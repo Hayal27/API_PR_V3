@@ -13,3 +13,4 @@ dist
 *.mp4
 *.pdf
 *.zip
+.env
