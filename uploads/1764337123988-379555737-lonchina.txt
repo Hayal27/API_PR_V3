@@ -1,0 +1,70 @@
+lonchina
+
+TicketBook.tsx update the loyut of the below code . make it as modal and very atractive layout
+
+Mass Ticket Booking
+
+{massError &&
+
+{massError}
+
+}
+
+Select Queue { const sel = queueList.find(q => String(q.id) === e.target.value); setMassQueue(sel || null); setMassError(''); setMassCount(''); }} required > -- Select Queue -- {queueList.map(q => { const booked = q.booked_seats ?? q.bookedSeats ?? q.ticketsBooked ?? 0; const cap = q.seat_capacity ?? q.seatCapacity ?? 0; const left = cap - booked; const growthPriceValue = q.tariff_price ?? q.price; const growthPriceNum = (growthPriceValue !== undefined && growthPriceValue !== null) ? parseFloat(String(growthPriceValue)) : NaN; const isValidGrowthPrice = !isNaN(growthPriceNum) && growthPriceNum > 0; const serviceCharge = isValidGrowthPrice ? growthPriceNum  0.025 : 0; const transportBureauCharge = isValidGrowthPrice ? growthPriceNum  0.005 : 0; const netPrice = isValidGrowthPrice ? growthPriceNum - serviceCharge + transportBureauCharge : NaN; const netPriceDisplay = !isNaN(netPrice) ? netPrice.toFixed(2) : 'N/A'; return ( {q.plateNo} ({left} seats left - {q.source} to {q.destination} @ {netPriceDisplay} ETB) ); })}
+
+Number of Tickets { setMassCount(e.target.value); setMassError(''); }} required disabled={!massQueue} />
+
+Cancel {massLoading ? ( <> Booking... ) : ( <> Book Tickets )}
+
+
+
+In need you to completely convert all code of  @TicketBook.tsx
+
+to @TicketBookingScreen.tsx .I want you to covert it to android app the full functionalty 
+
+
+// I need you to make the service charge = 3.5% of gross tarif and the tb charge will be 0.5% of the tarif  when the rout km < = 50km, in totall 4 % will be deducted for service charge and tb charge for example if gross tarif = 100birr the service tariff will be 3.5 birr. and if the km > to 50 km the service charge willl be 3% and the the tb charge will be 0.5 and in totall 3.5% will be deducted from the  gross tariff.
+
+
+
+@TicketBookingScreen.tsxremove the moke and only user the real data and also on the @TicketCard.tsxmake the Gross tariff = grossPrice 
+
+
+when posting on the ticket detaills the station_id  posted as null. so the  tstation_id  curent user station_id must be the posted to the db  on ticketdetails table.  
+cheek @loginScreen
+
+
+when I refesh the app wil outomaticly loged me out and also when 
+
+the logout button is not workin
+
+on the table add code to show the queue id for each requestes 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+*************tasks******************************
+1. update the layout of tb module
+2. update the layout of the casher module and ticket booking
+3. add (queue managment, vehicle managment, and tariff managment screen on mobile
+4. on mobile I need to two option after login online or offline mode. here on the login screen user can select the system to work of line or online mode, but login must work from online to validate the user cridential and if the system is online all activities will work on backend using api. but if it is offline after login the activities will works on sql light based on the mobile application. here on the offline mode every activities will submitt automaticly when the user submit the activieties.
+3. add for the mobile to have privilage to access the screens based on the loged in user role 
+

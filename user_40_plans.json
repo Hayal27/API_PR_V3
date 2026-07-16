@@ -1,0 +1,42 @@
+[
+  {
+    "plan_id": 253,
+    "goal_id": 103,
+    "objective_id": 148,
+    "department_id": 2,
+    "specific_objective_id": 608,
+    "specific_objective_detail_id": 811
+  },
+  {
+    "plan_id": 254,
+    "goal_id": 104,
+    "objective_id": 149,
+    "department_id": 2,
+    "specific_objective_id": 609,
+    "specific_objective_detail_id": 812
+  },
+  {
+    "plan_id": 255,
+    "goal_id": 104,
+    "objective_id": 149,
+    "department_id": 2,
+    "specific_objective_id": 609,
+    "specific_objective_detail_id": 813
+  },
+  {
+    "plan_id": 256,
+    "goal_id": 104,
+    "objective_id": 149,
+    "department_id": 2,
+    "specific_objective_id": 609,
+    "specific_objective_detail_id": 814
+  },
+  {
+    "plan_id": 257,
+    "goal_id": 104,
+    "objective_id": 149,
+    "department_id": 2,
+    "specific_objective_id": 609,
+    "specific_objective_detail_id": 815
+  }
+]

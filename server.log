@@ -1,0 +1,192 @@
+🔄 ANALYTICS.JS LOADED - FILTERING FOR COMPLETED PLANS ONLY
+✅ Email transporter configured
+Server running on http://0.0.0.0:5000
+Environment: production
+Database: localhost:3306/itpr
+Deadline notification scheduler initialized
+Connected to MySQL database
+GET request for /api/notifications/unread-count
+GET request for /api/tasks/stats
+GET request for /api/meetings/stats
+📊 Getting meeting stats for user: 40 
+GET request for /api/chat/conversations
+📨 Getting conversations for user: 40
+✅ Stats retrieved
+✅ Retrieved 5 conversations
+🚀 Running initial deadline check...
+📅 Found 0 plans with upcoming/overdue deadlines
+🧹 Cleaned up 0 old notifications
+GET request for /api/notifications/unread-count
+GET request for /api/tasks/stats
+GET request for /api/meetings/stats
+📊 Getting meeting stats for user: 40 
+GET request for /api/chat/conversations
+📨 Getting conversations for user: 40
+✅ Stats retrieved
+✅ Retrieved 5 conversations
+GET request for /api/notifications/unread-count
+GET request for /api/tasks/stats
+GET request for /api/meetings/stats
+📊 Getting meeting stats for user: 40 
+GET request for /api/chat/conversations
+📨 Getting conversations for user: 40
+✅ Stats retrieved
+✅ Retrieved 5 conversations
+GET request for /api/notifications/unread-count
+GET request for /api/tasks/stats
+GET request for /api/meetings/stats
+📊 Getting meeting stats for user: 40 
+GET request for /api/chat/conversations
+📨 Getting conversations for user: 40
+✅ Stats retrieved
+✅ Retrieved 5 conversations
+GET request for /api/audit-logs?limit=20&offset=0
+GET request for /api/audit-logs/stats
+GET request for /api/notifications/unread-count
+GET request for /api/tasks/stats
+GET request for /api/meetings/stats
+📊 Getting meeting stats for user: 40 
+GET request for /api/chat/conversations
+📨 Getting conversations for user: 40
+✅ Stats retrieved
+✅ Retrieved 5 conversations
+GET request for /api/notifications/unread-count
+GET request for /api/tasks/stats
+GET request for /api/meetings/stats
+📊 Getting meeting stats for user: 40 
+GET request for /api/chat/conversations
+📨 Getting conversations for user: 40
+✅ Stats retrieved
+✅ Retrieved 5 conversations
+GET request for /api/notifications/unread-count
+GET request for /api/tasks/stats
+GET request for /api/meetings/stats
+📊 Getting meeting stats for user: 40 
+GET request for /api/chat/conversations
+📨 Getting conversations for user: 40
+✅ Stats retrieved
+✅ Retrieved 5 conversations
+GET request for /api/notifications/unread-count
+GET request for /api/tasks/stats
+GET request for /api/meetings/stats
+📊 Getting meeting stats for user: 40 
+GET request for /api/chat/conversations
+📨 Getting conversations for user: 40
+✅ Stats retrieved
+✅ Retrieved 5 conversations
+GET request for /api/notifications/unread-count
+GET request for /api/tasks/stats
+GET request for /api/meetings/stats
+📊 Getting meeting stats for user: 40 
+GET request for /api/chat/conversations
+📨 Getting conversations for user: 40
+✅ Stats retrieved
+✅ Retrieved 5 conversations
+GET request for /api/notifications/unread-count
+GET request for /api/tasks/stats
+GET request for /api/meetings/stats
+📊 Getting meeting stats for user: 40 
+GET request for /api/chat/conversations
+📨 Getting conversations for user: 40
+✅ Stats retrieved
+✅ Retrieved 5 conversations
+GET request for /api/audit-logs?limit=20&offset=0
+GET request for /api/audit-logs/stats
+GET request for /api/notifications/unread-count
+GET request for /api/tasks/stats
+GET request for /api/meetings/stats
+📊 Getting meeting stats for user: 40 
+GET request for /api/chat/conversations
+📨 Getting conversations for user: 40
+✅ Stats retrieved
+✅ Retrieved 5 conversations
+GET request for /api/notifications/unread-count
+GET request for /api/tasks/stats
+GET request for /api/meetings/stats
+📊 Getting meeting stats for user: 40 
+GET request for /api/chat/conversations
+📨 Getting conversations for user: 40
+✅ Stats retrieved
+✅ Retrieved 5 conversations
+GET request for /api/notifications/unread-count
+GET request for /api/tasks/stats
+GET request for /api/meetings/stats
+📊 Getting meeting stats for user: 40 
+GET request for /api/chat/conversations
+📨 Getting conversations for user: 40
+✅ Stats retrieved
+✅ Retrieved 5 conversations
+GET request for /api/notifications/unread-count
+GET request for /api/tasks/stats
+GET request for /api/meetings/stats
+📊 Getting meeting stats for user: 40 
+GET request for /api/chat/conversations
+📨 Getting conversations for user: 40
+✅ Stats retrieved
+✅ Retrieved 5 conversations
+GET request for /api/notifications/unread-count
+GET request for /api/tasks/stats
+GET request for /api/chat/conversations
+📨 Getting conversations for user: 40
+GET request for /api/meetings/stats
+📊 Getting meeting stats for user: 40 
+✅ Retrieved 5 conversations
+✅ Stats retrieved
+GET request for /api/notifications/unread-count
+GET request for /api/tasks/stats
+GET request for /api/meetings/stats
+📊 Getting meeting stats for user: 40 
+GET request for /api/chat/conversations
+📨 Getting conversations for user: 40
+✅ Stats retrieved
+✅ Retrieved 5 conversations
+GET request for /api/notifications/unread-count
+GET request for /api/tasks/stats
+GET request for /api/meetings/stats
+📊 Getting meeting stats for user: 40 
+GET request for /api/chat/conversations
+📨 Getting conversations for user: 40
+✅ Stats retrieved
+✅ Retrieved 5 conversations
+GET request for /api/audit-logs?limit=20&offset=0
+GET request for /api/audit-logs/stats
+GET request for /api/notifications/unread-count
+GET request for /api/tasks/stats
+GET request for /api/meetings/stats
+📊 Getting meeting stats for user: 40 
+GET request for /api/chat/conversations
+📨 Getting conversations for user: 40
+✅ Stats retrieved
+✅ Retrieved 5 conversations
+GET request for /api/notifications/unread-count
+GET request for /api/tasks/stats
+GET request for /api/meetings/stats
+📊 Getting meeting stats for user: 40 
+GET request for /api/chat/conversations
+📨 Getting conversations for user: 40
+✅ Stats retrieved
+✅ Retrieved 5 conversations
+GET request for /api/notifications/unread-count
+GET request for /api/tasks/stats
+GET request for /api/meetings/stats
+📊 Getting meeting stats for user: 40 
+GET request for /api/chat/conversations
+📨 Getting conversations for user: 40
+✅ Stats retrieved
+✅ Retrieved 5 conversations
+GET request for /api/notifications/unread-count
+GET request for /api/tasks/stats
+GET request for /api/meetings/stats
+📊 Getting meeting stats for user: 40 
+GET request for /api/chat/conversations
+📨 Getting conversations for user: 40
+✅ Stats retrieved
+✅ Retrieved 5 conversations
+GET request for /api/notifications/unread-count
+GET request for /api/tasks/stats
+GET request for /api/meetings/stats
+📊 Getting meeting stats for user: 40 
+GET request for /api/chat/conversations
+📨 Getting conversations for user: 40
+✅ Stats retrieved
+✅ Retrieved 5 conversations

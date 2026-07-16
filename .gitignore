@@ -1,0 +1,15 @@
+APPROVAL_HISTORY_README.md
+node_modules
+HOW_TO_USE_APPROVAL_HISTORY.md
+about
+test_approval_history.js
+node_modules
+.zip
+dist
+.vscode
+.git/
+*.jpg
+*.png
+*.mp4
+*.pdf
+*.zip
