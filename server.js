@@ -3,6 +3,7 @@ const express = require("express");
 const cors = require("cors");
 const session = require("express-session");
 const path = require("path");
+const fs = require("fs");
 
 // Importing Routes
 const userRoutes = require("./routes/userRoutes.js");
@@ -118,19 +119,39 @@ app.use((req, res) => {
 
 // Global Error Handling Middleware
 app.use((err, req, res, next) => {
+  const timestamp = new Date().toISOString();
   console.error('❌ Error:', {
     message: err.message,
     stack: err.stack,
     path: req.path,
     method: req.method,
-    timestamp: new Date().toISOString()
+    timestamp
+  });
+
+  const logMessage = `[${timestamp}] ${req.method} ${req.path} - ${err.message}\nStack: ${err.stack}\n--------------------------------------------------\n`;
+  fs.appendFile(path.join(__dirname, 'error.log'), logMessage, (fsErr) => {
+    if (fsErr) console.error('Failed to write to error log:', fsErr);
   });
 
   res.status(err.status || 500).json({
     message: "Internal Server Error",
     error: process.env.NODE_ENV === "development" ? err.message : "Something went wrong",
-    timestamp: new Date().toISOString()
+    timestamp
   });
+});
+
+// Catch Uncaught Exceptions
+process.on('uncaughtException', (err) => {
+  console.error('❌ Uncaught Exception:', err);
+  const logMessage = `[${new Date().toISOString()}] UNCAUGHT EXCEPTION - ${err.message}\nStack: ${err.stack}\n--------------------------------------------------\n`;
+  fs.appendFileSync(path.join(__dirname, 'error.log'), logMessage);
+});
+
+// Catch Unhandled Rejections
+process.on('unhandledRejection', (reason, promise) => {
+  console.error('❌ Unhandled Rejection:', reason);
+  const logMessage = `[${new Date().toISOString()}] UNHANDLED REJECTION - ${reason}\n--------------------------------------------------\n`;
+  fs.appendFileSync(path.join(__dirname, 'error.log'), logMessage);
 });
 
 // Start Server and Listen on All Network Interfaces

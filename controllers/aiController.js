@@ -12,10 +12,21 @@ exports.generateInsights = async (req, res) => {
             return res.status(400).json({ success: false, message: "No data provided for analysis." });
         }
 
-        // Fetch API Key
-        const settings = await dbQuery("SELECT setting_value FROM system_settings WHERE setting_key = 'GROQ_API_KEY'");
-        if (!settings.length) return res.status(500).json({ success: false, message: "Groq API key not found." });
-        const apiKey = settings[0].setting_value;
+        // Fetch API Key safely
+        let apiKey = process.env.GROQ_API_KEY;
+        if (!apiKey) {
+            try {
+                const settings = await dbQuery("SELECT setting_value FROM system_settings WHERE setting_key = 'GROQ_API_KEY'");
+                if (settings.length) apiKey = settings[0].setting_value;
+            } catch (e) {
+                console.error("Warning: Could not fetch from system_settings:", e.message);
+            }
+        }
+
+        if (!apiKey) {
+            console.error("GROQ_API_KEY is missing. AI cannot proceed.");
+            return res.status(500).json({ success: false, message: "Groq API key not found." });
+        }
 
         // Fetch Global Summary for longitudinal comparison
         const globalSummary = await dbQuery(`
@@ -71,11 +82,12 @@ exports.generateInsights = async (req, res) => {
             return res.status(200).json({ success: true, insights: aiContent });
 
         } catch (apiError) {
-            console.error("Groq API Error:", apiError.message);
+            console.error("Groq API Error:", apiError.response ? apiError.response.data : apiError.message);
             return res.status(500).json({ success: false, message: "Failed to generate AI insights." });
         }
     } catch (error) {
-        console.error("GenerateInsights Error:", error);
+        console.error("GenerateInsights Error:", error.message);
+        console.error(error.stack);
         res.status(500).json({ success: false, message: "Server error during AI generation." });
     }
 };
@@ -89,10 +101,21 @@ exports.chatWithAI = async (req, res) => {
             return res.status(400).json({ success: false, message: "Invalid chat history." });
         }
 
-        // Fetch API Key
-        const settings = await dbQuery("SELECT setting_value FROM system_settings WHERE setting_key = 'GROQ_API_KEY'");
-        if (!settings.length) return res.status(500).json({ success: false, message: "AI Engine not configured." });
-        const apiKey = settings[0].setting_value;
+        // Fetch API Key safely
+        let apiKey = process.env.GROQ_API_KEY;
+        if (!apiKey) {
+            try {
+                const settings = await dbQuery("SELECT setting_value FROM system_settings WHERE setting_key = 'GROQ_API_KEY'");
+                if (settings.length) apiKey = settings[0].setting_value;
+            } catch (e) {
+                console.error("Warning: Could not fetch from system_settings:", e.message);
+            }
+        }
+
+        if (!apiKey) {
+            console.error("GROQ_API_KEY is missing. AI Chat cannot proceed.");
+            return res.status(500).json({ success: false, message: "AI Engine not configured." });
+        }
 
         // NEW: Fetch broad organizational context with JOINED NAMES (no raw IDs for AI)
         const [globalSummary, requesterProfile, employeeList, taskStats] = await Promise.all([
@@ -105,17 +128,17 @@ exports.chatWithAI = async (req, res) => {
                 WHERE aw.status = 'completed' GROUP BY g.year ORDER BY g.year ASC
             `),
             dbQuery(`
-                SELECT e.*, os.name as department_name, r.role_name 
+                SELECT e.*, d.name as department_name, r.role_name 
                 FROM employees e 
                 JOIN users u ON e.employee_id = u.employee_id 
-                LEFT JOIN organization_structure os ON e.department_id = os.id
+                LEFT JOIN departments d ON e.department_id = d.department_id
                 LEFT JOIN roles r ON e.role_id = r.role_id
                 WHERE u.user_id = ?
-            `, [req.user_id]),
+            `, [req.user?.user_id]),
             dbQuery(`
-                SELECT e.name, r.role_name, os.name as department_name, e.fname, e.lname 
+                SELECT e.name, r.role_name, d.name as department_name, e.fname, e.lname 
                 FROM employees e
-                LEFT JOIN organization_structure os ON e.department_id = os.id
+                LEFT JOIN departments d ON e.department_id = d.department_id
                 LEFT JOIN roles r ON e.role_id = r.role_id
             `),
             dbQuery(`SELECT status, COUNT(*) as count FROM task_assignments GROUP BY status`)
@@ -159,11 +182,12 @@ exports.chatWithAI = async (req, res) => {
             return res.status(200).json({ success: true, reply: aiResponse });
 
         } catch (apiError) {
-            console.error("Groq Chat Error:", apiError.message);
+            console.error("Groq Chat Error:", apiError.response ? apiError.response.data : apiError.message);
             return res.status(500).json({ success: false, message: "AI failed to respond." });
         }
     } catch (error) {
-        console.error("Chat Controller Error:", error);
+        console.error("Chat Controller Error:", error.message);
+        console.error(error.stack);
         res.status(500).json({ success: false, message: "Server error." });
     }
 };

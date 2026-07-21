@@ -15,7 +15,7 @@ const verifyToken = (req, res, next) => {
       });
     }
 
-    const decoded = jwt.verify(token, process.env.JWT_SECRET || "your_secret_key");
+    const decoded = jwt.verify(token, process.env.JWT_SECRET || "hayaltamrat@27");
     req.user = decoded;
     next();
   } catch (error) {

@@ -10,7 +10,7 @@ const { getAllPlansDeclined, getApprovedOrgPlans, getPlanDetail, getAllOrgPlans,
 // const {getSubmittedPlans, updatePlanStatus, getDetailedPlanForSupervisor,getSubmittedPlanssp,updatePlanApprovalStatus} = require("../controllers/planAproveController");
 const { getGoals, getGoalById, getObjectiveById, getObjectivesByGoals, getspesificObjectivesByGoals, getGoal, getPlansBySpecificGoal, getAllObjectives, getAllSpecificObjectives } = require("../controllers/planDetailFetchController");
 const { getProfilePic, getSpecificGoal, getSpesificObjectives, getdepartment, getUserRoles } = require("../controllers/planget");
-const { addGoals, addObjectives, addSpecificObjectives, addspecificObjectiveDetails, updateGoal, deleteGoal, updateObjective, deleteObjective, updateSpecificObjective, deleteSpecificObjective } = require("../controllers/planDtailedController")
+const { addGoals, addObjectives, addSpecificObjectives, addspecificObjectiveDetails, updateGoal, deleteGoal, updateObjective, deleteObjective, updateSpecificObjective, deleteSpecificObjective, getKPIsBySpecificObjective, updateKPI, deleteKPI } = require("../controllers/planDtailedController")
 const { upload } = require("../middleware/upload");
 
 const { buildAndSavePlanApprovalChain, getApprovalSteps, approveStep, declineStep, getPendingPlansForApprover } = require('../controllers/hierarchyApprovalController');
@@ -401,6 +401,11 @@ router.put("/updateSpecificObjective/:specific_objective_id", verifyToken, updat
 router.delete("/deleteSpecificObjective/:specific_objective_id", verifyToken, deleteSpecificObjective);
 
 router.post("/addspecificObjectiveDetail", verifyToken, addspecificObjectiveDetails);
+
+// KPI (specific_objective_details) routes
+router.get("/kpis/:specific_objective_id", verifyToken, getKPIsBySpecificObjective); // GET all KPIs for a specific objective
+router.put("/kpis/:detail_id", verifyToken, updateKPI);                              // PUT update a KPI
+router.delete("/kpis/:detail_id", verifyToken, deleteKPI);                          // DELETE a KPI and its tasks
 
 
 

@@ -1,73 +1,54 @@
 const con = require("../models/db");
 
-// Add Objective
-const jwt = require("jsonwebtoken");
-
 const addGoals = (req, res) => {
   const { name, description, year, quarter } = req.body;
+  const user_id = req.user_id; // set by verifyToken middleware
 
   if (!name || !description || !year || !quarter) {
     return res.status(400).json({ message: "All fields are required" });
   }
 
-  const token = req.headers["authorization"]?.split(" ")[1];
-  if (!token) {
-    return res.status(401).json({ message: "Authorization token is required" });
-  }
-
-  jwt.verify(token, "hayaltamrat@27", (err, decoded) => {
-    if (err) {
-      console.error("JWT Error:", err);
-      return res.status(401).json({ message: "Invalid or expired token" });
-    }
-
-    const user_id = decoded.user_id;
-    console.log("user_id from token:", user_id);
-
-    con.query(
-      "SELECT employee_id FROM users WHERE user_id = ?",
-      [user_id],
-      (err, result) => {
-        if (err) {
-          console.error("Database Error during user lookup:", err);
-          return res
-            .status(500)
-            .json({ message: "Error finding employee_id for the user" });
-        }
-
-        if (result.length === 0) {
-          return res.status(400).json({ message: "User not found" });
-        }
-
-        const employee_id = result[0].employee_id;
-        console.log("Employee ID:", employee_id);
-
-        const query = `
-          INSERT INTO goals (
-            user_id, name, description, year, quarter, created_at, updated_at, employee_id
-          ) 
-          VALUES (?, ?, ?, ?, ?, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, ?)
-        `;
-
-        const values = [user_id, name, description, year, quarter, employee_id];
-
-        con.query(query, values, (err, result) => {
-          if (err) {
-            console.error("Error adding goal:", err);
-            return res.status(500).json({ message: "Error adding goals" });
-          }
-
-          const goal_id = result.insertId;
-          console.log("Goal adde d successfully:", goal_id);
-
-          res.status(201).json({
-            message: "goal added successfully",
-            goal_id: goal_id,
-          });
-        });
+  con.query(
+    "SELECT employee_id FROM users WHERE user_id = ?",
+    [user_id],
+    (err, result) => {
+      if (err) {
+        console.error("Database Error during user lookup:", err);
+        return res.status(500).json({ message: "Error finding employee_id for the user" });
       }
-    );
-  });
+
+      if (result.length === 0) {
+        return res.status(400).json({ message: "User not found" });
+      }
+
+      const employee_id = result[0].employee_id;
+      console.log("Employee ID:", employee_id);
+
+      const query = `
+        INSERT INTO goals (
+          user_id, name, description, year, quarter, created_at, updated_at, employee_id
+        ) 
+        VALUES (?, ?, ?, ?, ?, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, ?)
+      `;
+
+      const values = [user_id, name, description, year, quarter, employee_id];
+
+      con.query(query, values, (err, result) => {
+        if (err) {
+          console.error("Error adding goal:", err);
+          return res.status(500).json({ message: "Error adding goals" });
+        }
+
+        const goal_id = result.insertId;
+        console.log("Goal added successfully:", goal_id);
+
+        res.status(201).json({
+          message: "goal added successfully",
+          goal_id: goal_id,
+        });
+      });
+    }
+  );
 };
 
 
@@ -76,80 +57,53 @@ const addGoals = (req, res) => {
 
 // Add Objective
 const addObjectives = (req, res) => {
-  const token = req.headers["authorization"]?.split(" ")[1];
-  if (!token) {
-    return res.status(401).json({ message: "Authorization token is required" });
+  const user_id = req.user_id; // set by verifyToken middleware
+  const { goal, name, description } = req.body;
+
+  console.log("addObjectives - Request body:", { goal, name, description, user_id });
+
+  if (!goal || !name || !description) {
+    return res.status(400).json({ message: "Goal ID, objective name, and description are required" });
   }
 
-  jwt.verify(token, "hayaltamrat@27", (err, decoded) => {
-    if (err) {
-      console.error("JWT Error:", err);
-      return res.status(401).json({ message: "Invalid or expired token" });
-    }
-
-    const user_id = decoded.user_id;
-    const { goal, name, description } = req.body;
-
-    console.log("addObjectives - Request body:", { goal, name, description, user_id });
-
-    if (!goal || !name || !description) {
-      return res.status(400).json({ message: "Goal ID, objective name, and description are required" });
-    }
-
-    // First, get the employee_id for this user
-    con.query(
-      "SELECT employee_id FROM users WHERE user_id = ?",
-      [user_id],
-      (err, userResult) => {
-        if (err) {
-          console.error("Database Error during user lookup:", err);
-          return res.status(500).json({
-            message: "Error finding employee_id for the user",
-            error: err.message
-          });
-        }
-
-        if (userResult.length === 0) {
-          return res.status(400).json({ message: "User not found" });
-        }
-
-        const employee_id = userResult[0].employee_id;
-        console.log("Employee ID:", employee_id);
-
-        const query = `
-          INSERT INTO objectives (user_id, goal_id, name, description, employee_id, created_at, updated_at)
-          VALUES (?, ?, ?, ?, ?, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
-        `;
-
-        con.query(query, [user_id, goal, name, description, employee_id], (err, result) => {
-          if (err) {
-            console.error("Database Error adding objective:", err);
-            console.error("Error code:", err.code);
-            console.error("Error message:", err.message);
-            console.error("SQL State:", err.sqlState);
-
-            if (err.code === 'ER_NO_REFERENCED_ROW' || err.code === 'ER_NO_REFERENCED_ROW_2') {
-              return res.status(400).json({ message: "Invalid goal ID provided" });
-            }
-            if (err.code === 'ER_DUP_ENTRY') {
-              return res.status(400).json({ message: "This objective already exists" });
-            }
-            return res.status(500).json({
-              message: "Error adding objective",
-              error: err.message,
-              code: err.code
-            });
-          }
-
-          console.log("Objective created successfully with ID:", result.insertId);
-          res.status(201).json({
-            message: "Objective created successfully",
-            objective_id: result.insertId
-          });
-        });
+  con.query(
+    "SELECT employee_id FROM users WHERE user_id = ?",
+    [user_id],
+    (err, userResult) => {
+      if (err) {
+        console.error("Database Error during user lookup:", err);
+        return res.status(500).json({ message: "Error finding employee_id for the user", error: err.message });
       }
-    );
-  });
+
+      if (userResult.length === 0) {
+        return res.status(400).json({ message: "User not found" });
+      }
+
+      const employee_id = userResult[0].employee_id;
+      console.log("Employee ID:", employee_id);
+
+      const query = `
+        INSERT INTO objectives (user_id, goal_id, name, description, employee_id, created_at, updated_at)
+        VALUES (?, ?, ?, ?, ?, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+      `;
+
+      con.query(query, [user_id, goal, name, description, employee_id], (err, result) => {
+        if (err) {
+          console.error("Database Error adding objective:", err.message, err.code);
+          if (err.code === 'ER_NO_REFERENCED_ROW' || err.code === 'ER_NO_REFERENCED_ROW_2') {
+            return res.status(400).json({ message: "Invalid goal ID provided" });
+          }
+          if (err.code === 'ER_DUP_ENTRY') {
+            return res.status(400).json({ message: "This objective already exists" });
+          }
+          return res.status(500).json({ message: "Error adding objective", error: err.message, code: err.code });
+        }
+
+        console.log("Objective created successfully with ID:", result.insertId);
+        res.status(201).json({ message: "Objective created successfully", objective_id: result.insertId });
+      });
+    }
+  );
 };
 
 
@@ -158,19 +112,9 @@ const addObjectives = (req, res) => {
 
 // Add specific objectives
 const addSpecificObjectives = (req, res) => {
-  const token = req.headers["authorization"]?.split(" ")[1];
-
-  if (!token) {
-    return res.status(401).json({ message: "Authorization token is required" });
-  }
-
-  jwt.verify(token, "hayaltamrat@27", (err, decoded) => {
-    if (err) {
-      console.error("JWT Error:", err);
-      return res.status(401).json({ message: "Invalid or expired token" });
-    }
-
-    const user_id = decoded.user_id;
+  const user_id = req.user_id; // set by verifyToken middleware
+  {
+    // keeping indentation block for minimal diff
     const { objective_id, specific_objective_name, view } = req.body;
 
     console.log("addSpecificObjectives - Request body:", { objective_id, specific_objective_name, view, user_id });
@@ -326,7 +270,7 @@ const addSpecificObjectives = (req, res) => {
         });
       });
     });
-  });
+  }
 };
 
 
@@ -343,20 +287,9 @@ const query = (sql, params) => {
 };
 
 const addspecificObjectiveDetails = async (req, res) => {
-  const token = req.headers["authorization"]?.split(" ")[1];
-  if (!token) {
-    return res.status(401).json({ message: "Authorization token is required" });
-  }
+  const user_id = req.user_id; // set by verifyToken middleware
 
   try {
-    const decoded = await new Promise((resolve, reject) => {
-      jwt.verify(token, "hayaltamrat@27", (err, decoded) => {
-        if (err) reject(err);
-        else resolve(decoded);
-      });
-    });
-
-    const user_id = decoded.user_id;
     console.log("user_id from token:", user_id);
 
     let { specific_objective } = req.body;
@@ -501,70 +434,44 @@ const addspecificObjectiveDetails = async (req, res) => {
 const updateGoal = (req, res) => {
   const { goal_id } = req.params;
   const { name, description, year, quarter } = req.body;
-  const token = req.headers["authorization"]?.split(" ")[1];
+  const user_id = req.user_id; // set by verifyToken middleware
 
-  if (!token) {
-    return res.status(401).json({ message: "Authorization token is required" });
-  }
+  const query = `
+    UPDATE goals 
+    SET name = ?, description = ?, year = ?, quarter = ?, updated_at = CURRENT_TIMESTAMP
+    WHERE goal_id = ? AND user_id = ?
+  `;
 
-  jwt.verify(token, "hayaltamrat@27", (err, decoded) => {
+  con.query(query, [name, description, year, quarter, goal_id, user_id], (err, result) => {
     if (err) {
-      return res.status(401).json({ message: "Invalid or expired token" });
+      console.error("Error updating goal:", err);
+      return res.status(500).json({ message: "Error updating goal" });
     }
 
-    const user_id = decoded.user_id;
+    if (result.affectedRows === 0) {
+      return res.status(404).json({ message: "Goal not found or unauthorized" });
+    }
 
-    const query = `
-      UPDATE goals 
-      SET name = ?, description = ?, year = ?, quarter = ?, updated_at = CURRENT_TIMESTAMP
-      WHERE goal_id = ? AND user_id = ?
-    `;
-
-    con.query(query, [name, description, year, quarter, goal_id, user_id], (err, result) => {
-      if (err) {
-        console.error("Error updating goal:", err);
-        return res.status(500).json({ message: "Error updating goal" });
-      }
-
-      if (result.affectedRows === 0) {
-        return res.status(404).json({ message: "Goal not found or unauthorized" });
-      }
-
-      res.status(200).json({ message: "Goal updated successfully" });
-    });
+    res.status(200).json({ message: "Goal updated successfully" });
   });
 };
 
 // Delete Goal
 const deleteGoal = (req, res) => {
   const { goal_id } = req.params;
-  const token = req.headers["authorization"]?.split(" ")[1];
+  const user_id = req.user_id; // set by verifyToken middleware
 
-  if (!token) {
-    return res.status(401).json({ message: "Authorization token is required" });
-  }
-
-  jwt.verify(token, "hayaltamrat@27", (err, decoded) => {
+  con.query("DELETE FROM goals WHERE goal_id = ? AND user_id = ?", [goal_id, user_id], (err, result) => {
     if (err) {
-      return res.status(401).json({ message: "Invalid or expired token" });
+      console.error("Error deleting goal:", err);
+      return res.status(500).json({ message: "Error deleting goal" });
     }
 
-    const user_id = decoded.user_id;
+    if (result.affectedRows === 0) {
+      return res.status(404).json({ message: "Goal not found or unauthorized" });
+    }
 
-    const query = "DELETE FROM goals WHERE goal_id = ? AND user_id = ?";
-
-    con.query(query, [goal_id, user_id], (err, result) => {
-      if (err) {
-        console.error("Error deleting goal:", err);
-        return res.status(500).json({ message: "Error deleting goal" });
-      }
-
-      if (result.affectedRows === 0) {
-        return res.status(404).json({ message: "Goal not found or unauthorized" });
-      }
-
-      res.status(200).json({ message: "Goal deleted successfully" });
-    });
+    res.status(200).json({ message: "Goal deleted successfully" });
   });
 };
 
@@ -572,70 +479,44 @@ const deleteGoal = (req, res) => {
 const updateObjective = (req, res) => {
   const { objective_id } = req.params;
   const { name, description, goal_id } = req.body;
-  const token = req.headers["authorization"]?.split(" ")[1];
+  const user_id = req.user_id; // set by verifyToken middleware
 
-  if (!token) {
-    return res.status(401).json({ message: "Authorization token is required" });
-  }
+  const query = `
+    UPDATE objectives 
+    SET name = ?, description = ?, goal_id = ?, updated_at = CURRENT_TIMESTAMP
+    WHERE objective_id = ? AND user_id = ?
+  `;
 
-  jwt.verify(token, "hayaltamrat@27", (err, decoded) => {
+  con.query(query, [name, description, goal_id, objective_id, user_id], (err, result) => {
     if (err) {
-      return res.status(401).json({ message: "Invalid or expired token" });
+      console.error("Error updating objective:", err);
+      return res.status(500).json({ message: "Error updating objective" });
     }
 
-    const user_id = decoded.user_id;
+    if (result.affectedRows === 0) {
+      return res.status(404).json({ message: "Objective not found or unauthorized" });
+    }
 
-    const query = `
-      UPDATE objectives 
-      SET name = ?, description = ?, goal_id = ?, updated_at = CURRENT_TIMESTAMP
-      WHERE objective_id = ? AND user_id = ?
-    `;
-
-    con.query(query, [name, description, goal_id, objective_id, user_id], (err, result) => {
-      if (err) {
-        console.error("Error updating objective:", err);
-        return res.status(500).json({ message: "Error updating objective" });
-      }
-
-      if (result.affectedRows === 0) {
-        return res.status(404).json({ message: "Objective not found or unauthorized" });
-      }
-
-      res.status(200).json({ message: "Objective updated successfully" });
-    });
+    res.status(200).json({ message: "Objective updated successfully" });
   });
 };
 
 // Delete Objective
 const deleteObjective = (req, res) => {
   const { objective_id } = req.params;
-  const token = req.headers["authorization"]?.split(" ")[1];
+  const user_id = req.user_id; // set by verifyToken middleware
 
-  if (!token) {
-    return res.status(401).json({ message: "Authorization token is required" });
-  }
-
-  jwt.verify(token, "hayaltamrat@27", (err, decoded) => {
+  con.query("DELETE FROM objectives WHERE objective_id = ? AND user_id = ?", [objective_id, user_id], (err, result) => {
     if (err) {
-      return res.status(401).json({ message: "Invalid or expired token" });
+      console.error("Error deleting objective:", err);
+      return res.status(500).json({ message: "Error deleting objective" });
     }
 
-    const user_id = decoded.user_id;
+    if (result.affectedRows === 0) {
+      return res.status(404).json({ message: "Objective not found or unauthorized" });
+    }
 
-    const query = "DELETE FROM objectives WHERE objective_id = ? AND user_id = ?";
-
-    con.query(query, [objective_id, user_id], (err, result) => {
-      if (err) {
-        console.error("Error deleting objective:", err);
-        return res.status(500).json({ message: "Error deleting objective" });
-      }
-
-      if (result.affectedRows === 0) {
-        return res.status(404).json({ message: "Objective not found or unauthorized" });
-      }
-
-      res.status(200).json({ message: "Objective deleted successfully" });
-    });
+    res.status(200).json({ message: "Objective deleted successfully" });
   });
 };
 
@@ -643,71 +524,207 @@ const deleteObjective = (req, res) => {
 const updateSpecificObjective = (req, res) => {
   const { specific_objective_id } = req.params;
   const { specific_objective_name, view, objective_id } = req.body;
-  const token = req.headers["authorization"]?.split(" ")[1];
+  const user_id = req.user_id; // set by verifyToken middleware
 
-  if (!token) {
-    return res.status(401).json({ message: "Authorization token is required" });
-  }
+  const query = `
+    UPDATE specific_objectives 
+    SET specific_objective_name = ?, view = ?, objective_id = ?, updated_at = CURRENT_TIMESTAMP
+    WHERE specific_objective_id = ? AND user_id = ?
+  `;
 
-  jwt.verify(token, "hayaltamrat@27", (err, decoded) => {
+  con.query(query, [specific_objective_name, view, objective_id, specific_objective_id, user_id], (err, result) => {
     if (err) {
-      return res.status(401).json({ message: "Invalid or expired token" });
+      console.error("Error updating specific objective:", err);
+      return res.status(500).json({ message: "Error updating specific objective" });
     }
 
-    const user_id = decoded.user_id;
+    if (result.affectedRows === 0) {
+      return res.status(404).json({ message: "Specific objective not found or unauthorized" });
+    }
 
-    const query = `
-      UPDATE specific_objectives 
-      SET specific_objective_name = ?, view = ?, objective_id = ?, updated_at = CURRENT_TIMESTAMP
-      WHERE specific_objective_id = ? AND user_id = ?
-    `;
-
-    con.query(query, [specific_objective_name, view, objective_id, specific_objective_id, user_id], (err, result) => {
-      if (err) {
-        console.error("Error updating specific objective:", err);
-        return res.status(500).json({ message: "Error updating specific objective" });
-      }
-
-      if (result.affectedRows === 0) {
-        return res.status(404).json({ message: "Specific objective not found or unauthorized" });
-      }
-
-      res.status(200).json({ message: "Specific objective updated successfully" });
-    });
+    res.status(200).json({ message: "Specific objective updated successfully" });
   });
 };
 
 // Delete Specific Objective
 const deleteSpecificObjective = (req, res) => {
   const { specific_objective_id } = req.params;
-  const token = req.headers["authorization"]?.split(" ")[1];
+  const user_id = req.user_id; // set by verifyToken middleware
 
-  if (!token) {
-    return res.status(401).json({ message: "Authorization token is required" });
-  }
-
-  jwt.verify(token, "hayaltamrat@27", (err, decoded) => {
+  con.query("DELETE FROM specific_objectives WHERE specific_objective_id = ? AND user_id = ?", [specific_objective_id, user_id], (err, result) => {
     if (err) {
-      return res.status(401).json({ message: "Invalid or expired token" });
+      console.error("Error deleting specific objective:", err);
+      return res.status(500).json({ message: "Error deleting specific objective" });
     }
 
-    const user_id = decoded.user_id;
+    if (result.affectedRows === 0) {
+      return res.status(404).json({ message: "Specific objective not found or unauthorized" });
+    }
 
-    const query = "DELETE FROM specific_objectives WHERE specific_objective_id = ? AND user_id = ?";
-
-    con.query(query, [specific_objective_id, user_id], (err, result) => {
-      if (err) {
-        console.error("Error deleting specific objective:", err);
-        return res.status(500).json({ message: "Error deleting specific objective" });
-      }
-
-      if (result.affectedRows === 0) {
-        return res.status(404).json({ message: "Specific objective not found or unauthorized" });
-      }
-
-      res.status(200).json({ message: "Specific objective deleted successfully" });
-    });
+    res.status(200).json({ message: "Specific objective deleted successfully" });
   });
+};
+
+// ─── KPI (specific_objective_details) CRUD ─────────────────────────────────
+
+// GET: list all KPI details for a specific_objective_id
+const getKPIsBySpecificObjective = (req, res) => {
+  const { specific_objective_id } = req.params;
+  const user_id = req.user_id;
+
+  if (!specific_objective_id) {
+    return res.status(400).json({ message: "specific_objective_id is required" });
+  }
+
+  const sql = `
+    SELECT
+      sod.specific_objective_detail_id,
+      sod.specific_objective_detailname,
+      sod.details,
+      sod.baseline,
+      sod.plan,
+      sod.measurement,
+      sod.year,
+      sod.month,
+      sod.day,
+      sod.deadline,
+      sod.status,
+      sod.priority,
+      sod.plan_type,
+      sod.cost_type,
+      sod.created_at,
+      sod.updated_at
+    FROM specific_objective_details sod
+    WHERE sod.specific_objective_id = ?
+    ORDER BY sod.created_at DESC
+  `;
+
+  con.query(sql, [specific_objective_id], (err, results) => {
+    if (err) {
+      console.error("Error fetching KPIs:", err);
+      return res.status(500).json({ message: "Error fetching KPIs", error: err.message });
+    }
+    res.status(200).json(Array.isArray(results) ? results : []);
+  });
+};
+
+// PUT: update a specific_objective_detail (KPI)
+const updateKPI = (req, res) => {
+  const { detail_id } = req.params;
+  const user_id = req.user_id;
+  const {
+    specific_objective_detailname,
+    details,
+    baseline,
+    plan,
+    measurement,
+    year,
+    month,
+    day,
+    deadline,
+    status,
+    priority,
+    plan_type,
+  } = req.body;
+
+  if (!detail_id) {
+    return res.status(400).json({ message: "detail_id is required" });
+  }
+
+  const sql = `
+    UPDATE specific_objective_details
+    SET
+      specific_objective_detailname = COALESCE(?, specific_objective_detailname),
+      details                       = COALESCE(?, details),
+      baseline                      = COALESCE(?, baseline),
+      plan                          = COALESCE(?, plan),
+      measurement                   = COALESCE(?, measurement),
+      year                          = COALESCE(?, year),
+      month                         = COALESCE(?, month),
+      day                           = COALESCE(?, day),
+      deadline                      = ?,
+      status                        = COALESCE(?, status),
+      priority                      = COALESCE(?, priority),
+      plan_type                     = COALESCE(?, plan_type),
+      updated_at                    = CURRENT_TIMESTAMP
+    WHERE specific_objective_detail_id = ?
+  `;
+
+  const values = [
+    specific_objective_detailname ?? null,
+    details ?? null,
+    baseline != null ? parseFloat(baseline) : null,
+    plan != null ? parseFloat(plan) : null,
+    measurement ?? null,
+    year != null ? parseInt(year) : null,
+    month != null ? parseInt(month) : null,
+    day != null ? parseInt(day) : null,
+    deadline || null,
+    status ?? null,
+    priority ?? null,
+    plan_type ?? null,
+    detail_id,
+  ];
+
+  con.query(sql, values, (err, result) => {
+    if (err) {
+      console.error("Error updating KPI:", err);
+      return res.status(500).json({ message: "Error updating KPI", error: err.message });
+    }
+    if (result.affectedRows === 0) {
+      return res.status(404).json({ message: "KPI not found" });
+    }
+    res.status(200).json({ message: "KPI updated successfully" });
+  });
+};
+
+// DELETE: remove a specific_objective_detail and its tasks
+const deleteKPI = async (req, res) => {
+  const { detail_id } = req.params;
+
+  if (!detail_id) {
+    return res.status(400).json({ message: "detail_id is required" });
+  }
+
+  try {
+    // 1. Delete weekly tasks referencing monthly tasks of this detail
+    await new Promise((resolve, reject) =>
+      con.query(
+        `DELETE wt FROM weekly_tasks wt
+         INNER JOIN monthly_tasks mt ON wt.monthly_task_id = mt.monthly_task_id
+         WHERE mt.specific_objective_detail_id = ?`,
+        [detail_id],
+        (err) => (err ? reject(err) : resolve())
+      )
+    );
+
+    // 2. Delete monthly tasks
+    await new Promise((resolve, reject) =>
+      con.query(
+        `DELETE FROM monthly_tasks WHERE specific_objective_detail_id = ?`,
+        [detail_id],
+        (err) => (err ? reject(err) : resolve())
+      )
+    );
+
+    // 3. Delete the KPI detail itself
+    const result = await new Promise((resolve, reject) =>
+      con.query(
+        `DELETE FROM specific_objective_details WHERE specific_objective_detail_id = ?`,
+        [detail_id],
+        (err, res) => (err ? reject(err) : resolve(res))
+      )
+    );
+
+    if (result.affectedRows === 0) {
+      return res.status(404).json({ message: "KPI not found" });
+    }
+
+    res.status(200).json({ message: "KPI deleted successfully" });
+  } catch (err) {
+    console.error("Error deleting KPI:", err);
+    res.status(500).json({ message: "Error deleting KPI", error: err.message });
+  }
 };
 
 module.exports = {
@@ -720,7 +737,10 @@ module.exports = {
   updateObjective,
   deleteObjective,
   updateSpecificObjective,
-  deleteSpecificObjective
+  deleteSpecificObjective,
+  getKPIsBySpecificObjective,
+  updateKPI,
+  deleteKPI,
 };
 
 

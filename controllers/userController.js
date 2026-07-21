@@ -1,7 +1,7 @@
 // controllers/userController.js
 
 const con = require("../models/db"); // Assumes you have a db.js file that exports the database connection
-const bcrypt = require('bcrypt');
+const bcrypt = require('bcryptjs');
 const util = require('util');
 
 
@@ -182,7 +182,7 @@ const deleteUser = (req, res) => {
 
 const changeStatus = async (status, user_id) => {
   try {
-    const response = await fetch(`http://192.168.0.223:5001/api/users/${user_id}/status`, {
+    const response = await fetch(`https://api.pr.ethiopianitpark.et/api/users/${user_id}/status`, {
       method: "PUT",
       headers: { "Content-type": "application/json" },
       body: JSON.stringify({ status }),

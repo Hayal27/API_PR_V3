@@ -3,7 +3,7 @@
 const con = require("../models/db");
 const express = require('express');
 const router = express.Router();
-const bcrypt = require('bcrypt');
+const bcrypt = require('bcryptjs');
 const util = require("util");
 // Function to add a new employee and create a corresponding user
 
