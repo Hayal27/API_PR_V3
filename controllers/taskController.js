@@ -439,64 +439,151 @@ exports.getTaskNotifications = (req, res) => {
 // Breakdown Supervisors Tracking API
 // ==============================================
 
+// ==============================================
+// Breakdown Supervisors Tracking API
+// ==============================================
+
 exports.getBreakdownSupervisors = async (req, res) => {
   const { detailId } = req.params;
   try {
     const util = require('util');
     const query = util.promisify(db.query).bind(db);
     
-    // Find who owns this plan detail
-    const planResult = await query('SELECT employee_id FROM plans WHERE specific_objective_detail_id = ? LIMIT 1', [detailId]);
-    if (!planResult.length) return res.json({ success: true, supervisors: [] });
-    
-    const ownerEmployeeId = planResult[0].employee_id;
-    
-    // Use the comprehensive hierarchical approval logic to find the true parent position holder
-    const { buildApprovalChain } = require('./hierarchyApprovalController');
-    const chain = await buildApprovalChain(ownerEmployeeId);
-    
-    if (!chain || !chain.length) {
-      return res.json({ success: true, supervisors: [] });
-    }
-    
-    // The immediate hierarchical supervisor is the first valid approver in the chain
-    const immediateSupervisorInfo = chain.find(step => step.approver_employee_id);
-    
-    if (!immediateSupervisorInfo) {
-      return res.json({ success: true, supervisors: [] });
-    }
-    
-    // Get full details to match frontend expectations
-    const supervisorDetails = await query(`
+    // 1. Fetch explicitly assigned breakdown supervisors from plan_breakdown_supervisors table
+    const customSupervisors = await query(`
       SELECT 
-        1 as id, 
+        pbs.id, 
         u.user_id as supervisor_user_id, 
+        u.user_id,
         u.user_name, 
         CONCAT(e.fname, ' ', e.lname) as name, 
-        COALESCE(os.name_amharic, os.name, d.name) as department_name, 
+        COALESCE(os.name_amharic, os.name, d.name, 'Staff') as department_name, 
         u.avatar_url
-      FROM users u
+      FROM plan_breakdown_supervisors pbs
+      JOIN users u ON pbs.supervisor_user_id = u.user_id
       JOIN employees e ON u.employee_id = e.employee_id
       LEFT JOIN employee_positions ep ON e.employee_id = ep.employee_id AND ep.is_primary = 1
       LEFT JOIN organization_structure os ON COALESCE(ep.org_node_id, e.department_id) = os.id
       LEFT JOIN departments d ON e.department_id = d.department_id
-      WHERE e.employee_id = ?
-    `, [immediateSupervisorInfo.approver_employee_id]);
-    
-    res.json({ success: true, supervisors: supervisorDetails });
+      WHERE pbs.specific_objective_detail_id = ?
+    `, [detailId]);
 
+    // 2. Also check hierarchical supervisor fallback
+    let hierarchicalSupervisors = [];
+    const planResult = await query('SELECT employee_id FROM plans WHERE specific_objective_detail_id = ? LIMIT 1', [detailId]);
+    if (planResult.length) {
+      const ownerEmployeeId = planResult[0].employee_id;
+      const { buildApprovalChain } = require('./hierarchyApprovalController');
+      const chain = await buildApprovalChain(ownerEmployeeId);
+      if (chain && chain.length) {
+        const immediateSupervisorInfo = chain.find(step => step.approver_employee_id);
+        if (immediateSupervisorInfo) {
+          hierarchicalSupervisors = await query(`
+            SELECT 
+              0 as id, 
+              u.user_id as supervisor_user_id, 
+              u.user_id,
+              u.user_name, 
+              CONCAT(e.fname, ' ', e.lname) as name, 
+              COALESCE(os.name_amharic, os.name, d.name, 'Hierarchical Supervisor') as department_name, 
+              u.avatar_url
+            FROM users u
+            JOIN employees e ON u.employee_id = e.employee_id
+            LEFT JOIN employee_positions ep ON e.employee_id = ep.employee_id AND ep.is_primary = 1
+            LEFT JOIN organization_structure os ON COALESCE(ep.org_node_id, e.department_id) = os.id
+            LEFT JOIN departments d ON e.department_id = d.department_id
+            WHERE e.employee_id = ?
+          `, [immediateSupervisorInfo.approver_employee_id]);
+        }
+      }
+    }
+
+    // Merge and deduplicate by user_id
+    const combined = [...customSupervisors, ...hierarchicalSupervisors];
+    const uniqueMap = new Map();
+    combined.forEach(s => {
+      const uid = s.supervisor_user_id || s.user_id;
+      if (uid && !uniqueMap.has(uid)) {
+        uniqueMap.set(uid, s);
+      }
+    });
+
+    res.json({ success: true, supervisors: Array.from(uniqueMap.values()) });
   } catch (err) {
     console.error('getBreakdownSupervisors error:', err);
     res.status(500).json({ success: false, message: "Server error", error: err.message });
   }
 };
 
-// These are no longer needed as supervisors are strictly hierarchical now, but we return a polite error just in case.
-exports.addBreakdownSupervisor = (req, res) => {
-  return res.status(400).json({ success: false, message: "Task breakdown supervisors are automatically assigned based on organizational hierarchy." });
+exports.addBreakdownSupervisor = async (req, res) => {
+  const { detailId } = req.params;
+  const supervisor_user_id = req.body.supervisor_user_id || req.body.supervisorId;
+
+  if (!detailId || !supervisor_user_id) {
+    return res.status(400).json({ success: false, message: "detailId and supervisor_user_id are required." });
+  }
+
+  try {
+    const util = require('util');
+    const query = util.promisify(db.query).bind(db);
+
+    const existing = await query(
+      'SELECT id FROM plan_breakdown_supervisors WHERE specific_objective_detail_id = ? AND supervisor_user_id = ? LIMIT 1',
+      [detailId, supervisor_user_id]
+    );
+
+    if (existing.length > 0) {
+      return res.json({ success: true, message: "User is already assigned as breakdown supervisor." });
+    }
+
+    await query(
+      'INSERT INTO plan_breakdown_supervisors (specific_objective_detail_id, supervisor_user_id) VALUES (?, ?)',
+      [detailId, supervisor_user_id]
+    );
+
+    // Send navbar notification to the assigned breakdown supervisor / manager
+    try {
+      const NotificationService = require('../services/notificationService');
+      const planRows = await query('SELECT specific_objective_detailname, name, details FROM specific_objective_details WHERE specific_objective_detail_id = ? LIMIT 1', [detailId]);
+      const planTitle = planRows && planRows[0] ? (planRows[0].specific_objective_detailname || planRows[0].name || planRows[0].details || 'Action Plan') : `Action Plan #${detailId}`;
+
+      NotificationService.createNotification({
+        user_id: supervisor_user_id,
+        type: 'plan',
+        title: '⚡ Action Plan Breakdown Delegation',
+        message: `You have been designated as Breakdown Manager/Supervisor for "${planTitle}". You can now access and manage its breakdown on the Action Plan Breakdown page.`,
+        priority: 'high'
+      }).catch(err => console.error('Failed to create supervisor notification:', err.message));
+    } catch (_) {}
+
+    res.json({ success: true, message: "Subordinate/Supervisor assigned to breakdown successfully." });
+  } catch (err) {
+    console.error('addBreakdownSupervisor error:', err);
+    res.status(500).json({ success: false, message: "Server error", error: err.message });
+  }
 };
 
-exports.removeBreakdownSupervisor = (req, res) => {
-  return res.status(400).json({ success: false, message: "Hierarchical supervisors cannot be manually removed." });
+exports.removeBreakdownSupervisor = async (req, res) => {
+  const { detailId, supervisorId } = req.params;
+  const currentUserId = req.user_id;
+
+  if (Number(supervisorId) === Number(currentUserId)) {
+    return res.status(400).json({ success: false, message: "You cannot remove yourself as a breakdown supervisor." });
+  }
+
+  try {
+    const util = require('util');
+    const query = util.promisify(db.query).bind(db);
+
+    await query(
+      'DELETE FROM plan_breakdown_supervisors WHERE specific_objective_detail_id = ? AND supervisor_user_id = ?',
+      [detailId, supervisorId]
+    );
+
+    res.json({ success: true, message: "Breakdown supervisor removed successfully." });
+  } catch (err) {
+    console.error('removeBreakdownSupervisor error:', err);
+    res.status(500).json({ success: false, message: "Server error", error: err.message });
+  }
 };
 

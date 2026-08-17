@@ -1,5 +1,5 @@
 ---
 deployment:
   tasks:
-    - export DEPLOYPATH=/home/ethiopz/api.prms.ethiopianitpark.com/
+    - export DEPLOYPATH=/home/ethiopz/api.http://localhost:5001/
     - /bin/cp -R * $DEPLOYPATH

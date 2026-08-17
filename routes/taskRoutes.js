@@ -1,6 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const taskController = require("../controllers/taskController");
+const taskBreakdownController = require("../controllers/taskBreakdownController");
 const verifyToken = require("../middleware/verifyToken");
 
 // Get all tasks for user
@@ -32,4 +33,12 @@ router.get("/tasks/breakdown/:detailId/supervisors", verifyToken, taskController
 router.post("/tasks/breakdown/:detailId/supervisors", verifyToken, taskController.addBreakdownSupervisor);
 router.delete("/tasks/breakdown/:detailId/supervisors/:supervisorId", verifyToken, taskController.removeBreakdownSupervisor);
 
+// Task Assignees (Monthly & Weekly breakdown task level)
+router.get("/tasks/breakdown/monthly/:taskId/assignees", verifyToken, taskBreakdownController.getMonthlyTaskAssignees);
+router.post("/tasks/breakdown/monthly/:taskId/assignees", verifyToken, taskBreakdownController.setMonthlyTaskAssignees);
+router.get("/tasks/breakdown/weekly/:taskId/assignees", verifyToken, taskBreakdownController.getWeeklyTaskAssignees);
+router.post("/tasks/breakdown/weekly/:taskId/assignees", verifyToken, taskBreakdownController.setWeeklyTaskAssignees);
+router.get("/tasks/breakdown/my-received", verifyToken, taskBreakdownController.getMyReceivedBreakdownTasks);
+
 module.exports = router;
+

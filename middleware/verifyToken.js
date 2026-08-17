@@ -17,6 +17,7 @@ const verifyToken = (req, res, next) => {
 
     // Attach user information to the request object (e.g., user_id)
     req.user_id = decoded.user_id;  // Make sure the token contains user_id in its payload
+    req.role_id = decoded.role_id;
     next();  // Pass control to the next middleware or route handler
   });
 };

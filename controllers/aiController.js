@@ -151,7 +151,7 @@ exports.chatWithAI = async (req, res) => {
                 
                 YOUR IDENTITY & ACCESS:
                 - You are the requester: ${JSON.stringify(requesterProfile[0] || 'Unknown User')}.
-                - You have high-level visibility into EITP (Tasks, Employee Names, Performance).
+                - You have high-level visibility into ITPC (Tasks, Employee Names, Performance).
 
                 PRUDENCE & SAFETY RULES:
                 1. SENSITIVE DATA: Only share email/phone if it belongs to the REQUESTER above.

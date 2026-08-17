@@ -1,12 +1,33 @@
 const con = require("../models/db");
 
+// Privileged roles that can edit/delete any Goal, Objective or KPI
+const PRIVILEGED_ROLES = ["admin", "super admin", "administrator", "plan", "report", "plan and report", "ceo", "deputy ceo", "executive"];
+
+// Helper: look up role_name for the current user
+const getUserRoleName = (user_id, callback) => {
+  con.query(
+    "SELECT r.role_name FROM users u LEFT JOIN roles r ON u.role_id = r.role_id WHERE u.user_id = ?",
+    [user_id],
+    (err, rows) => {
+      if (err) return callback(err, null);
+      const roleName = (rows && rows.length > 0 ? rows[0].role_name : "") || "";
+      callback(null, roleName.toLowerCase().trim());
+    }
+  );
+};
+
 const addGoals = (req, res) => {
-  const { name, description, year, quarter } = req.body;
+  const { name, description, year, quarter, weight, start_year, end_year } = req.body;
   const user_id = req.user_id; // set by verifyToken middleware
 
   if (!name || !description || !year || !quarter) {
     return res.status(400).json({ message: "All fields are required" });
   }
+
+  const goalWeight = weight != null && !isNaN(weight) ? parseFloat(weight) : 100;
+  const goalYear = parseInt(year, 10);
+  const goalStartYear = start_year ? parseInt(start_year, 10) : goalYear;
+  const goalEndYear = end_year ? parseInt(end_year, 10) : (goalStartYear + 5);
 
   con.query(
     "SELECT employee_id FROM users WHERE user_id = ?",
@@ -26,12 +47,12 @@ const addGoals = (req, res) => {
 
       const query = `
         INSERT INTO goals (
-          user_id, name, description, year, quarter, created_at, updated_at, employee_id
+          user_id, name, description, year, quarter, weight, created_at, updated_at, employee_id, start_year, end_year, is_active
         ) 
-        VALUES (?, ?, ?, ?, ?, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, ?)
+        VALUES (?, ?, ?, ?, ?, ?, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, ?, ?, ?, 1)
       `;
 
-      const values = [user_id, name, description, year, quarter, employee_id];
+      const values = [user_id, name, description, goalYear, quarter, goalWeight, employee_id, goalStartYear, goalEndYear];
 
       con.query(query, values, (err, result) => {
         if (err) {
@@ -40,7 +61,26 @@ const addGoals = (req, res) => {
         }
 
         const goal_id = result.insertId;
-        console.log("Goal added successfully:", goal_id);
+        console.log("Goal added successfully with ID:", goal_id);
+
+        // Auto-activate all 4 quarters for start_year through end_year in goal_quarter_activations
+        const activationRows = [];
+        for (let y = goalStartYear; y <= goalEndYear; y++) {
+          for (let q = 1; q <= 4; q++) {
+            activationRows.push([goal_id, y, String(q), 1]);
+          }
+        }
+
+        if (activationRows.length > 0) {
+          const actSql = `
+            INSERT INTO goal_quarter_activations (goal_id, year, quarter, is_active)
+            VALUES ?
+            ON DUPLICATE KEY UPDATE is_active = 1
+          `;
+          con.query(actSql, [activationRows], (actErr) => {
+            if (actErr) console.error("Error initializing quarter activations for goal:", actErr.message);
+          });
+        }
 
         res.status(201).json({
           message: "goal added successfully",
@@ -58,9 +98,10 @@ const addGoals = (req, res) => {
 // Add Objective
 const addObjectives = (req, res) => {
   const user_id = req.user_id; // set by verifyToken middleware
-  const { goal, name, description } = req.body;
+  const { goal, name, description, weight } = req.body;
+  const objWeight = weight != null && !isNaN(weight) ? parseFloat(weight) : 100;
 
-  console.log("addObjectives - Request body:", { goal, name, description, user_id });
+  console.log("addObjectives - Request body:", { goal, name, description, weight: objWeight, user_id });
 
   if (!goal || !name || !description) {
     return res.status(400).json({ message: "Goal ID, objective name, and description are required" });
@@ -80,14 +121,13 @@ const addObjectives = (req, res) => {
       }
 
       const employee_id = userResult[0].employee_id;
-      console.log("Employee ID:", employee_id);
 
       const query = `
-        INSERT INTO objectives (user_id, goal_id, name, description, employee_id, created_at, updated_at)
-        VALUES (?, ?, ?, ?, ?, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+        INSERT INTO objectives (user_id, goal_id, name, description, weight, employee_id, created_at, updated_at)
+        VALUES (?, ?, ?, ?, ?, ?, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
       `;
 
-      con.query(query, [user_id, goal, name, description, employee_id], (err, result) => {
+      con.query(query, [user_id, goal, name, description, objWeight, employee_id], (err, result) => {
         if (err) {
           console.error("Database Error adding objective:", err.message, err.code);
           if (err.code === 'ER_NO_REFERENCED_ROW' || err.code === 'ER_NO_REFERENCED_ROW_2') {
@@ -110,19 +150,69 @@ const addObjectives = (req, res) => {
 
 
 
+const toDbJson = (val) => {
+  if (!val) return null;
+  if (Array.isArray(val)) return val.length ? JSON.stringify(val) : null;
+  if (typeof val === "string") {
+    if (val.trim().startsWith("[")) return val.trim();
+    const arr = val.split(",").map((s) => s.trim()).filter(Boolean);
+    return arr.length ? JSON.stringify(arr) : null;
+  }
+  return null;
+};
+
 // Add specific objectives
 const addSpecificObjectives = (req, res) => {
   const user_id = req.user_id; // set by verifyToken middleware
   {
     // keeping indentation block for minimal diff
-    const { objective_id, specific_objective_name, view } = req.body;
+    const { objective_id, specific_objective_name, view, org_node_id, org_node_ids, supportive_org_node_ids, weight, plan_type, planType, plan_Type } = req.body;
+    const resolvedPlanType = plan_type || planType || plan_Type || 'general';
 
-    console.log("addSpecificObjectives - Request body:", { objective_id, specific_objective_name, view, user_id });
+    console.log("addSpecificObjectives - Request body:", { objective_id, specific_objective_name, view, org_node_id, org_node_ids, supportive_org_node_ids, weight, plan_type: resolvedPlanType, user_id });
 
     if (!objective_id || !specific_objective_name || !view) {
       return res.status(400).json({
         message: "Objective ID, specific_objective_name, and view are required fields.",
       });
+    }
+
+    const kpiWeight = weight != null && !isNaN(weight) ? parseFloat(weight) : 1;
+    const primaryJson = toDbJson(org_node_ids);
+    const supportiveJson = toDbJson(supportive_org_node_ids);
+    let primarySingleId = org_node_id;
+
+    if (!primarySingleId && primaryJson) {
+      try {
+        const arr = JSON.parse(primaryJson);
+        if (arr.length) primarySingleId = arr[0];
+      } catch {}
+    }
+
+    // ── If an explicit org position or list was chosen, skip auto-detection ──
+    if (primarySingleId || primaryJson || supportiveJson) {
+      const insertQuery = `
+        INSERT INTO specific_objectives (
+          user_id, objective_id, specific_objective_name, view,
+          deadline_quarter, priority, department_id, name, count,
+          org_node_ids, supportive_org_node_ids, weight, plan_type,
+          created_at, updated_at
+        )
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+      `;
+      const vals = [
+        user_id, objective_id, specific_objective_name, view,
+        'Q1', 'አስፈላጊ', primarySingleId || null, specific_objective_name, 1,
+        primaryJson, supportiveJson, kpiWeight, resolvedPlanType
+      ];
+      con.query(insertQuery, vals, (err, result) => {
+        if (err) {
+          console.error("Database Error adding specific objective (explicit org):", err);
+          return res.status(500).json({ message: "Error adding specific objective", error: err.message, code: err.code });
+        }
+        res.status(201).json({ message: "KPI created successfully.", specific_objective_id: result.insertId });
+      });
+      return; // stop; do NOT fall through to the employee-lookup chain below
     }
 
     // Get employee details - try multiple fallback columns
@@ -224,10 +314,10 @@ const addSpecificObjectives = (req, res) => {
       const query = `
         INSERT INTO specific_objectives (
           user_id, objective_id, specific_objective_name, view, 
-          deadline_quarter, priority, department_id, name, count, 
+          deadline_quarter, priority, department_id, name, count, plan_type,
           created_at, updated_at
         )
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
       `;
 
       // Provide default values for required fields
@@ -240,7 +330,8 @@ const addSpecificObjectives = (req, res) => {
         'አስፈላጊ',  // Default priority (Important in Amharic)
         department_id,
         specific_objective_name,  // Use specific_objective_name as name
-        1  // Default count
+        1,  // Default count
+        resolvedPlanType
       ];
 
       con.query(query, values, (err, result) => {
@@ -323,9 +414,9 @@ const addspecificObjectiveDetails = async (req, res) => {
     // Validate required fields
     const validationErrors = specific_objective.map((item) => {
       const requiredFields = [
-        'specific_objective_id', 'specific_objective_detailname', 'details', 'baseline', 'plan', 'measurement', 'year', 'month', 'day'
+        'specific_objective_id', 'specific_objective_detailname', 'baseline', 'plan', 'measurement', 'year', 'month', 'day'
       ];
-      const missingFields = requiredFields.filter(field => !item[field]);
+      const missingFields = requiredFields.filter(field => item[field] === undefined || item[field] === null || item[field] === '');
       return missingFields.length ? `Missing required fields: ${missingFields.join(', ')}` : null;
     }).filter(error => error !== null);
 
@@ -350,6 +441,32 @@ const addspecificObjectiveDetails = async (req, res) => {
       }
       const goal_id = goalResults[0].goal_id;
 
+      // ── Weight constraint check ───────────────────────────────────────────────
+      const actionPlanWeight = item.weight != null ? parseFloat(item.weight) : 0;
+      if (actionPlanWeight > 0) {
+        const weightCheckSql = `
+          SELECT so.weight AS kpi_weight, COALESCE(SUM(sod.weight), 0) AS used_weight
+          FROM specific_objectives so
+          LEFT JOIN specific_objective_details sod ON so.specific_objective_id = sod.specific_objective_id
+          WHERE so.specific_objective_id = ?
+          GROUP BY so.specific_objective_id, so.weight
+        `;
+        const weightRows = await query(weightCheckSql, [item.specific_objective_id]);
+        if (weightRows.length > 0) {
+          const kpiWeight = parseFloat(weightRows[0].kpi_weight) || 100;
+          const usedWeight = parseFloat(weightRows[0].used_weight) || 0;
+          if (usedWeight + actionPlanWeight > kpiWeight) {
+            return res.status(400).json({
+              message: `Cannot add Action Plan: weight exceeds KPI budget. KPI weight: ${kpiWeight}, already used: ${usedWeight}, requested: ${actionPlanWeight}. Remaining: ${(kpiWeight - usedWeight).toFixed(2)}`,
+              kpi_weight: kpiWeight,
+              used_weight: usedWeight,
+              remaining_weight: kpiWeight - usedWeight,
+            });
+          }
+        }
+      }
+
+
       // Insert specific objective details
       const insertQuery = `
                           INSERT INTO specific_objective_details (
@@ -357,8 +474,8 @@ const addspecificObjectiveDetails = async (req, res) => {
                               baseline, plan, measurement, created_by, year, month, day, deadline, status, priority,
                               plan_type, cost_type, income_exchange, employment_type, incomeName, costName,
                               CIbaseline, CIplan, department_id, name, description, count,
-                              project_type, income_plan_type, employee_of
-                          ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?,  ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`;
+                              project_type, income_plan_type, employee_of, weight
+                          ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?,  ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`;
 
       // Convert CIbaseline and CIplan to numbers
       let ciBaseline = null;
@@ -386,7 +503,8 @@ const addspecificObjectiveDetails = async (req, res) => {
         item.count || 1,
         item.project_type || null,
         item.income_plan_type || null,
-        item.employee_of || null
+        item.employee_of || null,
+        actionPlanWeight || 0
       ];
 
       const result = await query(insertQuery, sqlParameters);
@@ -433,144 +551,201 @@ const addspecificObjectiveDetails = async (req, res) => {
 // Update Goal
 const updateGoal = (req, res) => {
   const { goal_id } = req.params;
-  const { name, description, year, quarter } = req.body;
-  const user_id = req.user_id; // set by verifyToken middleware
+  const { name, description, year, quarter, weight } = req.body;
+  const user_id = req.user_id;
+  const goalWeight = weight != null && !isNaN(weight) ? parseFloat(weight) : 100;
 
-  const query = `
-    UPDATE goals 
-    SET name = ?, description = ?, year = ?, quarter = ?, updated_at = CURRENT_TIMESTAMP
-    WHERE goal_id = ? AND user_id = ?
-  `;
+  getUserRoleName(user_id, (err, roleName) => {
+    if (err) return res.status(500).json({ message: "Error checking user role" });
+    const isPrivileged = PRIVILEGED_ROLES.some(r => roleName.includes(r));
 
-  con.query(query, [name, description, year, quarter, goal_id, user_id], (err, result) => {
-    if (err) {
-      console.error("Error updating goal:", err);
-      return res.status(500).json({ message: "Error updating goal" });
-    }
+    const query = isPrivileged
+      ? `UPDATE goals SET name = ?, description = ?, year = ?, quarter = ?, weight = ?, updated_at = CURRENT_TIMESTAMP WHERE goal_id = ?`
+      : `UPDATE goals SET name = ?, description = ?, year = ?, quarter = ?, weight = ?, updated_at = CURRENT_TIMESTAMP WHERE goal_id = ? AND user_id = ?`;
 
-    if (result.affectedRows === 0) {
-      return res.status(404).json({ message: "Goal not found or unauthorized" });
-    }
+    const params = isPrivileged
+      ? [name, description, year, quarter, goalWeight, goal_id]
+      : [name, description, year, quarter, goalWeight, goal_id, user_id];
 
-    res.status(200).json({ message: "Goal updated successfully" });
+    con.query(query, params, (err, result) => {
+      if (err) {
+        console.error("Error updating goal:", err);
+        return res.status(500).json({ message: "Error updating goal" });
+      }
+      if (result.affectedRows === 0) {
+        return res.status(404).json({ message: "Goal not found or unauthorized" });
+      }
+      res.status(200).json({ message: "Goal updated successfully" });
+    });
   });
 };
 
 // Delete Goal
 const deleteGoal = (req, res) => {
   const { goal_id } = req.params;
-  const user_id = req.user_id; // set by verifyToken middleware
+  const user_id = req.user_id;
 
-  con.query("DELETE FROM goals WHERE goal_id = ? AND user_id = ?", [goal_id, user_id], (err, result) => {
-    if (err) {
-      console.error("Error deleting goal:", err);
-      return res.status(500).json({ message: "Error deleting goal" });
-    }
+  getUserRoleName(user_id, (err, roleName) => {
+    if (err) return res.status(500).json({ message: "Error checking user role" });
+    const isPrivileged = PRIVILEGED_ROLES.some(r => roleName.includes(r));
 
-    if (result.affectedRows === 0) {
-      return res.status(404).json({ message: "Goal not found or unauthorized" });
-    }
+    const query = isPrivileged
+      ? "DELETE FROM goals WHERE goal_id = ?"
+      : "DELETE FROM goals WHERE goal_id = ? AND user_id = ?";
+    const params = isPrivileged ? [goal_id] : [goal_id, user_id];
 
-    res.status(200).json({ message: "Goal deleted successfully" });
+    con.query(query, params, (err, result) => {
+      if (err) {
+        console.error("Error deleting goal:", err);
+        return res.status(500).json({ message: "Error deleting goal" });
+      }
+      if (result.affectedRows === 0) {
+        return res.status(404).json({ message: "Goal not found or unauthorized" });
+      }
+      res.status(200).json({ message: "Goal deleted successfully" });
+    });
   });
 };
 
 // Update Objective
 const updateObjective = (req, res) => {
   const { objective_id } = req.params;
-  const { name, description, goal_id } = req.body;
-  const user_id = req.user_id; // set by verifyToken middleware
+  const { name, description, goal_id, weight } = req.body;
+  const user_id = req.user_id;
+  const objWeight = weight != null && !isNaN(weight) ? parseFloat(weight) : 100;
 
-  const query = `
-    UPDATE objectives 
-    SET name = ?, description = ?, goal_id = ?, updated_at = CURRENT_TIMESTAMP
-    WHERE objective_id = ? AND user_id = ?
-  `;
+  getUserRoleName(user_id, (err, roleName) => {
+    if (err) return res.status(500).json({ message: "Error checking user role" });
+    const isPrivileged = PRIVILEGED_ROLES.some(r => roleName.includes(r));
 
-  con.query(query, [name, description, goal_id, objective_id, user_id], (err, result) => {
-    if (err) {
-      console.error("Error updating objective:", err);
-      return res.status(500).json({ message: "Error updating objective" });
-    }
+    const query = isPrivileged
+      ? `UPDATE objectives SET name = ?, description = ?, goal_id = ?, weight = ?, updated_at = CURRENT_TIMESTAMP WHERE objective_id = ?`
+      : `UPDATE objectives SET name = ?, description = ?, goal_id = ?, weight = ?, updated_at = CURRENT_TIMESTAMP WHERE objective_id = ? AND user_id = ?`;
 
-    if (result.affectedRows === 0) {
-      return res.status(404).json({ message: "Objective not found or unauthorized" });
-    }
+    const params = isPrivileged
+      ? [name, description, goal_id, objWeight, objective_id]
+      : [name, description, goal_id, objWeight, objective_id, user_id];
 
-    res.status(200).json({ message: "Objective updated successfully" });
+    con.query(query, params, (err, result) => {
+      if (err) {
+        console.error("Error updating objective:", err);
+        return res.status(500).json({ message: "Error updating objective" });
+      }
+      if (result.affectedRows === 0) {
+        return res.status(404).json({ message: "Objective not found or unauthorized" });
+      }
+      res.status(200).json({ message: "Objective updated successfully" });
+    });
   });
 };
 
 // Delete Objective
 const deleteObjective = (req, res) => {
   const { objective_id } = req.params;
-  const user_id = req.user_id; // set by verifyToken middleware
+  const user_id = req.user_id;
 
-  con.query("DELETE FROM objectives WHERE objective_id = ? AND user_id = ?", [objective_id, user_id], (err, result) => {
-    if (err) {
-      console.error("Error deleting objective:", err);
-      return res.status(500).json({ message: "Error deleting objective" });
-    }
+  getUserRoleName(user_id, (err, roleName) => {
+    if (err) return res.status(500).json({ message: "Error checking user role" });
+    const isPrivileged = PRIVILEGED_ROLES.some(r => roleName.includes(r));
 
-    if (result.affectedRows === 0) {
-      return res.status(404).json({ message: "Objective not found or unauthorized" });
-    }
+    const query = isPrivileged
+      ? "DELETE FROM objectives WHERE objective_id = ?"
+      : "DELETE FROM objectives WHERE objective_id = ? AND user_id = ?";
+    const params = isPrivileged ? [objective_id] : [objective_id, user_id];
 
-    res.status(200).json({ message: "Objective deleted successfully" });
+    con.query(query, params, (err, result) => {
+      if (err) {
+        console.error("Error deleting objective:", err);
+        return res.status(500).json({ message: "Error deleting objective" });
+      }
+      if (result.affectedRows === 0) {
+        return res.status(404).json({ message: "Objective not found or unauthorized" });
+      }
+      res.status(200).json({ message: "Objective deleted successfully" });
+    });
   });
 };
 
-// Update Specific Objective
+// Update Specific Objective (KPI)
 const updateSpecificObjective = (req, res) => {
   const { specific_objective_id } = req.params;
-  const { specific_objective_name, view, objective_id } = req.body;
-  const user_id = req.user_id; // set by verifyToken middleware
+  const { specific_objective_name, view, objective_id, org_node_id, org_node_ids, supportive_org_node_ids, weight, plan_type, planType, plan_Type } = req.body;
+  const resolvedPlanType = plan_type || planType || plan_Type || null;
 
-  const query = `
-    UPDATE specific_objectives 
-    SET specific_objective_name = ?, view = ?, objective_id = ?, updated_at = CURRENT_TIMESTAMP
-    WHERE specific_objective_id = ? AND user_id = ?
-  `;
+  const primaryJson = toDbJson(org_node_ids);
+  const supportiveJson = toDbJson(supportive_org_node_ids);
+  let primarySingleId = org_node_id;
 
-  con.query(query, [specific_objective_name, view, objective_id, specific_objective_id, user_id], (err, result) => {
+  if (!primarySingleId && primaryJson) {
+    try {
+      const arr = JSON.parse(primaryJson);
+      if (arr.length) primarySingleId = arr[0];
+    } catch {}
+  }
+
+  const hasOrgAssignment = org_node_id !== undefined || org_node_ids !== undefined || supportive_org_node_ids !== undefined;
+  const weightVal = weight != null ? parseFloat(weight) : undefined;
+
+  const sql = hasOrgAssignment
+    ? `UPDATE specific_objectives
+       SET specific_objective_name = COALESCE(?, specific_objective_name),
+           view                    = COALESCE(?, view),
+           objective_id            = COALESCE(?, objective_id),
+           department_id           = ?,
+           org_node_ids            = ?,
+           supportive_org_node_ids = ?,
+           weight                  = COALESCE(?, weight),
+           plan_type               = COALESCE(?, plan_type),
+           updated_at              = CURRENT_TIMESTAMP
+       WHERE specific_objective_id = ?`
+    : `UPDATE specific_objectives
+       SET specific_objective_name = COALESCE(?, specific_objective_name),
+           view                    = COALESCE(?, view),
+           objective_id            = COALESCE(?, objective_id),
+           weight                  = COALESCE(?, weight),
+           plan_type               = COALESCE(?, plan_type),
+           updated_at              = CURRENT_TIMESTAMP
+       WHERE specific_objective_id = ?`;
+
+  const values = hasOrgAssignment
+    ? [specific_objective_name || null, view || null, objective_id || null, primarySingleId || null, primaryJson, supportiveJson, weightVal ?? null, resolvedPlanType, specific_objective_id]
+    : [specific_objective_name || null, view || null, objective_id || null, weightVal ?? null, resolvedPlanType, specific_objective_id];
+
+  con.query(sql, values, (err, result) => {
     if (err) {
-      console.error("Error updating specific objective:", err);
-      return res.status(500).json({ message: "Error updating specific objective" });
+      console.error("Error updating KPI:", err);
+      return res.status(500).json({ message: "Error updating KPI", error: err.message });
     }
-
     if (result.affectedRows === 0) {
-      return res.status(404).json({ message: "Specific objective not found or unauthorized" });
+      return res.status(404).json({ message: "KPI not found" });
     }
-
-    res.status(200).json({ message: "Specific objective updated successfully" });
+    res.status(200).json({ message: "KPI updated successfully" });
   });
 };
 
 // Delete Specific Objective
 const deleteSpecificObjective = (req, res) => {
   const { specific_objective_id } = req.params;
-  const user_id = req.user_id; // set by verifyToken middleware
 
-  con.query("DELETE FROM specific_objectives WHERE specific_objective_id = ? AND user_id = ?", [specific_objective_id, user_id], (err, result) => {
+  con.query("DELETE FROM specific_objectives WHERE specific_objective_id = ?", [specific_objective_id], (err, result) => {
     if (err) {
       console.error("Error deleting specific objective:", err);
       return res.status(500).json({ message: "Error deleting specific objective" });
     }
 
     if (result.affectedRows === 0) {
-      return res.status(404).json({ message: "Specific objective not found or unauthorized" });
+      return res.status(404).json({ message: "Specific objective not found" });
     }
 
     res.status(200).json({ message: "Specific objective deleted successfully" });
   });
 };
 
-// ─── KPI (specific_objective_details) CRUD ─────────────────────────────────
+// ─── Action Plans (specific_objective_details) CRUD ────────────────────────
 
-// GET: list all KPI details for a specific_objective_id
+// GET: list all action plan details for a specific_objective_id (KPI)
 const getKPIsBySpecificObjective = (req, res) => {
   const { specific_objective_id } = req.params;
-  const user_id = req.user_id;
 
   if (!specific_objective_id) {
     return res.status(400).json({ message: "specific_objective_id is required" });
@@ -592,6 +767,7 @@ const getKPIsBySpecificObjective = (req, res) => {
       sod.priority,
       sod.plan_type,
       sod.cost_type,
+      sod.weight,
       sod.created_at,
       sod.updated_at
     FROM specific_objective_details sod
@@ -601,17 +777,51 @@ const getKPIsBySpecificObjective = (req, res) => {
 
   con.query(sql, [specific_objective_id], (err, results) => {
     if (err) {
-      console.error("Error fetching KPIs:", err);
-      return res.status(500).json({ message: "Error fetching KPIs", error: err.message });
+      console.error("Error fetching Action Plans:", err);
+      return res.status(500).json({ message: "Error fetching Action Plans", error: err.message });
     }
     res.status(200).json(Array.isArray(results) ? results : []);
   });
 };
 
-// PUT: update a specific_objective_detail (KPI)
+// GET: KPI weight info (total weight, used weight, remaining weight)
+const getKPIWeight = (req, res) => {
+  const { specific_objective_id } = req.params;
+
+  if (!specific_objective_id) {
+    return res.status(400).json({ message: "specific_objective_id is required" });
+  }
+
+  const sql = `
+    SELECT
+      so.weight AS kpi_weight,
+      COALESCE(SUM(sod.weight), 0) AS used_weight
+    FROM specific_objectives so
+    LEFT JOIN specific_objective_details sod ON so.specific_objective_id = sod.specific_objective_id
+    WHERE so.specific_objective_id = ?
+    GROUP BY so.specific_objective_id, so.weight
+  `;
+
+  con.query(sql, [specific_objective_id], (err, results) => {
+    if (err) {
+      console.error("Error fetching KPI weight:", err);
+      return res.status(500).json({ message: "Error fetching KPI weight", error: err.message });
+    }
+    if (!results || results.length === 0) {
+      return res.status(404).json({ message: "KPI not found" });
+    }
+    const { kpi_weight, used_weight } = results[0];
+    res.status(200).json({
+      kpi_weight: parseFloat(kpi_weight) || 100,
+      used_weight: parseFloat(used_weight) || 0,
+      remaining_weight: (parseFloat(kpi_weight) || 100) - (parseFloat(used_weight) || 0),
+    });
+  });
+};
+
+// PUT: update a specific_objective_detail (Action Plan)
 const updateKPI = (req, res) => {
   const { detail_id } = req.params;
-  const user_id = req.user_id;
   const {
     specific_objective_detailname,
     details,
@@ -625,6 +835,7 @@ const updateKPI = (req, res) => {
     status,
     priority,
     plan_type,
+    weight,
   } = req.body;
 
   if (!detail_id) {
@@ -646,6 +857,7 @@ const updateKPI = (req, res) => {
       status                        = COALESCE(?, status),
       priority                      = COALESCE(?, priority),
       plan_type                     = COALESCE(?, plan_type),
+      weight                        = COALESCE(?, weight),
       updated_at                    = CURRENT_TIMESTAMP
     WHERE specific_objective_detail_id = ?
   `;
@@ -663,18 +875,19 @@ const updateKPI = (req, res) => {
     status ?? null,
     priority ?? null,
     plan_type ?? null,
+    weight != null ? parseFloat(weight) : null,
     detail_id,
   ];
 
   con.query(sql, values, (err, result) => {
     if (err) {
-      console.error("Error updating KPI:", err);
-      return res.status(500).json({ message: "Error updating KPI", error: err.message });
+      console.error("Error updating Action Plan:", err);
+      return res.status(500).json({ message: "Error updating Action Plan", error: err.message });
     }
     if (result.affectedRows === 0) {
-      return res.status(404).json({ message: "KPI not found" });
+      return res.status(404).json({ message: "Action Plan not found" });
     }
-    res.status(200).json({ message: "KPI updated successfully" });
+    res.status(200).json({ message: "Action Plan updated successfully" });
   });
 };
 
@@ -739,6 +952,7 @@ module.exports = {
   updateSpecificObjective,
   deleteSpecificObjective,
   getKPIsBySpecificObjective,
+  getKPIWeight,
   updateKPI,
   deleteKPI,
 };

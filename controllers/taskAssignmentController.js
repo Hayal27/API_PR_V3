@@ -66,7 +66,7 @@ exports.assignTask = (req, res) => {
           `*Category:* ${category || 'General'}\n` +
           `*Assigned By:* ${assignerName}${assignerRole ? ` (${assignerRole})` : ''}\n` +
           (description ? `\n*Description:*\n${description}` : '') +
-          `\n\n_Please open the EITPR app to view and start this task._`;
+          `\n\n_Please open the ITPCR app to view and start this task._`;
 
         // Send Notification using NotificationService (supports Telegram)
         NotificationService.createNotification({
@@ -306,7 +306,114 @@ exports.getSupervisedUsers = (req, res) => {
             return res.status(500).json({ success: false, message: "Database error", error: err2.message });
           }
 
-          res.json({ success: true, users: results });
+          // Deduplicate by user_id to prevent duplicate rows
+          const uniqueUsers = [];
+          const seen = new Set();
+          (results || []).forEach(u => {
+            if (u.user_id && !seen.has(u.user_id)) {
+              seen.add(u.user_id);
+              uniqueUsers.push(u);
+            }
+          });
+
+          const userIds = uniqueUsers.map(u => u.user_id);
+          if (userIds.length === 0) {
+            return res.json({ success: true, users: [] });
+          }
+
+          const breakdownQuery = `
+            SELECT 
+              mta.user_id, 
+              mt.monthly_task_id AS task_id, 
+              mt.name, 
+              CASE
+                WHEN sod.CIplan > 0 AND mt.actual_amount IS NOT NULL AND mt.actual_amount > 0
+                THEN LEAST(100.0, (mt.actual_amount / sod.CIplan) * 100)
+                ELSE COALESCE(mt.progress, 0)
+              END AS progress, 
+              mt.weight, 
+              mt.created_at AS start_date,
+              sod.deadline AS deadline,
+              'monthly' AS type
+            FROM monthly_task_assignees mta
+            JOIN monthly_tasks mt ON mta.monthly_task_id = mt.monthly_task_id
+            LEFT JOIN specific_objective_details sod ON mt.specific_objective_detail_id = sod.specific_objective_detail_id
+            WHERE mta.user_id IN (?)
+            UNION ALL
+            SELECT 
+              wta.user_id, 
+              wt.weekly_task_id AS task_id, 
+              wt.name, 
+              CASE
+                WHEN sod.CIplan > 0 AND wt.actual_amount IS NOT NULL AND wt.actual_amount > 0
+                THEN LEAST(100.0, (wt.actual_amount / sod.CIplan) * 100)
+                WHEN sod.CIplan > 0 AND mt.actual_amount IS NOT NULL AND mt.actual_amount > 0
+                THEN LEAST(100.0, (mt.actual_amount / sod.CIplan) * 100)
+                ELSE COALESCE(wt.progress, 0)
+              END AS progress, 
+              wt.weight, 
+              wt.created_at AS start_date,
+              sod.deadline AS deadline,
+              'weekly' AS type
+            FROM weekly_task_assignees wta
+            JOIN weekly_tasks wt ON wta.weekly_task_id = wt.weekly_task_id
+            LEFT JOIN monthly_tasks mt ON wt.monthly_task_id = mt.monthly_task_id
+            LEFT JOIN specific_objective_details sod ON mt.specific_objective_detail_id = sod.specific_objective_detail_id
+            WHERE wta.user_id IN (?)
+          `;
+
+          db.query(breakdownQuery, [userIds, userIds], (errB, bTasks) => {
+            const userTasksMap = {};
+            if (!errB && bTasks) {
+              bTasks.forEach(bt => {
+                if (!userTasksMap[bt.user_id]) userTasksMap[bt.user_id] = [];
+                userTasksMap[bt.user_id].push(bt);
+              });
+            }
+
+            uniqueUsers.forEach(u => {
+              const tasks = userTasksMap[u.user_id] || [];
+              const totalBTasks = tasks.length;
+              let totalProg = 0;
+              let overdueCount = 0;
+              let earliestStart = null;
+              let latestDeadline = null;
+
+              tasks.forEach(t => {
+                const prog = parseFloat(t.progress) || 0;
+                totalProg += prog;
+                if (prog === 0) overdueCount++;
+
+                if (t.start_date) {
+                  if (!earliestStart || new Date(t.start_date) < new Date(earliestStart)) {
+                    earliestStart = t.start_date;
+                  }
+                }
+                if (t.deadline) {
+                  if (!latestDeadline || new Date(t.deadline) > new Date(latestDeadline)) {
+                    latestDeadline = t.deadline;
+                  }
+                }
+              });
+
+              const avgProg = totalBTasks > 0 ? Math.round(totalProg / totalBTasks) : 0;
+              let health = 'on_track';
+              if (totalBTasks > 0) {
+                if (avgProg < 40 || overdueCount > 0) health = 'overdue';
+                else if (avgProg < 75) health = 'behind';
+              }
+
+              u.breakdown_tasks_count = totalBTasks;
+              u.breakdown_avg_progress = avgProg;
+              u.breakdown_overdue_count = overdueCount;
+              u.health_status = health;
+              u.start_date = earliestStart;
+              u.deadline = latestDeadline;
+              u.breakdown_tasks = tasks;
+            });
+
+            res.json({ success: true, users: uniqueUsers });
+          });
         });
       });
     });
@@ -500,7 +607,7 @@ exports.deleteAssignment = (req, res) => {
   }
 };
 
-// Get assignment statistics
+// Get assignment statistics (including action plan breakdown tasks)
 exports.getAssignmentStats = (req, res) => {
   try {
     const userId = req.user_id;
@@ -510,18 +617,51 @@ exports.getAssignmentStats = (req, res) => {
 
     const query = `
       SELECT 
-        (SELECT COUNT(*) FROM task_assignments WHERE assigned_by = ?) as total_assigned_by_me,
-        (SELECT COUNT(*) FROM task_assignments WHERE assigned_to = ?) as total_assigned_to_me,
+        (
+          (SELECT COUNT(*) FROM task_assignments WHERE assigned_by = ?) +
+          (SELECT COUNT(*) FROM monthly_task_assignees WHERE assigned_by = ?) +
+          (SELECT COUNT(*) FROM weekly_task_assignees WHERE assigned_by = ?)
+        ) AS total_assigned_by_me,
+
+        (
+          (SELECT COUNT(*) FROM task_assignments WHERE assigned_to = ?) +
+          (SELECT COUNT(*) FROM monthly_task_assignees WHERE user_id = ?) +
+          (SELECT COUNT(*) FROM weekly_task_assignees WHERE user_id = ?)
+        ) AS total_assigned_to_me,
+
         (SELECT COUNT(*) FROM task_assignments WHERE assigned_by = ? AND status = 'pending') as pending_assigned,
         (SELECT COUNT(*) FROM task_assignments WHERE assigned_by = ? AND status = 'completed') as completed_waiting_confirm,
         (SELECT COUNT(*) FROM task_assignments WHERE assigned_by = ? AND status = 'confirmed') as confirmed_tasks,
-        (SELECT COUNT(*) FROM task_assignments WHERE assigned_to = ? AND status = 'pending') as my_pending_tasks,
+
+        (
+          (SELECT COUNT(*) FROM task_assignments WHERE assigned_to = ? AND status IN ('pending', 'in_progress')) +
+          (SELECT COUNT(*) FROM monthly_task_assignees mta JOIN monthly_tasks mt ON mta.monthly_task_id = mt.monthly_task_id WHERE mta.user_id = ? AND (mt.progress < 100 OR mt.status != 'completed')) +
+          (SELECT COUNT(*) FROM weekly_task_assignees wta JOIN weekly_tasks wt ON wta.weekly_task_id = wt.weekly_task_id WHERE wta.user_id = ? AND (wt.progress < 100 OR wt.status != 'completed'))
+        ) AS my_pending_tasks,
+
         (SELECT COUNT(*) FROM task_assignments WHERE assigned_to = ? AND status = 'in_progress') as my_inprogress_tasks,
         (SELECT COUNT(*) FROM task_assignments WHERE assigned_to = ? AND status = 'completed') as my_completed_tasks,
-        (SELECT COUNT(*) FROM task_assignments WHERE (assigned_by = ? OR assigned_to = ?) AND due_date < NOW() AND status NOT IN ('completed','confirmed')) as overdue_tasks
+
+        (
+          (SELECT COUNT(*) FROM task_assignments WHERE (assigned_by = ? OR assigned_to = ?) AND due_date < NOW() AND status NOT IN ('completed','confirmed')) +
+          (SELECT COUNT(*) FROM monthly_task_assignees mta JOIN monthly_tasks mt ON mta.monthly_task_id = mt.monthly_task_id WHERE (mta.user_id = ? OR mta.assigned_by = ?) AND mt.progress < 40) +
+          (SELECT COUNT(*) FROM weekly_task_assignees wta JOIN weekly_tasks wt ON wta.weekly_task_id = wt.weekly_task_id WHERE (wta.user_id = ? OR wta.assigned_by = ?) AND wt.progress < 40)
+        ) AS overdue_tasks
     `;
 
-    db.query(query, [userId, userId, userId, userId, userId, userId, userId, userId, userId, userId], (err, results) => {
+    const params = [
+      userId, userId, userId,
+      userId, userId, userId,
+      userId,
+      userId,
+      userId,
+      userId, userId, userId,
+      userId,
+      userId,
+      userId, userId, userId, userId, userId, userId
+    ];
+
+    db.query(query, params, (err, results) => {
       if (err) {
         console.error("Error fetching stats:", err);
         return res.status(500).json({ success: false, message: "Database error", error: err.message });

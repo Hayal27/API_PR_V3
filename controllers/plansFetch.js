@@ -144,8 +144,28 @@ const getAllPlans = async (req, res) => {
 
     console.log("🔍 Query parameters:", req.query);
 
-    let filterConditions = ["p.user_id = ?"];
-    let filterValues = [target_userId];
+    let filterConditions = [`(
+      p.user_id = ? 
+      OR sod.user_id = ? 
+      OR sod.created_by = ? 
+      OR sod.specific_objective_detail_id IN (
+        SELECT specific_objective_detail_id FROM plan_breakdown_supervisors WHERE supervisor_user_id = ?
+      )
+      OR sod.specific_objective_detail_id IN (
+        SELECT mt.specific_objective_detail_id 
+        FROM monthly_tasks mt 
+        JOIN monthly_task_assignees mta ON mt.monthly_task_id = mta.monthly_task_id 
+        WHERE mta.user_id = ?
+      )
+      OR sod.specific_objective_detail_id IN (
+        SELECT mt.specific_objective_detail_id 
+        FROM weekly_tasks wt 
+        JOIN weekly_task_assignees wta ON wt.weekly_task_id = wta.weekly_task_id 
+        JOIN monthly_tasks mt ON wt.monthly_task_id = mt.monthly_task_id 
+        WHERE wta.user_id = ?
+      )
+    )`];
+    let filterValues = [target_userId, target_userId, target_userId, target_userId, target_userId, target_userId];
 
     // Dynamically add filters based on query parameters
     if (year) {

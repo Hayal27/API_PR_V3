@@ -6,11 +6,15 @@ const {
   getUnreadCount,
   markAsRead,
   markAllAsRead,
-  deleteNotification
+  deleteNotification,
+  sendAlert
 } = require('../controllers/notificationController');
 
 // All routes require authentication
 router.use(verifyToken);
+
+// Send alert notification to user
+router.post('/send-alert', sendAlert);
 
 // Get notifications for authenticated user
 router.get('/', getNotifications);

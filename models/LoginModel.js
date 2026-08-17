@@ -9,7 +9,8 @@ const JWT_SECRET_KEY = 'hayaltamrat@27';
 
 // Function to handle login
 const getLogin = async (req, res) => {
-    const { user_name, pass } = req.body;
+    const user_name = req.body.user_name || req.body.username;
+    const pass = req.body.pass || req.body.password;
 
     // Validate that pass is provided
     if (!pass) {
@@ -70,11 +71,10 @@ const getLogin = async (req, res) => {
         try {
             const passwordMatch = await bcrypt.compare(pass, user.password);
             if (passwordMatch && user.status === '1') {
-                // Update user online status
+                // Update user online status (non-blocking)
                 con.query('UPDATE users SET online_flag=? WHERE user_id=?', [1, user.user_id], (error) => {
                     if (error) {
-                        console.error('Error updating online status:', error);
-                        return res.status(500).json({ success: false, message: 'Error updating online status' });
+                        console.warn('Notice updating online status:', error.message);
                     }
                 });
 

@@ -683,7 +683,7 @@ const sendMeetingInvitation = async (meeting_id, participant_id, meetingDetails)
                       </div>
                     </div>
                     <p style="text-align: center; color: #999; font-size: 12px; margin-top: 20px;">
-                        This is an automated notification from your EITPRV2 Workspace.
+                        This is an automated notification from your ITPCRV2 Workspace.
                     </p>
                   </div>
                 `
@@ -762,7 +762,7 @@ const sendPostponeEmail = async (meeting_id, participant_id, meetingDetails) => 
                       </div>
                     </div>
                     <p style="text-align: center; color: #999; font-size: 12px; margin-top: 20px;">
-                        This is an automated notification from your EITPRV2 Workspace.
+                        This is an automated notification from your ITPCRV2 Workspace.
                     </p>
                   </div>
                 `

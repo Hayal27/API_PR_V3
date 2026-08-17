@@ -26,6 +26,11 @@ const adminRoutes = require("./routes/adminRoutes.js");
 const taskAssignmentRoutes = require("./routes/taskAssignmentRoutes.js");
 const dailyTaskRoutes = require("./routes/dailyTaskRoutes.js");
 const aiRoutes = require("./routes/aiRoutes.js");
+const riskRoutes = require("./routes/riskRoutes.js");
+const dataQualityRoutes = require("./routes/dataQualityRoutes.js");
+const evaluationRoutes = require("./routes/evaluationRoutes.js");
+const executiveReportRoutes = require("./routes/executiveReportRoutes.js");
+const reportModuleRoutes = require("./routes/reportModuleRoutes.js");
 const DeadlineScheduler = require("./services/deadlineScheduler.js");
 const telegramBot = require("./services/telegramBot.js");
 const ReminderScheduler = require("./services/reminderScheduler.js");
@@ -35,13 +40,12 @@ const loggingMiddleware = require("./middleware/loggingMiddleware.js");
 const app = express();
 const PORT = process.env.PORT;
 
-// Middleware
-const corsOptions = {
-  origin: "*", // Allow all origins
-  methods: "GET,POST,PUT,DELETE",
-  allowedHeaders: "Content-Type,Authorization"
-};
-app.use(cors(corsOptions));
+// Middleware - Allow all origins, methods, and headers
+app.use(cors({
+  origin: "*",
+  methods: "*",
+  allowedHeaders: "*"
+}));
 
 app.use(session({
   secret: process.env.SESSION_SECRET,
@@ -62,7 +66,8 @@ app.use(loggingMiddleware); // Logs every request
 app.use("/api", userRoutes);
 app.use("/api", employeeRoutes);
 app.use("/api", planRoutes);
-app.use("/api", dashboardRoutes);
+app.use("/api/plan", planRoutes);   // also expose plan routes under /api/plan prefix
+app.use("/api/dashboard", dashboardRoutes);
 app.use("/api", reportRoutes);
 app.use("/api", analyticsRoutes);
 app.use("/api/menu-permissions", menuPermissionRoutes);
@@ -79,8 +84,14 @@ app.use("/api/admin", adminRoutes);
 app.use("/api/task-assignments", taskAssignmentRoutes);
 app.use("/api/daily-tasks", dailyTaskRoutes);
 app.use("/api", aiRoutes);
+app.use("/api", riskRoutes);
+app.use("/api", dataQualityRoutes);
+app.use("/api", evaluationRoutes);
+app.use("/api/executive-report", executiveReportRoutes);
+app.use("/api/report-module", reportModuleRoutes);
 
 app.post("/login", authMiddleware.login);
+app.post("/api/login", authMiddleware.login);
 app.put("/logout/:user_id", authMiddleware.logout);
 
 // Health Check Endpoint
@@ -155,6 +166,8 @@ process.on('unhandledRejection', (reason, promise) => {
 });
 
 // Start Server and Listen on All Network Interfaces
+const con = require('./models/db');
+
 app.listen(PORT, "0.0.0.0", () => {
   console.log(`Server running on http://0.0.0.0:${PORT}`);
   console.log(`Environment: ${process.env.NODE_ENV || "production"}`);
@@ -164,4 +177,142 @@ app.listen(PORT, "0.0.0.0", () => {
   DeadlineScheduler.init();
   ReminderScheduler.init();
   console.log('Deadline and Reminder schedulers initialized');
+
+  // ── Auto-register menu items that may not yet exist ──────────────────────
+  setTimeout(() => autoRegisterMenuItems(), 2000); // wait 2 s for DB to settle
 });
+
+/**
+ * Idempotently ensures required menu items exist in menu_items + role_permissions.
+ * Safe to run on every startup — uses INSERT IGNORE / existence checks.
+ */
+function autoRegisterMenuItems() {
+  const db = con;
+
+  const menus = [
+    {
+      name: 'Action Plan Breakdown',
+      path: '/plan/action-plan-breakdown',
+      icon: 'bi bi-diagram-3',
+      fileName: 'ActionPlanBreakdownPage.jsx',
+      sortOrder: 55,
+      parentPath: '/plan/View_myplan',
+      roles: [1, 2, 3, 4, 29],
+    },
+    {
+      name: 'M&E Compliance',
+      path: '/me/compliance',
+      icon: 'bi bi-shield-check',
+      fileName: 'MECompliancePage.jsx',
+      sortOrder: 60,
+      parentPath: null,
+      roles: [1, 2, 3, 4, 29],
+    },
+    {
+      name: 'Executive Report',
+      path: '/reports/executive',
+      icon: 'bi bi-bar-chart-steps',
+      fileName: 'ExecutiveReportPage.jsx',
+      sortOrder: 65,
+      parentPath: null,
+      roles: [1, 2, 3, 4, 5, 29],
+    },
+    {
+      name: 'Assign New Task',
+      path: '/tasks/assignment/assign',
+      icon: 'bi bi-plus-circle',
+      fileName: 'TaskAssignment.jsx',
+      sortOrder: 1,
+      parentPath: '#',
+      roles: [1, 2, 3, 4, 5, 29],
+    },
+    {
+      name: 'Sent Tasks',
+      path: '/tasks/assignment/sent',
+      icon: 'bi bi-send',
+      fileName: 'TaskAssignment.jsx',
+      sortOrder: 2,
+      parentPath: '#',
+      roles: [1, 2, 3, 4, 5, 29],
+    },
+    {
+      name: 'Received Tasks',
+      path: '/tasks/assignment/received',
+      icon: 'bi bi-inbox',
+      fileName: 'TaskAssignment.jsx',
+      sortOrder: 3,
+      parentPath: '#',
+      roles: [1, 2, 3, 4, 5, 29],
+    },
+    {
+      name: 'Subordinates',
+      path: '/tasks/assignment/subordinates',
+      icon: 'bi bi-people',
+      fileName: 'TaskAssignment.jsx',
+      sortOrder: 4,
+      parentPath: '#',
+      roles: [1, 2, 3, 4, 5, 29],
+    },
+  ];
+
+  menus.forEach(menu => {
+    // 1. Resolve parent_id (optional)
+    const resolveParent = menu.parentPath
+      ? new Promise(resolve =>
+          db.query('SELECT id FROM menu_items WHERE path = ? LIMIT 1', [menu.parentPath], (err, rows) =>
+            resolve((!err && rows && rows.length > 0) ? rows[0].id : null)
+          )
+        )
+      : Promise.resolve(null);
+
+    resolveParent.then(parentId => {
+      // 2. Check if menu already exists
+      db.query('SELECT id FROM menu_items WHERE path = ? LIMIT 1', [menu.path], (err, existing) => {
+        if (err) { console.error('autoRegisterMenuItems: check error', err.message); return; }
+
+        const proceed = (menuItemId) => {
+          // 3. Ensure permissions for each role
+          menu.roles.forEach(roleId => {
+            db.query(
+              'SELECT id FROM role_permissions WHERE role_id = ? AND menu_item_id = ? LIMIT 1',
+              [roleId, menuItemId],
+              (pErr, pRows) => {
+                if (pErr || (pRows && pRows.length > 0)) return;
+                db.query(
+                  'INSERT INTO role_permissions (role_id, menu_item_id, can_view, can_create, can_edit, can_delete) VALUES (?, ?, 1, 1, 1, 1)',
+                  [roleId, menuItemId],
+                  (iErr) => {
+                    if (!iErr) console.log(`✔ Menu permission granted: "${menu.name}" → role_id=${roleId}`);
+                  }
+                );
+              }
+            );
+          });
+        };
+
+        if (existing && existing.length > 0) {
+          proceed(existing[0].id);
+        } else {
+          db.query(
+            'INSERT INTO menu_items (name, path, icon, parent_id, sort_order, file_name, is_active) VALUES (?, ?, ?, ?, ?, ?, 1)',
+            [menu.name, menu.path, menu.icon, parentId, menu.sortOrder, menu.fileName],
+            (iErr, result) => {
+              if (iErr) { console.error(`autoRegisterMenuItems: insert error for "${menu.name}":`, iErr.message); return; }
+              console.log(`✔ Menu item registered: "${menu.name}" (id=${result.insertId})`);
+              proceed(result.insertId);
+            }
+          );
+        }
+      });
+    });
+  });
+
+  // Run Task Assignment child menus migration
+  try {
+    const autoMigrateTaskAssignmentMenus = require('./migrations/autoMigrateTaskAssignmentMenus');
+    autoMigrateTaskAssignmentMenus();
+  } catch (err) {
+    console.error('Failed to run Task Assignment auto-migration:', err);
+  }
+}
+

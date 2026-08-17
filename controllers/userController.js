@@ -182,7 +182,7 @@ const deleteUser = (req, res) => {
 
 const changeStatus = async (status, user_id) => {
   try {
-    const response = await fetch(`https://api.pr.ethiopianitpark.et/api/users/${user_id}/status`, {
+    const response = await fetch(`http://localhost:5001/api/users/${user_id}/status`, {
       method: "PUT",
       headers: { "Content-type": "application/json" },
       body: JSON.stringify({ status }),

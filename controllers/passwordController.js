@@ -33,7 +33,7 @@ const sendOTPEmail = async (email, otp, userName) => {
     const mailOptions = {
       from: process.env.SMTP_USER,
       to: email,
-      subject: "🔐 Password Reset OTP - EITPR System",
+      subject: "🔐 Password Reset OTP - ITPCR System",
       html: `
         <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
           <div style="background: linear-gradient(100deg, rgb(22, 40, 79) 2%, rgb(12, 124, 146) 100%); padding: 20px; border-radius: 10px 10px 0 0; text-align: center;">
@@ -44,7 +44,7 @@ const sendOTPEmail = async (email, otp, userName) => {
             <p style="color: #333; font-size: 16px;">Hi <strong>${userName}</strong>,</p>
             
             <p style="color: #555; font-size: 14px; line-height: 1.6;">
-              We received a request to reset your password for your EITPR account. 
+              We received a request to reset your password for your ITPCR account. 
               Use the OTP code below to proceed with password reset:
             </p>
             
@@ -71,7 +71,7 @@ const sendOTPEmail = async (email, otp, userName) => {
                 This is an automated email. Please do not reply to this message.
               </p>
               <p style="color: #999; font-size: 12px; margin: 5px 0 0 0;">
-                © 2025 EITPR System. All rights reserved.
+                © 2026ITPCR System. All rights reserved.
               </p>
             </div>
           </div>

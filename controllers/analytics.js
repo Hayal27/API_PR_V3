@@ -841,35 +841,45 @@ const DefaultPlanOutcomeDifferenceFulltime = async (req, res) => {
 const userPerformanceRanking = async (req, res) => {
   try {
     const { year, quarter, month } = req.query;
-    const extraFilters = getFilterConditions(req);
 
     let periodFilter = "";
-    if (month) periodFilter += ` AND sod.month = ${con.escape(month)}`;
-    if (quarter) periodFilter += ` AND g.quarter = ${con.escape(quarter)}`;
-    if (year) periodFilter += ` AND sod.year = ${con.escape(year)}`;
+    if (month) periodFilter += ` AND MONTH(mt.created_at) = ${con.escape(month)}`;
+    if (year) periodFilter += ` AND YEAR(mt.created_at) = ${con.escape(year)}`;
 
     const query = `
       SELECT 
         e.employee_id,
-        e.name as employee_name,
-        d.name as department,
-        COUNT(sod.specific_objective_detail_id) as total_objectives,
-        AVG(COALESCE(sod.CIexecution_percentage, sod.execution_percentage, 0)) as execution_percentage,
-        SUM(COALESCE(sod.CIplan, 0)) as total_plan,
-        SUM(COALESCE(sod.CIoutcome, 0)) as total_outcome
-      FROM specific_objective_details sod
-      JOIN plans p ON sod.specific_objective_detail_id = p.specific_objective_detail_id
-      JOIN goals g ON p.goal_id = g.goal_id
-      JOIN approvalworkflow aw ON p.plan_id = aw.plan_id
-      LEFT JOIN employees e ON sod.created_by = e.employee_id
-      LEFT JOIN departments d ON sod.department_id = d.department_id
-      WHERE aw.status = 'completed'
-      AND aw.comment NOT LIKE 'REFERRED by %'
-      AND aw.comment NOT LIKE 'Referred from %'
+        TRIM(CONCAT(COALESCE(e.fname,''), ' ', COALESCE(e.lname,''))) as employee_name,
+        COALESCE(os.name_amharic, os.name, d.name, 'General Unit') as department,
+        COUNT(DISTINCT mt.monthly_task_id) as total_objectives,
+        -- ✅ REAL execution: actual_amount / CIplan × 100, fallback to mt.progress
+        COALESCE(AVG(
+          CASE
+            WHEN sod.CIplan > 0 AND mt.actual_amount IS NOT NULL AND mt.actual_amount > 0
+            THEN LEAST(100.0, mt.actual_amount / sod.CIplan * 100)
+            ELSE COALESCE(mt.progress, 0)
+          END
+        ), 0) as execution_percentage,
+        SUM(COALESCE(NULLIF(mt.weight, 0), sod.weight, 1.0)) as total_plan,
+        SUM(COALESCE(NULLIF(mt.weight, 0), sod.weight, 1.0) *
+          CASE
+            WHEN sod.CIplan > 0 AND mt.actual_amount IS NOT NULL AND mt.actual_amount > 0
+            THEN LEAST(100.0, mt.actual_amount / sod.CIplan * 100) / 100
+            ELSE COALESCE(mt.progress, 0) / 100
+          END
+        ) as total_outcome
+      FROM monthly_task_assignees mta
+      JOIN monthly_tasks mt ON mta.monthly_task_id = mt.monthly_task_id
+      LEFT JOIN specific_objective_details sod ON mt.specific_objective_detail_id = sod.specific_objective_detail_id
+      JOIN users u ON mta.user_id = u.user_id
+      LEFT JOIN employees e ON u.employee_id = e.employee_id
+      LEFT JOIN employee_positions ep ON e.employee_id = ep.employee_id AND ep.is_primary = 1
+      LEFT JOIN organization_structure os ON ep.org_node_id = os.id
+      LEFT JOIN departments d ON e.department_id = d.department_id
+      WHERE 1=1
       ${periodFilter}
-      ${extraFilters}
-      GROUP BY e.employee_id, e.name, d.name
-      HAVING COUNT(sod.specific_objective_detail_id) > 0
+      GROUP BY e.employee_id, employee_name, department
+      HAVING total_objectives > 0
       ORDER BY execution_percentage DESC
       LIMIT 10
     `;

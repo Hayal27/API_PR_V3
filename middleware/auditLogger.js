@@ -96,35 +96,38 @@ const AUDIT_ACTIONS = {
  * @param {object} req - Express request object (optional, for extracting IP, user agent, etc.)
  */
 const logAudit = (userId, action, description, metadata = {}, req = null) => {
-    return new Promise((resolve, reject) => {
-        // Enhance metadata with request information if available
-        const enrichedMetadata = {
-            ...metadata,
-            timestamp: new Date().toISOString(),
-            ip_address: req ? (req.ip || req.connection.remoteAddress) : null,
-            user_agent: req ? req.get('user-agent') : null,
-            endpoint: req ? req.originalUrl : null,
-            method: req ? req.method : null,
-        };
+    return new Promise((resolve) => {
+        try {
+            const enrichedMetadata = {
+                ...metadata,
+                timestamp: new Date().toISOString(),
+                ip_address: req ? (req.ip || req.connection?.remoteAddress) : null,
+                user_agent: req ? (typeof req.get === 'function' ? req.get('user-agent') : null) : null,
+                endpoint: req ? req.originalUrl : null,
+                method: req ? req.method : null,
+            };
 
-        const query = `
-      INSERT INTO audit_logs (user_id, action, description, metadata, created_at)
-      VALUES (?, ?, ?, ?, NOW())
-    `;
+            const query = `
+              INSERT INTO audit_logs (user_id, action, description, metadata, created_at)
+              VALUES (?, ?, ?, ?, NOW())
+            `;
 
-        con.query(
-            query,
-            [userId, action, description, JSON.stringify(enrichedMetadata)],
-            (err, result) => {
-                if (err) {
-                    console.error('❌ Audit Log Error:', err);
-                    reject(err);
-                } else {
-                    console.log(`✅ Audit Log: ${action} - ${description}`);
-                    resolve(result);
+            con.query(
+                query,
+                [userId, action, description, JSON.stringify(enrichedMetadata)],
+                (err, result) => {
+                    if (err) {
+                        console.warn('Notice: Audit log error (non-critical):', err.message);
+                    } else {
+                        console.log(`✅ Audit Log: ${action} - ${description}`);
+                    }
+                    resolve(result || null);
                 }
-            }
-        );
+            );
+        } catch (err) {
+            console.warn('Notice: Exception in logAudit:', err.message);
+            resolve(null);
+        }
     });
 };
 

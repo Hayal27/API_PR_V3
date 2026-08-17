@@ -194,10 +194,47 @@ const deleteNotification = async (req, res) => {
   }
 };
 
+// Send manual alert notification to subordinate user
+const sendAlert = async (req, res) => {
+  try {
+    const { target_user_id, title, message, priority = 'high' } = req.body;
+
+    if (!target_user_id || !title || !message) {
+      return res.status(400).json({
+        success: false,
+        message: 'target_user_id, title, and message are required'
+      });
+    }
+
+    const notificationId = await NotificationService.createNotification({
+      user_id: target_user_id,
+      type: 'task_overdue_alert',
+      title: title,
+      message: message,
+      priority: priority
+    });
+
+    res.json({
+      success: true,
+      message: 'Alert notification sent successfully',
+      notification_id: notificationId
+    });
+  } catch (error) {
+    console.error('Error sending alert notification:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Failed to send alert notification',
+      error: error.message
+    });
+  }
+};
+
 module.exports = {
   getNotifications,
   getUnreadCount,
   markAsRead,
   markAllAsRead,
-  deleteNotification
+  deleteNotification,
+  sendAlert
 };
+
