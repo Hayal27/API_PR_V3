@@ -265,18 +265,33 @@ class NotificationService {
         if (error) {
           reject(error);
         } else {
-          // Parse JSON data field and add is_creator to data
-          const notifications = results.map(notification => {
-            const parsedData = notification.data ? JSON.parse(notification.data) : {};
-            return {
-              ...notification,
-              data: {
-                ...parsedData,
-                is_creator: notification.is_creator
+          try {
+            // Parse JSON data field safely and add is_creator to data
+            const notifications = (results || []).map(notification => {
+              let parsedData = {};
+              if (notification.data) {
+                try {
+                  parsedData = typeof notification.data === 'string'
+                    ? JSON.parse(notification.data)
+                    : notification.data;
+                } catch (parseErr) {
+                  console.error(`⚠️ Error parsing data for notification_id ${notification.notification_id}:`, parseErr.message);
+                  parsedData = {};
+                }
               }
-            };
-          });
-          resolve(notifications);
+              return {
+                ...notification,
+                data: {
+                  ...parsedData,
+                  is_creator: notification.is_creator
+                }
+              };
+            });
+            resolve(notifications);
+          } catch (err) {
+            console.error('Error processing notifications:', err);
+            reject(err);
+          }
         }
       });
     });
@@ -329,7 +344,11 @@ class NotificationService {
         if (error) {
           reject(error);
         } else {
-          resolve(results[0].count);
+          try {
+            resolve(results && results.length > 0 ? (results[0].count || 0) : 0);
+          } catch (err) {
+            reject(err);
+          }
         }
       });
     });

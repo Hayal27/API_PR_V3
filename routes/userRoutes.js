@@ -15,6 +15,7 @@ router.get('/users', getAllUsers);
 router.get('/department', getDepartment);
 
 router.put('/:user_id/status', changeUserStatus);
+router.put('/users/:user_id/status', changeUserStatus);
 
 
 

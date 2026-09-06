@@ -61,36 +61,54 @@ const getProfilePicture = (req, res) => {
     return res.status(400).json({ error: "User ID is required." });
   }
 
-  // Log the beginning of fetching the profile picture
-  console.log(`Fetching profile picture for user: ${user_id}`);
+  const sql = `
+    SELECT 
+      u.user_id,
+      u.user_name,
+      u.avatar_url,
+      u.role_id,
+      e.fname,
+      e.lname,
+      e.email,
+      COALESCE(d.name, 'General Directorate') as department_name
+    FROM users u
+    LEFT JOIN employees e ON u.employee_id = e.employee_id
+    LEFT JOIN departments d ON e.department_id = d.department_id
+    WHERE u.user_id = ?
+  `;
 
-  const sql = "SELECT avatar_url FROM users WHERE user_id = ?";
   con.query(sql, [user_id], (err, result) => {
     if (err) {
-      console.error("Database error:", err);
+      console.error("Database error in getProfilePicture:", err);
       return res.status(500).json({ error: "Database query failed." });
     }
 
-    if (result.length === 0) {
-      console.error("User not found for ID:", user_id);
-      return res.status(404).json({ error: "User not found." });
+    if (!result || result.length === 0) {
+      return res.json({
+        success: true,
+        avatarUrl: null,
+        user: null,
+        message: "User not found."
+      });
     }
 
-    const avatarUrl = result[0].avatar_url;
-    if (!avatarUrl) {
-      console.error("No profile picture found for user:", user_id);
-      return res.status(404).json({ error: "No profile picture found." });
-    }
+    const userData = result[0];
+    const avatarUrl = userData.avatar_url;
+    let fullAvatarUrl = null;
 
-    // Construct full URL
-    const fullAvatarUrl = `${req.protocol}://${req.get("host")}${avatarUrl}`;
-    
-    // Log the successful fetch before sending response
-    console.log(`Profile picture fetched for user: ${user_id} - URL: ${fullAvatarUrl}`);
+    if (avatarUrl) {
+      fullAvatarUrl = avatarUrl.startsWith('http')
+        ? avatarUrl
+        : `${req.protocol}://${req.get("host")}${avatarUrl.startsWith('/') ? '' : '/'}${avatarUrl}`;
+    }
 
     res.json({
       success: true,
-      avatarUrl: fullAvatarUrl
+      avatarUrl: fullAvatarUrl,
+      user: {
+        ...userData,
+        avatar_url: fullAvatarUrl
+      }
     });
   });
 };

@@ -1,4 +1,5 @@
 const con = require("../models/db");
+const { logAudit, AUDIT_ACTIONS } = require('../middleware/auditLogger');
 
 // Privileged roles that can edit/delete any Goal, Objective or KPI
 const PRIVILEGED_ROLES = ["admin", "super admin", "administrator", "plan", "report", "plan and report", "ceo", "deputy ceo", "executive"];
@@ -82,6 +83,10 @@ const addGoals = (req, res) => {
           });
         }
 
+        logAudit(user_id, AUDIT_ACTIONS.PLAN_CREATE || 'PLAN_CREATE', `Created strategic goal: "${name}" (${goalStartYear}-${goalEndYear})`, {
+          goal_id, name, year: goalYear, weight: goalWeight, start_year: goalStartYear, end_year: goalEndYear
+        }, req).catch(() => {});
+
         res.status(201).json({
           message: "goal added successfully",
           goal_id: goal_id,
@@ -138,6 +143,10 @@ const addObjectives = (req, res) => {
           }
           return res.status(500).json({ message: "Error adding objective", error: err.message, code: err.code });
         }
+
+        logAudit(user_id, AUDIT_ACTIONS.PLAN_CREATE || 'PLAN_CREATE', `Created objective: "${name}" under Goal ID ${goal}`, {
+          objective_id: result.insertId, goal_id: goal, name, weight: objWeight
+        }, req).catch(() => {});
 
         console.log("Objective created successfully with ID:", result.insertId);
         res.status(201).json({ message: "Objective created successfully", objective_id: result.insertId });
@@ -353,6 +362,9 @@ const addSpecificObjectives = (req, res) => {
             code: err.code
           });
         }
+        logAudit(user_id, AUDIT_ACTIONS.PLAN_CREATE || 'PLAN_CREATE', `Created specific objective (KPI): "${specific_objective_name}"`, {
+          specific_objective_id: result.insertId, objective_id, name: specific_objective_name, department_id, plan_type: resolvedPlanType
+        }, req).catch(() => {});
 
         console.log("Specific Objective created successfully with ID:", result.insertId);
         res.status(201).json({
@@ -418,46 +430,46 @@ const addspecificObjectiveDetails = async (req, res) => {
       ];
       const missingFields = requiredFields.filter(field => item[field] === undefined || item[field] === null || item[field] === '');
       return missingFields.length ? `Missing required fields: ${missingFields.join(', ')}` : null;
-    }).filter(error => error !== null);
+    }).filter(Boolean);
 
     if (validationErrors.length > 0) {
-      return res.status(400).json({ message: "Validation failed.", errors: validationErrors });
+      return res.status(400).json({ message: "Validation errors occurred.", errors: validationErrors });
     }
 
     const insertIds = [];
 
     // Process each specific objective sequentially to avoid connection issues
     for (const item of specific_objective) {
-      // Query to get goal_id
-      const getGoalIdQuery = `
-                      SELECT o.goal_id FROM specific_objectives so 
-                      JOIN objectives o ON so.objective_id = o.objective_id 
-                      WHERE so.specific_objective_id = ?`;
+      // Look up goal_id via specific_objective -> objective -> goal
+      const [soRow] = await query(
+        `SELECT o.goal_id 
+         FROM specific_objectives so 
+         JOIN objectives o ON so.objective_id = o.objective_id 
+         WHERE so.specific_objective_id = ?`,
+        [item.specific_objective_id]
+      );
+      const goal_id = soRow ? soRow.goal_id : (item.goal_id || null);
 
-      const goalResults = await query(getGoalIdQuery, [item.specific_objective_id]);
+      const actionPlanWeight = item.weight != null && !isNaN(item.weight) ? parseFloat(item.weight) : 0;
 
-      if (goalResults.length === 0) {
-        throw new Error(`No goal found for specific objective: ${item.specific_objective_id}`);
-      }
-      const goal_id = goalResults[0].goal_id;
-
-      // ── Weight constraint check ───────────────────────────────────────────────
-      const actionPlanWeight = item.weight != null ? parseFloat(item.weight) : 0;
-      if (actionPlanWeight > 0) {
-        const weightCheckSql = `
-          SELECT so.weight AS kpi_weight, COALESCE(SUM(sod.weight), 0) AS used_weight
-          FROM specific_objectives so
-          LEFT JOIN specific_objective_details sod ON so.specific_objective_id = sod.specific_objective_id
-          WHERE so.specific_objective_id = ?
-          GROUP BY so.specific_objective_id, so.weight
-        `;
-        const weightRows = await query(weightCheckSql, [item.specific_objective_id]);
-        if (weightRows.length > 0) {
-          const kpiWeight = parseFloat(weightRows[0].kpi_weight) || 100;
-          const usedWeight = parseFloat(weightRows[0].used_weight) || 0;
-          if (usedWeight + actionPlanWeight > kpiWeight) {
+      // Validate weight against remaining KPI weight budget
+      if (item.specific_objective_id && actionPlanWeight > 0) {
+        const [kpiRow] = await query(
+          `SELECT weight FROM specific_objectives WHERE specific_objective_id = ?`,
+          [item.specific_objective_id]
+        );
+        if (kpiRow && kpiRow.weight != null) {
+          const kpiWeight = parseFloat(kpiRow.weight);
+          const [usedRow] = await query(
+            `SELECT COALESCE(SUM(weight), 0) AS total_used 
+             FROM specific_objective_details 
+             WHERE specific_objective_id = ?`,
+            [item.specific_objective_id]
+          );
+          const usedWeight = parseFloat(usedRow.total_used || 0);
+          if (usedWeight + actionPlanWeight > kpiWeight + 0.001) {
             return res.status(400).json({
-              message: `Cannot add Action Plan: weight exceeds KPI budget. KPI weight: ${kpiWeight}, already used: ${usedWeight}, requested: ${actionPlanWeight}. Remaining: ${(kpiWeight - usedWeight).toFixed(2)}`,
+              message: `Weight exceeds KPI budget. Total allocated (${(usedWeight + actionPlanWeight).toFixed(2)}) cannot exceed KPI weight (${kpiWeight}). Remaining: ${(kpiWeight - usedWeight).toFixed(2)}`,
               kpi_weight: kpiWeight,
               used_weight: usedWeight,
               remaining_weight: kpiWeight - usedWeight,
@@ -465,7 +477,6 @@ const addspecificObjectiveDetails = async (req, res) => {
           }
         }
       }
-
 
       // Insert specific objective details
       const insertQuery = `
@@ -534,6 +545,10 @@ const addspecificObjectiveDetails = async (req, res) => {
       }
     }
 
+    logAudit(user_id, AUDIT_ACTIONS.PLAN_CREATE || 'PLAN_CREATE', `Created ${insertIds.length} Action Plan detail record(s)`, {
+      detail_ids: insertIds, count: insertIds.length
+    }, req).catch(() => {});
+
     res.status(201).json({ message: "Specific objective details added successfully.", insertIds });
 
   } catch (error) {
@@ -541,12 +556,6 @@ const addspecificObjectiveDetails = async (req, res) => {
     res.status(500).json({ message: "Error processing specific objective details.", error: error.message });
   }
 };
-
-
-
-
-
-
 
 // Update Goal
 const updateGoal = (req, res) => {
@@ -575,6 +584,10 @@ const updateGoal = (req, res) => {
       if (result.affectedRows === 0) {
         return res.status(404).json({ message: "Goal not found or unauthorized" });
       }
+      logAudit(user_id, AUDIT_ACTIONS.PLAN_UPDATE || 'PLAN_UPDATE', `Updated goal ID ${goal_id}: "${name || ''}"`, {
+        goal_id, name, year, quarter, weight: goalWeight
+      }, req).catch(() => {});
+
       res.status(200).json({ message: "Goal updated successfully" });
     });
   });
@@ -602,6 +615,10 @@ const deleteGoal = (req, res) => {
       if (result.affectedRows === 0) {
         return res.status(404).json({ message: "Goal not found or unauthorized" });
       }
+      logAudit(user_id, AUDIT_ACTIONS.PLAN_DELETE || 'PLAN_DELETE', `Deleted strategic goal ID ${goal_id}`, {
+        goal_id
+      }, req).catch(() => {});
+
       res.status(200).json({ message: "Goal deleted successfully" });
     });
   });
@@ -634,6 +651,10 @@ const updateObjective = (req, res) => {
       if (result.affectedRows === 0) {
         return res.status(404).json({ message: "Objective not found or unauthorized" });
       }
+      logAudit(user_id, AUDIT_ACTIONS.PLAN_UPDATE || 'PLAN_UPDATE', `Updated objective ID ${objective_id}: "${name || ''}"`, {
+        objective_id, name, goal_id, weight: objWeight
+      }, req).catch(() => {});
+
       res.status(200).json({ message: "Objective updated successfully" });
     });
   });
@@ -661,6 +682,10 @@ const deleteObjective = (req, res) => {
       if (result.affectedRows === 0) {
         return res.status(404).json({ message: "Objective not found or unauthorized" });
       }
+      logAudit(user_id, AUDIT_ACTIONS.PLAN_DELETE || 'PLAN_DELETE', `Deleted objective ID ${objective_id}`, {
+        objective_id
+      }, req).catch(() => {});
+
       res.status(200).json({ message: "Objective deleted successfully" });
     });
   });
@@ -669,6 +694,7 @@ const deleteObjective = (req, res) => {
 // Update Specific Objective (KPI)
 const updateSpecificObjective = (req, res) => {
   const { specific_objective_id } = req.params;
+  const user_id = req.user_id;
   const { specific_objective_name, view, objective_id, org_node_id, org_node_ids, supportive_org_node_ids, weight, plan_type, planType, plan_Type } = req.body;
   const resolvedPlanType = plan_type || planType || plan_Type || null;
 
@@ -719,6 +745,10 @@ const updateSpecificObjective = (req, res) => {
     if (result.affectedRows === 0) {
       return res.status(404).json({ message: "KPI not found" });
     }
+    logAudit(user_id, AUDIT_ACTIONS.PLAN_UPDATE || 'PLAN_UPDATE', `Updated KPI ID ${specific_objective_id}: "${specific_objective_name || ''}"`, {
+      specific_objective_id, name: specific_objective_name, weight: weightVal
+    }, req).catch(() => {});
+
     res.status(200).json({ message: "KPI updated successfully" });
   });
 };
@@ -726,16 +756,19 @@ const updateSpecificObjective = (req, res) => {
 // Delete Specific Objective
 const deleteSpecificObjective = (req, res) => {
   const { specific_objective_id } = req.params;
+  const user_id = req.user_id;
 
   con.query("DELETE FROM specific_objectives WHERE specific_objective_id = ?", [specific_objective_id], (err, result) => {
     if (err) {
       console.error("Error deleting specific objective:", err);
       return res.status(500).json({ message: "Error deleting specific objective" });
     }
-
     if (result.affectedRows === 0) {
       return res.status(404).json({ message: "Specific objective not found" });
     }
+    logAudit(user_id, AUDIT_ACTIONS.PLAN_DELETE || 'PLAN_DELETE', `Deleted specific objective (KPI) ID ${specific_objective_id}`, {
+      specific_objective_id
+    }, req).catch(() => {});
 
     res.status(200).json({ message: "Specific objective deleted successfully" });
   });
@@ -887,6 +920,10 @@ const updateKPI = (req, res) => {
     if (result.affectedRows === 0) {
       return res.status(404).json({ message: "Action Plan not found" });
     }
+    logAudit(req.user_id, AUDIT_ACTIONS.PLAN_UPDATE || 'PLAN_UPDATE', `Updated Action Plan detail ID ${detail_id}: "${specific_objective_detailname || ''}"`, {
+      detail_id, name: specific_objective_detailname, plan_type, weight
+    }, req).catch(() => {});
+
     res.status(200).json({ message: "Action Plan updated successfully" });
   });
 };
@@ -894,6 +931,7 @@ const updateKPI = (req, res) => {
 // DELETE: remove a specific_objective_detail and its tasks
 const deleteKPI = async (req, res) => {
   const { detail_id } = req.params;
+  const user_id = req.user_id;
 
   if (!detail_id) {
     return res.status(400).json({ message: "detail_id is required" });
@@ -932,6 +970,10 @@ const deleteKPI = async (req, res) => {
     if (result.affectedRows === 0) {
       return res.status(404).json({ message: "KPI not found" });
     }
+
+    logAudit(user_id, AUDIT_ACTIONS.PLAN_DELETE || 'PLAN_DELETE', `Deleted Action Plan detail ID ${detail_id}`, {
+      detail_id
+    }, req).catch(() => {});
 
     res.status(200).json({ message: "KPI deleted successfully" });
   } catch (err) {

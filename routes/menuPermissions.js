@@ -89,31 +89,67 @@ router.get('/test', async (req, res) => {
 router.get('/user-permissions/:roleId', async (req, res) => {
   try {
     const { roleId } = req.params;
+    const numericRoleId = parseInt(roleId, 10);
+    const isAdmin = numericRoleId === 1;
 
-    console.log('🔍 API: Fetching menu permissions for role_id:', roleId);
+    console.log('🔍 API: Fetching menu permissions for role_id:', roleId, '(isAdmin:', isAdmin, ')');
 
-    const query = `
-      SELECT
-        mi.id,
-        mi.name,
-        mi.path,
-        mi.icon,
-        mi.parent_id,
-        mi.sort_order,
-        rp.can_view,
-        rp.can_create,
-        rp.can_edit,
-        rp.can_delete
-      FROM menu_items mi
-      LEFT JOIN role_permissions rp ON mi.id = rp.menu_item_id AND rp.role_id = ?
-      WHERE mi.is_active = 1 AND rp.can_view = 1
-      ORDER BY mi.sort_order ASC, mi.name ASC
-    `;
+    let query;
+    let params;
 
-    console.log('🔍 API: Executing query:', query);
-    console.log('🔍 API: Query parameters:', [roleId]);
+    if (isAdmin) {
+      // Admin gets all active menu items with full permissions
+      query = `
+        SELECT
+          mi.id,
+          mi.name,
+          mi.path,
+          mi.icon,
+          mi.parent_id,
+          mi.sort_order,
+          1 AS can_view,
+          1 AS can_create,
+          1 AS can_edit,
+          1 AS can_delete
+        FROM menu_items mi
+        WHERE mi.is_active = 1
+        ORDER BY mi.sort_order ASC, mi.id ASC
+      `;
+      params = [];
+    } else {
+      // Non-admin roles:
+      // 1. Menu items directly granted can_view=1
+      // 2. PLUS parent items of any granted child items
+      query = `
+        SELECT DISTINCT
+          mi.id,
+          mi.name,
+          mi.path,
+          mi.icon,
+          mi.parent_id,
+          mi.sort_order,
+          COALESCE(rp.can_view, 1) AS can_view,
+          COALESCE(rp.can_create, 0) AS can_create,
+          COALESCE(rp.can_edit, 0) AS can_edit,
+          COALESCE(rp.can_delete, 0) AS can_delete
+        FROM menu_items mi
+        LEFT JOIN role_permissions rp ON mi.id = rp.menu_item_id AND rp.role_id = ?
+        WHERE mi.is_active = 1
+          AND (
+            rp.can_view = 1
+            OR mi.id IN (
+              SELECT DISTINCT parent_mi.parent_id
+              FROM menu_items parent_mi
+              JOIN role_permissions child_rp ON parent_mi.id = child_rp.menu_item_id
+              WHERE child_rp.role_id = ? AND child_rp.can_view = 1 AND parent_mi.is_active = 1
+            )
+          )
+        ORDER BY mi.sort_order ASC, mi.id ASC
+      `;
+      params = [numericRoleId, numericRoleId];
+    }
 
-    con.query(query, [roleId], (err, results) => {
+    con.query(query, params, (err, results) => {
       if (err) {
         console.error('💥 API: Database query failed:', err);
         return res.status(500).json({
@@ -124,18 +160,14 @@ router.get('/user-permissions/:roleId', async (req, res) => {
         });
       }
 
-      console.log('📊 API: Raw query results:', results);
-      console.log('📊 API: Number of results:', results.length);
+      console.log('📊 API: Number of permitted menu results:', (results || []).length);
 
       // Organize menu items into hierarchical structure
       const menuItems = [];
       const menuMap = new Map();
 
-      console.log('🔧 API: Processing results into hierarchical structure...');
-
       // First pass: create all menu items
-      results.forEach(item => {
-        console.log('🔧 API: Processing item:', item);
+      (results || []).forEach(item => {
         const menuItem = {
           id: item.id,
           name: item.name,
@@ -154,26 +186,22 @@ router.get('/user-permissions/:roleId', async (req, res) => {
         menuMap.set(item.id, menuItem);
       });
 
-      console.log('🔧 API: Created menu map with', menuMap.size, 'items');
-
       // Second pass: organize hierarchy
       menuMap.forEach(item => {
         if (item.parent_id === null) {
           menuItems.push(item);
-          console.log('🔧 API: Added root item:', item.name);
         } else {
           const parent = menuMap.get(item.parent_id);
           if (parent) {
             parent.children.push(item);
-            console.log('🔧 API: Added child item:', item.name, 'to parent:', parent.name);
           } else {
-            console.warn('⚠️ API: Parent not found for item:', item.name, 'parent_id:', item.parent_id);
+            // If parent is not in map, preserve item as root so permitted child is not lost
+            menuItems.push(item);
           }
         }
       });
 
       console.log('✅ API: Final menu structure created with', menuItems.length, 'root items');
-      console.log('✅ API: Sending response:', { success: true, data: menuItems });
 
       res.json({
         success: true,
@@ -182,10 +210,6 @@ router.get('/user-permissions/:roleId', async (req, res) => {
     });
   } catch (error) {
     console.error('💥 API: Error fetching user permissions:', error);
-    console.error('💥 API: Error message:', error.message);
-    console.error('💥 API: Error stack:', error.stack);
-    console.error('💥 API: Role ID that caused error:', req.params.roleId);
-
     res.status(500).json({
       success: false,
       message: 'Failed to fetch user permissions',
@@ -513,6 +537,87 @@ router.put('/menu-items/:id', (req, res) => {
     res.json({
       success: true,
       message: 'Menu item updated successfully'
+    });
+  });
+});
+
+// Bulk Update Menu Status (Active / Inactive)
+router.put('/menu-items/bulk-status', (req, res) => {
+  const { menu_ids, is_active } = req.body;
+
+  if (!menu_ids || !Array.isArray(menu_ids) || menu_ids.length === 0) {
+    return res.status(400).json({ success: false, message: 'No menu items provided' });
+  }
+
+  const activeStatus = is_active ? 1 : 0;
+  console.log(`🔄 API: Bulk updating status for ${menu_ids.length} menu items to is_active=${activeStatus}`);
+
+  const query = `UPDATE menu_items SET is_active = ? WHERE id IN (?)`;
+  con.query(query, [activeStatus, menu_ids], (err, result) => {
+    if (err) {
+      console.error('💥 API: Failed to bulk update menu items:', err);
+      return res.status(500).json({
+        success: false,
+        message: 'Failed to update menu items',
+        error: err.message
+      });
+    }
+
+    console.log(`✅ API: Successfully updated ${result.affectedRows} menu items`);
+    res.json({
+      success: true,
+      message: `Successfully updated ${result.affectedRows} menu items to ${activeStatus ? 'Active' : 'Inactive'}`,
+      affectedRows: result.affectedRows
+    });
+  });
+});
+
+// Bulk Delete Menu Items
+router.post('/menu-items/bulk-delete', (req, res) => {
+  const { menu_ids } = req.body;
+
+  if (!menu_ids || !Array.isArray(menu_ids) || menu_ids.length === 0) {
+    return res.status(400).json({ success: false, message: 'No menu items provided' });
+  }
+
+  console.log(`🗑️ API: Bulk deleting ${menu_ids.length} menu items:`, menu_ids);
+
+  // 1. Delete all role permissions for these menu items and their children
+  const deletePermsQuery = `
+    DELETE FROM role_permissions 
+    WHERE menu_item_id IN (?) 
+       OR menu_item_id IN (SELECT id FROM (SELECT id FROM menu_items WHERE parent_id IN (?)) AS tmp)
+  `;
+
+  con.query(deletePermsQuery, [menu_ids, menu_ids], (err) => {
+    if (err) {
+      console.error('💥 API: Failed to delete role permissions in bulk delete:', err);
+    }
+
+    // 2. Delete children first if any
+    con.query('DELETE FROM menu_items WHERE parent_id IN (?)', [menu_ids], (errChildren) => {
+      if (errChildren) {
+        console.warn('⚠️ API: Error deleting child menu items:', errChildren.message);
+      }
+
+      // 3. Delete the menu items
+      con.query('DELETE FROM menu_items WHERE id IN (?)', [menu_ids], (err, result) => {
+        if (err) {
+          console.error('💥 API: Failed to bulk delete menu items:', err);
+          return res.status(500).json({
+            success: false,
+            message: 'Failed to delete menu items',
+            error: err.message
+          });
+        }
+
+        console.log(`✅ API: Successfully deleted ${result.affectedRows} menu items`);
+        res.json({
+          success: true,
+          message: `Successfully deleted ${result.affectedRows} menu items`,
+          affectedRows: result.affectedRows
+        });
+      });
     });
   });
 });

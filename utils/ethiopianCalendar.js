@@ -35,6 +35,30 @@ function gregorianToJDN(year, month, day) {
   );
 }
 
+function jdnToGregorian(jdn) {
+  const a = jdn + 32044;
+  const b = Math.floor((4 * a + 3) / 146097);
+  const c = a - Math.floor((146097 * b) / 4);
+  const d = Math.floor((4 * c + 3) / 1461);
+  const e = c - Math.floor((1461 * d) / 4);
+  const m = Math.floor((5 * e + 2) / 153);
+
+  const day   = e - Math.floor((153 * m + 2) / 5) + 1;
+  const month = m + 3 - 12 * Math.floor(m / 10);
+  const year  = 100 * b + d - 4800 + Math.floor(m / 10);
+  return { year, month, day };
+}
+
+function ethiopianToJDN(ethYear, ethMonth, ethDay) {
+  return (
+    ETHIOPIAN_EPOCH +
+    365 * (ethYear - 1) +
+    Math.floor(ethYear / 4) +
+    30 * (ethMonth - 1) +
+    (ethDay - 1)
+  );
+}
+
 function jdnToEthiopian(jdn) {
   const diff = jdn - ETHIOPIAN_EPOCH;
   const r    = diff % 1461;
@@ -51,30 +75,74 @@ function jdnToEthiopian(jdn) {
 }
 
 function gregorianToEthiopian(gregorianDate) {
-  if (!gregorianDate) return { year: 2017, month: 1, day: 1 };
-  const d = gregorianDate instanceof Date ? gregorianDate : new Date(gregorianDate);
-  if (isNaN(d.getTime())) return { year: 2017, month: 1, day: 1 };
+  const fallback = { year: 2017, month: 1, day: 1, monthName: 'መስከረም', monthNameEn: 'Meskerem' };
+  if (!gregorianDate) return fallback;
 
-  const jdn = gregorianToJDN(d.getFullYear(), d.getMonth() + 1, d.getDate());
+  let gYear, gMonth, gDay;
+  if (typeof gregorianDate === 'string') {
+    const trimmed = gregorianDate.trim();
+    const match = trimmed.match(/^(\d{4})[-/](\d{1,2})[-/](\d{1,2})/);
+    if (match) {
+      gYear  = parseInt(match[1], 10);
+      gMonth = parseInt(match[2], 10);
+      gDay   = parseInt(match[3], 10);
+    } else {
+      const d = new Date(trimmed);
+      if (isNaN(d.getTime())) return fallback;
+      gYear  = d.getFullYear();
+      gMonth = d.getMonth() + 1;
+      gDay   = d.getDate();
+    }
+  } else if (gregorianDate instanceof Date) {
+    if (isNaN(gregorianDate.getTime())) return fallback;
+    gYear  = gregorianDate.getFullYear();
+    gMonth = gregorianDate.getMonth() + 1;
+    gDay   = gregorianDate.getDate();
+  } else if (typeof gregorianDate === 'object' && gregorianDate.year && gregorianDate.month && gregorianDate.day) {
+    gYear  = parseInt(gregorianDate.year, 10);
+    gMonth = parseInt(gregorianDate.month, 10);
+    gDay   = parseInt(gregorianDate.day, 10);
+  } else {
+    const d = new Date(gregorianDate);
+    if (isNaN(d.getTime())) return fallback;
+    gYear  = d.getFullYear();
+    gMonth = d.getMonth() + 1;
+    gDay   = d.getDate();
+  }
+
+  const jdn = gregorianToJDN(gYear, gMonth, gDay);
   return jdnToEthiopian(jdn);
+}
+
+function ethiopianToGregorian(ethYear, ethMonth, ethDay) {
+  const jdn = ethiopianToJDN(parseInt(ethYear, 10), parseInt(ethMonth, 10), parseInt(ethDay, 10));
+  const { year, month, day } = jdnToGregorian(jdn);
+  return new Date(year, month - 1, day, 12, 0, 0);
+}
+
+function ethiopianToGregorianStr(ethYear, ethMonth, ethDay) {
+  const jdn = ethiopianToJDN(parseInt(ethYear, 10), parseInt(ethMonth, 10), parseInt(ethDay, 10));
+  const { year, month, day } = jdnToGregorian(jdn);
+  return `${year}-${String(month).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
 }
 
 function getCurrentEthiopianPeriod() {
   const ec = gregorianToEthiopian(new Date());
-  let quarter = "1";
-  if (ec.month === 11 || ec.month === 12 || ec.month === 13 || ec.month === 1) {
-    quarter = "1";
-  } else if (ec.month >= 2 && ec.month <= 4) {
-    quarter = "2";
-  } else if (ec.month >= 5 && ec.month <= 7) {
-    quarter = "3";
-  } else if (ec.month >= 8 && ec.month <= 10) {
-    quarter = "4";
-  }
-  return { year: ec.year, quarter: quarter, month: ec.month };
+  const m = ec.month;
+  // Fiscal year: Hamle(11), Nehase(12), Pagume(13) belong to next fiscal year's Q1
+  const fiscalYear = m >= 11 ? ec.year + 1 : ec.year;
+  let quarter;
+  if (m === 11 || m === 12 || m === 13 || m === 1) quarter = "1";
+  else if (m <= 4) quarter = "2";
+  else if (m <= 7) quarter = "3";
+  else quarter = "4";
+  return { year: fiscalYear, quarter: quarter, month: m };
 }
 
 module.exports = {
+  ETHIOPIAN_MONTHS,
   gregorianToEthiopian,
+  ethiopianToGregorian,
+  ethiopianToGregorianStr,
   getCurrentEthiopianPeriod
 };

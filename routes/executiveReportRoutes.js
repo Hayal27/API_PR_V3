@@ -24,41 +24,62 @@ router.get('/', verifyToken, (req, res) => {
         scope_user_ids  // comma-separated user_ids from /scope endpoint
     } = req.query;
 
-    const userRoleId = Number(req.role_id || req.user?.role_id || req.user?.role || 0);
     const currentUserId = req.user_id || req.user?.user_id || req.user?.id;
-    // Privileged = Admin(1), Deputy CEO(2), Gen. Mgmt(3), Planning&Reporting(9), CEO(29)
-    const isPrivileged = [1, 2, 3, 9, 29].includes(userRoleId);
 
-    let whereClauses = [];
-    let params = [];
+    // Resolve user role name and id from database for accurate permission checking
+    con.query(
+        `SELECT u.role_id, LOWER(COALESCE(r.role_name, '')) AS role_name, u.employee_id 
+         FROM users u 
+         LEFT JOIN roles r ON u.role_id = r.role_id 
+         WHERE u.user_id = ?`,
+        [currentUserId],
+        (userErr, userRows) => {
+            const roleId = userRows && userRows.length > 0 ? Number(userRows[0].role_id) : Number(req.role_id || req.user?.role_id || req.user?.role || 0);
+            const roleName = userRows && userRows.length > 0 ? userRows[0].role_name : '';
+            
+            // Privileged roles see all plans: Admin, CEO, Deputy, Director, Manager, Executive, Planning
+            const isPrivileged = [1, 2, 3, 4, 5, 6, 7, 8, 9, 29].includes(roleId) ||
+                roleName.includes('ceo') ||
+                roleName.includes('deputy') ||
+                roleName.includes('admin') ||
+                roleName.includes('executive') ||
+                roleName.includes('director') ||
+                roleName.includes('manager') ||
+                roleName.includes('plan');
 
-    // Org-scoped filtering: frontend passes scope_user_ids (self + all subordinates)
-    if (scope_user_ids && scope_user_ids !== 'all') {
-        const ids = scope_user_ids.split(',').map(id => Number(id.trim())).filter(Boolean);
-        if (ids.length > 0) {
-            whereClauses.push(`sod.user_id IN (?)`);
-            params.push(ids);
-        }
-    } else if (!isPrivileged) {
-        // Fallback: unprivileged user with no scope — only their own plans
-        if (currentUserId) {
-            whereClauses.push('(sod.user_id = ? OR sod.created_by = ?)');
-            params.push(currentUserId, currentUserId);
-        }
-    } else if (filterUser && filterUser !== 'all') {
-        // Privileged user filtered by specific person
-        whereClauses.push('sod.user_id = ?');
-        params.push(filterUser);
-    }
+            let whereClauses = [];
+            let params = [];
 
-    if (year && year !== 'all') {
-        whereClauses.push('g.year = ?');
-        params.push(year);
-    }
-    if (quarter && quarter !== 'all') {
-        whereClauses.push('g.quarter = ?');
-        params.push(quarter);
-    }
+            // Only include confirmed action plans in executive reports
+            whereClauses.push("(LOWER(TRIM(sod.status)) = 'confirmed' OR LOWER(TRIM(sod.status)) LIKE '%confirm%')");
+
+            // Org-scoped filtering: frontend passes scope_user_ids (self + all subordinates)
+            if (!isPrivileged && scope_user_ids && scope_user_ids !== 'all') {
+                const ids = scope_user_ids.split(',').map(id => Number(id.trim())).filter(Boolean);
+                if (ids.length > 0) {
+                    whereClauses.push(`(sod.user_id IN (?) OR sod.created_by = ?)`);
+                    params.push(ids, String(currentUserId));
+                }
+            } else if (!isPrivileged) {
+                // Fallback: unprivileged user with no scope — only their own plans
+                if (currentUserId) {
+                    whereClauses.push('(sod.user_id = ? OR sod.created_by = ?)');
+                    params.push(currentUserId, currentUserId);
+                }
+            } else if (filterUser && filterUser !== 'all') {
+                // Privileged user explicitly filtered by specific person in UI
+                whereClauses.push('sod.user_id = ?');
+                params.push(filterUser);
+            }
+
+            if (year && year !== 'all') {
+                whereClauses.push('g.year = ?');
+                params.push(year);
+            }
+            if (quarter && quarter !== 'all') {
+                whereClauses.push('g.quarter = ?');
+                params.push(quarter);
+            }
     if (month && month !== 'all') {
         whereClauses.push('MONTH(sod.created_at) = ?');
         params.push(month);
@@ -491,7 +512,7 @@ router.get('/', verifyToken, (req, res) => {
             LEFT JOIN employee_positions ep ON e.employee_id = ep.employee_id AND ep.is_primary = 1
             LEFT JOIN positions pos ON ep.position_id = pos.position_id
             LEFT JOIN organization_structure os ON COALESCE(ep.org_node_id, e.department_id) = os.id
-            WHERE 1=1 ${tbWhere}
+            WHERE LOWER(sod.status) = 'confirmed' ${tbWhere}
             GROUP BY u.user_id, full_name, username, org_node_id, department, position
         `;
 
@@ -536,7 +557,7 @@ router.get('/', verifyToken, (req, res) => {
             LEFT JOIN employee_positions ep ON e.employee_id = ep.employee_id AND ep.is_primary = 1
             LEFT JOIN positions pos ON ep.position_id = pos.position_id
             LEFT JOIN organization_structure os ON COALESCE(ep.org_node_id, e.department_id) = os.id
-            WHERE 1=1
+            WHERE LOWER(sod.status) = 'confirmed'
             GROUP BY u.user_id, full_name, username, org_node_id, department, position
         `;
 
@@ -747,10 +768,9 @@ router.get('/', verifyToken, (req, res) => {
 
             res.json({ success: true, hierarchy, summary, flat: uniqueRows });
         }).catch(err => {
-            console.error('Error building report rankings:', err);
-            res.status(500).json({ success: false, message: 'Error building report rankings', error: err.message });
-        });
+        }); // end Promise.all rankings
     }); // end main SQL query
+    }); // end user role query
 }); // end router.get('/')
 
 
@@ -760,10 +780,11 @@ router.get('/', verifyToken, (req, res) => {
 router.get('/filters', verifyToken, (req, res) => {
 
 
-    const userRoleId = Number(req.role_id || req.user?.role_id || req.user?.role || 0);
-    const currentUserId = req.user_id || req.user?.user_id || req.user?.id;
-    const isPrivileged = [1, 2, 3, 9, 29].includes(userRoleId);
-    const userFilter = (isPrivileged || !currentUserId) ? '' : `WHERE sod.user_id = ${con.escape(currentUserId)} OR sod.created_by = ${con.escape(currentUserId)}`;
+    const filterClauses = ["LOWER(sod.status) = 'confirmed'"];
+    if (!isPrivileged && currentUserId) {
+        filterClauses.push(`(sod.user_id = ${con.escape(currentUserId)} OR sod.created_by = ${con.escape(currentUserId)})`);
+    }
+    const userFilter = `WHERE ${filterClauses.join(' AND ')}`;
 
     const sql = `
         SELECT DISTINCT
@@ -825,17 +846,35 @@ router.get('/filters', verifyToken, (req, res) => {
  */
 router.get('/scope', verifyToken, (req, res) => {
     const currentUserId = req.user_id || req.user?.user_id || req.user?.id;
-    const userRoleId = Number(req.role_id || req.user?.role_id || req.user?.role || 0);
-    const isPrivileged = [1, 2, 3, 9, 29].includes(userRoleId);
 
     if (!currentUserId) {
         return res.status(401).json({ success: false, message: 'Unauthorized' });
     }
 
-    // Privileged roles (CEO, exec, admin) see all — return null to indicate no restriction
-    if (isPrivileged) {
-        return res.json({ success: true, scoped: false, user_ids: null, current_user_id: currentUserId });
-    }
+    // Resolve user role name and id from DB
+    con.query(
+        `SELECT u.role_id, LOWER(COALESCE(r.role_name, '')) AS role_name, u.employee_id 
+         FROM users u 
+         LEFT JOIN roles r ON u.role_id = r.role_id 
+         WHERE u.user_id = ?`,
+        [currentUserId],
+        (userErr, userRows) => {
+            const roleId = userRows && userRows.length > 0 ? Number(userRows[0].role_id) : Number(req.role_id || req.user?.role_id || req.user?.role || 0);
+            const roleName = userRows && userRows.length > 0 ? userRows[0].role_name : '';
+            
+            const isPrivileged = [1, 2, 3, 4, 5, 6, 7, 8, 9, 29].includes(roleId) ||
+                roleName.includes('ceo') ||
+                roleName.includes('deputy') ||
+                roleName.includes('admin') ||
+                roleName.includes('executive') ||
+                roleName.includes('director') ||
+                roleName.includes('manager') ||
+                roleName.includes('plan');
+
+            // Privileged roles (CEO, exec, admin, director, manager) see all — return null to indicate no restriction
+            if (isPrivileged) {
+                return res.json({ success: true, scoped: false, user_ids: null, current_user_id: currentUserId });
+            }
 
     // Step 1: Resolve the current user's employee_id
     con.query('SELECT employee_id FROM users WHERE user_id = ?', [currentUserId], (err, userRows) => {
@@ -917,6 +956,7 @@ router.get('/scope', verifyToken, (req, res) => {
             );
         });
     });
+    }); // end user query in /scope
 });
 
 module.exports = router;

@@ -1,5 +1,6 @@
 const jwt = require("jsonwebtoken");
 const con = require("../models/db");
+const { logAudit, AUDIT_ACTIONS } = require('../middleware/auditLogger');
 
 const addReport = (req, res) => {
   const { outcome, execution_percentage, Description } = req.body;
@@ -120,6 +121,10 @@ const addReport = (req, res) => {
                 message: "Error updating specific goal",
               });
             }
+
+            logAudit(user_id, AUDIT_ACTIONS.REPORT_CREATE || 'REPORT_CREATE', `Submitted report for plan ID ${planId} — Execution: ${execution_percentage}%, Outcome: ${outcome}`, {
+              plan_id: planId, specific_objective_detail_id, outcome, execution_percentage, description: Description
+            }, req).catch(() => {});
 
             res.status(200).json({
               message: "Outcome, execution percentage, and Description updated successfully",

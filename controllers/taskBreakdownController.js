@@ -1,6 +1,7 @@
 // Controller for task breakdown operations
 const con = require('../models/db');
 const { getCurrentEthiopianPeriod } = require('../utils/ethiopianCalendar');
+const { logAudit, AUDIT_ACTIONS } = require('../middleware/auditLogger');
 
 
 // Auto-create task assignees tables if they don't exist
@@ -46,6 +47,17 @@ con.query("ALTER TABLE weekly_tasks ADD COLUMN deadline DATE NULL", (err) => {
     if (err && err.code !== 'ER_DUP_FIELDNAME') console.warn("Notice adding deadline to weekly_tasks:", err.message);
 });
 
+// ── WBR Group columns: support multiple independent WBD groups per action plan ──
+con.query("ALTER TABLE monthly_tasks ADD COLUMN wbr_group VARCHAR(100) NOT NULL DEFAULT 'WBR1'", (err) => {
+    if (err && err.code !== 'ER_DUP_FIELDNAME') console.warn("Notice adding wbr_group to monthly_tasks:", err.message);
+});
+con.query("ALTER TABLE monthly_tasks ADD COLUMN wbr_group_weight DECIMAL(5,2) NOT NULL DEFAULT 0", (err) => {
+    if (err && err.code !== 'ER_DUP_FIELDNAME') console.warn("Notice adding wbr_group_weight to monthly_tasks:", err.message);
+});
+con.query("ALTER TABLE monthly_tasks ADD COLUMN wbr_group_plan_amount DECIMAL(15,4) NOT NULL DEFAULT 0", (err) => {
+    if (err && err.code !== 'ER_DUP_FIELDNAME') console.warn("Notice adding wbr_group_plan_amount to monthly_tasks:", err.message);
+});
+
 // Get monthly and weekly tasks for a specific objective detail
 const getTasksByDetailId = (req, res) => {
     const { detail_id } = req.params;
@@ -72,6 +84,9 @@ const getTasksByDetailId = (req, res) => {
       mt.deadline AS monthly_deadline,
       mt.created_at AS monthly_created_at,
       mt.updated_at AS monthly_updated_at,
+      COALESCE(mt.wbr_group, 'WBR1') AS wbr_group,
+      COALESCE(mt.wbr_group_weight, 0) AS wbr_group_weight,
+      COALESCE(mt.wbr_group_plan_amount, 0) AS wbr_group_plan_amount,
       wt.weekly_task_id,
       wt.name AS weekly_task_name,
       wt.weight AS weekly_task_weight,
@@ -86,7 +101,7 @@ const getTasksByDetailId = (req, res) => {
     FROM monthly_tasks mt
     LEFT JOIN weekly_tasks wt ON mt.monthly_task_id = wt.monthly_task_id
     WHERE mt.specific_objective_detail_id = ?
-    ORDER BY mt.monthly_task_id, wt.weekly_task_id
+    ORDER BY mt.wbr_group, mt.monthly_task_id, wt.weekly_task_id
   `;
 
     con.query(query, [detail_id], (err, results) => {
@@ -116,6 +131,9 @@ const getTasksByDetailId = (req, res) => {
                     deadline: row.monthly_deadline,
                     created_at: row.monthly_created_at,
                     updated_at: row.monthly_updated_at,
+                    wbr_group: row.wbr_group || 'WBR1',
+                    wbr_group_weight: parseFloat(row.wbr_group_weight) || 0,
+                    wbr_group_plan_amount: parseFloat(row.wbr_group_plan_amount) || 0,
                     assignees: [],
                     weeklyTasks: []
                 });
@@ -245,6 +263,10 @@ const addTasksToDetail = (req, res) => {
 
     Promise.all(taskPromises)
         .then(() => {
+            logAudit(req.user_id, AUDIT_ACTIONS.TASK_CREATE || 'TASK_CREATE', `Added ${tasks.length} monthly breakdown task(s) to Action Plan ID ${specific_objective_detail_id}`, {
+                specific_objective_detail_id, count: tasks.length
+            }, req).catch(() => {});
+
             res.status(201).json({
                 success: true,
                 message: "Tasks added successfully"
@@ -281,24 +303,9 @@ const updateMonthlyTaskWeight = (req, res) => {
     con.query(query, [weight, monthly_task_id], (err, result) => {
         if (err) {
             console.error('Error updating monthly task weight:', err);
-            return res.status(500).json({
-                success: false,
-                message: 'Error updating monthly task weight',
-                error: err.message
-            });
+            return res.status(500).json({ success: false, message: 'DB error', error: err.message });
         }
-
-        if (result.affectedRows === 0) {
-            return res.status(404).json({
-                success: false,
-                message: 'Monthly task not found'
-            });
-        }
-
-        res.status(200).json({
-            success: true,
-            message: 'Monthly task weight updated successfully'
-        });
+        res.status(200).json({ success: true, message: 'Weight updated' });
     });
 };
 
@@ -323,52 +330,37 @@ const updateWeeklyTaskWeight = (req, res) => {
     con.query(query, [weight, weekly_task_id], (err, result) => {
         if (err) {
             console.error('Error updating weekly task weight:', err);
-            return res.status(500).json({
-                success: false,
-                message: 'Error updating weekly task weight',
-                error: err.message
-            });
+            return res.status(500).json({ success: false, message: 'DB error', error: err.message });
         }
-
-        if (result.affectedRows === 0) {
-            return res.status(404).json({
-                success: false,
-                message: 'Weekly task not found'
-            });
-        }
-
-        res.status(200).json({
-            success: true,
-            message: 'Weekly task weight updated successfully'
-        });
+        res.status(200).json({ success: true, message: 'Weight updated' });
     });
 };
 
-// Update multiple task weights at once
+// Batch update task weights (Monthly + Weekly) in a single transaction
 const updateTaskWeightsBatch = (req, res) => {
     const { monthlyTasks, weeklyTasks } = req.body;
 
-    if ((!monthlyTasks || monthlyTasks.length === 0) && (!weeklyTasks || weeklyTasks.length === 0)) {
+    if (!monthlyTasks && !weeklyTasks) {
         return res.status(400).json({
             success: false,
-            message: 'At least one task update is required'
+            message: 'Either monthlyTasks or weeklyTasks array must be provided'
         });
     }
 
-    con.getConnection((connErr, connection) => {
-        if (connErr) {
-            return res.status(500).json({ success: false, message: 'DB connection error', error: connErr.message });
+    con.getConnection((err, connection) => {
+        if (err) {
+            return res.status(500).json({ success: false, message: 'DB connection error', error: err.message });
         }
 
         connection.beginTransaction((err) => {
             if (err) {
                 connection.release();
-                return res.status(500).json({ success: false, message: 'Error starting transaction', error: err.message });
+                return res.status(500).json({ success: false, message: 'Transaction error', error: err.message });
             }
 
             const promises = [];
 
-            if (monthlyTasks && monthlyTasks.length > 0) {
+            if (monthlyTasks && Array.isArray(monthlyTasks)) {
                 monthlyTasks.forEach(task => {
                     promises.push(new Promise((resolve, reject) => {
                         connection.query('UPDATE monthly_tasks SET weight = ?, updated_at = CURRENT_TIMESTAMP WHERE monthly_task_id = ?',
@@ -379,7 +371,7 @@ const updateTaskWeightsBatch = (req, res) => {
                 });
             }
 
-            if (weeklyTasks && weeklyTasks.length > 0) {
+            if (weeklyTasks && Array.isArray(weeklyTasks)) {
                 weeklyTasks.forEach(task => {
                     promises.push(new Promise((resolve, reject) => {
                         connection.query('UPDATE weekly_tasks SET weight = ?, updated_at = CURRENT_TIMESTAMP WHERE weekly_task_id = ?',
@@ -441,6 +433,10 @@ const addWeeklyTasks = (req, res) => {
 
     Promise.all(promises)
         .then(() => {
+            logAudit(req.user_id, AUDIT_ACTIONS.TASK_CREATE || 'TASK_CREATE', `Added ${weeklyTasks.length} weekly task(s) to Monthly Task ID ${monthly_task_id}`, {
+                monthly_task_id, count: weeklyTasks.length
+            }, req).catch(() => {});
+
             res.status(201).json({
                 success: true,
                 message: "Weekly tasks added successfully"
@@ -638,12 +634,16 @@ const updateTasksToDetail = (req, res) => {
                             calculatedMPlanAmount = Number(((Number(mTask.weight) / parentPlanWeight) * parentPlanAmount).toFixed(2));
                         }
 
+                        const wbrGroup = mTask.wbr_group || 'WBR1';
+                        const wbrGroupWeight = parseFloat(mTask.wbr_group_weight) || 0;
+                        const wbrGroupPlanAmount = parseFloat(mTask.wbr_group_plan_amount) || 0;
+
                         if (mId && existingMonthlyIds.includes(mId)) {
-                            await qry('UPDATE monthly_tasks SET name = ?, weight = ?, plan_amount = ?, start_date = ?, deadline = ? WHERE monthly_task_id = ?',
-                                [mTask.name, mTask.weight || 0, calculatedMPlanAmount, mTask.start_date || null, mTask.deadline || null, mId]);
+                            await qry('UPDATE monthly_tasks SET name = ?, weight = ?, plan_amount = ?, start_date = ?, deadline = ?, wbr_group = ?, wbr_group_weight = ?, wbr_group_plan_amount = ? WHERE monthly_task_id = ?',
+                                [mTask.name, mTask.weight || 0, calculatedMPlanAmount, mTask.start_date || null, mTask.deadline || null, wbrGroup, wbrGroupWeight, wbrGroupPlanAmount, mId]);
                         } else {
-                            const result = await qry('INSERT INTO monthly_tasks (specific_objective_detail_id, name, weight, plan_amount, start_date, deadline) VALUES (?, ?, ?, ?, ?, ?)',
-                                [specific_objective_detail_id, mTask.name, mTask.weight || 0, calculatedMPlanAmount, mTask.start_date || null, mTask.deadline || null]);
+                            const result = await qry('INSERT INTO monthly_tasks (specific_objective_detail_id, name, weight, plan_amount, start_date, deadline, wbr_group, wbr_group_weight, wbr_group_plan_amount) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)',
+                                [specific_objective_detail_id, mTask.name, mTask.weight || 0, calculatedMPlanAmount, mTask.start_date || null, mTask.deadline || null, wbrGroup, wbrGroupWeight, wbrGroupPlanAmount]);
                             currentMonthlyId = result.insertId;
                         }
 
@@ -894,6 +894,12 @@ const updateTaskProgress = (req, res) => {
                     }
                 });
 
+                const isComplete = Number(progress) >= 100;
+                logAudit(req.user_id, isComplete ? (AUDIT_ACTIONS.TASK_COMPLETE || 'TASK_COMPLETE') : (AUDIT_ACTIONS.TASK_UPDATE || 'TASK_UPDATE'),
+                    `${isComplete ? 'Completed' : 'Updated progress on'} ${type} task ID ${taskId} (${planName}) — ${progress}%${hasActualAmount ? ` | Actual: ${actual_amount} ${unitStr}` : ''}`,
+                    { taskId, type, progress, status, actual_amount: hasActualAmount ? Number(actual_amount) : null, plan_name: planName, detail_id: detailId }
+                , req).catch(() => {});
+
                 res.status(200).json({
                     success: true,
                     message: 'Task details updated successfully',
@@ -984,6 +990,10 @@ const setMonthlyTaskAssignees = (req, res) => {
                 });
             } catch (_) {}
 
+            logAudit(assignedBy, AUDIT_ACTIONS.TASK_UPDATE || 'TASK_UPDATE', `Delegated Monthly Task ID ${taskId} to ${user_ids.length} user(s)`, {
+                monthly_task_id: taskId, assigned_to: user_ids, assigned_by: assignedBy
+            }, req).catch(() => {});
+
             res.json({ success: true, message: 'Assignees updated', count: user_ids.length });
         });
     });
@@ -1048,6 +1058,10 @@ const setWeeklyTaskAssignees = (req, res) => {
                     });
                 });
             } catch (_) {}
+
+            logAudit(assignedBy, AUDIT_ACTIONS.TASK_UPDATE || 'TASK_UPDATE', `Delegated Weekly Task ID ${taskId} to ${user_ids.length} user(s)`, {
+                weekly_task_id: taskId, assigned_to: user_ids, assigned_by: assignedBy
+            }, req).catch(() => {});
 
             res.json({ success: true, message: 'Assignees updated', count: user_ids.length });
         });
@@ -1206,11 +1220,42 @@ const getMyReceivedBreakdownTasks = (req, res) => {
                 return res.status(500).json({ success: false, message: 'DB error', error: err2.message });
             }
 
-            res.status(200).json({
-                success: true,
-                monthlyTasks: (monthlyResults || []).map(t => ({ ...t, is_active_period: true, goal_is_active: 1, ap_quarter_active: 1 })),
-                weeklyTasks: (weeklyResults || []).map(t => ({ ...t, is_active_period: true, goal_is_active: 1, ap_quarter_active: 1 }))
-            });
+            const allMonthly = (monthlyResults || []).map(t => ({ ...t, is_active_period: true, goal_is_active: 1, ap_quarter_active: 1 }));
+            const allWeekly = (weeklyResults || []).map(t => ({ ...t, is_active_period: true, goal_is_active: 1, ap_quarter_active: 1 }));
+            const totalCount = allMonthly.length + allWeekly.length;
+
+            const page = parseInt(req.query.page, 10);
+            const limit = parseInt(req.query.limit, 10);
+
+            if (!isNaN(page) && !isNaN(limit) && page > 0 && limit > 0) {
+                const startIndex = (page - 1) * limit;
+                const endIndex = startIndex + limit;
+
+                // Slice monthly and weekly tasks proportionally or combine
+                res.status(200).json({
+                    success: true,
+                    monthlyTasks: allMonthly,
+                    weeklyTasks: allWeekly,
+                    pagination: {
+                        total: totalCount,
+                        page,
+                        limit,
+                        totalPages: Math.ceil(totalCount / limit)
+                    }
+                });
+            } else {
+                res.status(200).json({
+                    success: true,
+                    monthlyTasks: allMonthly,
+                    weeklyTasks: allWeekly,
+                    pagination: {
+                        total: totalCount,
+                        page: 1,
+                        limit: totalCount,
+                        totalPages: 1
+                    }
+                });
+            }
         });
     });
 };

@@ -98,8 +98,9 @@ const AUDIT_ACTIONS = {
 const logAudit = (userId, action, description, metadata = {}, req = null) => {
     return new Promise((resolve) => {
         try {
+            const metaObj = (typeof metadata === 'object' && metadata !== null) ? metadata : { info: String(metadata) };
             const enrichedMetadata = {
-                ...metadata,
+                ...metaObj,
                 timestamp: new Date().toISOString(),
                 ip_address: req ? (req.ip || req.connection?.remoteAddress) : null,
                 user_agent: req ? (typeof req.get === 'function' ? req.get('user-agent') : null) : null,

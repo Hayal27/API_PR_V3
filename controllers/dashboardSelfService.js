@@ -318,4 +318,69 @@ const getDashboardPillars = async (req, res) => {
     }
 };
 
-module.exports = { getDashboardStats, getDashboardActivityChart, getDashboardPillars };
+// 4. Get Today's Overview (Today's Meetings + Received Tasks + User Profile details)
+const getDashboardTodayOverview = async (req, res) => {
+    try {
+        const user_id = req.user_id;
+
+        // User info for personalized welcome
+        const userSql = `
+            SELECT u.user_id, u.username, u.email, r.role_name, 
+                   CONCAT(COALESCE(e.fname,''), ' ', COALESCE(e.lname,'')) as full_name,
+                   os.name as department_name
+            FROM users u
+            LEFT JOIN roles r ON u.role_id = r.role_id
+            LEFT JOIN employees e ON u.employee_id = e.employee_id
+            LEFT JOIN organization_structure os ON u.department_id = os.id
+            WHERE u.user_id = ?
+        `;
+
+        // Meetings for today / upcoming
+        const meetingsSql = `
+            SELECT m.meeting_id, m.title, m.description, m.start_time, m.end_time, m.location, m.meeting_link, m.status, m.priority
+            FROM meetings m
+            WHERE m.status != 'cancelled'
+              AND (DATE(m.start_time) = CURDATE() OR m.status = 'in-progress' OR (m.start_time >= NOW() AND m.start_time <= DATE_ADD(NOW(), INTERVAL 24 HOUR)))
+            ORDER BY m.start_time ASC
+            LIMIT 5
+        `;
+
+        // Received Tasks for user
+        const receivedTasksSql = `
+            SELECT ta.assignment_id, ta.title, ta.description, ta.priority, ta.status, ta.due_date, ta.created_at,
+                   CONCAT(COALESCE(e.fname,''), ' ', COALESCE(e.lname,'')) as assigner_name
+            FROM task_assignments ta
+            LEFT JOIN users u ON ta.assigned_by = u.user_id
+            LEFT JOIN employees e ON u.employee_id = e.employee_id
+            WHERE ta.assigned_to = ? AND ta.status != 'completed'
+            ORDER BY 
+              CASE WHEN ta.priority = 'urgent' THEN 1 WHEN ta.priority = 'high' THEN 2 WHEN ta.priority = 'medium' THEN 3 ELSE 4 END,
+              ta.due_date ASC
+            LIMIT 5
+        `;
+
+        con.query(userSql, [user_id], (uErr, userRows) => {
+            const userInfo = (userRows && userRows.length > 0) ? userRows[0] : null;
+
+            con.query(meetingsSql, [], (mErr, meetingRows) => {
+                const meetings = meetingRows || [];
+
+                con.query(receivedTasksSql, [user_id], (tErr, taskRows) => {
+                    const receivedTasks = taskRows || [];
+
+                    res.status(200).json({
+                        success: true,
+                        userInfo,
+                        meetings,
+                        receivedTasks
+                    });
+                });
+            });
+        });
+
+    } catch (err) {
+        res.status(500).json({ success: false, message: err.message });
+    }
+};
+
+module.exports = { getDashboardStats, getDashboardActivityChart, getDashboardPillars, getDashboardTodayOverview };

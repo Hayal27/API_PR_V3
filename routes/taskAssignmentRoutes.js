@@ -22,6 +22,7 @@ router.get("/assigned-to-me", verifyToken, taskAssignmentController.getAssignedT
 router.get("/available-users", verifyToken, taskAssignmentController.getAvailableUsers);
 router.get("/supervised-users", verifyToken, taskAssignmentController.getSupervisedUsers);
 router.get("/stats", verifyToken, taskAssignmentController.getAssignmentStats);
+router.get("/performance-ranking", verifyToken, taskAssignmentController.getPerformanceRanking);
 
 // Status updates
 router.put("/:id/status", verifyToken, taskAssignmentController.updateAssignmentStatus);

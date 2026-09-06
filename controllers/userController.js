@@ -3,6 +3,7 @@
 const con = require("../models/db"); // Assumes you have a db.js file that exports the database connection
 const bcrypt = require('bcryptjs');
 const util = require('util');
+const { logAudit, AUDIT_ACTIONS } = require('../middleware/auditLogger');
 
 
 
@@ -77,6 +78,10 @@ const updateUser = async (req, res) => {
     }
 
     console.log("User account updated for user_id:", user_id);
+    logAudit(req.user_id, AUDIT_ACTIONS.USER_UPDATE || 'USER_UPDATE', `Updated user ID ${user_id}: role=${parsedRoleID}, name=${fname} ${lname}`, {
+      target_user_id: user_id, role_id: parsedRoleID, fname, lname, user_name, department_id, supervisor_id
+    }, req).catch(() => {});
+
     res.status(200).json({ message: "User updated successfully" });
   } catch (error) {
     console.error("Error updating user:", error);
@@ -114,18 +119,32 @@ const getDepartment = (req, res) => {
 // We use LEFT JOIN with employees table so that employee fields (fname, lname, phone) override users fields
 
 const getAllUsers = (req, res) => {
+  // Use original u.*, e.* join so department_id and supervisor_id from employees table
+  // are included (they contain real position/supervisor data for each user).
+  // u.status is added explicitly LAST so it always overrides any e.status column.
   const query = `
-    SELECT u.*, e.*
-    FROM users u 
+    SELECT
+      u.*,
+      e.*,
+      u.status AS status
+    FROM users u
     LEFT JOIN employees e ON u.employee_id = e.employee_id
   `;
+
   con.query(query, (err, results) => {
     if (err) {
       console.error("Error retrieving users:", err);
       return res.status(500).json({ message: "Error retrieving users", error: err });
     }
-    console.log("Fetched users:", results);
-    res.json(results);
+
+    // Ensure status is always a proper integer (0 or 1) from users table
+    // mysql2 returns the last alias value for duplicate column names
+    const normalized = results.map(r => ({
+      ...r,
+      status: r.status !== undefined && r.status !== null ? Number(r.status) : 0
+    }));
+
+    res.json(normalized);
   });
 };
 
@@ -152,6 +171,10 @@ const changeUserStatus = (req, res) => {
     }
 
     console.log("User status updated successfully for user_id:", user_id, "New status:", status);
+    logAudit(req.user_id, AUDIT_ACTIONS.USER_STATUS_CHANGE || 'USER_STATUS_CHANGE', `Changed status of user ID ${user_id} to ${status === 1 ? 'Active' : 'Inactive'}`, {
+      target_user_id: user_id, status, status_label: status === 1 ? 'Active' : 'Inactive'
+    }, req).catch(() => {});
+
     res.json({ message: "User status updated successfully" });
   });
 };
@@ -174,6 +197,10 @@ const deleteUser = (req, res) => {
     }
 
     console.log("User deleted successfully, user_id:", user_id);
+    logAudit(req.user_id, AUDIT_ACTIONS.USER_DELETE || 'USER_DELETE', `Deleted user ID ${user_id}`, {
+      target_user_id: user_id
+    }, req).catch(() => {});
+
     res.json({ message: "User deleted successfully" });
   });
 
@@ -182,7 +209,7 @@ const deleteUser = (req, res) => {
 
 const changeStatus = async (status, user_id) => {
   try {
-    const response = await fetch(`http://localhost:5001/api/users/${user_id}/status`, {
+    const response = await fetch(`https://prms.ethiopianitpark.com/api/users/${user_id}/status`, {
       method: "PUT",
       headers: { "Content-type": "application/json" },
       body: JSON.stringify({ status }),

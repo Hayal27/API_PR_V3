@@ -4,6 +4,7 @@ const approvalWorkflowModel = require("../models/approvalWorkflowModel");
 const { addApprovalHistory, updateCurrentStepStatus } = require("./approvalHistoryController");
 const NotificationService = require("../services/notificationService");
 const util = require('util');
+const { logAudit, AUDIT_ACTIONS } = require('../middleware/auditLogger');
 
 // Helper function to verify JWT token and extract user_id
 const verifyToken = (token) => {
@@ -651,6 +652,10 @@ const updatePlanStatus = async (req, res) => {
                             });
                           }
 
+                          logAudit(user_id, AUDIT_ACTIONS.PLAN_APPROVE || 'PLAN_APPROVE', `Approved plan ID ${plan_id} — forwarded to next supervisor`, {
+                            plan_id, approver_id: supervisor_id, status: 'Approved', comment
+                          }, req).catch(() => {});
+
                           return res.status(200).json({
                             success: true,
                             message: "approved",
@@ -673,6 +678,10 @@ const updatePlanStatus = async (req, res) => {
                             error_code: "DB_ERROR",
                           });
                         }
+
+                        logAudit(user_id, AUDIT_ACTIONS.PLAN_APPROVE || 'PLAN_APPROVE', `Fully approved plan ID ${plan_id}`, {
+                          plan_id, approver_id: supervisor_id, status: 'Approved', final: true, comment
+                        }, req).catch(() => {});
 
                         return res.status(200).json({
                           success: true,
@@ -706,6 +715,10 @@ const updatePlanStatus = async (req, res) => {
                         error_code: "PLAN_NOT_FOUND",
                       });
                     }
+
+                    logAudit(user_id, AUDIT_ACTIONS.PLAN_DECLINE || 'PLAN_DECLINE', `Declined plan ID ${plan_id}`, {
+                      plan_id, approver_id: supervisor_id, status: 'Declined', comment
+                    }, req).catch(() => {});
 
                     // Successfully declined and reverted the supervisor
                     return res.status(200).json({
@@ -1293,6 +1306,10 @@ const updatePlanApprovalStatus = async (req, res) => {
                   error_code: "DB_ERROR",
                 });
               }
+              logAudit(user_id, AUDIT_ACTIONS.PLAN_APPROVE || 'PLAN_APPROVE', `Confirmed/Approved plan ID ${plan_id}`, {
+                plan_id, approver_id: supervisor_id, status: 'Approved', comment
+              }, req).catch(() => {});
+
               return res.status(200).json({
                 success: true,
                 message: "approved"
@@ -1314,6 +1331,10 @@ const updatePlanApprovalStatus = async (req, res) => {
                   error_code: "DB_ERROR",
                 });
               }
+              logAudit(user_id, AUDIT_ACTIONS.PLAN_DECLINE || 'PLAN_DECLINE', `Declined/rejected plan ID ${plan_id}`, {
+                plan_id, approver_id: supervisor_id, status: 'Declined', comment
+              }, req).catch(() => {});
+
               return res.status(200).json({
                 success: true,
                 message: "Plan declined and reverted to original supervisor."

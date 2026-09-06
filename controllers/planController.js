@@ -4,6 +4,7 @@ const { addApprovalHistory } = require("./approvalHistoryController");
 const { buildAndSavePlanApprovalChain } = require("./hierarchyApprovalController");
 const NotificationService = require("../services/notificationService");
 const util = require('util');
+const { logAudit, AUDIT_ACTIONS } = require('../middleware/auditLogger');
 
 const addPlan = (req, res) => {
   console.log('🔥 ADDPLAN REQUEST RECEIVED');
@@ -263,6 +264,11 @@ const addPlan = (req, res) => {
                           console.error("Error building approval chain (non-fatal):", chainErr);
                           // Non-fatal: plan still created, chain will be built on first approval fetch
                         }
+
+                        logAudit(user_id, AUDIT_ACTIONS.PLAN_SUBMIT || 'PLAN_SUBMIT', `Submitted plan ID ${plan_id} for approval (${approvalChain.length}-step chain)`, {
+                          plan_id, goal_id, objective_id, specific_objective_id, supervisor_id,
+                          approval_chain_steps: approvalChain.length
+                        }, req).catch(() => {});
 
                         res.status(201).json({
                           message: "Plan and associated entries created successfully",

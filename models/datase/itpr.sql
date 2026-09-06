@@ -3,9 +3,9 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Mar 16, 2026 at 01:23 PM
+-- Generation Time: Sep 06, 2026 at 12:05 PM
 -- Server version: 10.4.32-MariaDB
--- PHP Version: 8.0.30
+-- PHP Version: 8.2.12
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
@@ -20,6 +20,22 @@ SET time_zone = "+00:00";
 --
 -- Database: `itpr`
 --
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `action_plan_quarter_activations`
+--
+
+CREATE TABLE `action_plan_quarter_activations` (
+  `id` int(11) NOT NULL,
+  `specific_objective_detail_id` int(11) NOT NULL,
+  `year` int(11) NOT NULL,
+  `quarter` varchar(10) NOT NULL,
+  `is_active` tinyint(1) DEFAULT 1,
+  `created_at` datetime DEFAULT current_timestamp(),
+  `updated_at` datetime DEFAULT current_timestamp() ON UPDATE current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
 
@@ -59,47 +75,8 @@ CREATE TABLE `approvalworkflow` (
 --
 
 INSERT INTO `approvalworkflow` (`approvalworkflow_id`, `plan_id`, `approver_id`, `status`, `comment`, `approval_date`, `approved_at`, `report_id`, `report_status`, `rating`, `comment_writer`) VALUES
-(415, 224, 72, 'completed', '', '2025-11-24 08:20:42', NULL, NULL, 'Pending', NULL, ''),
-(416, 225, 72, 'completed', '', '2025-11-24 08:20:20', NULL, NULL, 'Pending', NULL, ''),
-(417, 226, 72, 'completed', '', '2025-11-24 08:20:25', NULL, NULL, 'Pending', NULL, ''),
-(418, 227, 72, 'completed', '', '2025-11-24 08:20:38', NULL, NULL, 'Pending', NULL, ''),
-(419, 228, 72, 'completed', '', '2025-11-24 08:20:47', NULL, NULL, 'Pending', NULL, ''),
-(420, 229, 72, 'completed', '', '2025-11-24 08:20:51', NULL, NULL, 'Pending', NULL, ''),
-(421, 230, 72, 'completed', '', '2025-11-24 08:20:29', NULL, NULL, 'Pending', NULL, ''),
-(422, 231, 72, 'Approved', '', '2025-11-24 08:20:33', NULL, NULL, 'Pending', NULL, ''),
-(423, 232, 72, 'Declined', 'you need to update ', '2026-03-11 19:01:05', NULL, NULL, 'Pending', NULL, 'olana olana'),
-(425, 234, 72, 'Pending', NULL, '2025-11-25 09:03:13', NULL, NULL, 'Pending', NULL, ''),
-(427, 236, 72, 'Approved', '', '2025-11-29 04:53:29', NULL, NULL, 'Pending', NULL, ''),
-(428, 237, 72, 'Approved', 'REFERRED by olana olana: ', '2025-11-27 03:49:26', NULL, NULL, 'Pending', NULL, 'olana olana'),
-(429, 237, 141, 'Pending', 'Referred from olana olana', '2025-11-27 03:49:26', NULL, NULL, 'Pending', NULL, ''),
-(430, 238, 72, 'Approved', 'REFERRED by olana olana: this issue ....', '2026-03-11 17:11:29', NULL, NULL, 'Pending', NULL, 'olana olana'),
-(431, 239, 72, 'Pending', NULL, '2025-12-11 07:28:06', NULL, NULL, 'Pending', NULL, ''),
-(432, 240, 72, 'Pending', NULL, '2025-12-11 07:34:19', NULL, NULL, 'Pending', NULL, ''),
-(433, 241, 72, 'Pending', '', '2025-12-11 08:38:43', NULL, NULL, 'Pending', NULL, ''),
-(434, 242, 72, 'Pending', NULL, '2025-12-11 11:30:28', NULL, NULL, 'Pending', NULL, ''),
-(435, 243, 72, 'Pending', NULL, '2025-12-15 02:52:45', NULL, NULL, 'Pending', NULL, ''),
-(436, 244, 72, 'Pending', NULL, '2025-12-15 04:21:12', NULL, NULL, 'Pending', NULL, ''),
-(437, 245, 72, 'Pending', NULL, '2025-12-15 07:15:21', NULL, NULL, 'Pending', NULL, ''),
-(438, 246, 72, 'Pending', NULL, '2025-12-15 07:28:13', NULL, NULL, 'Pending', NULL, ''),
-(439, 247, 148, 'Approved', 'REFERRED by belete esubalew: eyew', '2026-03-11 17:26:48', NULL, NULL, 'Pending', NULL, 'belete esubalew'),
-(440, 248, 150, 'Approved', 'REFERRED by belete esubalew: check this out ', '2026-03-11 17:24:26', NULL, NULL, 'Pending', NULL, 'belete esubalew'),
-(441, 249, 143, 'Pending', NULL, '2026-03-09 10:08:12', NULL, NULL, 'Pending', NULL, ''),
-(442, 250, 72, 'Pending', NULL, '2026-03-09 11:16:56', NULL, NULL, 'Pending', NULL, ''),
-(443, 251, 143, 'Pending', NULL, '2026-03-10 11:06:01', NULL, NULL, 'Pending', NULL, ''),
-(444, 252, 143, 'Approved', 'REFERRED by olana olana: ', '2026-03-11 14:39:15', NULL, NULL, 'Pending', NULL, 'olana olana'),
-(445, 252, 142, 'Approved', 'REFERRED by belete esubalew: review it by you self', '2026-03-11 14:40:37', NULL, NULL, 'Pending', NULL, 'belete esubalew'),
-(446, 252, 72, 'Approved', '', '2026-03-11 17:10:36', NULL, NULL, 'Pending', NULL, ''),
-(447, 232, 142, 'Approved', 'REFERRED by belete esubalew: cheek out this', '2026-03-11 18:55:02', NULL, NULL, 'Pending', NULL, 'belete esubalew'),
-(448, 238, 142, 'Approved', 'REFERRED by belete esubalew: note mine', '2026-03-11 17:13:09', NULL, NULL, 'Pending', NULL, 'belete esubalew'),
-(449, 238, 72, 'Pending', 'Referred from belete esubalew', '2026-03-11 17:13:09', NULL, NULL, 'Pending', NULL, ''),
-(450, 248, 72, 'Approved', 'REFERRED by olana olana: bele eyew', '2026-03-11 17:25:36', NULL, NULL, 'Pending', NULL, 'olana olana'),
-(451, 248, 142, 'Approved', 'REFERRED by belete esubalew: test', '2026-03-11 18:55:53', NULL, NULL, 'Pending', NULL, 'belete esubalew'),
-(452, 247, 72, 'Approved', 'REFERRED by belete esubalew: cheek this', '2026-03-11 17:27:26', NULL, NULL, 'Pending', NULL, 'belete esubalew'),
-(453, 247, 72, 'Approved', 'REFERRED by olana olana: tets', '2026-03-11 18:51:52', NULL, NULL, 'Pending', NULL, 'olana olana'),
-(454, 247, 142, 'Pending', 'Referred from olana olana', '2026-03-11 18:51:52', NULL, NULL, 'Pending', NULL, ''),
-(455, 232, 72, 'Declined', 'you need to update ', '2026-03-11 19:01:05', NULL, NULL, 'Pending', NULL, ''),
-(456, 248, 72, 'Approved', 'REFERRED by belete esubalew: cheek this out ', '2026-03-11 18:56:32', NULL, NULL, 'Pending', NULL, 'belete esubalew'),
-(457, 248, 72, 'Pending', 'Referred from belete esubalew', '2026-03-11 18:56:32', NULL, NULL, 'Pending', NULL, '');
+(1, 1, 143, 'Pending', NULL, '2026-08-17 16:39:11', NULL, NULL, 'Pending', NULL, ''),
+(2, 2, 143, 'Pending', NULL, '2026-08-17 18:41:13', NULL, NULL, 'Pending', NULL, '');
 
 -- --------------------------------------------------------
 
@@ -129,33 +106,14 @@ CREATE TABLE `approval_workflow_history` (
 --
 
 INSERT INTO `approval_workflow_history` (`history_id`, `plan_id`, `approver_id`, `approver_name`, `approver_role`, `status`, `comment`, `action_date`, `step_number`, `is_current_step`, `created_by_user_id`, `created_by_name`, `created_at`, `updated_at`) VALUES
-(105, 224, 72, 'Unknown', 'Unknown', 'Pending', 'Plan submitted for approval', '2025-11-24 08:08:46', 1, 1, 40, 'Unknown', '2025-11-24 13:08:46', '2025-11-24 13:08:46'),
-(106, 225, 72, 'Unknown', 'Unknown', 'Pending', 'Plan submitted for approval', '2025-11-24 08:10:39', 1, 1, 40, 'Unknown', '2025-11-24 13:10:39', '2025-11-24 13:10:39'),
-(107, 226, 72, 'Unknown', 'Unknown', 'Pending', 'Plan submitted for approval', '2025-11-24 08:12:00', 1, 1, 40, 'Unknown', '2025-11-24 13:12:00', '2025-11-24 13:12:00'),
-(108, 227, 72, 'Unknown', 'Unknown', 'Pending', 'Plan submitted for approval', '2025-11-24 08:13:52', 1, 1, 40, 'Unknown', '2025-11-24 13:13:52', '2025-11-24 13:13:52'),
-(109, 228, 72, 'Unknown', 'Unknown', 'Pending', 'Plan submitted for approval', '2025-11-24 08:15:35', 1, 1, 40, 'Unknown', '2025-11-24 13:15:35', '2025-11-24 13:15:35'),
-(110, 229, 72, 'Unknown', 'Unknown', 'Pending', 'Plan submitted for approval', '2025-11-24 08:17:12', 1, 1, 40, 'Unknown', '2025-11-24 13:17:12', '2025-11-24 13:17:12'),
-(111, 230, 72, 'Unknown', 'Unknown', 'Pending', 'Plan submitted for approval', '2025-11-24 08:18:53', 1, 1, 40, 'Unknown', '2025-11-24 13:18:53', '2025-11-24 13:18:53'),
-(112, 231, 72, 'Unknown', 'Unknown', 'Pending', 'Plan submitted for approval', '2025-11-24 08:20:06', 1, 1, 40, 'Unknown', '2025-11-24 13:20:06', '2025-11-24 13:20:06'),
-(113, 232, 72, 'Unknown', 'Unknown', 'Pending', 'Plan submitted for approval', '2025-11-25 08:55:46', 1, 1, 40, 'Unknown', '2025-11-25 13:55:46', '2025-11-25 13:55:46'),
-(115, 234, 72, 'Unknown', 'Unknown', 'Pending', 'Plan submitted for approval', '2025-11-25 09:03:13', 1, 1, 40, 'Unknown', '2025-11-25 14:03:13', '2025-11-25 14:03:13'),
-(117, 236, 72, 'Unknown', 'Unknown', 'Pending', 'Plan submitted for approval', '2025-11-27 03:46:05', 1, 1, 40, 'Unknown', '2025-11-27 08:46:05', '2025-11-27 08:46:05'),
-(118, 237, 72, 'Unknown', 'Unknown', 'Pending', 'Plan submitted for approval', '2025-11-27 03:48:50', 1, 1, 40, 'Unknown', '2025-11-27 08:48:50', '2025-11-27 08:48:50'),
-(119, 238, 72, 'Unknown', 'Unknown', 'Pending', 'Plan submitted for approval', '2025-11-27 08:57:07', 1, 1, 40, 'Unknown', '2025-11-27 13:57:07', '2025-11-27 13:57:07'),
-(120, 239, 72, 'Unknown', 'Unknown', 'Pending', 'Plan submitted for approval', '2025-12-11 07:28:06', 1, 1, 40, 'Unknown', '2025-12-11 12:28:06', '2025-12-11 12:28:06'),
-(121, 240, 72, 'Unknown', 'Unknown', 'Pending', 'Plan submitted for approval', '2025-12-11 07:34:19', 1, 1, 40, 'Unknown', '2025-12-11 12:34:19', '2025-12-11 12:34:19'),
-(122, 241, 72, 'Unknown', 'Unknown', 'Pending', 'Plan submitted for approval', '2025-12-11 08:24:23', 1, 1, 25, 'Unknown', '2025-12-11 13:24:23', '2025-12-11 13:24:23'),
-(123, 242, 72, 'Unknown', 'Unknown', 'Pending', 'Plan submitted for approval', '2025-12-11 11:30:29', 1, 1, 25, 'Unknown', '2025-12-11 16:30:29', '2025-12-11 16:30:29'),
-(124, 243, 72, 'Unknown', 'Unknown', 'Pending', 'Plan submitted for approval', '2025-12-15 02:52:45', 1, 1, 40, 'Unknown', '2025-12-15 07:52:45', '2025-12-15 07:52:45'),
-(125, 244, 72, 'Unknown', 'Unknown', 'Pending', 'Plan submitted for approval', '2025-12-15 04:21:12', 1, 1, 40, 'Unknown', '2025-12-15 09:21:12', '2025-12-15 09:21:12'),
-(126, 245, 72, 'Unknown', 'Unknown', 'Pending', 'Plan submitted for approval', '2025-12-15 07:15:21', 1, 1, 40, 'Unknown', '2025-12-15 12:15:21', '2025-12-15 12:15:21'),
-(127, 246, 72, 'Unknown', 'Unknown', 'Pending', 'Plan submitted for approval', '2025-12-15 07:28:13', 1, 1, 40, 'Unknown', '2025-12-15 12:28:13', '2025-12-15 12:28:13'),
-(128, 247, 148, 'Unknown', 'Unknown', 'Pending', 'Plan submitted for approval', '2025-12-16 08:22:07', 1, 1, 76, 'Unknown', '2025-12-16 13:22:07', '2025-12-16 13:22:07'),
-(129, 248, 150, 'Unknown', 'Unknown', 'Pending', 'Plan submitted for approval', '2025-12-16 13:36:52', 1, 1, 78, 'Unknown', '2025-12-16 18:36:52', '2025-12-16 18:36:52'),
-(130, 249, 143, 'Unknown', 'Unknown', 'Pending', 'Plan submitted for approval', '2026-03-09 10:08:12', 1, 1, 40, 'Unknown', '2026-03-09 07:08:12', '2026-03-09 07:08:12'),
-(131, 250, 72, 'Unknown', 'Unknown', 'Pending', 'Plan submitted for approval', '2026-03-09 11:16:56', 1, 1, 40, 'Unknown', '2026-03-09 08:16:56', '2026-03-09 08:16:56'),
-(132, 251, 143, 'Unknown', 'Unknown', 'Pending', 'Plan submitted for approval', '2026-03-10 11:06:01', 1, 1, 40, 'Unknown', '2026-03-10 08:06:01', '2026-03-10 08:06:01'),
-(133, 252, 143, 'Unknown', 'Unknown', 'Pending', 'Plan submitted for approval', '2026-03-11 14:12:30', 1, 1, 40, 'Unknown', '2026-03-11 11:12:30', '2026-03-11 11:12:30');
+(175, 469, 143, 'Unknown', 'Unknown', 'Pending', 'Plan submitted for approval', '2026-08-09 09:41:47', 1, 1, 73, 'Unknown', '2026-08-09 06:41:47', '2026-08-09 06:41:47'),
+(179, 473, 143, 'Unknown', 'Unknown', 'Pending', 'Plan submitted for approval', '2026-08-10 20:26:00', 1, 1, 73, 'Unknown', '2026-08-10 17:26:00', '2026-08-10 17:26:00'),
+(180, 474, 143, 'Unknown', 'Unknown', 'Pending', 'Plan submitted for approval', '2026-08-11 10:34:14', 1, 1, 73, 'Unknown', '2026-08-11 07:34:14', '2026-08-11 07:34:14'),
+(181, 475, 143, 'Unknown', 'Unknown', 'Pending', 'Plan submitted for approval', '2026-08-11 21:47:09', 1, 1, 73, 'Unknown', '2026-08-11 18:47:09', '2026-08-11 18:47:09'),
+(182, 1, 143, 'Unknown', 'Unknown', 'Pending', 'Plan submitted for approval', '2026-08-12 20:08:20', 1, 1, 73, 'Unknown', '2026-08-12 17:08:20', '2026-08-12 17:08:20'),
+(183, 2, 143, 'Unknown', 'Unknown', 'Pending', 'Plan submitted for approval', '2026-08-12 22:09:22', 1, 1, 73, 'Unknown', '2026-08-12 19:09:22', '2026-08-12 19:09:22'),
+(184, 1, 143, 'Unknown', 'Unknown', 'Pending', 'Plan submitted for approval', '2026-08-17 16:39:11', 1, 1, 73, 'Unknown', '2026-08-17 13:39:11', '2026-08-17 13:39:11'),
+(185, 2, 143, 'Unknown', 'Unknown', 'Pending', 'Plan submitted for approval', '2026-08-17 18:41:13', 1, 1, 73, 'Unknown', '2026-08-17 15:41:13', '2026-08-17 15:41:13');
 
 -- --------------------------------------------------------
 
@@ -297,7 +255,971 @@ INSERT INTO `audit_logs` (`id`, `user_id`, `action`, `description`, `metadata`, 
 (124, 40, 'LOGIN', 'User ezira@itpark.et logged in successfully', '{\"username\":\"ezira@itpark.et\",\"user_id\":40,\"role_id\":1,\"employee_id\":109,\"employee_name\":\"Ezira\",\"department_id\":2,\"login_time\":\"2026-03-16T07:35:23.000Z\",\"timestamp\":\"2026-03-16T07:35:23.000Z\",\"ip_address\":\"127.0.0.1\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36\",\"endpoint\":\"/login\",\"method\":\"POST\"}', '2026-03-16 07:35:23'),
 (125, 40, 'LOGOUT', 'User ezira@itpark.et logged out', '{\"user_id\":\"40\",\"username\":\"ezira@itpark.et\",\"employee_name\":\"Ezira\",\"logout_time\":\"2026-03-16T07:35:27.909Z\",\"timestamp\":\"2026-03-16T07:35:27.909Z\",\"ip_address\":\"127.0.0.1\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36\",\"endpoint\":\"/logout/40\",\"method\":\"PUT\"}', '2026-03-16 07:35:27'),
 (126, NULL, 'LOGIN_FAILED', 'Login failed: User not found - olana@itpark.et', '{\"username\":\"olana@itpark.et\",\"reason\":\"user_not_found\",\"timestamp\":\"2026-03-16T07:35:34.531Z\",\"ip_address\":\"127.0.0.1\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36\",\"endpoint\":\"/login\",\"method\":\"POST\"}', '2026-03-16 07:35:34'),
-(127, 25, 'LOGIN', 'User olana@itp.et logged in successfully', '{\"username\":\"olana@itp.et\",\"user_id\":25,\"role_id\":2,\"employee_id\":72,\"employee_name\":\"Olana\",\"department_id\":2,\"login_time\":\"2026-03-16T07:36:51.811Z\",\"timestamp\":\"2026-03-16T07:36:51.811Z\",\"ip_address\":\"127.0.0.1\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36\",\"endpoint\":\"/login\",\"method\":\"POST\"}', '2026-03-16 07:36:51');
+(127, 25, 'LOGIN', 'User olana@itp.et logged in successfully', '{\"username\":\"olana@itp.et\",\"user_id\":25,\"role_id\":2,\"employee_id\":72,\"employee_name\":\"Olana\",\"department_id\":2,\"login_time\":\"2026-03-16T07:36:51.811Z\",\"timestamp\":\"2026-03-16T07:36:51.811Z\",\"ip_address\":\"127.0.0.1\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36\",\"endpoint\":\"/login\",\"method\":\"POST\"}', '2026-03-16 07:36:51'),
+(128, NULL, 'LOGIN_FAILED', 'Login failed: User not found - user40', '{\"username\":\"user40\",\"reason\":\"user_not_found\",\"timestamp\":\"2026-03-17T07:02:03.446Z\",\"ip_address\":\"127.0.0.1\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36\",\"endpoint\":\"/login\",\"method\":\"POST\"}', '2026-03-17 07:02:03'),
+(129, 40, 'LOGOUT', 'User ezira@itpark.et logged out', '{\"user_id\":\"40\",\"username\":\"ezira@itpark.et\",\"employee_name\":\"Ezira\",\"logout_time\":\"2026-03-17T07:04:19.855Z\",\"timestamp\":\"2026-03-17T07:04:19.855Z\",\"ip_address\":\"127.0.0.1\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36\",\"endpoint\":\"/logout/40\",\"method\":\"PUT\"}', '2026-03-17 07:04:19'),
+(130, NULL, 'LOGIN_FAILED', 'Login failed: User not found - user40', '{\"username\":\"user40\",\"reason\":\"user_not_found\",\"timestamp\":\"2026-03-17T07:04:26.160Z\",\"ip_address\":\"127.0.0.1\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36\",\"endpoint\":\"/login\",\"method\":\"POST\"}', '2026-03-17 07:04:26'),
+(131, 40, 'LOGIN', 'User ezira@itpark.et logged in successfully', '{\"username\":\"ezira@itpark.et\",\"user_id\":40,\"role_id\":1,\"employee_id\":109,\"employee_name\":\"Ezira\",\"department_id\":2,\"login_time\":\"2026-03-17T07:05:19.035Z\",\"timestamp\":\"2026-03-17T07:05:19.035Z\",\"ip_address\":\"127.0.0.1\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36\",\"endpoint\":\"/login\",\"method\":\"POST\"}', '2026-03-17 07:05:19'),
+(132, 40, 'LOGIN', 'User ezira@itpark.et logged in successfully', '{\"username\":\"ezira@itpark.et\",\"user_id\":40,\"role_id\":1,\"employee_id\":109,\"employee_name\":\"Ezira\",\"department_id\":2,\"login_time\":\"2026-03-17T07:05:44.282Z\",\"timestamp\":\"2026-03-17T07:05:44.282Z\",\"ip_address\":\"127.0.0.1\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36\",\"endpoint\":\"/login\",\"method\":\"POST\"}', '2026-03-17 07:05:44'),
+(133, NULL, 'LOGIN_FAILED', 'Login failed: Password not provided for username undefined', '{\"reason\":\"missing_password\",\"timestamp\":\"2026-03-17T07:11:30.576Z\",\"ip_address\":\"127.0.0.1\",\"user_agent\":\"node\",\"endpoint\":\"/login\",\"method\":\"POST\"}', '2026-03-17 07:11:30'),
+(134, 40, 'LOGIN', 'User ezira@itpark.et logged in successfully', '{\"username\":\"ezira@itpark.et\",\"user_id\":40,\"role_id\":1,\"employee_id\":109,\"employee_name\":\"Ezira\",\"department_id\":2,\"login_time\":\"2026-03-17T07:11:58.158Z\",\"timestamp\":\"2026-03-17T07:11:58.158Z\",\"ip_address\":\"127.0.0.1\",\"user_agent\":\"node\",\"endpoint\":\"/login\",\"method\":\"POST\"}', '2026-03-17 07:11:58'),
+(135, 40, 'LOGIN', 'User ezira@itpark.et logged in successfully', '{\"username\":\"ezira@itpark.et\",\"user_id\":40,\"role_id\":1,\"employee_id\":109,\"employee_name\":\"Ezira\",\"department_id\":2,\"login_time\":\"2026-03-17T07:13:44.885Z\",\"timestamp\":\"2026-03-17T07:13:44.885Z\",\"ip_address\":\"127.0.0.1\",\"user_agent\":\"node\",\"endpoint\":\"/login\",\"method\":\"POST\"}', '2026-03-17 07:13:44'),
+(136, 40, 'LOGIN', 'User ezira@itpark.et logged in successfully', '{\"username\":\"ezira@itpark.et\",\"user_id\":40,\"role_id\":1,\"employee_id\":109,\"employee_name\":\"Ezira\",\"department_id\":2,\"login_time\":\"2026-03-17T07:13:59.715Z\",\"timestamp\":\"2026-03-17T07:13:59.716Z\",\"ip_address\":\"127.0.0.1\",\"user_agent\":\"node\",\"endpoint\":\"/login\",\"method\":\"POST\"}', '2026-03-17 07:13:59'),
+(137, 40, 'LOGIN', 'User ezira@itpark.et logged in successfully', '{\"username\":\"ezira@itpark.et\",\"user_id\":40,\"role_id\":1,\"employee_id\":109,\"employee_name\":\"Ezira\",\"department_id\":2,\"login_time\":\"2026-03-17T07:14:18.289Z\",\"timestamp\":\"2026-03-17T07:14:18.289Z\",\"ip_address\":\"127.0.0.1\",\"user_agent\":\"node\",\"endpoint\":\"/login\",\"method\":\"POST\"}', '2026-03-17 07:14:18'),
+(138, 40, 'LOGIN', 'User ezira@itpark.et logged in successfully', '{\"username\":\"ezira@itpark.et\",\"user_id\":40,\"role_id\":1,\"employee_id\":109,\"employee_name\":\"Ezira\",\"department_id\":2,\"login_time\":\"2026-03-17T07:20:25.046Z\",\"timestamp\":\"2026-03-17T07:20:25.046Z\",\"ip_address\":\"127.0.0.1\",\"user_agent\":\"node\",\"endpoint\":\"/login\",\"method\":\"POST\"}', '2026-03-17 07:20:25'),
+(139, 40, 'LOGIN', 'User ezira@itpark.et logged in successfully', '{\"username\":\"ezira@itpark.et\",\"user_id\":40,\"role_id\":1,\"employee_id\":109,\"employee_name\":\"Ezira\",\"department_id\":2,\"login_time\":\"2026-03-17T07:20:41.873Z\",\"timestamp\":\"2026-03-17T07:20:41.873Z\",\"ip_address\":\"127.0.0.1\",\"user_agent\":\"node\",\"endpoint\":\"/login\",\"method\":\"POST\"}', '2026-03-17 07:20:41'),
+(140, 40, 'LOGIN', 'User ezira@itpark.et logged in successfully', '{\"username\":\"ezira@itpark.et\",\"user_id\":40,\"role_id\":1,\"employee_id\":109,\"employee_name\":\"Ezira\",\"department_id\":2,\"login_time\":\"2026-03-17T07:21:04.556Z\",\"timestamp\":\"2026-03-17T07:21:04.556Z\",\"ip_address\":\"127.0.0.1\",\"user_agent\":\"node\",\"endpoint\":\"/login\",\"method\":\"POST\"}', '2026-03-17 07:21:04'),
+(141, 40, 'LOGIN', 'User ezira@itpark.et logged in successfully', '{\"username\":\"ezira@itpark.et\",\"user_id\":40,\"role_id\":1,\"employee_id\":109,\"employee_name\":\"Ezira\",\"department_id\":2,\"login_time\":\"2026-03-17T07:21:23.638Z\",\"timestamp\":\"2026-03-17T07:21:23.638Z\",\"ip_address\":\"127.0.0.1\",\"user_agent\":\"node\",\"endpoint\":\"/login\",\"method\":\"POST\"}', '2026-03-17 07:21:23'),
+(142, 40, 'LOGIN', 'User ezira@itpark.et logged in successfully', '{\"username\":\"ezira@itpark.et\",\"user_id\":40,\"role_id\":1,\"employee_id\":109,\"employee_name\":\"Ezira\",\"department_id\":2,\"login_time\":\"2026-03-17T07:21:45.396Z\",\"timestamp\":\"2026-03-17T07:21:45.396Z\",\"ip_address\":\"127.0.0.1\",\"user_agent\":\"node\",\"endpoint\":\"/login\",\"method\":\"POST\"}', '2026-03-17 07:21:45'),
+(143, 40, 'LOGIN', 'User ezira@itpark.et logged in successfully', '{\"username\":\"ezira@itpark.et\",\"user_id\":40,\"role_id\":1,\"employee_id\":109,\"employee_name\":\"Ezira\",\"department_id\":2,\"login_time\":\"2026-03-17T07:22:31.904Z\",\"timestamp\":\"2026-03-17T07:22:31.905Z\",\"ip_address\":\"127.0.0.1\",\"user_agent\":\"node\",\"endpoint\":\"/login\",\"method\":\"POST\"}', '2026-03-17 07:22:31'),
+(144, 40, 'LOGIN', 'User ezira@itpark.et logged in successfully', '{\"username\":\"ezira@itpark.et\",\"user_id\":40,\"role_id\":1,\"employee_id\":109,\"employee_name\":\"Ezira\",\"department_id\":2,\"login_time\":\"2026-03-17T07:23:06.118Z\",\"timestamp\":\"2026-03-17T07:23:06.118Z\",\"ip_address\":\"127.0.0.1\",\"user_agent\":\"node\",\"endpoint\":\"/login\",\"method\":\"POST\"}', '2026-03-17 07:23:06'),
+(145, 25, 'LOGOUT', 'User olana@itp.et logged out', '{\"user_id\":\"25\",\"username\":\"olana@itp.et\",\"employee_name\":\"Olana\",\"logout_time\":\"2026-03-17T14:00:59.389Z\",\"timestamp\":\"2026-03-17T14:00:59.389Z\",\"ip_address\":\"127.0.0.1\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36\",\"endpoint\":\"/logout/25\",\"method\":\"PUT\"}', '2026-03-17 14:00:59'),
+(146, 25, 'LOGIN', 'User olana@itp.et logged in successfully', '{\"username\":\"olana@itp.et\",\"user_id\":25,\"role_id\":2,\"employee_id\":72,\"employee_name\":\"Olana\",\"department_id\":2,\"login_time\":\"2026-03-17T14:06:21.233Z\",\"timestamp\":\"2026-03-17T14:06:21.233Z\",\"ip_address\":\"127.0.0.1\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36\",\"endpoint\":\"/login\",\"method\":\"POST\"}', '2026-03-17 14:06:21'),
+(147, 40, 'LOGOUT', 'User ezira@itpark.et logged out', '{\"user_id\":\"40\",\"username\":\"ezira@itpark.et\",\"employee_name\":\"Ezira\",\"logout_time\":\"2026-03-18T12:34:38.708Z\",\"timestamp\":\"2026-03-18T12:34:38.709Z\",\"ip_address\":\"127.0.0.1\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36\",\"endpoint\":\"/logout/40\",\"method\":\"PUT\"}', '2026-03-18 12:34:38'),
+(148, 40, 'LOGIN', 'User ezira@itpark.et logged in successfully', '{\"username\":\"ezira@itpark.et\",\"user_id\":40,\"role_id\":1,\"employee_id\":109,\"employee_name\":\"Ezira\",\"department_id\":2,\"login_time\":\"2026-03-18T12:34:47.986Z\",\"timestamp\":\"2026-03-18T12:34:47.986Z\",\"ip_address\":\"127.0.0.1\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36\",\"endpoint\":\"/login\",\"method\":\"POST\"}', '2026-03-18 12:34:47'),
+(149, 25, 'LOGOUT', 'User olana@itp.et logged out', '{\"user_id\":\"25\",\"username\":\"olana@itp.et\",\"employee_name\":\"Olana\",\"logout_time\":\"2026-03-18T12:44:03.497Z\",\"timestamp\":\"2026-03-18T12:44:03.497Z\",\"ip_address\":\"127.0.0.1\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36\",\"endpoint\":\"/logout/25\",\"method\":\"PUT\"}', '2026-03-18 12:44:03'),
+(150, 25, 'LOGIN', 'User olana@itp.et logged in successfully', '{\"username\":\"olana@itp.et\",\"user_id\":25,\"role_id\":2,\"employee_id\":72,\"employee_name\":\"Olana\",\"department_id\":2,\"login_time\":\"2026-03-18T12:44:07.287Z\",\"timestamp\":\"2026-03-18T12:44:07.287Z\",\"ip_address\":\"127.0.0.1\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36\",\"endpoint\":\"/login\",\"method\":\"POST\"}', '2026-03-18 12:44:07'),
+(151, 25, 'LOGOUT', 'User olana@itp.et logged out', '{\"user_id\":\"25\",\"username\":\"olana@itp.et\",\"employee_name\":\"Olana\",\"logout_time\":\"2026-03-18T13:49:09.887Z\",\"timestamp\":\"2026-03-18T13:49:09.887Z\",\"ip_address\":\"127.0.0.1\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36\",\"endpoint\":\"/logout/25\",\"method\":\"PUT\"}', '2026-03-18 13:49:09'),
+(152, 25, 'LOGIN', 'User olana@itp.et logged in successfully', '{\"username\":\"olana@itp.et\",\"user_id\":25,\"role_id\":2,\"employee_id\":72,\"employee_name\":\"Olana\",\"department_id\":2,\"login_time\":\"2026-03-18T13:49:14.444Z\",\"timestamp\":\"2026-03-18T13:49:14.444Z\",\"ip_address\":\"127.0.0.1\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36\",\"endpoint\":\"/login\",\"method\":\"POST\"}', '2026-03-18 13:49:14'),
+(153, 25, 'LOGOUT', 'User olana@itp.et logged out', '{\"user_id\":\"25\",\"username\":\"olana@itp.et\",\"employee_name\":\"Olana\",\"logout_time\":\"2026-03-18T13:54:23.178Z\",\"timestamp\":\"2026-03-18T13:54:23.178Z\",\"ip_address\":\"127.0.0.1\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36\",\"endpoint\":\"/logout/25\",\"method\":\"PUT\"}', '2026-03-18 13:54:23'),
+(154, 25, 'LOGIN', 'User olana@itp.et logged in successfully', '{\"username\":\"olana@itp.et\",\"user_id\":25,\"role_id\":2,\"employee_id\":72,\"employee_name\":\"Olana\",\"department_id\":2,\"login_time\":\"2026-03-18T13:54:24.655Z\",\"timestamp\":\"2026-03-18T13:54:24.655Z\",\"ip_address\":\"127.0.0.1\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36\",\"endpoint\":\"/login\",\"method\":\"POST\"}', '2026-03-18 13:54:24'),
+(155, 40, 'LOGOUT', 'User ezira@itpark.et logged out', '{\"user_id\":\"40\",\"username\":\"ezira@itpark.et\",\"employee_name\":\"Ezira\",\"logout_time\":\"2026-03-19T09:04:39.357Z\",\"timestamp\":\"2026-03-19T09:04:39.357Z\",\"ip_address\":\"127.0.0.1\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36\",\"endpoint\":\"/logout/40\",\"method\":\"PUT\"}', '2026-03-19 09:04:39'),
+(156, 40, 'LOGIN', 'User ezira@itpark.et logged in successfully', '{\"username\":\"ezira@itpark.et\",\"user_id\":40,\"role_id\":1,\"employee_id\":109,\"employee_name\":\"Ezira\",\"department_id\":2,\"login_time\":\"2026-03-19T09:04:41.445Z\",\"timestamp\":\"2026-03-19T09:04:41.445Z\",\"ip_address\":\"127.0.0.1\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36\",\"endpoint\":\"/login\",\"method\":\"POST\"}', '2026-03-19 09:04:41'),
+(157, 25, 'LOGOUT', 'User olana@itp.et logged out', '{\"user_id\":\"25\",\"username\":\"olana@itp.et\",\"employee_name\":\"Olana\",\"logout_time\":\"2026-03-19T09:06:52.421Z\",\"timestamp\":\"2026-03-19T09:06:52.422Z\",\"ip_address\":\"127.0.0.1\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36\",\"endpoint\":\"/logout/25\",\"method\":\"PUT\"}', '2026-03-19 09:06:52'),
+(158, 25, 'LOGIN', 'User olana@itp.et logged in successfully', '{\"username\":\"olana@itp.et\",\"user_id\":25,\"role_id\":2,\"employee_id\":72,\"employee_name\":\"Olana\",\"department_id\":2,\"login_time\":\"2026-03-19T09:06:55.688Z\",\"timestamp\":\"2026-03-19T09:06:55.688Z\",\"ip_address\":\"127.0.0.1\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36\",\"endpoint\":\"/login\",\"method\":\"POST\"}', '2026-03-19 09:06:55'),
+(159, 25, 'LOGOUT', 'User olana@itp.et logged out', '{\"user_id\":\"25\",\"username\":\"olana@itp.et\",\"employee_name\":\"Olana\",\"logout_time\":\"2026-03-19T10:19:01.978Z\",\"timestamp\":\"2026-03-19T10:19:01.978Z\",\"ip_address\":\"127.0.0.1\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36\",\"endpoint\":\"/logout/25\",\"method\":\"PUT\"}', '2026-03-19 10:19:01'),
+(160, 25, 'LOGIN', 'User olana@itp.et logged in successfully', '{\"username\":\"olana@itp.et\",\"user_id\":25,\"role_id\":2,\"employee_id\":72,\"employee_name\":\"Olana\",\"department_id\":2,\"login_time\":\"2026-03-19T10:19:27.424Z\",\"timestamp\":\"2026-03-19T10:19:27.424Z\",\"ip_address\":\"127.0.0.1\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36\",\"endpoint\":\"/login\",\"method\":\"POST\"}', '2026-03-19 10:19:27'),
+(161, 25, 'LOGOUT', 'User olana@itp.et logged out', '{\"user_id\":\"25\",\"username\":\"olana@itp.et\",\"employee_name\":\"Olana\",\"logout_time\":\"2026-03-19T10:19:43.284Z\",\"timestamp\":\"2026-03-19T10:19:43.284Z\",\"ip_address\":\"127.0.0.1\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36\",\"endpoint\":\"/logout/25\",\"method\":\"PUT\"}', '2026-03-19 10:19:43'),
+(162, 25, 'LOGIN', 'User olana@itp.et logged in successfully', '{\"username\":\"olana@itp.et\",\"user_id\":25,\"role_id\":2,\"employee_id\":72,\"employee_name\":\"Olana\",\"department_id\":2,\"login_time\":\"2026-03-19T10:20:10.136Z\",\"timestamp\":\"2026-03-19T10:20:10.136Z\",\"ip_address\":\"127.0.0.1\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36\",\"endpoint\":\"/login\",\"method\":\"POST\"}', '2026-03-19 10:20:10'),
+(163, 25, 'LOGOUT', 'User olana@itp.et logged out', '{\"user_id\":\"25\",\"username\":\"olana@itp.et\",\"employee_name\":\"Olana\",\"logout_time\":\"2026-03-20T04:59:38.230Z\",\"timestamp\":\"2026-03-20T04:59:38.230Z\",\"ip_address\":\"127.0.0.1\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36\",\"endpoint\":\"/logout/25\",\"method\":\"PUT\"}', '2026-03-20 04:59:38'),
+(164, 40, 'LOGIN', 'User ezira@itpark.et logged in successfully', '{\"username\":\"ezira@itpark.et\",\"user_id\":40,\"role_id\":1,\"employee_id\":109,\"employee_name\":\"Ezira\",\"department_id\":2,\"login_time\":\"2026-03-20T04:59:42.305Z\",\"timestamp\":\"2026-03-20T04:59:42.305Z\",\"ip_address\":\"127.0.0.1\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36\",\"endpoint\":\"/login\",\"method\":\"POST\"}', '2026-03-20 04:59:42'),
+(165, 40, 'LOGOUT', 'User ezira@itpark.et logged out', '{\"user_id\":\"40\",\"username\":\"ezira@itpark.et\",\"employee_name\":\"Ezira\",\"logout_time\":\"2026-03-20T06:14:22.918Z\",\"timestamp\":\"2026-03-20T06:14:22.918Z\",\"ip_address\":\"127.0.0.1\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36\",\"endpoint\":\"/logout/40\",\"method\":\"PUT\"}', '2026-03-20 06:14:22'),
+(166, 79, 'LOGIN', 'User Milliongoraw@gmail.com logged in successfully', '{\"username\":\"Milliongoraw@gmail.com\",\"user_id\":79,\"role_id\":6,\"employee_id\":152,\"employee_name\":\"Million  Goraw\",\"department_id\":null,\"login_time\":\"2026-03-20T06:14:42.433Z\",\"timestamp\":\"2026-03-20T06:14:42.433Z\",\"ip_address\":\"127.0.0.1\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36\",\"endpoint\":\"/login\",\"method\":\"POST\"}', '2026-03-20 06:14:42'),
+(167, 79, 'LOGOUT', 'User Milliongoraw@gmail.com logged out', '{\"user_id\":\"79\",\"username\":\"Milliongoraw@gmail.com\",\"employee_name\":\"Million  Goraw\",\"logout_time\":\"2026-03-20T06:15:04.398Z\",\"timestamp\":\"2026-03-20T06:15:04.398Z\",\"ip_address\":\"127.0.0.1\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36\",\"endpoint\":\"/logout/79\",\"method\":\"PUT\"}', '2026-03-20 06:15:04'),
+(168, 40, 'LOGIN', 'User ezira@itpark.et logged in successfully', '{\"username\":\"ezira@itpark.et\",\"user_id\":40,\"role_id\":1,\"employee_id\":109,\"employee_name\":\"Ezira\",\"department_id\":2,\"login_time\":\"2026-03-20T06:15:45.528Z\",\"timestamp\":\"2026-03-20T06:15:45.528Z\",\"ip_address\":\"127.0.0.1\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36\",\"endpoint\":\"/login\",\"method\":\"POST\"}', '2026-03-20 06:15:45'),
+(169, 40, 'LOGOUT', 'User ezira@itpark.et logged out', '{\"user_id\":\"40\",\"username\":\"ezira@itpark.et\",\"employee_name\":\"Ezira\",\"logout_time\":\"2026-03-20T06:21:25.920Z\",\"timestamp\":\"2026-03-20T06:21:25.920Z\",\"ip_address\":\"127.0.0.1\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36\",\"endpoint\":\"/logout/40\",\"method\":\"PUT\"}', '2026-03-20 06:21:25'),
+(170, 40, 'LOGIN', 'User ezira@itpark.et logged in successfully', '{\"username\":\"ezira@itpark.et\",\"user_id\":40,\"role_id\":1,\"employee_id\":109,\"employee_name\":\"Ezira\",\"department_id\":2,\"login_time\":\"2026-03-20T06:21:31.261Z\",\"timestamp\":\"2026-03-20T06:21:31.261Z\",\"ip_address\":\"127.0.0.1\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36\",\"endpoint\":\"/login\",\"method\":\"POST\"}', '2026-03-20 06:21:31'),
+(171, 40, 'LOGOUT', 'User ezira@itpark.et logged out', '{\"user_id\":\"40\",\"username\":\"ezira@itpark.et\",\"employee_name\":\"Ezira\",\"logout_time\":\"2026-03-20T06:21:38.300Z\",\"timestamp\":\"2026-03-20T06:21:38.300Z\",\"ip_address\":\"127.0.0.1\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36\",\"endpoint\":\"/logout/40\",\"method\":\"PUT\"}', '2026-03-20 06:21:38'),
+(172, 79, 'LOGIN', 'User Milliongoraw@gmail.com logged in successfully', '{\"username\":\"Milliongoraw@gmail.com\",\"user_id\":79,\"role_id\":6,\"employee_id\":152,\"employee_name\":\"Million  Goraw\",\"department_id\":null,\"login_time\":\"2026-03-20T06:21:43.759Z\",\"timestamp\":\"2026-03-20T06:21:43.759Z\",\"ip_address\":\"127.0.0.1\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36\",\"endpoint\":\"/login\",\"method\":\"POST\"}', '2026-03-20 06:21:43'),
+(173, 79, 'LOGOUT', 'User Milliongoraw@gmail.com logged out', '{\"user_id\":\"79\",\"username\":\"Milliongoraw@gmail.com\",\"employee_name\":\"Million  Goraw\",\"logout_time\":\"2026-03-20T06:22:24.253Z\",\"timestamp\":\"2026-03-20T06:22:24.253Z\",\"ip_address\":\"127.0.0.1\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36\",\"endpoint\":\"/logout/79\",\"method\":\"PUT\"}', '2026-03-20 06:22:24'),
+(174, 25, 'LOGIN', 'User olana@itp.et logged in successfully', '{\"username\":\"olana@itp.et\",\"user_id\":25,\"role_id\":2,\"employee_id\":72,\"employee_name\":\"Olana\",\"department_id\":2,\"login_time\":\"2026-03-20T06:22:32.385Z\",\"timestamp\":\"2026-03-20T06:22:32.385Z\",\"ip_address\":\"127.0.0.1\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36\",\"endpoint\":\"/login\",\"method\":\"POST\"}', '2026-03-20 06:22:32'),
+(175, 40, 'LOGOUT', 'User ezira@itpark.et logged out', '{\"user_id\":\"40\",\"username\":\"ezira@itpark.et\",\"employee_name\":\"Ezira\",\"logout_time\":\"2026-03-20T11:25:44.371Z\",\"timestamp\":\"2026-03-20T11:25:44.371Z\",\"ip_address\":\"127.0.0.1\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36\",\"endpoint\":\"/logout/40\",\"method\":\"PUT\"}', '2026-03-20 11:25:44'),
+(176, 40, 'LOGIN', 'User ezira@itpark.et logged in successfully', '{\"username\":\"ezira@itpark.et\",\"user_id\":40,\"role_id\":1,\"employee_id\":109,\"employee_name\":\"Ezira\",\"department_id\":2,\"login_time\":\"2026-03-20T11:25:57.027Z\",\"timestamp\":\"2026-03-20T11:25:57.027Z\",\"ip_address\":\"127.0.0.1\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36\",\"endpoint\":\"/login\",\"method\":\"POST\"}', '2026-03-20 11:25:57'),
+(177, 25, 'LOGOUT', 'User olana@itp.et logged out', '{\"user_id\":\"25\",\"username\":\"olana@itp.et\",\"employee_name\":\"Olana\",\"logout_time\":\"2026-03-20T11:26:00.124Z\",\"timestamp\":\"2026-03-20T11:26:00.124Z\",\"ip_address\":\"127.0.0.1\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36\",\"endpoint\":\"/logout/25\",\"method\":\"PUT\"}', '2026-03-20 11:26:00'),
+(178, 79, 'LOGIN', 'User Milliongoraw@gmail.com logged in successfully', '{\"username\":\"Milliongoraw@gmail.com\",\"user_id\":79,\"role_id\":6,\"employee_id\":152,\"employee_name\":\"Million  Goraw\",\"department_id\":null,\"login_time\":\"2026-03-20T11:26:04.965Z\",\"timestamp\":\"2026-03-20T11:26:04.965Z\",\"ip_address\":\"127.0.0.1\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36\",\"endpoint\":\"/login\",\"method\":\"POST\"}', '2026-03-20 11:26:04'),
+(179, 40, 'LOGOUT', 'User ezira@itpark.et logged out', '{\"user_id\":\"40\",\"username\":\"ezira@itpark.et\",\"employee_name\":\"Ezira\",\"logout_time\":\"2026-03-20T11:43:26.257Z\",\"timestamp\":\"2026-03-20T11:43:26.258Z\",\"ip_address\":\"127.0.0.1\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36\",\"endpoint\":\"/logout/40\",\"method\":\"PUT\"}', '2026-03-20 11:43:26'),
+(180, 67, 'LOGIN', 'User hayaltamrat@gmail.com logged in successfully', '{\"username\":\"hayaltamrat@gmail.com\",\"user_id\":67,\"role_id\":8,\"employee_id\":139,\"employee_name\":\"hayal Tamrat\",\"department_id\":2,\"login_time\":\"2026-03-20T11:43:33.662Z\",\"timestamp\":\"2026-03-20T11:43:33.662Z\",\"ip_address\":\"127.0.0.1\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36\",\"endpoint\":\"/login\",\"method\":\"POST\"}', '2026-03-20 11:43:33'),
+(181, 67, 'LOGOUT', 'User hayaltamrat@gmail.com logged out', '{\"user_id\":\"67\",\"username\":\"hayaltamrat@gmail.com\",\"employee_name\":\"hayal Tamrat\",\"logout_time\":\"2026-03-20T11:46:34.691Z\",\"timestamp\":\"2026-03-20T11:46:34.691Z\",\"ip_address\":\"127.0.0.1\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36\",\"endpoint\":\"/logout/67\",\"method\":\"PUT\"}', '2026-03-20 11:46:34'),
+(182, 40, 'LOGIN', 'User ezira@itpark.et logged in successfully', '{\"username\":\"ezira@itpark.et\",\"user_id\":40,\"role_id\":1,\"employee_id\":109,\"employee_name\":\"Ezira\",\"department_id\":2,\"login_time\":\"2026-03-20T11:46:39.337Z\",\"timestamp\":\"2026-03-20T11:46:39.337Z\",\"ip_address\":\"127.0.0.1\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36\",\"endpoint\":\"/login\",\"method\":\"POST\"}', '2026-03-20 11:46:39'),
+(183, 79, 'LOGOUT', 'User Milliongoraw@gmail.com logged out', '{\"user_id\":\"79\",\"username\":\"Milliongoraw@gmail.com\",\"employee_name\":\"Million  Goraw\",\"logout_time\":\"2026-03-20T11:48:12.794Z\",\"timestamp\":\"2026-03-20T11:48:12.794Z\",\"ip_address\":\"127.0.0.1\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36\",\"endpoint\":\"/logout/79\",\"method\":\"PUT\"}', '2026-03-20 11:48:12'),
+(184, 79, 'LOGIN', 'User Milliongoraw@gmail.com logged in successfully', '{\"username\":\"Milliongoraw@gmail.com\",\"user_id\":79,\"role_id\":6,\"employee_id\":152,\"employee_name\":\"Million  Goraw\",\"department_id\":null,\"login_time\":\"2026-03-20T11:48:27.820Z\",\"timestamp\":\"2026-03-20T11:48:27.821Z\",\"ip_address\":\"127.0.0.1\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36\",\"endpoint\":\"/login\",\"method\":\"POST\"}', '2026-03-20 11:48:27'),
+(185, 40, 'LOGOUT', 'User ezira@itpark.et logged out', '{\"user_id\":\"40\",\"username\":\"ezira@itpark.et\",\"employee_name\":\"Ezira\",\"logout_time\":\"2026-03-20T12:42:23.863Z\",\"timestamp\":\"2026-03-20T12:42:23.863Z\",\"ip_address\":\"127.0.0.1\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36\",\"endpoint\":\"/logout/40\",\"method\":\"PUT\"}', '2026-03-20 12:42:23'),
+(186, 40, 'LOGIN', 'User ezira@itpark.et logged in successfully', '{\"username\":\"ezira@itpark.et\",\"user_id\":40,\"role_id\":1,\"employee_id\":109,\"employee_name\":\"Ezira\",\"department_id\":2,\"login_time\":\"2026-03-20T12:42:31.468Z\",\"timestamp\":\"2026-03-20T12:42:31.468Z\",\"ip_address\":\"127.0.0.1\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36\",\"endpoint\":\"/login\",\"method\":\"POST\"}', '2026-03-20 12:42:31'),
+(187, 40, 'LOGOUT', 'User ezira@itpark.et logged out', '{\"user_id\":\"40\",\"username\":\"ezira@itpark.et\",\"employee_name\":\"Ezira\",\"logout_time\":\"2026-03-20T12:51:01.992Z\",\"timestamp\":\"2026-03-20T12:51:01.992Z\",\"ip_address\":\"127.0.0.1\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36\",\"endpoint\":\"/logout/40\",\"method\":\"PUT\"}', '2026-03-20 12:51:01'),
+(188, 67, 'LOGIN', 'User hayaltamrat@gmail.com logged in successfully', '{\"username\":\"hayaltamrat@gmail.com\",\"user_id\":67,\"role_id\":8,\"employee_id\":139,\"employee_name\":\"hayal Tamrat\",\"department_id\":2,\"login_time\":\"2026-03-20T12:51:06.734Z\",\"timestamp\":\"2026-03-20T12:51:06.734Z\",\"ip_address\":\"127.0.0.1\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36\",\"endpoint\":\"/login\",\"method\":\"POST\"}', '2026-03-20 12:51:06'),
+(189, 67, 'LOGOUT', 'User hayaltamrat@gmail.com logged out', '{\"user_id\":\"67\",\"username\":\"hayaltamrat@gmail.com\",\"employee_name\":\"hayal Tamrat\",\"logout_time\":\"2026-03-20T12:52:20.057Z\",\"timestamp\":\"2026-03-20T12:52:20.057Z\",\"ip_address\":\"127.0.0.1\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36\",\"endpoint\":\"/logout/67\",\"method\":\"PUT\"}', '2026-03-20 12:52:20'),
+(190, 40, 'LOGIN', 'User ezira@itpark.et logged in successfully', '{\"username\":\"ezira@itpark.et\",\"user_id\":40,\"role_id\":1,\"employee_id\":109,\"employee_name\":\"Ezira\",\"department_id\":2,\"login_time\":\"2026-03-20T12:52:29.462Z\",\"timestamp\":\"2026-03-20T12:52:29.462Z\",\"ip_address\":\"127.0.0.1\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36\",\"endpoint\":\"/login\",\"method\":\"POST\"}', '2026-03-20 12:52:29'),
+(191, 79, 'LOGOUT', 'User Milliongoraw@gmail.com logged out', '{\"user_id\":\"79\",\"username\":\"Milliongoraw@gmail.com\",\"employee_name\":\"Million  Goraw\",\"logout_time\":\"2026-03-20T12:55:10.534Z\",\"timestamp\":\"2026-03-20T12:55:10.534Z\",\"ip_address\":\"127.0.0.1\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36\",\"endpoint\":\"/logout/79\",\"method\":\"PUT\"}', '2026-03-20 12:55:10'),
+(192, 79, 'LOGIN', 'User Milliongoraw@gmail.com logged in successfully', '{\"username\":\"Milliongoraw@gmail.com\",\"user_id\":79,\"role_id\":6,\"employee_id\":152,\"employee_name\":\"Million  Goraw\",\"department_id\":null,\"login_time\":\"2026-03-20T12:55:22.961Z\",\"timestamp\":\"2026-03-20T12:55:22.961Z\",\"ip_address\":\"127.0.0.1\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36\",\"endpoint\":\"/login\",\"method\":\"POST\"}', '2026-03-20 12:55:23'),
+(193, 40, 'LOGOUT', 'User ezira@itpark.et logged out', '{\"user_id\":\"40\",\"username\":\"ezira@itpark.et\",\"employee_name\":\"Ezira\",\"logout_time\":\"2026-03-20T12:55:42.718Z\",\"timestamp\":\"2026-03-20T12:55:42.718Z\",\"ip_address\":\"127.0.0.1\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36\",\"endpoint\":\"/logout/40\",\"method\":\"PUT\"}', '2026-03-20 12:55:42'),
+(194, 73, 'LOGIN', 'User tsehayu@itp.et logged in successfully', '{\"username\":\"tsehayu@itp.et\",\"user_id\":73,\"role_id\":5,\"employee_id\":146,\"employee_name\":\"tsuhayu directorate\",\"department_id\":11,\"login_time\":\"2026-03-20T12:55:46.404Z\",\"timestamp\":\"2026-03-20T12:55:46.404Z\",\"ip_address\":\"127.0.0.1\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36\",\"endpoint\":\"/login\",\"method\":\"POST\"}', '2026-03-20 12:55:46'),
+(195, 79, 'LOGOUT', 'User Milliongoraw@gmail.com logged out', '{\"user_id\":\"79\",\"username\":\"Milliongoraw@gmail.com\",\"employee_name\":\"Million  Goraw\",\"logout_time\":\"2026-03-20T12:56:41.411Z\",\"timestamp\":\"2026-03-20T12:56:41.411Z\",\"ip_address\":\"127.0.0.1\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36\",\"endpoint\":\"/logout/79\",\"method\":\"PUT\"}', '2026-03-20 12:56:41'),
+(196, 76, 'LOGIN', 'User hayaltamrat@itp.et logged in successfully', '{\"username\":\"hayaltamrat@itp.et\",\"user_id\":76,\"role_id\":8,\"employee_id\":149,\"employee_name\":\"Hayal Tamrat\",\"department_id\":18,\"login_time\":\"2026-03-20T12:56:51.051Z\",\"timestamp\":\"2026-03-20T12:56:51.051Z\",\"ip_address\":\"127.0.0.1\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36\",\"endpoint\":\"/login\",\"method\":\"POST\"}', '2026-03-20 12:56:51'),
+(197, 76, 'LOGOUT', 'User hayaltamrat@itp.et logged out', '{\"user_id\":\"76\",\"username\":\"hayaltamrat@itp.et\",\"employee_name\":\"Hayal Tamrat\",\"logout_time\":\"2026-03-20T12:57:17.511Z\",\"timestamp\":\"2026-03-20T12:57:17.511Z\",\"ip_address\":\"127.0.0.1\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36\",\"endpoint\":\"/logout/76\",\"method\":\"PUT\"}', '2026-03-20 12:57:17'),
+(198, 73, 'LOGOUT', 'User tsehayu@itp.et logged out', '{\"user_id\":\"73\",\"username\":\"tsehayu@itp.et\",\"employee_name\":\"tsuhayu directorate\",\"logout_time\":\"2026-03-20T12:57:25.270Z\",\"timestamp\":\"2026-03-20T12:57:25.270Z\",\"ip_address\":\"127.0.0.1\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36\",\"endpoint\":\"/logout/73\",\"method\":\"PUT\"}', '2026-03-20 12:57:25'),
+(199, 67, 'LOGIN', 'User hayaltamrat@gmail.com logged in successfully', '{\"username\":\"hayaltamrat@gmail.com\",\"user_id\":67,\"role_id\":8,\"employee_id\":139,\"employee_name\":\"hayal Tamrat\",\"department_id\":2,\"login_time\":\"2026-03-20T12:57:32.001Z\",\"timestamp\":\"2026-03-20T12:57:32.001Z\",\"ip_address\":\"127.0.0.1\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36\",\"endpoint\":\"/login\",\"method\":\"POST\"}', '2026-03-20 12:57:32'),
+(200, 25, 'LOGIN', 'User olana@itp.et logged in successfully', '{\"username\":\"olana@itp.et\",\"user_id\":25,\"role_id\":2,\"employee_id\":72,\"employee_name\":\"Olana\",\"department_id\":2,\"login_time\":\"2026-03-20T12:58:26.591Z\",\"timestamp\":\"2026-03-20T12:58:26.591Z\",\"ip_address\":\"127.0.0.1\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36\",\"endpoint\":\"/login\",\"method\":\"POST\"}', '2026-03-20 12:58:26'),
+(201, 25, 'LOGOUT', 'User olana@itp.et logged out', '{\"user_id\":\"25\",\"username\":\"olana@itp.et\",\"employee_name\":\"Olana\",\"logout_time\":\"2026-03-20T12:59:22.150Z\",\"timestamp\":\"2026-03-20T12:59:22.150Z\",\"ip_address\":\"127.0.0.1\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36\",\"endpoint\":\"/logout/25\",\"method\":\"PUT\"}', '2026-03-20 12:59:22'),
+(202, 73, 'LOGIN', 'User tsehayu@itp.et logged in successfully', '{\"username\":\"tsehayu@itp.et\",\"user_id\":73,\"role_id\":5,\"employee_id\":146,\"employee_name\":\"tsuhayu directorate\",\"department_id\":11,\"login_time\":\"2026-03-20T12:59:35.789Z\",\"timestamp\":\"2026-03-20T12:59:35.790Z\",\"ip_address\":\"127.0.0.1\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36\",\"endpoint\":\"/login\",\"method\":\"POST\"}', '2026-03-20 12:59:35'),
+(203, 73, 'LOGOUT', 'User tsehayu@itp.et logged out', '{\"user_id\":\"73\",\"username\":\"tsehayu@itp.et\",\"employee_name\":\"tsuhayu directorate\",\"logout_time\":\"2026-03-20T12:59:45.782Z\",\"timestamp\":\"2026-03-20T12:59:45.782Z\",\"ip_address\":\"127.0.0.1\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36\",\"endpoint\":\"/logout/73\",\"method\":\"PUT\"}', '2026-03-20 12:59:45'),
+(204, 25, 'LOGIN', 'User olana@itp.et logged in successfully', '{\"username\":\"olana@itp.et\",\"user_id\":25,\"role_id\":2,\"employee_id\":72,\"employee_name\":\"Olana\",\"department_id\":2,\"login_time\":\"2026-03-20T12:59:54.790Z\",\"timestamp\":\"2026-03-20T12:59:54.790Z\",\"ip_address\":\"127.0.0.1\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36\",\"endpoint\":\"/login\",\"method\":\"POST\"}', '2026-03-20 12:59:54'),
+(205, 67, 'LOGOUT', 'User hayaltamrat@gmail.com logged out', '{\"user_id\":\"67\",\"username\":\"hayaltamrat@gmail.com\",\"employee_name\":\"hayal Tamrat\",\"logout_time\":\"2026-03-20T14:23:56.812Z\",\"timestamp\":\"2026-03-20T14:23:56.812Z\",\"ip_address\":\"127.0.0.1\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36\",\"endpoint\":\"/logout/67\",\"method\":\"PUT\"}', '2026-03-20 14:23:56'),
+(206, 40, 'LOGIN', 'User ezira@itpark.et logged in successfully', '{\"username\":\"ezira@itpark.et\",\"user_id\":40,\"role_id\":1,\"employee_id\":109,\"employee_name\":\"Ezira\",\"department_id\":2,\"login_time\":\"2026-03-20T14:24:02.870Z\",\"timestamp\":\"2026-03-20T14:24:02.870Z\",\"ip_address\":\"127.0.0.1\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36\",\"endpoint\":\"/login\",\"method\":\"POST\"}', '2026-03-20 14:24:02'),
+(207, 25, 'LOGOUT', 'User olana@itp.et logged out', '{\"user_id\":\"25\",\"username\":\"olana@itp.et\",\"employee_name\":\"Olana\",\"logout_time\":\"2026-03-20T14:25:21.647Z\",\"timestamp\":\"2026-03-20T14:25:21.647Z\",\"ip_address\":\"127.0.0.1\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36\",\"endpoint\":\"/logout/25\",\"method\":\"PUT\"}', '2026-03-20 14:25:21'),
+(208, 25, 'LOGIN', 'User olana@itp.et logged in successfully', '{\"username\":\"olana@itp.et\",\"user_id\":25,\"role_id\":2,\"employee_id\":72,\"employee_name\":\"Olana\",\"department_id\":2,\"login_time\":\"2026-03-20T14:25:23.472Z\",\"timestamp\":\"2026-03-20T14:25:23.472Z\",\"ip_address\":\"127.0.0.1\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36\",\"endpoint\":\"/login\",\"method\":\"POST\"}', '2026-03-20 14:25:23'),
+(209, 25, 'LOGOUT', 'User olana@itp.et logged out', '{\"user_id\":\"25\",\"username\":\"olana@itp.et\",\"employee_name\":\"Olana\",\"logout_time\":\"2026-03-20T14:25:58.555Z\",\"timestamp\":\"2026-03-20T14:25:58.555Z\",\"ip_address\":\"127.0.0.1\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36\",\"endpoint\":\"/logout/25\",\"method\":\"PUT\"}', '2026-03-20 14:25:58'),
+(210, 79, 'LOGIN', 'User Milliongoraw@gmail.com logged in successfully', '{\"username\":\"Milliongoraw@gmail.com\",\"user_id\":79,\"role_id\":6,\"employee_id\":152,\"employee_name\":\"Million  Goraw\",\"department_id\":null,\"login_time\":\"2026-03-20T14:26:05.270Z\",\"timestamp\":\"2026-03-20T14:26:05.270Z\",\"ip_address\":\"127.0.0.1\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36\",\"endpoint\":\"/login\",\"method\":\"POST\"}', '2026-03-20 14:26:05'),
+(211, 40, 'LOGOUT', 'User ezira@itpark.et logged out', '{\"user_id\":\"40\",\"username\":\"ezira@itpark.et\",\"employee_name\":\"Ezira\",\"logout_time\":\"2026-03-20T14:48:27.507Z\",\"timestamp\":\"2026-03-20T14:48:27.507Z\",\"ip_address\":\"127.0.0.1\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36\",\"endpoint\":\"/logout/40\",\"method\":\"PUT\"}', '2026-03-20 14:48:27'),
+(212, 73, 'LOGIN', 'User tsehayu@itp.et logged in successfully', '{\"username\":\"tsehayu@itp.et\",\"user_id\":73,\"role_id\":5,\"employee_id\":146,\"employee_name\":\"tsuhayu directorate\",\"department_id\":11,\"login_time\":\"2026-03-20T14:48:41.218Z\",\"timestamp\":\"2026-03-20T14:48:41.219Z\",\"ip_address\":\"127.0.0.1\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36\",\"endpoint\":\"/login\",\"method\":\"POST\"}', '2026-03-20 14:48:41'),
+(213, 73, 'LOGOUT', 'User tsehayu@itp.et logged out', '{\"user_id\":\"73\",\"username\":\"tsehayu@itp.et\",\"employee_name\":\"tsuhayu directorate\",\"logout_time\":\"2026-03-20T14:49:07.939Z\",\"timestamp\":\"2026-03-20T14:49:07.939Z\",\"ip_address\":\"127.0.0.1\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36\",\"endpoint\":\"/logout/73\",\"method\":\"PUT\"}', '2026-03-20 14:49:07'),
+(214, 25, 'LOGIN', 'User olana@itp.et logged in successfully', '{\"username\":\"olana@itp.et\",\"user_id\":25,\"role_id\":2,\"employee_id\":72,\"employee_name\":\"Olana\",\"department_id\":2,\"login_time\":\"2026-03-20T14:49:12.132Z\",\"timestamp\":\"2026-03-20T14:49:12.132Z\",\"ip_address\":\"127.0.0.1\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36\",\"endpoint\":\"/login\",\"method\":\"POST\"}', '2026-03-20 14:49:12'),
+(215, 25, 'LOGOUT', 'User olana@itp.et logged out', '{\"user_id\":\"25\",\"username\":\"olana@itp.et\",\"employee_name\":\"Olana\",\"logout_time\":\"2026-03-20T14:50:01.457Z\",\"timestamp\":\"2026-03-20T14:50:01.457Z\",\"ip_address\":\"127.0.0.1\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36\",\"endpoint\":\"/logout/25\",\"method\":\"PUT\"}', '2026-03-20 14:50:01'),
+(216, 69, 'LOGIN', 'User belete@itp.et logged in successfully', '{\"username\":\"belete@itp.et\",\"user_id\":69,\"role_id\":29,\"employee_id\":142,\"employee_name\":\"belete esubalew\",\"department_id\":null,\"login_time\":\"2026-03-20T14:50:11.157Z\",\"timestamp\":\"2026-03-20T14:50:11.157Z\",\"ip_address\":\"127.0.0.1\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36\",\"endpoint\":\"/login\",\"method\":\"POST\"}', '2026-03-20 14:50:11'),
+(217, 79, 'LOGOUT', 'User Milliongoraw@gmail.com logged out', '{\"user_id\":\"79\",\"username\":\"Milliongoraw@gmail.com\",\"employee_name\":\"Million  Goraw\",\"logout_time\":\"2026-03-20T14:51:44.603Z\",\"timestamp\":\"2026-03-20T14:51:44.603Z\",\"ip_address\":\"127.0.0.1\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36\",\"endpoint\":\"/logout/79\",\"method\":\"PUT\"}', '2026-03-20 14:51:44'),
+(218, 40, 'LOGIN', 'User ezira@itpark.et logged in successfully', '{\"username\":\"ezira@itpark.et\",\"user_id\":40,\"role_id\":1,\"employee_id\":109,\"employee_name\":\"Ezira\",\"department_id\":2,\"login_time\":\"2026-03-20T14:51:49.842Z\",\"timestamp\":\"2026-03-20T14:51:49.842Z\",\"ip_address\":\"127.0.0.1\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36\",\"endpoint\":\"/login\",\"method\":\"POST\"}', '2026-03-20 14:51:49'),
+(219, 40, 'LOGOUT', 'User ezira@itpark.et logged out', '{\"user_id\":\"40\",\"username\":\"ezira@itpark.et\",\"employee_name\":\"Ezira\",\"logout_time\":\"2026-03-20T15:38:41.176Z\",\"timestamp\":\"2026-03-20T15:38:41.176Z\",\"ip_address\":\"127.0.0.1\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36\",\"endpoint\":\"/logout/40\",\"method\":\"PUT\"}', '2026-03-20 15:38:41'),
+(220, 67, 'LOGIN', 'User hayaltamrat@gmail.com logged in successfully', '{\"username\":\"hayaltamrat@gmail.com\",\"user_id\":67,\"role_id\":8,\"employee_id\":139,\"employee_name\":\"hayal Tamrat\",\"department_id\":2,\"login_time\":\"2026-03-20T15:39:13.142Z\",\"timestamp\":\"2026-03-20T15:39:13.142Z\",\"ip_address\":\"127.0.0.1\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36\",\"endpoint\":\"/login\",\"method\":\"POST\"}', '2026-03-20 15:39:13'),
+(221, 69, 'LOGOUT', 'User belete@itp.et logged out', '{\"user_id\":\"69\",\"username\":\"belete@itp.et\",\"employee_name\":\"belete esubalew\",\"logout_time\":\"2026-03-20T15:39:41.225Z\",\"timestamp\":\"2026-03-20T15:39:41.225Z\",\"ip_address\":\"127.0.0.1\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36\",\"endpoint\":\"/logout/69\",\"method\":\"PUT\"}', '2026-03-20 15:39:41'),
+(222, 79, 'LOGIN', 'User milliongoraw@gmail.com logged in successfully', '{\"username\":\"milliongoraw@gmail.com\",\"user_id\":79,\"role_id\":6,\"employee_id\":152,\"employee_name\":\"Million  Goraw\",\"department_id\":null,\"login_time\":\"2026-03-20T15:40:12.455Z\",\"timestamp\":\"2026-03-20T15:40:12.455Z\",\"ip_address\":\"127.0.0.1\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36\",\"endpoint\":\"/login\",\"method\":\"POST\"}', '2026-03-20 15:40:12');
+INSERT INTO `audit_logs` (`id`, `user_id`, `action`, `description`, `metadata`, `created_at`) VALUES
+(223, 79, 'LOGOUT', 'User Milliongoraw@gmail.com logged out', '{\"user_id\":\"79\",\"username\":\"Milliongoraw@gmail.com\",\"employee_name\":\"Million  Goraw\",\"logout_time\":\"2026-03-20T15:54:51.413Z\",\"timestamp\":\"2026-03-20T15:54:51.413Z\",\"ip_address\":\"127.0.0.1\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36\",\"endpoint\":\"/logout/79\",\"method\":\"PUT\"}', '2026-03-20 15:54:51'),
+(224, 73, 'LOGIN', 'User tsehayu@itp.et logged in successfully', '{\"username\":\"tsehayu@itp.et\",\"user_id\":73,\"role_id\":5,\"employee_id\":146,\"employee_name\":\"tsuhayu directorate\",\"department_id\":11,\"login_time\":\"2026-03-20T15:55:02.050Z\",\"timestamp\":\"2026-03-20T15:55:02.050Z\",\"ip_address\":\"127.0.0.1\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36\",\"endpoint\":\"/login\",\"method\":\"POST\"}', '2026-03-20 15:55:02'),
+(225, 67, 'LOGOUT', 'User hayaltamrat@gmail.com logged out', '{\"user_id\":\"67\",\"username\":\"hayaltamrat@gmail.com\",\"employee_name\":\"hayal Tamrat\",\"logout_time\":\"2026-03-20T17:55:31.160Z\",\"timestamp\":\"2026-03-20T17:55:31.161Z\",\"ip_address\":\"127.0.0.1\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36\",\"endpoint\":\"/logout/67\",\"method\":\"PUT\"}', '2026-03-20 17:55:31'),
+(226, 40, 'LOGIN', 'User ezira@itpark.et logged in successfully', '{\"username\":\"ezira@itpark.et\",\"user_id\":40,\"role_id\":1,\"employee_id\":109,\"employee_name\":\"Ezira\",\"department_id\":2,\"login_time\":\"2026-03-20T17:55:42.092Z\",\"timestamp\":\"2026-03-20T17:55:42.092Z\",\"ip_address\":\"127.0.0.1\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36\",\"endpoint\":\"/login\",\"method\":\"POST\"}', '2026-03-20 17:55:42'),
+(227, 73, 'LOGOUT', 'User tsehayu@itp.et logged out', '{\"user_id\":\"73\",\"username\":\"tsehayu@itp.et\",\"employee_name\":\"tsuhayu directorate\",\"logout_time\":\"2026-03-20T18:00:42.883Z\",\"timestamp\":\"2026-03-20T18:00:42.883Z\",\"ip_address\":\"127.0.0.1\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36\",\"endpoint\":\"/logout/73\",\"method\":\"PUT\"}', '2026-03-20 18:00:42'),
+(228, 79, 'LOGIN', 'User milliongoraw@gmail.com logged in successfully', '{\"username\":\"milliongoraw@gmail.com\",\"user_id\":79,\"role_id\":6,\"employee_id\":152,\"employee_name\":\"Million  Goraw\",\"department_id\":null,\"login_time\":\"2026-03-20T18:00:51.019Z\",\"timestamp\":\"2026-03-20T18:00:51.019Z\",\"ip_address\":\"127.0.0.1\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36\",\"endpoint\":\"/login\",\"method\":\"POST\"}', '2026-03-20 18:00:51'),
+(229, 40, 'LOGOUT', 'User ezira@itpark.et logged out', '{\"user_id\":\"40\",\"username\":\"ezira@itpark.et\",\"employee_name\":\"Ezira\",\"logout_time\":\"2026-03-20T18:01:42.161Z\",\"timestamp\":\"2026-03-20T18:01:42.161Z\",\"ip_address\":\"127.0.0.1\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36\",\"endpoint\":\"/logout/40\",\"method\":\"PUT\"}', '2026-03-20 18:01:42'),
+(230, 40, 'LOGIN', 'User ezira@itpark.et logged in successfully', '{\"username\":\"ezira@itpark.et\",\"user_id\":40,\"role_id\":1,\"employee_id\":109,\"employee_name\":\"Ezira\",\"department_id\":2,\"login_time\":\"2026-03-20T18:01:44.929Z\",\"timestamp\":\"2026-03-20T18:01:44.929Z\",\"ip_address\":\"127.0.0.1\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36\",\"endpoint\":\"/login\",\"method\":\"POST\"}', '2026-03-20 18:01:44'),
+(231, 40, 'LOGOUT', 'User ezira@itpark.et logged out', '{\"user_id\":\"40\",\"username\":\"ezira@itpark.et\",\"employee_name\":\"Ezira\",\"logout_time\":\"2026-03-21T06:07:40.574Z\",\"timestamp\":\"2026-03-21T06:07:40.574Z\",\"ip_address\":\"127.0.0.1\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36\",\"endpoint\":\"/logout/40\",\"method\":\"PUT\"}', '2026-03-21 06:07:40'),
+(232, 73, 'LOGIN', 'User tsehayu@itp.et logged in successfully', '{\"username\":\"tsehayu@itp.et\",\"user_id\":73,\"role_id\":5,\"employee_id\":146,\"employee_name\":\"tsuhayu directorate\",\"department_id\":11,\"login_time\":\"2026-03-21T06:07:48.060Z\",\"timestamp\":\"2026-03-21T06:07:48.060Z\",\"ip_address\":\"127.0.0.1\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36\",\"endpoint\":\"/login\",\"method\":\"POST\"}', '2026-03-21 06:07:48'),
+(233, 79, 'LOGOUT', 'User Milliongoraw@gmail.com logged out', '{\"user_id\":\"79\",\"username\":\"Milliongoraw@gmail.com\",\"employee_name\":\"Million  Goraw\",\"logout_time\":\"2026-03-21T14:25:35.277Z\",\"timestamp\":\"2026-03-21T14:25:35.277Z\",\"ip_address\":\"127.0.0.1\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36\",\"endpoint\":\"/logout/79\",\"method\":\"PUT\"}', '2026-03-21 14:25:35'),
+(234, 73, 'LOGIN', 'User tsehayu@itp.et logged in successfully', '{\"username\":\"tsehayu@itp.et\",\"user_id\":73,\"role_id\":5,\"employee_id\":146,\"employee_name\":\"tsuhayu directorate\",\"department_id\":11,\"login_time\":\"2026-03-21T14:25:49.105Z\",\"timestamp\":\"2026-03-21T14:25:49.105Z\",\"ip_address\":\"127.0.0.1\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36\",\"endpoint\":\"/login\",\"method\":\"POST\"}', '2026-03-21 14:25:49'),
+(235, 73, 'LOGOUT', 'User tsehayu@itp.et logged out', '{\"user_id\":\"73\",\"username\":\"tsehayu@itp.et\",\"employee_name\":\"tsuhayu directorate\",\"logout_time\":\"2026-03-23T06:09:05.418Z\",\"timestamp\":\"2026-03-23T06:09:05.418Z\",\"ip_address\":\"127.0.0.1\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36\",\"endpoint\":\"/logout/73\",\"method\":\"PUT\"}', '2026-03-23 06:09:05'),
+(236, 40, 'LOGIN', 'User ezira@itpark.et logged in successfully', '{\"username\":\"ezira@itpark.et\",\"user_id\":40,\"role_id\":1,\"employee_id\":109,\"employee_name\":\"Ezira\",\"department_id\":2,\"login_time\":\"2026-03-23T06:09:09.608Z\",\"timestamp\":\"2026-03-23T06:09:09.608Z\",\"ip_address\":\"127.0.0.1\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36\",\"endpoint\":\"/login\",\"method\":\"POST\"}', '2026-03-23 06:09:09'),
+(237, 40, 'LOGOUT', 'User ezira@itpark.et logged out', '{\"user_id\":\"40\",\"username\":\"ezira@itpark.et\",\"employee_name\":\"Ezira\",\"logout_time\":\"2026-03-23T06:46:13.770Z\",\"timestamp\":\"2026-03-23T06:46:13.770Z\",\"ip_address\":\"127.0.0.1\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36\",\"endpoint\":\"/logout/40\",\"method\":\"PUT\"}', '2026-03-23 06:46:13'),
+(238, 79, 'LOGIN', 'User milliongoraw@gmail.com logged in successfully', '{\"username\":\"milliongoraw@gmail.com\",\"user_id\":79,\"role_id\":6,\"employee_id\":152,\"employee_name\":\"Million  Goraw\",\"department_id\":null,\"login_time\":\"2026-03-23T06:46:20.769Z\",\"timestamp\":\"2026-03-23T06:46:20.769Z\",\"ip_address\":\"127.0.0.1\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36\",\"endpoint\":\"/login\",\"method\":\"POST\"}', '2026-03-23 06:46:20'),
+(239, 79, 'LOGOUT', 'User Milliongoraw@gmail.com logged out', '{\"user_id\":\"79\",\"username\":\"Milliongoraw@gmail.com\",\"employee_name\":\"Million  Goraw\",\"logout_time\":\"2026-03-23T09:05:02.339Z\",\"timestamp\":\"2026-03-23T09:05:02.339Z\",\"ip_address\":\"127.0.0.1\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36\",\"endpoint\":\"/logout/79\",\"method\":\"PUT\"}', '2026-03-23 09:05:02'),
+(240, 40, 'LOGIN', 'User ezira@itpark.et logged in successfully', '{\"username\":\"ezira@itpark.et\",\"user_id\":40,\"role_id\":1,\"employee_id\":109,\"employee_name\":\"Ezira\",\"department_id\":null,\"login_time\":\"2026-03-23T09:05:10.721Z\",\"timestamp\":\"2026-03-23T09:05:10.721Z\",\"ip_address\":\"127.0.0.1\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36\",\"endpoint\":\"/login\",\"method\":\"POST\"}', '2026-03-23 09:05:10'),
+(241, 73, 'LOGOUT', 'User tsehayu@itp.et logged out', '{\"user_id\":\"73\",\"username\":\"tsehayu@itp.et\",\"employee_name\":\"tsuhayu directorate\",\"logout_time\":\"2026-03-23T11:09:02.387Z\",\"timestamp\":\"2026-03-23T11:09:02.387Z\",\"ip_address\":\"127.0.0.1\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36\",\"endpoint\":\"/logout/73\",\"method\":\"PUT\"}', '2026-03-23 11:09:02'),
+(242, 76, 'LOGIN', 'User hayaltamrat@itp.et logged in successfully', '{\"username\":\"hayaltamrat@itp.et\",\"user_id\":76,\"role_id\":8,\"employee_id\":149,\"employee_name\":\"Hayal Tamrat\",\"department_id\":18,\"login_time\":\"2026-03-23T11:09:09.662Z\",\"timestamp\":\"2026-03-23T11:09:09.662Z\",\"ip_address\":\"127.0.0.1\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36\",\"endpoint\":\"/login\",\"method\":\"POST\"}', '2026-03-23 11:09:09'),
+(243, 76, 'LOGOUT', 'User hayaltamrat@itp.et logged out', '{\"user_id\":\"76\",\"username\":\"hayaltamrat@itp.et\",\"employee_name\":\"Hayal Tamrat\",\"logout_time\":\"2026-03-23T11:10:04.589Z\",\"timestamp\":\"2026-03-23T11:10:04.589Z\",\"ip_address\":\"127.0.0.1\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36\",\"endpoint\":\"/logout/76\",\"method\":\"PUT\"}', '2026-03-23 11:10:04'),
+(244, 79, 'LOGIN', 'User Milliongoraw@gmail.com logged in successfully', '{\"username\":\"Milliongoraw@gmail.com\",\"user_id\":79,\"role_id\":6,\"employee_id\":152,\"employee_name\":\"Million  Goraw\",\"department_id\":null,\"login_time\":\"2026-03-23T11:10:09.244Z\",\"timestamp\":\"2026-03-23T11:10:09.244Z\",\"ip_address\":\"127.0.0.1\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36\",\"endpoint\":\"/login\",\"method\":\"POST\"}', '2026-03-23 11:10:09'),
+(245, 79, 'LOGOUT', 'User Milliongoraw@gmail.com logged out', '{\"user_id\":\"79\",\"username\":\"Milliongoraw@gmail.com\",\"employee_name\":\"Million  Goraw\",\"logout_time\":\"2026-03-24T12:18:01.564Z\",\"timestamp\":\"2026-03-24T12:18:01.564Z\",\"ip_address\":\"127.0.0.1\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36\",\"endpoint\":\"/logout/79\",\"method\":\"PUT\"}', '2026-03-24 12:18:01'),
+(246, 76, 'LOGIN', 'User hayaltamrat@itp.et logged in successfully', '{\"username\":\"hayaltamrat@itp.et\",\"user_id\":76,\"role_id\":8,\"employee_id\":149,\"employee_name\":\"Hayal Tamrat\",\"department_id\":18,\"login_time\":\"2026-03-24T12:18:08.502Z\",\"timestamp\":\"2026-03-24T12:18:08.502Z\",\"ip_address\":\"127.0.0.1\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36\",\"endpoint\":\"/login\",\"method\":\"POST\"}', '2026-03-24 12:18:08'),
+(247, 76, 'LOGOUT', 'User hayaltamrat@itp.et logged out', '{\"user_id\":\"76\",\"username\":\"hayaltamrat@itp.et\",\"employee_name\":\"Hayal Tamrat\",\"logout_time\":\"2026-03-24T12:19:35.590Z\",\"timestamp\":\"2026-03-24T12:19:35.590Z\",\"ip_address\":\"127.0.0.1\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36\",\"endpoint\":\"/logout/76\",\"method\":\"PUT\"}', '2026-03-24 12:19:35'),
+(248, 73, 'LOGIN', 'User tsehayu@itp.et logged in successfully', '{\"username\":\"tsehayu@itp.et\",\"user_id\":73,\"role_id\":5,\"employee_id\":146,\"employee_name\":\"tsuhayu directorate\",\"department_id\":11,\"login_time\":\"2026-03-24T12:19:43.718Z\",\"timestamp\":\"2026-03-24T12:19:43.718Z\",\"ip_address\":\"127.0.0.1\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36\",\"endpoint\":\"/login\",\"method\":\"POST\"}', '2026-03-24 12:19:43'),
+(249, 73, 'LOGOUT', 'User tsehayu@itp.et logged out', '{\"user_id\":\"73\",\"username\":\"tsehayu@itp.et\",\"employee_name\":\"tsuhayu directorate\",\"logout_time\":\"2026-03-24T12:20:13.733Z\",\"timestamp\":\"2026-03-24T12:20:13.733Z\",\"ip_address\":\"127.0.0.1\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36\",\"endpoint\":\"/logout/73\",\"method\":\"PUT\"}', '2026-03-24 12:20:13'),
+(250, 25, 'LOGIN', 'User olana@itp.et logged in successfully', '{\"username\":\"olana@itp.et\",\"user_id\":25,\"role_id\":2,\"employee_id\":72,\"employee_name\":\"Olana\",\"department_id\":2,\"login_time\":\"2026-03-24T12:20:20.588Z\",\"timestamp\":\"2026-03-24T12:20:20.588Z\",\"ip_address\":\"127.0.0.1\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36\",\"endpoint\":\"/login\",\"method\":\"POST\"}', '2026-03-24 12:20:20'),
+(251, 25, 'LOGOUT', 'User olana@itp.et logged out', '{\"user_id\":\"25\",\"username\":\"olana@itp.et\",\"employee_name\":\"Olana\",\"logout_time\":\"2026-03-24T12:21:23.347Z\",\"timestamp\":\"2026-03-24T12:21:23.347Z\",\"ip_address\":\"127.0.0.1\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36\",\"endpoint\":\"/logout/25\",\"method\":\"PUT\"}', '2026-03-24 12:21:23'),
+(252, 69, 'LOGIN', 'User belete@itp.et logged in successfully', '{\"username\":\"belete@itp.et\",\"user_id\":69,\"role_id\":29,\"employee_id\":142,\"employee_name\":\"belete esubalew\",\"department_id\":null,\"login_time\":\"2026-03-24T12:21:34.708Z\",\"timestamp\":\"2026-03-24T12:21:34.708Z\",\"ip_address\":\"127.0.0.1\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36\",\"endpoint\":\"/login\",\"method\":\"POST\"}', '2026-03-24 12:21:34'),
+(253, 69, 'LOGOUT', 'User belete@itp.et logged out', '{\"user_id\":\"69\",\"username\":\"belete@itp.et\",\"employee_name\":\"belete esubalew\",\"logout_time\":\"2026-03-24T12:34:13.089Z\",\"timestamp\":\"2026-03-24T12:34:13.089Z\",\"ip_address\":\"127.0.0.1\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36\",\"endpoint\":\"/logout/69\",\"method\":\"PUT\"}', '2026-03-24 12:34:13'),
+(254, 79, 'LOGIN', 'User Milliongoraw@gmail.com logged in successfully', '{\"username\":\"Milliongoraw@gmail.com\",\"user_id\":79,\"role_id\":6,\"employee_id\":152,\"employee_name\":\"Million  Goraw\",\"department_id\":null,\"login_time\":\"2026-03-24T12:34:24.451Z\",\"timestamp\":\"2026-03-24T12:34:24.451Z\",\"ip_address\":\"127.0.0.1\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36\",\"endpoint\":\"/login\",\"method\":\"POST\"}', '2026-03-24 12:34:24'),
+(255, 25, 'LOGOUT', 'User olana@itp.et logged out', '{\"user_id\":\"25\",\"username\":\"olana@itp.et\",\"employee_name\":\"Olana\",\"logout_time\":\"2026-03-24T13:33:15.375Z\",\"timestamp\":\"2026-03-24T13:33:15.375Z\",\"ip_address\":\"127.0.0.1\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36\",\"endpoint\":\"/logout/25\",\"method\":\"PUT\"}', '2026-03-24 13:33:15'),
+(256, 40, 'LOGIN', 'User ezira@itpark.et logged in successfully', '{\"username\":\"ezira@itpark.et\",\"user_id\":40,\"role_id\":1,\"employee_id\":109,\"employee_name\":\"Ezira\",\"department_id\":null,\"login_time\":\"2026-03-24T19:02:54.255Z\",\"timestamp\":\"2026-03-24T19:02:54.255Z\",\"ip_address\":\"127.0.0.1\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36\",\"endpoint\":\"/login\",\"method\":\"POST\"}', '2026-03-24 19:02:54'),
+(257, 40, 'LOGOUT', 'User ezira@itpark.et logged out', '{\"user_id\":\"40\",\"username\":\"ezira@itpark.et\",\"employee_name\":\"Ezira\",\"logout_time\":\"2026-03-25T06:24:26.752Z\",\"timestamp\":\"2026-03-25T06:24:26.752Z\",\"ip_address\":\"127.0.0.1\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36\",\"endpoint\":\"/logout/40\",\"method\":\"PUT\"}', '2026-03-25 06:24:26'),
+(258, 40, 'LOGIN', 'User ezira@itpark.et logged in successfully', '{\"username\":\"ezira@itpark.et\",\"user_id\":40,\"role_id\":1,\"employee_id\":109,\"employee_name\":\"Ezira\",\"department_id\":null,\"login_time\":\"2026-03-25T06:33:02.689Z\",\"timestamp\":\"2026-03-25T06:33:02.689Z\",\"ip_address\":\"127.0.0.1\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36\",\"endpoint\":\"/login\",\"method\":\"POST\"}', '2026-03-25 06:33:02'),
+(524, 40, 'LOGOUT', 'User ezira@itpark.et logged out', '{\"user_id\":\"40\",\"username\":\"ezira@itpark.et\",\"employee_name\":\"Ezira\",\"logout_time\":\"2026-03-25T07:38:40.605Z\",\"timestamp\":\"2026-03-25T07:38:40.605Z\",\"ip_address\":\"127.0.0.1\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36\",\"endpoint\":\"/logout/40\",\"method\":\"PUT\"}', '2026-03-25 07:38:40'),
+(525, 40, 'LOGIN', 'User ezira@itpark.et logged in successfully', '{\"username\":\"ezira@itpark.et\",\"user_id\":40,\"role_id\":1,\"employee_id\":109,\"employee_name\":\"Ezira\",\"department_id\":null,\"login_time\":\"2026-03-25T07:38:43.335Z\",\"timestamp\":\"2026-03-25T07:38:43.335Z\",\"ip_address\":\"127.0.0.1\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36\",\"endpoint\":\"/login\",\"method\":\"POST\"}', '2026-03-25 07:38:43'),
+(526, 24, 'TASK_CREATE', 'Created task: \"Fix API timeout issues\" assigned to team', '{\"ip_address\":\"192.168.1.198\",\"user_agent\":\"Mozilla/5.0 (X11; Linux x86_64) Firefox/125\",\"endpoint\":\"/api/tasks/187\",\"method\":\"POST\",\"timestamp\":\"2026-03-25T07:41:46.066Z\",\"task_id\":187}', '2026-03-11 00:30:40'),
+(527, 76, 'PLAN_DELETE', 'Deleted plan: \"Marketing Strategy 2026\" (ID 351)', '{\"ip_address\":\"192.168.1.193\",\"user_agent\":\"Mozilla/5.0 (X11; Linux x86_64) Firefox/125\",\"endpoint\":\"/api/plans/351\",\"method\":\"PUT\",\"timestamp\":\"2026-03-25T07:41:46.065Z\",\"plan_id\":351}', '2026-03-23 04:40:13'),
+(528, 57, 'PLAN_CREATE', 'Created plan: \"Construction Safety Roadmap\" (ID 249)', '{\"ip_address\":\"192.168.1.95\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) Chrome/124\",\"endpoint\":\"/api/plans/249\",\"method\":\"POST\",\"timestamp\":\"2026-03-25T07:41:46.064Z\",\"plan_id\":249}', '2026-03-17 21:10:19'),
+(529, 79, 'PLAN_UPDATE', 'Updated plan: \"Annual IT Infrastructure Upgrade\" — revised budget & timeline', '{\"ip_address\":\"192.168.1.33\",\"user_agent\":\"Mozilla/5.0 (X11; Linux x86_64) Firefox/125\",\"endpoint\":\"/api/plans/317\",\"method\":\"PUT\",\"timestamp\":\"2026-03-25T07:41:46.065Z\",\"plan_id\":317}', '2026-03-19 09:48:08'),
+(530, 43, 'REPORT_DECLINE', 'Declined report: \"Q1 Financial Summary Report\" — data inconsistency', '{\"ip_address\":\"192.168.1.26\",\"user_agent\":\"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) Safari/605\",\"endpoint\":\"/api/reports/612\",\"method\":\"GET\",\"timestamp\":\"2026-03-25T07:41:46.065Z\",\"report_id\":612}', '2026-03-16 15:54:30'),
+(531, 27, 'REPORT_SUBMIT', 'Submitted report: \"Q1 Financial Summary Report\" for review', '{\"ip_address\":\"192.168.1.28\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) Chrome/124\",\"endpoint\":\"/api/reports/549\",\"method\":\"GET\",\"timestamp\":\"2026-03-25T07:41:46.065Z\",\"report_id\":549}', '2026-03-09 00:29:37'),
+(532, 38, 'REPORT_CREATE', 'Created report: \"Annual Audit Report 2024\"', '{\"ip_address\":\"192.168.1.84\",\"user_agent\":\"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) Safari/605\",\"endpoint\":\"/api/reports/469\",\"method\":\"POST\",\"timestamp\":\"2026-03-25T07:41:46.065Z\",\"report_id\":469}', '2026-02-28 21:31:00'),
+(533, 41, 'MENU_DELETE', 'Deleted menu item \"Tasks\" and cleaned up role_permissions', '{\"ip_address\":\"192.168.1.193\",\"user_agent\":\"Mozilla/5.0 (X11; Linux x86_64) Firefox/125\",\"endpoint\":\"/api/menu-permissions\",\"method\":\"POST\",\"timestamp\":\"2026-03-25T07:41:46.066Z\",\"role\":\"Expert\",\"menu\":\"Tasks\"}', '2026-02-27 00:14:19'),
+(534, 46, 'PLAN_APPROVE', 'Approved plan: \"Legal Compliance Review Plan\" (ID 301)', '{\"ip_address\":\"192.168.1.22\",\"user_agent\":\"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) Safari/605\",\"endpoint\":\"/api/plans/301\",\"method\":\"PUT\",\"timestamp\":\"2026-03-25T07:41:46.065Z\",\"plan_id\":301}', '2026-02-27 07:46:15'),
+(535, 79, 'TASK_COMPLETE', 'Completed task: \"Prepare Q2 budget sheet\" (ID 275) ahead of schedule', '{\"ip_address\":\"192.168.1.100\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) Chrome/124\",\"endpoint\":\"/api/tasks/275\",\"method\":\"PUT\",\"timestamp\":\"2026-03-25T07:41:46.066Z\",\"task_id\":275}', '2026-03-12 12:48:02'),
+(536, 26, 'TASK_DELETE', 'Deleted task: \"Update employee records\" (ID 146) — cancelled', '{\"ip_address\":\"192.168.1.141\",\"user_agent\":\"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) Safari/605\",\"endpoint\":\"/api/tasks/146\",\"method\":\"PUT\",\"timestamp\":\"2026-03-25T07:41:46.066Z\",\"task_id\":146}', '2026-03-10 23:48:16'),
+(537, 44, 'MENU_CREATE', 'Created menu item: \"Dashboard\" (path /dashboard)', '{\"ip_address\":\"192.168.1.198\",\"user_agent\":\"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) Safari/605\",\"endpoint\":\"/api/menu-permissions\",\"method\":\"POST\",\"timestamp\":\"2026-03-25T07:41:46.066Z\",\"role\":\"Staff\",\"menu\":\"Dashboard\"}', '2026-03-10 12:22:37'),
+(538, 52, 'TASK_COMPLETE', 'Completed task: \"Prepare Q2 budget sheet\" (ID 195) ahead of schedule', '{\"ip_address\":\"192.168.1.41\",\"user_agent\":\"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) Safari/605\",\"endpoint\":\"/api/tasks/195\",\"method\":\"PUT\",\"timestamp\":\"2026-03-25T07:41:46.066Z\",\"task_id\":195}', '2026-03-12 10:24:32'),
+(539, 64, 'PLAN_VIEW', 'Viewed plan: \"Employee Training Programme 2025\"', '{\"ip_address\":\"192.168.1.154\",\"user_agent\":\"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) Safari/605\",\"endpoint\":\"/api/plans/403\",\"method\":\"PUT\",\"timestamp\":\"2026-03-25T07:41:46.065Z\",\"plan_id\":403}', '2026-02-23 23:40:44'),
+(540, 56, 'PLAN_APPROVE', 'Approved plan: \"Q2 Budget Forecast Plan\" (ID 226)', '{\"ip_address\":\"192.168.1.27\",\"user_agent\":\"Mozilla/5.0 (X11; Linux x86_64) Firefox/125\",\"endpoint\":\"/api/plans/226\",\"method\":\"PUT\",\"timestamp\":\"2026-03-25T07:41:46.065Z\",\"plan_id\":226}', '2026-03-16 11:36:31'),
+(541, 79, 'REPORT_DECLINE', 'Declined report: \"Monthly Employee Performance\" — data inconsistency', '{\"ip_address\":\"192.168.1.50\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) Chrome/124\",\"endpoint\":\"/api/reports/674\",\"method\":\"GET\",\"timestamp\":\"2026-03-25T07:41:46.066Z\",\"report_id\":674}', '2026-03-04 15:21:05'),
+(542, 46, 'REPORT_UPDATE', 'Updated report: \"Construction Progress Report\" — added Q3 data', '{\"ip_address\":\"192.168.1.136\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) Chrome/124\",\"endpoint\":\"/api/reports/345\",\"method\":\"GET\",\"timestamp\":\"2026-03-25T07:41:46.066Z\",\"report_id\":345}', '2026-02-25 16:56:05'),
+(543, 43, 'PLAN_VIEW', 'Viewed plan: \"Q2 Budget Forecast Plan\"', '{\"ip_address\":\"192.168.1.27\",\"user_agent\":\"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) Safari/605\",\"endpoint\":\"/api/plans/203\",\"method\":\"PUT\",\"timestamp\":\"2026-03-25T07:41:46.065Z\",\"plan_id\":203}', '2026-03-15 01:12:12'),
+(544, 55, 'TASK_COMPLETE', 'Completed task: \"Update employee records\" (ID 189) ahead of schedule', '{\"ip_address\":\"192.168.1.58\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) Chrome/124\",\"endpoint\":\"/api/tasks/189\",\"method\":\"PUT\",\"timestamp\":\"2026-03-25T07:41:46.066Z\",\"task_id\":189}', '2026-03-22 02:59:18'),
+(545, 25, 'REPORT_SUBMIT', 'Submitted report: \"Q1 Financial Summary Report\" for review', '{\"ip_address\":\"192.168.1.189\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) Chrome/124\",\"endpoint\":\"/api/reports/414\",\"method\":\"GET\",\"timestamp\":\"2026-03-25T07:41:46.065Z\",\"report_id\":414}', '2026-03-07 16:28:51'),
+(546, 43, 'PLAN_DELETE', 'Deleted plan: \"HR Onboarding Automation\" (ID 423)', '{\"ip_address\":\"192.168.1.33\",\"user_agent\":\"Mozilla/5.0 (X11; Linux x86_64) Firefox/125\",\"endpoint\":\"/api/plans/423\",\"method\":\"PUT\",\"timestamp\":\"2026-03-25T07:41:46.065Z\",\"plan_id\":423}', '2026-03-16 16:01:49'),
+(547, 40, 'TASK_DELETE', 'Deleted task: \"Deploy hotfix to production\" (ID 173) — cancelled', '{\"ip_address\":\"192.168.1.56\",\"user_agent\":\"Mozilla/5.0 (X11; Linux x86_64) Firefox/125\",\"endpoint\":\"/api/tasks/173\",\"method\":\"PUT\",\"timestamp\":\"2026-03-25T07:41:46.066Z\",\"task_id\":173}', '2026-03-01 21:29:35'),
+(548, 37, 'REPORT_CREATE', 'Created report: \"IT Incident Response Report\"', '{\"ip_address\":\"192.168.1.54\",\"user_agent\":\"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) Safari/605\",\"endpoint\":\"/api/reports/473\",\"method\":\"POST\",\"timestamp\":\"2026-03-25T07:41:46.066Z\",\"report_id\":473}', '2026-03-20 18:50:03'),
+(549, 68, 'PLAN_SUBMIT', 'Submitted plan: \"Q2 Budget Forecast Plan\" for approval', '{\"ip_address\":\"192.168.1.188\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) Chrome/124\",\"endpoint\":\"/api/plans/155\",\"method\":\"PUT\",\"timestamp\":\"2026-03-25T07:41:46.065Z\",\"plan_id\":155}', '2026-03-23 13:31:16'),
+(550, 6, 'MENU_UPDATE', 'Updated menu item \"Tasks\" — changed icon & display order', '{\"ip_address\":\"192.168.1.80\",\"user_agent\":\"Mozilla/5.0 (X11; Linux x86_64) Firefox/125\",\"endpoint\":\"/api/menu-permissions\",\"method\":\"POST\",\"timestamp\":\"2026-03-25T07:41:46.066Z\",\"role\":\"Manager\",\"menu\":\"Tasks\"}', '2026-03-04 14:19:43'),
+(551, 73, 'PLAN_UPDATE', 'Updated plan: \"Annual IT Infrastructure Upgrade\" — revised budget & timeline', '{\"ip_address\":\"192.168.1.144\",\"user_agent\":\"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) Safari/605\",\"endpoint\":\"/api/plans/267\",\"method\":\"PUT\",\"timestamp\":\"2026-03-25T07:41:46.065Z\",\"plan_id\":267}', '2026-03-16 14:02:43'),
+(552, 52, 'TASK_CREATE', 'Created task: \"Review server backups\" assigned to team', '{\"ip_address\":\"192.168.1.115\",\"user_agent\":\"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) Safari/605\",\"endpoint\":\"/api/tasks/213\",\"method\":\"POST\",\"timestamp\":\"2026-03-25T07:41:46.066Z\",\"task_id\":213}', '2026-03-05 01:48:26'),
+(553, 7, 'REPORT_UPDATE', 'Updated report: \"Risk Assessment Report\" — added Q3 data', '{\"ip_address\":\"192.168.1.93\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) Chrome/124\",\"endpoint\":\"/api/reports/306\",\"method\":\"GET\",\"timestamp\":\"2026-03-25T07:41:46.065Z\",\"report_id\":306}', '2026-03-17 01:38:54'),
+(554, 50, 'TASK_UPDATE', 'Updated task: \"Update employee records\" — changed deadline & priority', '{\"ip_address\":\"192.168.1.19\",\"user_agent\":\"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) Safari/605\",\"endpoint\":\"/api/tasks/26\",\"method\":\"PUT\",\"timestamp\":\"2026-03-25T07:41:46.066Z\",\"task_id\":26}', '2026-03-05 20:41:10'),
+(555, 69, 'REPORT_DECLINE', 'Declined report: \"Q1 Financial Summary Report\" — data inconsistency', '{\"ip_address\":\"192.168.1.150\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) Chrome/124\",\"endpoint\":\"/api/reports/280\",\"method\":\"GET\",\"timestamp\":\"2026-03-25T07:41:46.065Z\",\"report_id\":280}', '2026-03-08 06:29:37'),
+(556, 25, 'REPORT_CREATE', 'Created report: \"Budget Variance Analysis\"', '{\"ip_address\":\"192.168.1.145\",\"user_agent\":\"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) Safari/605\",\"endpoint\":\"/api/reports/538\",\"method\":\"POST\",\"timestamp\":\"2026-03-25T07:41:46.065Z\",\"report_id\":538}', '2026-02-25 19:06:24'),
+(557, 40, 'TASK_COMPLETE', 'Completed task: \"Fix API timeout issues\" (ID 240) ahead of schedule', '{\"ip_address\":\"192.168.1.197\",\"user_agent\":\"Mozilla/5.0 (X11; Linux x86_64) Firefox/125\",\"endpoint\":\"/api/tasks/240\",\"method\":\"PUT\",\"timestamp\":\"2026-03-25T07:41:46.066Z\",\"task_id\":240}', '2026-03-25 02:43:17'),
+(558, 56, 'TASK_CREATE', 'Created task: \"Train new team members\" assigned to team', '{\"ip_address\":\"192.168.1.170\",\"user_agent\":\"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) Safari/605\",\"endpoint\":\"/api/tasks/131\",\"method\":\"POST\",\"timestamp\":\"2026-03-25T07:41:46.066Z\",\"task_id\":131}', '2026-03-20 19:30:38'),
+(559, 54, 'TASK_UPDATE', 'Updated task: \"Update employee records\" — changed deadline & priority', '{\"ip_address\":\"192.168.1.60\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) Chrome/124\",\"endpoint\":\"/api/tasks/215\",\"method\":\"PUT\",\"timestamp\":\"2026-03-25T07:41:46.066Z\",\"task_id\":215}', '2026-03-18 07:13:11'),
+(560, 7, 'TASK_CREATE', 'Created task: \"Update employee records\" assigned to team', '{\"ip_address\":\"192.168.1.133\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) Chrome/124\",\"endpoint\":\"/api/tasks/268\",\"method\":\"POST\",\"timestamp\":\"2026-03-25T07:41:46.066Z\",\"task_id\":268}', '2026-03-15 23:47:10'),
+(561, 74, 'TASK_COMPLETE', 'Completed task: \"Complete security audit\" (ID 220) ahead of schedule', '{\"ip_address\":\"192.168.1.96\",\"user_agent\":\"Mozilla/5.0 (X11; Linux x86_64) Firefox/125\",\"endpoint\":\"/api/tasks/220\",\"method\":\"PUT\",\"timestamp\":\"2026-03-25T07:41:46.066Z\",\"task_id\":220}', '2026-02-25 04:51:29'),
+(562, 38, 'PLAN_CREATE', 'Created plan: \"Annual IT Infrastructure Upgrade\" (ID 338)', '{\"ip_address\":\"192.168.1.176\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) Chrome/124\",\"endpoint\":\"/api/plans/338\",\"method\":\"POST\",\"timestamp\":\"2026-03-25T07:41:46.065Z\",\"plan_id\":338}', '2026-03-11 11:08:17'),
+(563, 64, 'PLAN_CREATE', 'Created plan: \"Employee Training Programme 2025\" (ID 204)', '{\"ip_address\":\"192.168.1.64\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) Chrome/124\",\"endpoint\":\"/api/plans/204\",\"method\":\"POST\",\"timestamp\":\"2026-03-25T07:41:46.065Z\",\"plan_id\":204}', '2026-03-08 17:34:23'),
+(564, 26, 'TASK_UPDATE', 'Updated task: \"Train new team members\" — changed deadline & priority', '{\"ip_address\":\"192.168.1.150\",\"user_agent\":\"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) Safari/605\",\"endpoint\":\"/api/tasks/216\",\"method\":\"PUT\",\"timestamp\":\"2026-03-25T07:41:46.066Z\",\"task_id\":216}', '2026-03-12 09:07:06'),
+(565, 66, 'PLAN_DELETE', 'Deleted plan: \"Marketing Strategy 2026\" (ID 362)', '{\"ip_address\":\"192.168.1.65\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) Chrome/124\",\"endpoint\":\"/api/plans/362\",\"method\":\"PUT\",\"timestamp\":\"2026-03-25T07:41:46.065Z\",\"plan_id\":362}', '2026-03-18 00:39:56'),
+(566, 79, 'TASK_UPDATE', 'Updated task: \"Update employee records\" — changed deadline & priority', '{\"ip_address\":\"192.168.1.111\",\"user_agent\":\"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) Safari/605\",\"endpoint\":\"/api/tasks/83\",\"method\":\"PUT\",\"timestamp\":\"2026-03-25T07:41:46.066Z\",\"task_id\":83}', '2026-02-26 13:02:32'),
+(567, 55, 'PLAN_DECLINE', 'Declined plan: \"Digital Transformation Initiative\" — insufficient detail', '{\"ip_address\":\"192.168.1.15\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) Chrome/124\",\"endpoint\":\"/api/plans/257\",\"method\":\"PUT\",\"timestamp\":\"2026-03-25T07:41:46.065Z\",\"plan_id\":257}', '2026-03-15 19:36:21'),
+(568, 75, 'ROLE_DELETE', 'Deleted role \"Manager\" and reassigned 3 users', '{\"ip_address\":\"192.168.1.62\",\"user_agent\":\"Mozilla/5.0 (X11; Linux x86_64) Firefox/125\",\"endpoint\":\"/api/menu-permissions\",\"method\":\"POST\",\"timestamp\":\"2026-03-25T07:41:46.066Z\",\"role\":\"Manager\",\"menu\":\"Admin Panel\"}', '2026-03-19 01:43:33'),
+(569, 61, 'TASK_DELETE', 'Deleted task: \"Review server backups\" (ID 118) — cancelled', '{\"ip_address\":\"192.168.1.161\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) Chrome/124\",\"endpoint\":\"/api/tasks/118\",\"method\":\"PUT\",\"timestamp\":\"2026-03-25T07:41:46.066Z\",\"task_id\":118}', '2026-03-20 18:10:54'),
+(570, 52, 'PLAN_CREATE', 'Created plan: \"Q2 Budget Forecast Plan\" (ID 212)', '{\"ip_address\":\"192.168.1.110\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) Chrome/124\",\"endpoint\":\"/api/plans/212\",\"method\":\"POST\",\"timestamp\":\"2026-03-25T07:41:46.065Z\",\"plan_id\":212}', '2026-03-23 18:46:11'),
+(571, 59, 'PLAN_CREATE', 'Created plan: \"Employee Training Programme 2025\" (ID 219)', '{\"ip_address\":\"192.168.1.169\",\"user_agent\":\"Mozilla/5.0 (X11; Linux x86_64) Firefox/125\",\"endpoint\":\"/api/plans/219\",\"method\":\"POST\",\"timestamp\":\"2026-03-25T07:41:46.065Z\",\"plan_id\":219}', '2026-03-15 15:48:40'),
+(572, 49, 'REPORT_CREATE', 'Created report: \"Annual Audit Report 2024\"', '{\"ip_address\":\"192.168.1.150\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) Chrome/124\",\"endpoint\":\"/api/reports/331\",\"method\":\"POST\",\"timestamp\":\"2026-03-25T07:41:46.066Z\",\"report_id\":331}', '2026-02-28 23:20:04'),
+(573, 75, 'MEETING_POSTPONE', 'Postponed meeting: \"Q2 Strategy Meeting\" to next week', '{\"ip_address\":\"192.168.1.116\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) Chrome/124\",\"endpoint\":\"/api/meetings/46\",\"method\":\"POST\",\"timestamp\":\"2026-03-25T07:41:46.066Z\",\"meeting_id\":46}', '2026-03-23 16:21:38'),
+(574, 48, 'PLAN_DECLINE', 'Declined plan: \"Marketing Strategy 2026\" — insufficient detail', '{\"ip_address\":\"192.168.1.39\",\"user_agent\":\"Mozilla/5.0 (X11; Linux x86_64) Firefox/125\",\"endpoint\":\"/api/plans/235\",\"method\":\"PUT\",\"timestamp\":\"2026-03-25T07:41:46.065Z\",\"plan_id\":235}', '2026-03-17 19:27:17'),
+(575, 78, 'ROLE_DELETE', 'Deleted role \"Manager\" and reassigned 5 users', '{\"ip_address\":\"192.168.1.34\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) Chrome/124\",\"endpoint\":\"/api/menu-permissions\",\"method\":\"POST\",\"timestamp\":\"2026-03-25T07:41:46.066Z\",\"role\":\"Manager\",\"menu\":\"Settings\"}', '2026-03-06 03:11:18'),
+(576, 42, 'SYSTEM_START', 'Server started on port 5001 — DB connected, 16 routes registered', '{\"ip_address\":\"192.168.1.84\",\"user_agent\":\"Mozilla/5.0 (X11; Linux x86_64) Firefox/125\",\"endpoint\":\"/api/system/start\",\"method\":\"POST\",\"timestamp\":\"2026-03-25T07:41:46.066Z\"}', '2026-03-21 08:46:55'),
+(577, 27, 'SETTINGS_CHANGE', 'System setting changed: session_timeout updated', '{\"ip_address\":\"192.168.1.144\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) Chrome/124\",\"endpoint\":\"/api/settings\",\"method\":\"POST\",\"timestamp\":\"2026-03-25T07:41:46.066Z\"}', '2026-03-13 13:08:17'),
+(578, 71, 'PLAN_UPDATE', 'Updated plan: \"Annual IT Infrastructure Upgrade\" — revised budget & timeline', '{\"ip_address\":\"192.168.1.138\",\"user_agent\":\"Mozilla/5.0 (X11; Linux x86_64) Firefox/125\",\"endpoint\":\"/api/plans/231\",\"method\":\"PUT\",\"timestamp\":\"2026-03-25T07:41:46.065Z\",\"plan_id\":231}', '2026-03-18 03:24:02'),
+(579, 63, 'REPORT_CREATE', 'Created report: \"Construction Progress Report\"', '{\"ip_address\":\"192.168.1.179\",\"user_agent\":\"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) Safari/605\",\"endpoint\":\"/api/reports/374\",\"method\":\"POST\",\"timestamp\":\"2026-03-25T07:41:46.065Z\",\"report_id\":374}', '2026-02-23 21:55:51'),
+(580, 47, 'REPORT_SUBMIT', 'Submitted report: \"Monthly Employee Performance\" for review', '{\"ip_address\":\"192.168.1.110\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) Chrome/124\",\"endpoint\":\"/api/reports/615\",\"method\":\"GET\",\"timestamp\":\"2026-03-25T07:41:46.065Z\",\"report_id\":615}', '2026-03-20 22:16:03'),
+(581, 44, 'REPORT_SUBMIT', 'Submitted report: \"Budget Variance Analysis\" for review', '{\"ip_address\":\"192.168.1.110\",\"user_agent\":\"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) Safari/605\",\"endpoint\":\"/api/reports/620\",\"method\":\"GET\",\"timestamp\":\"2026-03-25T07:41:46.065Z\",\"report_id\":620}', '2026-03-10 12:46:57'),
+(582, 65, 'REPORT_UPDATE', 'Updated report: \"Q1 Financial Summary Report\" — added Q3 data', '{\"ip_address\":\"192.168.1.101\",\"user_agent\":\"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) Safari/605\",\"endpoint\":\"/api/reports/337\",\"method\":\"GET\",\"timestamp\":\"2026-03-25T07:41:46.065Z\",\"report_id\":337}', '2026-03-08 11:57:29'),
+(583, 46, 'REPORT_DELETE', 'Deleted report: \"Annual Audit Report 2024\" (ID 295)', '{\"ip_address\":\"192.168.1.24\",\"user_agent\":\"Mozilla/5.0 (X11; Linux x86_64) Firefox/125\",\"endpoint\":\"/api/reports/295\",\"method\":\"GET\",\"timestamp\":\"2026-03-25T07:41:46.065Z\",\"report_id\":295}', '2026-03-07 15:21:11'),
+(584, 37, 'PLAN_VIEW', 'Viewed plan: \"Marketing Strategy 2026\"', '{\"ip_address\":\"192.168.1.48\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) Chrome/124\",\"endpoint\":\"/api/plans/148\",\"method\":\"PUT\",\"timestamp\":\"2026-03-25T07:41:46.065Z\",\"plan_id\":148}', '2026-02-26 10:58:27'),
+(585, 58, 'REPORT_SUBMIT', 'Submitted report: \"Annual Audit Report 2024\" for review', '{\"ip_address\":\"192.168.1.24\",\"user_agent\":\"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) Safari/605\",\"endpoint\":\"/api/reports/605\",\"method\":\"GET\",\"timestamp\":\"2026-03-25T07:41:46.065Z\",\"report_id\":605}', '2026-03-08 19:40:06'),
+(586, 44, 'DATA_EXPORT', 'Data exported: employees table — 3230 rows as CSV', '{\"ip_address\":\"192.168.1.107\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) Chrome/124\",\"endpoint\":\"/api/admin/export\",\"method\":\"POST\",\"timestamp\":\"2026-03-25T07:41:46.066Z\"}', '2026-03-24 13:51:13'),
+(587, NULL, 'SYSTEM_ERROR', 'Unhandled exception in /api/plans/approve — Timeout', '{\"ip_address\":\"192.168.1.199\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) Chrome/124\",\"endpoint\":\"/api/system/errors\",\"method\":\"POST\",\"timestamp\":\"2026-03-25T07:41:46.066Z\"}', '2026-03-18 04:57:58'),
+(588, 74, 'REPORT_DECLINE', 'Declined report: \"Construction Progress Report\" — data inconsistency', '{\"ip_address\":\"192.168.1.12\",\"user_agent\":\"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) Safari/605\",\"endpoint\":\"/api/reports/461\",\"method\":\"GET\",\"timestamp\":\"2026-03-25T07:41:46.065Z\",\"report_id\":461}', '2026-03-19 08:42:59'),
+(589, 26, 'TASK_CREATE', 'Created task: \"Train new team members\" assigned to team', '{\"ip_address\":\"192.168.1.115\",\"user_agent\":\"Mozilla/5.0 (X11; Linux x86_64) Firefox/125\",\"endpoint\":\"/api/tasks/133\",\"method\":\"POST\",\"timestamp\":\"2026-03-25T07:41:46.066Z\",\"task_id\":133}', '2026-03-20 11:55:11'),
+(590, 37, 'TASK_DELETE', 'Deleted task: \"Prepare Q2 budget sheet\" (ID 281) — cancelled', '{\"ip_address\":\"192.168.1.143\",\"user_agent\":\"Mozilla/5.0 (X11; Linux x86_64) Firefox/125\",\"endpoint\":\"/api/tasks/281\",\"method\":\"PUT\",\"timestamp\":\"2026-03-25T07:41:46.066Z\",\"task_id\":281}', '2026-03-06 02:22:17'),
+(591, 42, 'TASK_UPDATE', 'Updated task: \"Prepare Q2 budget sheet\" — changed deadline & priority', '{\"ip_address\":\"192.168.1.59\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) Chrome/124\",\"endpoint\":\"/api/tasks/83\",\"method\":\"PUT\",\"timestamp\":\"2026-03-25T07:41:46.066Z\",\"task_id\":83}', '2026-03-16 11:51:06'),
+(592, 30, 'PLAN_CREATE', 'Created plan: \"Q2 Budget Forecast Plan\" (ID 199)', '{\"ip_address\":\"192.168.1.28\",\"user_agent\":\"Mozilla/5.0 (X11; Linux x86_64) Firefox/125\",\"endpoint\":\"/api/plans/199\",\"method\":\"POST\",\"timestamp\":\"2026-03-25T07:41:46.065Z\",\"plan_id\":199}', '2026-03-15 18:26:18'),
+(593, 37, 'TASK_UPDATE', 'Updated task: \"Deploy hotfix to production\" — changed deadline & priority', '{\"ip_address\":\"192.168.1.44\",\"user_agent\":\"Mozilla/5.0 (X11; Linux x86_64) Firefox/125\",\"endpoint\":\"/api/tasks/117\",\"method\":\"PUT\",\"timestamp\":\"2026-03-25T07:41:46.066Z\",\"task_id\":117}', '2026-03-04 09:44:41'),
+(594, 13, 'REPORT_APPROVE', 'Approved report: \"Risk Assessment Report\"', '{\"ip_address\":\"192.168.1.162\",\"user_agent\":\"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) Safari/605\",\"endpoint\":\"/api/reports/664\",\"method\":\"GET\",\"timestamp\":\"2026-03-25T07:41:46.065Z\",\"report_id\":664}', '2026-03-11 12:04:15'),
+(595, 77, 'DATA_EXPORT', 'Scheduled database backup completed — 84 MB archived', '{\"ip_address\":\"192.168.1.128\",\"user_agent\":\"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) Safari/605\",\"endpoint\":\"/api/admin/backup\",\"method\":\"POST\",\"timestamp\":\"2026-03-25T07:41:46.066Z\"}', '2026-03-17 18:17:19'),
+(596, 59, 'REPORT_DELETE', 'Deleted report: \"Q1 Financial Summary Report\" (ID 346)', '{\"ip_address\":\"192.168.1.64\",\"user_agent\":\"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) Safari/605\",\"endpoint\":\"/api/reports/346\",\"method\":\"GET\",\"timestamp\":\"2026-03-25T07:41:46.065Z\",\"report_id\":346}', '2026-03-04 09:58:08'),
+(597, 75, 'PLAN_DELETE', 'Deleted plan: \"Legal Compliance Review Plan\" (ID 470)', '{\"ip_address\":\"192.168.1.127\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) Chrome/124\",\"endpoint\":\"/api/plans/470\",\"method\":\"PUT\",\"timestamp\":\"2026-03-25T07:41:46.065Z\",\"plan_id\":470}', '2026-03-12 02:09:03'),
+(598, 62, 'MENU_DELETE', 'Deleted menu item \"Plans\" and cleaned up role_permissions', '{\"ip_address\":\"192.168.1.93\",\"user_agent\":\"Mozilla/5.0 (X11; Linux x86_64) Firefox/125\",\"endpoint\":\"/api/menu-permissions\",\"method\":\"POST\",\"timestamp\":\"2026-03-25T07:41:46.066Z\",\"role\":\"Team Leader\",\"menu\":\"Plans\"}', '2026-03-03 21:27:53'),
+(599, 49, 'TASK_CREATE', 'Created task: \"Prepare Q2 budget sheet\" assigned to team', '{\"ip_address\":\"192.168.1.14\",\"user_agent\":\"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) Safari/605\",\"endpoint\":\"/api/tasks/158\",\"method\":\"POST\",\"timestamp\":\"2026-03-25T07:41:46.066Z\",\"task_id\":158}', '2026-03-16 10:02:43'),
+(600, 73, 'REPORT_DELETE', 'Deleted report: \"IT Incident Response Report\" (ID 335)', '{\"ip_address\":\"192.168.1.83\",\"user_agent\":\"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) Safari/605\",\"endpoint\":\"/api/reports/335\",\"method\":\"GET\",\"timestamp\":\"2026-03-25T07:41:46.065Z\",\"report_id\":335}', '2026-03-07 07:19:51'),
+(601, 73, 'REPORT_DECLINE', 'Declined report: \"Risk Assessment Report\" — data inconsistency', '{\"ip_address\":\"192.168.1.62\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) Chrome/124\",\"endpoint\":\"/api/reports/445\",\"method\":\"GET\",\"timestamp\":\"2026-03-25T07:41:46.065Z\",\"report_id\":445}', '2026-03-19 03:47:24'),
+(602, 49, 'REPORT_CREATE', 'Created report: \"IT Incident Response Report\"', '{\"ip_address\":\"192.168.1.151\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) Chrome/124\",\"endpoint\":\"/api/reports/507\",\"method\":\"POST\",\"timestamp\":\"2026-03-25T07:41:46.066Z\",\"report_id\":507}', '2026-03-08 11:42:10'),
+(603, 73, 'SYSTEM_ERROR', 'Unhandled exception in /api/reports — DB connection lost', '{\"ip_address\":\"192.168.1.80\",\"user_agent\":\"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) Safari/605\",\"endpoint\":\"/api/system/errors\",\"method\":\"POST\",\"timestamp\":\"2026-03-25T07:41:46.066Z\"}', '2026-03-10 00:50:24'),
+(604, 26, 'MENU_UPDATE', 'Updated menu item \"Settings\" — changed icon & display order', '{\"ip_address\":\"192.168.1.75\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) Chrome/124\",\"endpoint\":\"/api/menu-permissions\",\"method\":\"POST\",\"timestamp\":\"2026-03-25T07:41:46.066Z\",\"role\":\"Staff\",\"menu\":\"Settings\"}', '2026-03-12 13:08:38'),
+(605, 49, 'PLAN_DECLINE', 'Declined plan: \"HR Onboarding Automation\" — insufficient detail', '{\"ip_address\":\"192.168.1.24\",\"user_agent\":\"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) Safari/605\",\"endpoint\":\"/api/plans/180\",\"method\":\"PUT\",\"timestamp\":\"2026-03-25T07:41:46.065Z\",\"plan_id\":180}', '2026-03-11 16:21:28'),
+(606, 41, 'TASK_CREATE', 'Created task: \"Train new team members\" assigned to team', '{\"ip_address\":\"192.168.1.34\",\"user_agent\":\"Mozilla/5.0 (X11; Linux x86_64) Firefox/125\",\"endpoint\":\"/api/tasks/8\",\"method\":\"POST\",\"timestamp\":\"2026-03-25T07:41:46.066Z\",\"task_id\":8}', '2026-03-14 01:26:38'),
+(607, 26, 'PLAN_DECLINE', 'Declined plan: \"Digital Transformation Initiative\" — insufficient detail', '{\"ip_address\":\"192.168.1.171\",\"user_agent\":\"Mozilla/5.0 (X11; Linux x86_64) Firefox/125\",\"endpoint\":\"/api/plans/142\",\"method\":\"PUT\",\"timestamp\":\"2026-03-25T07:41:46.065Z\",\"plan_id\":142}', '2026-03-16 17:14:41'),
+(608, 78, 'PLAN_CREATE', 'Created plan: \"Employee Training Programme 2025\" (ID 272)', '{\"ip_address\":\"192.168.1.67\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) Chrome/124\",\"endpoint\":\"/api/plans/272\",\"method\":\"POST\",\"timestamp\":\"2026-03-25T07:41:46.065Z\",\"plan_id\":272}', '2026-02-24 00:46:46'),
+(609, 65, 'ROLE_UPDATE', 'Updated role \"Manager\" — renamed & permission set revised', '{\"ip_address\":\"192.168.1.110\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) Chrome/124\",\"endpoint\":\"/api/menu-permissions\",\"method\":\"POST\",\"timestamp\":\"2026-03-25T07:41:46.066Z\",\"role\":\"Manager\",\"menu\":\"Admin Panel\"}', '2026-03-24 23:40:54'),
+(610, 37, 'ROLE_CREATE', 'Created new role: \"Manager Level 1\"', '{\"ip_address\":\"192.168.1.188\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) Chrome/124\",\"endpoint\":\"/api/menu-permissions\",\"method\":\"POST\",\"timestamp\":\"2026-03-25T07:41:46.066Z\",\"role\":\"Manager\",\"menu\":\"Settings\"}', '2026-03-15 06:42:10'),
+(611, 67, 'ROLE_CREATE', 'Created new role: \"Staff Level 2\"', '{\"ip_address\":\"192.168.1.117\",\"user_agent\":\"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) Safari/605\",\"endpoint\":\"/api/menu-permissions\",\"method\":\"POST\",\"timestamp\":\"2026-03-25T07:41:46.066Z\",\"role\":\"Staff\",\"menu\":\"Admin Panel\"}', '2026-02-26 14:03:55'),
+(612, 62, 'PERMISSION_UPDATE', 'Updated permissions for role \"Team Leader\" — toggled access to [Dashboard, Reports]', '{\"ip_address\":\"192.168.1.183\",\"user_agent\":\"Mozilla/5.0 (X11; Linux x86_64) Firefox/125\",\"endpoint\":\"/api/menu-permissions\",\"method\":\"POST\",\"timestamp\":\"2026-03-25T07:41:46.066Z\",\"role\":\"Team Leader\",\"menu\":\"Dashboard\"}', '2026-02-27 17:43:09'),
+(613, 77, 'SETTINGS_CHANGE', 'System setting changed: email_notifications updated', '{\"ip_address\":\"192.168.1.55\",\"user_agent\":\"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) Safari/605\",\"endpoint\":\"/api/settings\",\"method\":\"POST\",\"timestamp\":\"2026-03-25T07:41:46.066Z\"}', '2026-03-03 01:29:50'),
+(614, NULL, 'DATA_EXPORT', 'Data exported: audit_logs table — 493 rows as CSV', '{\"ip_address\":\"192.168.1.199\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) Chrome/124\",\"endpoint\":\"/api/admin/export\",\"method\":\"POST\",\"timestamp\":\"2026-03-25T07:41:46.066Z\"}', '2026-03-08 07:56:18'),
+(615, 38, 'ROLE_UPDATE', 'Updated role \"Admin\" — renamed & permission set revised', '{\"ip_address\":\"192.168.1.85\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) Chrome/124\",\"endpoint\":\"/api/menu-permissions\",\"method\":\"POST\",\"timestamp\":\"2026-03-25T07:41:46.066Z\",\"role\":\"Admin\",\"menu\":\"Settings\"}', '2026-03-19 23:26:46'),
+(616, 73, 'SYSTEM_ERROR', 'Unhandled exception in /api/plans/approve — DB connection lost', '{\"ip_address\":\"192.168.1.94\",\"user_agent\":\"Mozilla/5.0 (X11; Linux x86_64) Firefox/125\",\"endpoint\":\"/api/system/errors\",\"method\":\"POST\",\"timestamp\":\"2026-03-25T07:41:46.066Z\"}', '2026-03-12 05:33:38'),
+(617, NULL, 'SETTINGS_CHANGE', 'System setting changed: session_timeout updated', '{\"ip_address\":\"192.168.1.64\",\"user_agent\":\"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) Safari/605\",\"endpoint\":\"/api/settings\",\"method\":\"POST\",\"timestamp\":\"2026-03-25T07:41:46.066Z\"}', '2026-03-18 04:24:59'),
+(618, 55, 'REPORT_DECLINE', 'Declined report: \"Budget Variance Analysis\" — data inconsistency', '{\"ip_address\":\"192.168.1.71\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) Chrome/124\",\"endpoint\":\"/api/reports/471\",\"method\":\"GET\",\"timestamp\":\"2026-03-25T07:41:46.065Z\",\"report_id\":471}', '2026-03-16 04:32:31');
+INSERT INTO `audit_logs` (`id`, `user_id`, `action`, `description`, `metadata`, `created_at`) VALUES
+(619, 39, 'ROLE_UPDATE', 'Updated role \"Staff\" — renamed & permission set revised', '{\"ip_address\":\"192.168.1.185\",\"user_agent\":\"Mozilla/5.0 (X11; Linux x86_64) Firefox/125\",\"endpoint\":\"/api/menu-permissions\",\"method\":\"POST\",\"timestamp\":\"2026-03-25T07:41:46.066Z\",\"role\":\"Staff\",\"menu\":\"Tasks\"}', '2026-02-28 12:34:12'),
+(620, 27, 'SETTINGS_CHANGE', 'System setting changed: max_login_attempts updated', '{\"ip_address\":\"192.168.1.97\",\"user_agent\":\"Mozilla/5.0 (X11; Linux x86_64) Firefox/125\",\"endpoint\":\"/api/settings\",\"method\":\"POST\",\"timestamp\":\"2026-03-25T07:41:46.066Z\"}', '2026-02-26 11:23:59'),
+(621, 74, 'PLAN_UPDATE', 'Updated plan: \"Q2 Budget Forecast Plan\" — revised budget & timeline', '{\"ip_address\":\"192.168.1.55\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) Chrome/124\",\"endpoint\":\"/api/plans/222\",\"method\":\"PUT\",\"timestamp\":\"2026-03-25T07:41:46.065Z\",\"plan_id\":222}', '2026-03-09 02:53:24'),
+(622, 78, 'PLAN_UPDATE', 'Updated plan: \"Annual IT Infrastructure Upgrade\" — revised budget & timeline', '{\"ip_address\":\"192.168.1.67\",\"user_agent\":\"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) Safari/605\",\"endpoint\":\"/api/plans/308\",\"method\":\"PUT\",\"timestamp\":\"2026-03-25T07:41:46.065Z\",\"plan_id\":308}', '2026-03-14 05:55:14'),
+(623, 63, 'PLAN_APPROVE', 'Approved plan: \"Annual IT Infrastructure Upgrade\" (ID 121)', '{\"ip_address\":\"192.168.1.15\",\"user_agent\":\"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) Safari/605\",\"endpoint\":\"/api/plans/121\",\"method\":\"PUT\",\"timestamp\":\"2026-03-25T07:41:46.065Z\",\"plan_id\":121}', '2026-03-04 15:34:27'),
+(624, 73, 'SETTINGS_CHANGE', 'System setting changed: max_login_attempts updated', '{\"ip_address\":\"192.168.1.56\",\"user_agent\":\"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) Safari/605\",\"endpoint\":\"/api/settings\",\"method\":\"POST\",\"timestamp\":\"2026-03-25T07:41:46.066Z\"}', '2026-03-02 14:11:38'),
+(625, 55, 'PERMISSION_UPDATE', 'Updated permissions for role \"Manager\" — toggled access to [Plans, Tasks]', '{\"ip_address\":\"192.168.1.102\",\"user_agent\":\"Mozilla/5.0 (X11; Linux x86_64) Firefox/125\",\"endpoint\":\"/api/menu-permissions\",\"method\":\"POST\",\"timestamp\":\"2026-03-25T07:41:46.066Z\",\"role\":\"Manager\",\"menu\":\"Plans\"}', '2026-03-01 00:21:16'),
+(626, 38, 'TASK_DELETE', 'Deleted task: \"Deploy hotfix to production\" (ID 51) — cancelled', '{\"ip_address\":\"192.168.1.128\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) Chrome/124\",\"endpoint\":\"/api/tasks/51\",\"method\":\"PUT\",\"timestamp\":\"2026-03-25T07:41:46.066Z\",\"task_id\":51}', '2026-03-14 00:39:39'),
+(627, 43, 'TASK_COMPLETE', 'Completed task: \"Review server backups\" (ID 52) ahead of schedule', '{\"ip_address\":\"192.168.1.195\",\"user_agent\":\"Mozilla/5.0 (X11; Linux x86_64) Firefox/125\",\"endpoint\":\"/api/tasks/52\",\"method\":\"PUT\",\"timestamp\":\"2026-03-25T07:41:46.066Z\",\"task_id\":52}', '2026-03-05 03:34:11'),
+(628, NULL, 'SETTINGS_CHANGE', 'System setting changed: backup_schedule updated', '{\"ip_address\":\"192.168.1.64\",\"user_agent\":\"Mozilla/5.0 (X11; Linux x86_64) Firefox/125\",\"endpoint\":\"/api/settings\",\"method\":\"POST\",\"timestamp\":\"2026-03-25T07:41:46.066Z\"}', '2026-02-27 15:48:20'),
+(629, 77, 'TASK_COMPLETE', 'Completed task: \"Complete security audit\" (ID 129) ahead of schedule', '{\"ip_address\":\"192.168.1.152\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) Chrome/124\",\"endpoint\":\"/api/tasks/129\",\"method\":\"PUT\",\"timestamp\":\"2026-03-25T07:41:46.066Z\",\"task_id\":129}', '2026-03-13 06:40:18'),
+(630, 47, 'DATA_EXPORT', 'Scheduled database backup completed — 169 MB archived', '{\"ip_address\":\"192.168.1.144\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) Chrome/124\",\"endpoint\":\"/api/admin/backup\",\"method\":\"POST\",\"timestamp\":\"2026-03-25T07:41:46.066Z\"}', '2026-03-23 22:42:16'),
+(631, 77, 'MEETING_JOIN', 'Joined meeting: \"Q2 Strategy Meeting\"', '{\"ip_address\":\"192.168.1.22\",\"user_agent\":\"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) Safari/605\",\"endpoint\":\"/api/meetings/68\",\"method\":\"POST\",\"timestamp\":\"2026-03-25T07:41:46.066Z\",\"meeting_id\":68}', '2026-03-05 17:07:30'),
+(632, 41, 'MENU_DELETE', 'Deleted menu item \"Settings\" and cleaned up role_permissions', '{\"ip_address\":\"192.168.1.71\",\"user_agent\":\"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) Safari/605\",\"endpoint\":\"/api/menu-permissions\",\"method\":\"POST\",\"timestamp\":\"2026-03-25T07:41:46.066Z\",\"role\":\"Admin\",\"menu\":\"Settings\"}', '2026-03-08 10:41:24'),
+(633, 57, 'TASK_COMPLETE', 'Completed task: \"Prepare Q2 budget sheet\" (ID 76) ahead of schedule', '{\"ip_address\":\"192.168.1.134\",\"user_agent\":\"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) Safari/605\",\"endpoint\":\"/api/tasks/76\",\"method\":\"PUT\",\"timestamp\":\"2026-03-25T07:41:46.066Z\",\"task_id\":76}', '2026-03-21 07:35:58'),
+(634, 75, 'TASK_CREATE', 'Created task: \"Train new team members\" assigned to team', '{\"ip_address\":\"192.168.1.48\",\"user_agent\":\"Mozilla/5.0 (X11; Linux x86_64) Firefox/125\",\"endpoint\":\"/api/tasks/73\",\"method\":\"POST\",\"timestamp\":\"2026-03-25T07:41:46.066Z\",\"task_id\":73}', '2026-02-25 21:22:41'),
+(635, 76, 'ROLE_UPDATE', 'Updated role \"Expert\" — renamed & permission set revised', '{\"ip_address\":\"192.168.1.152\",\"user_agent\":\"Mozilla/5.0 (X11; Linux x86_64) Firefox/125\",\"endpoint\":\"/api/menu-permissions\",\"method\":\"POST\",\"timestamp\":\"2026-03-25T07:41:46.066Z\",\"role\":\"Expert\",\"menu\":\"Settings\"}', '2026-03-16 02:36:57'),
+(636, 37, 'TASK_COMPLETE', 'Completed task: \"Review server backups\" (ID 163) ahead of schedule', '{\"ip_address\":\"192.168.1.30\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) Chrome/124\",\"endpoint\":\"/api/tasks/163\",\"method\":\"PUT\",\"timestamp\":\"2026-03-25T07:41:46.066Z\",\"task_id\":163}', '2026-03-07 14:53:15'),
+(637, 75, 'PLAN_APPROVE', 'Approved plan: \"Marketing Strategy 2026\" (ID 187)', '{\"ip_address\":\"192.168.1.199\",\"user_agent\":\"Mozilla/5.0 (X11; Linux x86_64) Firefox/125\",\"endpoint\":\"/api/plans/187\",\"method\":\"PUT\",\"timestamp\":\"2026-03-25T07:41:46.065Z\",\"plan_id\":187}', '2026-03-15 11:52:16'),
+(638, 62, 'PLAN_CREATE', 'Created plan: \"Marketing Strategy 2026\" (ID 395)', '{\"ip_address\":\"192.168.1.152\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) Chrome/124\",\"endpoint\":\"/api/plans/395\",\"method\":\"POST\",\"timestamp\":\"2026-03-25T07:41:46.065Z\",\"plan_id\":395}', '2026-03-14 14:29:35'),
+(639, 42, 'MEETING_END', 'Ended meeting: \"Budget Review Session\" — duration 20 minutes', '{\"ip_address\":\"192.168.1.36\",\"user_agent\":\"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) Safari/605\",\"endpoint\":\"/api/meetings/56\",\"method\":\"POST\",\"timestamp\":\"2026-03-25T07:41:46.066Z\",\"meeting_id\":56}', '2026-03-03 16:20:58'),
+(640, 27, 'TASK_CREATE', 'Created task: \"Review server backups\" assigned to team', '{\"ip_address\":\"192.168.1.63\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) Chrome/124\",\"endpoint\":\"/api/tasks/183\",\"method\":\"POST\",\"timestamp\":\"2026-03-25T07:41:46.066Z\",\"task_id\":183}', '2026-03-11 10:21:56'),
+(641, 51, 'REPORT_UPDATE', 'Updated report: \"Construction Progress Report\" — added Q3 data', '{\"ip_address\":\"192.168.1.19\",\"user_agent\":\"Mozilla/5.0 (X11; Linux x86_64) Firefox/125\",\"endpoint\":\"/api/reports/544\",\"method\":\"GET\",\"timestamp\":\"2026-03-25T07:41:46.065Z\",\"report_id\":544}', '2026-03-20 21:55:01'),
+(642, 52, 'MEETING_CREATE', 'Scheduled meeting: \"Q2 Strategy Meeting\" — 7 attendees invited', '{\"ip_address\":\"192.168.1.49\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) Chrome/124\",\"endpoint\":\"/api/meetings/1\",\"method\":\"POST\",\"timestamp\":\"2026-03-25T07:41:46.066Z\",\"meeting_id\":1}', '2026-02-28 21:20:42'),
+(643, 37, 'TASK_UPDATE', 'Updated task: \"Fix API timeout issues\" — changed deadline & priority', '{\"ip_address\":\"192.168.1.84\",\"user_agent\":\"Mozilla/5.0 (X11; Linux x86_64) Firefox/125\",\"endpoint\":\"/api/tasks/112\",\"method\":\"PUT\",\"timestamp\":\"2026-03-25T07:41:46.066Z\",\"task_id\":112}', '2026-03-18 20:31:39'),
+(644, 7, 'PLAN_DECLINE', 'Declined plan: \"Q2 Budget Forecast Plan\" — insufficient detail', '{\"ip_address\":\"192.168.1.68\",\"user_agent\":\"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) Safari/605\",\"endpoint\":\"/api/plans/439\",\"method\":\"PUT\",\"timestamp\":\"2026-03-25T07:41:46.065Z\",\"plan_id\":439}', '2026-03-06 23:57:18'),
+(645, 46, 'REPORT_APPROVE', 'Approved report: \"Q1 Financial Summary Report\"', '{\"ip_address\":\"192.168.1.167\",\"user_agent\":\"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) Safari/605\",\"endpoint\":\"/api/reports/685\",\"method\":\"GET\",\"timestamp\":\"2026-03-25T07:41:46.065Z\",\"report_id\":685}', '2026-03-01 03:25:25'),
+(646, 76, 'TASK_DELETE', 'Deleted task: \"Fix API timeout issues\" (ID 33) — cancelled', '{\"ip_address\":\"192.168.1.36\",\"user_agent\":\"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) Safari/605\",\"endpoint\":\"/api/tasks/33\",\"method\":\"PUT\",\"timestamp\":\"2026-03-25T07:41:46.066Z\",\"task_id\":33}', '2026-03-23 22:22:38'),
+(647, 77, 'REPORT_DECLINE', 'Declined report: \"Budget Variance Analysis\" — data inconsistency', '{\"ip_address\":\"192.168.1.171\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) Chrome/124\",\"endpoint\":\"/api/reports/671\",\"method\":\"GET\",\"timestamp\":\"2026-03-25T07:41:46.065Z\",\"report_id\":671}', '2026-03-02 06:53:51'),
+(648, 79, 'PLAN_CREATE', 'Created plan: \"Employee Training Programme 2025\" (ID 179)', '{\"ip_address\":\"192.168.1.171\",\"user_agent\":\"Mozilla/5.0 (X11; Linux x86_64) Firefox/125\",\"endpoint\":\"/api/plans/179\",\"method\":\"POST\",\"timestamp\":\"2026-03-25T07:41:46.065Z\",\"plan_id\":179}', '2026-02-28 09:15:17'),
+(649, 42, 'MEETING_POSTPONE', 'Postponed meeting: \"Audit Debrief\" to next week', '{\"ip_address\":\"192.168.1.143\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) Chrome/124\",\"endpoint\":\"/api/meetings/39\",\"method\":\"POST\",\"timestamp\":\"2026-03-25T07:41:46.066Z\",\"meeting_id\":39}', '2026-03-20 22:42:35'),
+(650, 55, 'REPORT_UPDATE', 'Updated report: \"IT Incident Response Report\" — added Q3 data', '{\"ip_address\":\"192.168.1.187\",\"user_agent\":\"Mozilla/5.0 (X11; Linux x86_64) Firefox/125\",\"endpoint\":\"/api/reports/393\",\"method\":\"GET\",\"timestamp\":\"2026-03-25T07:41:46.065Z\",\"report_id\":393}', '2026-03-08 21:27:03'),
+(651, 7, 'MEETING_JOIN', 'Joined meeting: \"Budget Review Session\"', '{\"ip_address\":\"192.168.1.124\",\"user_agent\":\"Mozilla/5.0 (X11; Linux x86_64) Firefox/125\",\"endpoint\":\"/api/meetings/59\",\"method\":\"POST\",\"timestamp\":\"2026-03-25T07:41:46.066Z\",\"meeting_id\":59}', '2026-02-24 21:18:52'),
+(652, NULL, 'SYSTEM_ERROR', 'Unhandled exception in /api/users — DB connection lost', '{\"ip_address\":\"192.168.1.179\",\"user_agent\":\"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) Safari/605\",\"endpoint\":\"/api/system/errors\",\"method\":\"POST\",\"timestamp\":\"2026-03-25T07:41:46.066Z\"}', '2026-03-06 01:45:02'),
+(653, 13, 'REPORT_APPROVE', 'Approved report: \"Annual Audit Report 2024\"', '{\"ip_address\":\"192.168.1.98\",\"user_agent\":\"Mozilla/5.0 (X11; Linux x86_64) Firefox/125\",\"endpoint\":\"/api/reports/648\",\"method\":\"GET\",\"timestamp\":\"2026-03-25T07:41:46.066Z\",\"report_id\":648}', '2026-03-08 05:18:27'),
+(654, 45, 'REPORT_DECLINE', 'Declined report: \"Risk Assessment Report\" — data inconsistency', '{\"ip_address\":\"192.168.1.173\",\"user_agent\":\"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) Safari/605\",\"endpoint\":\"/api/reports/699\",\"method\":\"GET\",\"timestamp\":\"2026-03-25T07:41:46.065Z\",\"report_id\":699}', '2026-03-13 13:45:25'),
+(655, 64, 'PLAN_DECLINE', 'Declined plan: \"HR Onboarding Automation\" — insufficient detail', '{\"ip_address\":\"192.168.1.178\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) Chrome/124\",\"endpoint\":\"/api/plans/459\",\"method\":\"PUT\",\"timestamp\":\"2026-03-25T07:41:46.065Z\",\"plan_id\":459}', '2026-03-20 18:56:13'),
+(656, 25, 'TASK_COMPLETE', 'Completed task: \"Prepare Q2 budget sheet\" (ID 108) ahead of schedule', '{\"ip_address\":\"192.168.1.92\",\"user_agent\":\"Mozilla/5.0 (X11; Linux x86_64) Firefox/125\",\"endpoint\":\"/api/tasks/108\",\"method\":\"PUT\",\"timestamp\":\"2026-03-25T07:41:46.066Z\",\"task_id\":108}', '2026-03-06 12:35:02'),
+(657, 64, 'PLAN_UPDATE', 'Updated plan: \"Employee Training Programme 2025\" — revised budget & timeline', '{\"ip_address\":\"192.168.1.14\",\"user_agent\":\"Mozilla/5.0 (X11; Linux x86_64) Firefox/125\",\"endpoint\":\"/api/plans/322\",\"method\":\"PUT\",\"timestamp\":\"2026-03-25T07:41:46.065Z\",\"plan_id\":322}', '2026-02-23 16:26:25'),
+(658, 42, 'TASK_CREATE', 'Created task: \"Complete security audit\" assigned to team', '{\"ip_address\":\"192.168.1.198\",\"user_agent\":\"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) Safari/605\",\"endpoint\":\"/api/tasks/267\",\"method\":\"POST\",\"timestamp\":\"2026-03-25T07:41:46.066Z\",\"task_id\":267}', '2026-03-09 13:06:45'),
+(659, 62, 'MENU_CREATE', 'Created menu item: \"Tasks\" (path /tasks)', '{\"ip_address\":\"192.168.1.50\",\"user_agent\":\"Mozilla/5.0 (X11; Linux x86_64) Firefox/125\",\"endpoint\":\"/api/menu-permissions\",\"method\":\"POST\",\"timestamp\":\"2026-03-25T07:41:46.066Z\",\"role\":\"Team Leader\",\"menu\":\"Tasks\"}', '2026-03-09 10:18:45'),
+(660, 38, 'REPORT_CREATE', 'Created report: \"Budget Variance Analysis\"', '{\"ip_address\":\"192.168.1.162\",\"user_agent\":\"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) Safari/605\",\"endpoint\":\"/api/reports/376\",\"method\":\"POST\",\"timestamp\":\"2026-03-25T07:41:46.066Z\",\"report_id\":376}', '2026-03-25 00:16:25'),
+(661, 58, 'REPORT_CREATE', 'Created report: \"Risk Assessment Report\"', '{\"ip_address\":\"192.168.1.20\",\"user_agent\":\"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) Safari/605\",\"endpoint\":\"/api/reports/499\",\"method\":\"POST\",\"timestamp\":\"2026-03-25T07:41:46.066Z\",\"report_id\":499}', '2026-03-15 03:18:10'),
+(662, 77, 'TASK_DELETE', 'Deleted task: \"Fix API timeout issues\" (ID 110) — cancelled', '{\"ip_address\":\"192.168.1.93\",\"user_agent\":\"Mozilla/5.0 (X11; Linux x86_64) Firefox/125\",\"endpoint\":\"/api/tasks/110\",\"method\":\"PUT\",\"timestamp\":\"2026-03-25T07:41:46.066Z\",\"task_id\":110}', '2026-03-15 20:40:58'),
+(663, 55, 'REPORT_SUBMIT', 'Submitted report: \"Construction Progress Report\" for review', '{\"ip_address\":\"192.168.1.31\",\"user_agent\":\"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) Safari/605\",\"endpoint\":\"/api/reports/547\",\"method\":\"GET\",\"timestamp\":\"2026-03-25T07:41:46.065Z\",\"report_id\":547}', '2026-02-24 23:27:08'),
+(664, 49, 'PLAN_SUBMIT', 'Submitted plan: \"Digital Transformation Initiative\" for approval', '{\"ip_address\":\"192.168.1.176\",\"user_agent\":\"Mozilla/5.0 (X11; Linux x86_64) Firefox/125\",\"endpoint\":\"/api/plans/485\",\"method\":\"PUT\",\"timestamp\":\"2026-03-25T07:41:46.065Z\",\"plan_id\":485}', '2026-03-09 06:25:38'),
+(665, 56, 'MENU_CREATE', 'Created menu item: \"Reports\" (path /reports)', '{\"ip_address\":\"192.168.1.33\",\"user_agent\":\"Mozilla/5.0 (X11; Linux x86_64) Firefox/125\",\"endpoint\":\"/api/menu-permissions\",\"method\":\"POST\",\"timestamp\":\"2026-03-25T07:41:46.066Z\",\"role\":\"Manager\",\"menu\":\"Reports\"}', '2026-03-19 02:54:25'),
+(666, 54, 'PLAN_SUBMIT', 'Submitted plan: \"Marketing Strategy 2026\" for approval', '{\"ip_address\":\"192.168.1.36\",\"user_agent\":\"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) Safari/605\",\"endpoint\":\"/api/plans/365\",\"method\":\"PUT\",\"timestamp\":\"2026-03-25T07:41:46.065Z\",\"plan_id\":365}', '2026-03-14 18:40:06'),
+(667, 40, 'MENU_DELETE', 'Deleted menu item \"Plans\" and cleaned up role_permissions', '{\"ip_address\":\"192.168.1.61\",\"user_agent\":\"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) Safari/605\",\"endpoint\":\"/api/menu-permissions\",\"method\":\"POST\",\"timestamp\":\"2026-03-25T07:41:46.066Z\",\"role\":\"Admin\",\"menu\":\"Plans\"}', '2026-03-11 22:53:02'),
+(668, 61, 'MENU_CREATE', 'Created menu item: \"Reports\" (path /reports)', '{\"ip_address\":\"192.168.1.58\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) Chrome/124\",\"endpoint\":\"/api/menu-permissions\",\"method\":\"POST\",\"timestamp\":\"2026-03-25T07:41:46.066Z\",\"role\":\"Staff\",\"menu\":\"Reports\"}', '2026-03-10 11:42:47'),
+(669, 67, 'TASK_UPDATE', 'Updated task: \"Review server backups\" — changed deadline & priority', '{\"ip_address\":\"192.168.1.198\",\"user_agent\":\"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) Safari/605\",\"endpoint\":\"/api/tasks/271\",\"method\":\"PUT\",\"timestamp\":\"2026-03-25T07:41:46.066Z\",\"task_id\":271}', '2026-03-23 19:05:20'),
+(670, 77, 'PLAN_UPDATE', 'Updated plan: \"Employee Training Programme 2025\" — revised budget & timeline', '{\"ip_address\":\"192.168.1.182\",\"user_agent\":\"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) Safari/605\",\"endpoint\":\"/api/plans/387\",\"method\":\"PUT\",\"timestamp\":\"2026-03-25T07:41:46.065Z\",\"plan_id\":387}', '2026-03-02 15:02:16'),
+(671, 40, 'PLAN_VIEW', 'Viewed plan: \"Q2 Budget Forecast Plan\"', '{\"ip_address\":\"192.168.1.193\",\"user_agent\":\"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) Safari/605\",\"endpoint\":\"/api/plans/393\",\"method\":\"PUT\",\"timestamp\":\"2026-03-25T07:41:46.065Z\",\"plan_id\":393}', '2026-03-08 11:22:10'),
+(672, 48, 'PLAN_CREATE', 'Created plan: \"Digital Transformation Initiative\" (ID 247)', '{\"ip_address\":\"192.168.1.117\",\"user_agent\":\"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) Safari/605\",\"endpoint\":\"/api/plans/247\",\"method\":\"POST\",\"timestamp\":\"2026-03-25T07:41:46.065Z\",\"plan_id\":247}', '2026-03-09 07:45:46'),
+(673, 55, 'ROLE_DELETE', 'Deleted role \"Team Leader\" and reassigned 7 users', '{\"ip_address\":\"192.168.1.105\",\"user_agent\":\"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) Safari/605\",\"endpoint\":\"/api/menu-permissions\",\"method\":\"POST\",\"timestamp\":\"2026-03-25T07:41:46.066Z\",\"role\":\"Team Leader\",\"menu\":\"Reports\"}', '2026-03-14 06:41:41'),
+(674, 56, 'MENU_CREATE', 'Created menu item: \"Reports\" (path /reports)', '{\"ip_address\":\"192.168.1.189\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) Chrome/124\",\"endpoint\":\"/api/menu-permissions\",\"method\":\"POST\",\"timestamp\":\"2026-03-25T07:41:46.066Z\",\"role\":\"Manager\",\"menu\":\"Reports\"}', '2026-03-17 21:48:39'),
+(675, NULL, 'SYSTEM_START', 'Server started on port 5001 — DB connected, 19 routes registered', '{\"ip_address\":\"192.168.1.73\",\"user_agent\":\"Mozilla/5.0 (X11; Linux x86_64) Firefox/125\",\"endpoint\":\"/api/system/start\",\"method\":\"POST\",\"timestamp\":\"2026-03-25T07:41:46.066Z\"}', '2026-03-08 09:27:02'),
+(676, 61, 'TASK_UPDATE', 'Updated task: \"Train new team members\" — changed deadline & priority', '{\"ip_address\":\"192.168.1.189\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) Chrome/124\",\"endpoint\":\"/api/tasks/221\",\"method\":\"PUT\",\"timestamp\":\"2026-03-25T07:41:46.066Z\",\"task_id\":221}', '2026-03-10 20:03:36'),
+(677, 40, 'MENU_CREATE', 'Created menu item: \"Settings\" (path /settings)', '{\"ip_address\":\"192.168.1.189\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) Chrome/124\",\"endpoint\":\"/api/menu-permissions\",\"method\":\"POST\",\"timestamp\":\"2026-03-25T07:41:46.066Z\",\"role\":\"Team Leader\",\"menu\":\"Settings\"}', '2026-03-09 05:22:31'),
+(678, 24, 'REPORT_VIEW', 'Viewed report: \"Annual Audit Report 2024\"', '{\"ip_address\":\"192.168.1.16\",\"user_agent\":\"Mozilla/5.0 (X11; Linux x86_64) Firefox/125\",\"endpoint\":\"/api/reports/442\",\"method\":\"GET\",\"timestamp\":\"2026-03-25T07:41:46.065Z\",\"report_id\":442}', '2026-03-14 23:41:33'),
+(679, 49, 'MEETING_JOIN', 'Joined meeting: \"Audit Debrief\"', '{\"ip_address\":\"192.168.1.190\",\"user_agent\":\"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) Safari/605\",\"endpoint\":\"/api/meetings/53\",\"method\":\"POST\",\"timestamp\":\"2026-03-25T07:41:46.066Z\",\"meeting_id\":53}', '2026-03-12 13:52:25'),
+(680, 40, 'PLAN_CREATE', 'Created plan: \"Q2 Budget Forecast Plan\" (ID 297)', '{\"ip_address\":\"192.168.1.186\",\"user_agent\":\"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) Safari/605\",\"endpoint\":\"/api/plans/297\",\"method\":\"POST\",\"timestamp\":\"2026-03-25T07:41:46.065Z\",\"plan_id\":297}', '2026-02-28 15:51:32'),
+(681, 78, 'PLAN_APPROVE', 'Approved plan: \"Legal Compliance Review Plan\" (ID 220)', '{\"ip_address\":\"192.168.1.138\",\"user_agent\":\"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) Safari/605\",\"endpoint\":\"/api/plans/220\",\"method\":\"PUT\",\"timestamp\":\"2026-03-25T07:41:46.065Z\",\"plan_id\":220}', '2026-03-09 14:56:06'),
+(682, 73, 'REPORT_UPDATE', 'Updated report: \"IT Incident Response Report\" — added Q3 data', '{\"ip_address\":\"192.168.1.41\",\"user_agent\":\"Mozilla/5.0 (X11; Linux x86_64) Firefox/125\",\"endpoint\":\"/api/reports/646\",\"method\":\"GET\",\"timestamp\":\"2026-03-25T07:41:46.065Z\",\"report_id\":646}', '2026-02-24 16:55:11'),
+(683, 6, 'MEETING_END', 'Ended meeting: \"Budget Review Session\" — duration 27 minutes', '{\"ip_address\":\"192.168.1.167\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) Chrome/124\",\"endpoint\":\"/api/meetings/28\",\"method\":\"POST\",\"timestamp\":\"2026-03-25T07:41:46.066Z\",\"meeting_id\":28}', '2026-03-11 12:48:20'),
+(684, 79, 'PLAN_CREATE', 'Created plan: \"Q2 Budget Forecast Plan\" (ID 164)', '{\"ip_address\":\"192.168.1.187\",\"user_agent\":\"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) Safari/605\",\"endpoint\":\"/api/plans/164\",\"method\":\"POST\",\"timestamp\":\"2026-03-25T07:41:46.065Z\",\"plan_id\":164}', '2026-02-25 08:17:13'),
+(685, 51, 'ROLE_CREATE', 'Created new role: \"Admin Level 2\"', '{\"ip_address\":\"192.168.1.44\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) Chrome/124\",\"endpoint\":\"/api/menu-permissions\",\"method\":\"POST\",\"timestamp\":\"2026-03-25T07:41:46.066Z\",\"role\":\"Admin\",\"menu\":\"Dashboard\"}', '2026-03-24 16:35:17'),
+(686, 62, 'SYSTEM_ERROR', 'Unhandled exception in /api/plans/approve — Null reference', '{\"ip_address\":\"192.168.1.156\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) Chrome/124\",\"endpoint\":\"/api/system/errors\",\"method\":\"POST\",\"timestamp\":\"2026-03-25T07:41:46.066Z\"}', '2026-03-20 04:53:15'),
+(687, 75, 'ROLE_UPDATE', 'Updated role \"Staff\" — renamed & permission set revised', '{\"ip_address\":\"192.168.1.42\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) Chrome/124\",\"endpoint\":\"/api/menu-permissions\",\"method\":\"POST\",\"timestamp\":\"2026-03-25T07:41:46.066Z\",\"role\":\"Staff\",\"menu\":\"Settings\"}', '2026-02-27 07:16:16'),
+(688, 48, 'MENU_UPDATE', 'Updated menu item \"Reports\" — changed icon & display order', '{\"ip_address\":\"192.168.1.45\",\"user_agent\":\"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) Safari/605\",\"endpoint\":\"/api/menu-permissions\",\"method\":\"POST\",\"timestamp\":\"2026-03-25T07:41:46.066Z\",\"role\":\"Staff\",\"menu\":\"Reports\"}', '2026-02-25 21:55:38'),
+(689, 62, 'REPORT_VIEW', 'Viewed report: \"Annual Audit Report 2024\"', '{\"ip_address\":\"192.168.1.47\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) Chrome/124\",\"endpoint\":\"/api/reports/660\",\"method\":\"GET\",\"timestamp\":\"2026-03-25T07:41:46.065Z\",\"report_id\":660}', '2026-03-16 10:14:17'),
+(690, 76, 'TASK_UPDATE', 'Updated task: \"Complete security audit\" — changed deadline & priority', '{\"ip_address\":\"192.168.1.109\",\"user_agent\":\"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) Safari/605\",\"endpoint\":\"/api/tasks/67\",\"method\":\"PUT\",\"timestamp\":\"2026-03-25T07:41:46.066Z\",\"task_id\":67}', '2026-03-09 23:14:10'),
+(691, 24, 'REPORT_DECLINE', 'Declined report: \"Monthly Employee Performance\" — data inconsistency', '{\"ip_address\":\"192.168.1.192\",\"user_agent\":\"Mozilla/5.0 (X11; Linux x86_64) Firefox/125\",\"endpoint\":\"/api/reports/442\",\"method\":\"GET\",\"timestamp\":\"2026-03-25T07:41:46.065Z\",\"report_id\":442}', '2026-03-05 18:15:37'),
+(692, 63, 'PLAN_DECLINE', 'Declined plan: \"Employee Training Programme 2025\" — insufficient detail', '{\"ip_address\":\"192.168.1.169\",\"user_agent\":\"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) Safari/605\",\"endpoint\":\"/api/plans/475\",\"method\":\"PUT\",\"timestamp\":\"2026-03-25T07:41:46.065Z\",\"plan_id\":475}', '2026-03-13 18:06:15'),
+(693, 67, 'REPORT_UPDATE', 'Updated report: \"Budget Variance Analysis\" — added Q3 data', '{\"ip_address\":\"192.168.1.195\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) Chrome/124\",\"endpoint\":\"/api/reports/679\",\"method\":\"GET\",\"timestamp\":\"2026-03-25T07:41:46.065Z\",\"report_id\":679}', '2026-02-26 14:32:16'),
+(694, 56, 'REPORT_DELETE', 'Deleted report: \"Construction Progress Report\" (ID 588)', '{\"ip_address\":\"192.168.1.86\",\"user_agent\":\"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) Safari/605\",\"endpoint\":\"/api/reports/588\",\"method\":\"GET\",\"timestamp\":\"2026-03-25T07:41:46.065Z\",\"report_id\":588}', '2026-03-25 03:15:58'),
+(695, 27, 'REPORT_DECLINE', 'Declined report: \"Construction Progress Report\" — data inconsistency', '{\"ip_address\":\"192.168.1.153\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) Chrome/124\",\"endpoint\":\"/api/reports/682\",\"method\":\"GET\",\"timestamp\":\"2026-03-25T07:41:46.065Z\",\"report_id\":682}', '2026-03-03 06:30:21'),
+(696, 41, 'ROLE_DELETE', 'Deleted role \"Manager\" and reassigned 3 users', '{\"ip_address\":\"192.168.1.79\",\"user_agent\":\"Mozilla/5.0 (X11; Linux x86_64) Firefox/125\",\"endpoint\":\"/api/menu-permissions\",\"method\":\"POST\",\"timestamp\":\"2026-03-25T07:41:46.066Z\",\"role\":\"Manager\",\"menu\":\"Admin Panel\"}', '2026-02-27 17:10:57'),
+(697, 67, 'PLAN_APPROVE', 'Approved plan: \"HR Onboarding Automation\" (ID 271)', '{\"ip_address\":\"192.168.1.159\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) Chrome/124\",\"endpoint\":\"/api/plans/271\",\"method\":\"PUT\",\"timestamp\":\"2026-03-25T07:41:46.065Z\",\"plan_id\":271}', '2026-02-24 02:34:44'),
+(698, NULL, 'SYSTEM_ERROR', 'Unhandled exception in /api/reports — Timeout', '{\"ip_address\":\"192.168.1.37\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) Chrome/124\",\"endpoint\":\"/api/system/errors\",\"method\":\"POST\",\"timestamp\":\"2026-03-25T07:41:46.066Z\"}', '2026-03-05 01:10:29'),
+(699, 57, 'TASK_COMPLETE', 'Completed task: \"Review server backups\" (ID 299) ahead of schedule', '{\"ip_address\":\"192.168.1.78\",\"user_agent\":\"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) Safari/605\",\"endpoint\":\"/api/tasks/299\",\"method\":\"PUT\",\"timestamp\":\"2026-03-25T07:41:46.066Z\",\"task_id\":299}', '2026-03-16 08:18:07'),
+(700, 25, 'MENU_UPDATE', 'Updated menu item \"Admin Panel\" — changed icon & display order', '{\"ip_address\":\"192.168.1.179\",\"user_agent\":\"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) Safari/605\",\"endpoint\":\"/api/menu-permissions\",\"method\":\"POST\",\"timestamp\":\"2026-03-25T07:41:46.066Z\",\"role\":\"Admin\",\"menu\":\"Admin Panel\"}', '2026-03-22 13:47:04'),
+(701, 13, 'ROLE_DELETE', 'Deleted role \"Staff\" and reassigned 2 users', '{\"ip_address\":\"192.168.1.194\",\"user_agent\":\"Mozilla/5.0 (X11; Linux x86_64) Firefox/125\",\"endpoint\":\"/api/menu-permissions\",\"method\":\"POST\",\"timestamp\":\"2026-03-25T07:41:46.066Z\",\"role\":\"Staff\",\"menu\":\"Dashboard\"}', '2026-03-08 07:40:59'),
+(702, 39, 'MENU_DELETE', 'Deleted menu item \"Reports\" and cleaned up role_permissions', '{\"ip_address\":\"192.168.1.109\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) Chrome/124\",\"endpoint\":\"/api/menu-permissions\",\"method\":\"POST\",\"timestamp\":\"2026-03-25T07:41:46.066Z\",\"role\":\"Expert\",\"menu\":\"Reports\"}', '2026-03-01 09:31:07'),
+(703, 44, 'ROLE_UPDATE', 'Updated role \"Manager\" — renamed & permission set revised', '{\"ip_address\":\"192.168.1.129\",\"user_agent\":\"Mozilla/5.0 (X11; Linux x86_64) Firefox/125\",\"endpoint\":\"/api/menu-permissions\",\"method\":\"POST\",\"timestamp\":\"2026-03-25T07:41:46.066Z\",\"role\":\"Manager\",\"menu\":\"Admin Panel\"}', '2026-03-20 20:20:43'),
+(704, 70, 'PLAN_APPROVE', 'Approved plan: \"Digital Transformation Initiative\" (ID 463)', '{\"ip_address\":\"192.168.1.49\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) Chrome/124\",\"endpoint\":\"/api/plans/463\",\"method\":\"PUT\",\"timestamp\":\"2026-03-25T07:41:46.065Z\",\"plan_id\":463}', '2026-03-11 08:05:12'),
+(705, 24, 'TASK_CREATE', 'Created task: \"Prepare Q2 budget sheet\" assigned to team', '{\"ip_address\":\"192.168.1.39\",\"user_agent\":\"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) Safari/605\",\"endpoint\":\"/api/tasks/149\",\"method\":\"POST\",\"timestamp\":\"2026-03-25T07:41:46.066Z\",\"task_id\":149}', '2026-03-05 06:46:53'),
+(706, 43, 'SYSTEM_ERROR', 'Unhandled exception in /api/users — DB connection lost', '{\"ip_address\":\"192.168.1.188\",\"user_agent\":\"Mozilla/5.0 (X11; Linux x86_64) Firefox/125\",\"endpoint\":\"/api/system/errors\",\"method\":\"POST\",\"timestamp\":\"2026-03-25T07:41:46.066Z\"}', '2026-03-19 23:35:11'),
+(707, 38, 'PLAN_DECLINE', 'Declined plan: \"Annual IT Infrastructure Upgrade\" — insufficient detail', '{\"ip_address\":\"192.168.1.153\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) Chrome/124\",\"endpoint\":\"/api/plans/103\",\"method\":\"PUT\",\"timestamp\":\"2026-03-25T07:41:46.065Z\",\"plan_id\":103}', '2026-03-15 13:29:09'),
+(708, 73, 'TASK_COMPLETE', 'Completed task: \"Prepare Q2 budget sheet\" (ID 8) ahead of schedule', '{\"ip_address\":\"192.168.1.97\",\"user_agent\":\"Mozilla/5.0 (X11; Linux x86_64) Firefox/125\",\"endpoint\":\"/api/tasks/8\",\"method\":\"PUT\",\"timestamp\":\"2026-03-25T07:41:46.066Z\",\"task_id\":8}', '2026-03-23 02:13:20'),
+(709, 66, 'PLAN_DELETE', 'Deleted plan: \"Digital Transformation Initiative\" (ID 188)', '{\"ip_address\":\"192.168.1.118\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) Chrome/124\",\"endpoint\":\"/api/plans/188\",\"method\":\"PUT\",\"timestamp\":\"2026-03-25T07:41:46.065Z\",\"plan_id\":188}', '2026-03-24 17:01:18'),
+(710, 71, 'PLAN_SUBMIT', 'Submitted plan: \"Digital Transformation Initiative\" for approval', '{\"ip_address\":\"192.168.1.79\",\"user_agent\":\"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) Safari/605\",\"endpoint\":\"/api/plans/316\",\"method\":\"PUT\",\"timestamp\":\"2026-03-25T07:41:46.065Z\",\"plan_id\":316}', '2026-02-24 13:17:43'),
+(711, 59, 'PLAN_SUBMIT', 'Submitted plan: \"Annual IT Infrastructure Upgrade\" for approval', '{\"ip_address\":\"192.168.1.89\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) Chrome/124\",\"endpoint\":\"/api/plans/305\",\"method\":\"PUT\",\"timestamp\":\"2026-03-25T07:41:46.065Z\",\"plan_id\":305}', '2026-03-09 10:38:10'),
+(712, 49, 'PLAN_CREATE', 'Created plan: \"HR Onboarding Automation\" (ID 128)', '{\"ip_address\":\"192.168.1.178\",\"user_agent\":\"Mozilla/5.0 (X11; Linux x86_64) Firefox/125\",\"endpoint\":\"/api/plans/128\",\"method\":\"POST\",\"timestamp\":\"2026-03-25T07:41:46.065Z\",\"plan_id\":128}', '2026-02-24 07:06:54'),
+(713, NULL, 'DATA_EXPORT', 'Scheduled database backup completed — 69 MB archived', '{\"ip_address\":\"192.168.1.82\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) Chrome/124\",\"endpoint\":\"/api/admin/backup\",\"method\":\"POST\",\"timestamp\":\"2026-03-25T07:41:46.066Z\"}', '2026-03-15 12:33:31'),
+(714, 6, 'PLAN_CREATE', 'Created plan: \"Employee Training Programme 2025\" (ID 312)', '{\"ip_address\":\"192.168.1.196\",\"user_agent\":\"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) Safari/605\",\"endpoint\":\"/api/plans/312\",\"method\":\"POST\",\"timestamp\":\"2026-03-25T07:41:46.065Z\",\"plan_id\":312}', '2026-03-21 07:53:39'),
+(715, 54, 'PLAN_UPDATE', 'Updated plan: \"Employee Training Programme 2025\" — revised budget & timeline', '{\"ip_address\":\"192.168.1.74\",\"user_agent\":\"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) Safari/605\",\"endpoint\":\"/api/plans/195\",\"method\":\"PUT\",\"timestamp\":\"2026-03-25T07:41:46.065Z\",\"plan_id\":195}', '2026-03-11 00:27:26'),
+(716, 6, 'PERMISSION_UPDATE', 'Updated permissions for role \"Manager\" — toggled access to [Reports, Settings]', '{\"ip_address\":\"192.168.1.89\",\"user_agent\":\"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) Safari/605\",\"endpoint\":\"/api/menu-permissions\",\"method\":\"POST\",\"timestamp\":\"2026-03-25T07:41:46.066Z\",\"role\":\"Manager\",\"menu\":\"Reports\"}', '2026-03-02 02:35:49'),
+(717, 51, 'TASK_CREATE', 'Created task: \"Train new team members\" assigned to team', '{\"ip_address\":\"192.168.1.11\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) Chrome/124\",\"endpoint\":\"/api/tasks/145\",\"method\":\"POST\",\"timestamp\":\"2026-03-25T07:41:46.066Z\",\"task_id\":145}', '2026-03-03 07:07:11'),
+(718, 60, 'TASK_COMPLETE', 'Completed task: \"Train new team members\" (ID 114) ahead of schedule', '{\"ip_address\":\"192.168.1.160\",\"user_agent\":\"Mozilla/5.0 (X11; Linux x86_64) Firefox/125\",\"endpoint\":\"/api/tasks/114\",\"method\":\"PUT\",\"timestamp\":\"2026-03-25T07:41:46.066Z\",\"task_id\":114}', '2026-03-12 08:11:06'),
+(719, 59, 'REPORT_DECLINE', 'Declined report: \"Risk Assessment Report\" — data inconsistency', '{\"ip_address\":\"192.168.1.161\",\"user_agent\":\"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) Safari/605\",\"endpoint\":\"/api/reports/366\",\"method\":\"GET\",\"timestamp\":\"2026-03-25T07:41:46.065Z\",\"report_id\":366}', '2026-03-02 19:50:04'),
+(720, 46, 'TASK_CREATE', 'Created task: \"Prepare Q2 budget sheet\" assigned to team', '{\"ip_address\":\"192.168.1.116\",\"user_agent\":\"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) Safari/605\",\"endpoint\":\"/api/tasks/122\",\"method\":\"POST\",\"timestamp\":\"2026-03-25T07:41:46.066Z\",\"task_id\":122}', '2026-03-10 18:17:36'),
+(721, 77, 'ROLE_DELETE', 'Deleted role \"Expert\" and reassigned 5 users', '{\"ip_address\":\"192.168.1.150\",\"user_agent\":\"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) Safari/605\",\"endpoint\":\"/api/menu-permissions\",\"method\":\"POST\",\"timestamp\":\"2026-03-25T07:41:46.066Z\",\"role\":\"Expert\",\"menu\":\"Reports\"}', '2026-03-15 20:37:05'),
+(722, 74, 'SYSTEM_START', 'Server started on port 5001 — DB connected, 10 routes registered', '{\"ip_address\":\"192.168.1.14\",\"user_agent\":\"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) Safari/605\",\"endpoint\":\"/api/system/start\",\"method\":\"POST\",\"timestamp\":\"2026-03-25T07:41:46.066Z\"}', '2026-03-18 08:37:42'),
+(723, 64, 'MEETING_CREATE', 'Scheduled meeting: \"Budget Review Session\" — 12 attendees invited', '{\"ip_address\":\"192.168.1.34\",\"user_agent\":\"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) Safari/605\",\"endpoint\":\"/api/meetings/26\",\"method\":\"POST\",\"timestamp\":\"2026-03-25T07:41:46.066Z\",\"meeting_id\":26}', '2026-03-08 00:25:28'),
+(724, 52, 'REPORT_UPDATE', 'Updated report: \"Risk Assessment Report\" — added Q3 data', '{\"ip_address\":\"192.168.1.84\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) Chrome/124\",\"endpoint\":\"/api/reports/268\",\"method\":\"GET\",\"timestamp\":\"2026-03-25T07:41:46.066Z\",\"report_id\":268}', '2026-02-24 02:48:29'),
+(725, 68, 'REPORT_APPROVE', 'Approved report: \"Annual Audit Report 2024\"', '{\"ip_address\":\"192.168.1.140\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) Chrome/124\",\"endpoint\":\"/api/reports/349\",\"method\":\"GET\",\"timestamp\":\"2026-03-25T07:41:46.065Z\",\"report_id\":349}', '2026-03-21 04:21:11'),
+(726, 37, 'ROLE_CREATE', 'Created new role: \"Expert Level 3\"', '{\"ip_address\":\"192.168.1.173\",\"user_agent\":\"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) Safari/605\",\"endpoint\":\"/api/menu-permissions\",\"method\":\"POST\",\"timestamp\":\"2026-03-25T07:41:46.066Z\",\"role\":\"Expert\",\"menu\":\"Admin Panel\"}', '2026-03-22 10:18:50'),
+(727, 48, 'REPORT_DECLINE', 'Declined report: \"Monthly Employee Performance\" — data inconsistency', '{\"ip_address\":\"192.168.1.197\",\"user_agent\":\"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) Safari/605\",\"endpoint\":\"/api/reports/404\",\"method\":\"GET\",\"timestamp\":\"2026-03-25T07:41:46.065Z\",\"report_id\":404}', '2026-03-09 10:41:17'),
+(728, 48, 'MENU_DELETE', 'Deleted menu item \"Plans\" and cleaned up role_permissions', '{\"ip_address\":\"192.168.1.51\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) Chrome/124\",\"endpoint\":\"/api/menu-permissions\",\"method\":\"POST\",\"timestamp\":\"2026-03-25T07:41:46.066Z\",\"role\":\"Team Leader\",\"menu\":\"Plans\"}', '2026-03-23 04:18:21'),
+(729, 78, 'TASK_DELETE', 'Deleted task: \"Prepare Q2 budget sheet\" (ID 258) — cancelled', '{\"ip_address\":\"192.168.1.174\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) Chrome/124\",\"endpoint\":\"/api/tasks/258\",\"method\":\"PUT\",\"timestamp\":\"2026-03-25T07:41:46.066Z\",\"task_id\":258}', '2026-03-09 20:26:13'),
+(730, 36, 'MEETING_POSTPONE', 'Postponed meeting: \"IT Daily Standup\" to next week', '{\"ip_address\":\"192.168.1.15\",\"user_agent\":\"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) Safari/605\",\"endpoint\":\"/api/meetings/90\",\"method\":\"POST\",\"timestamp\":\"2026-03-25T07:41:46.066Z\",\"meeting_id\":90}', '2026-03-10 13:55:50'),
+(731, NULL, 'SYSTEM_ERROR', 'Unhandled exception in /api/users — Null reference', '{\"ip_address\":\"192.168.1.36\",\"user_agent\":\"Mozilla/5.0 (X11; Linux x86_64) Firefox/125\",\"endpoint\":\"/api/system/errors\",\"method\":\"POST\",\"timestamp\":\"2026-03-25T07:41:46.066Z\"}', '2026-03-07 21:57:25'),
+(732, 71, 'REPORT_UPDATE', 'Updated report: \"Annual Audit Report 2024\" — added Q3 data', '{\"ip_address\":\"192.168.1.89\",\"user_agent\":\"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) Safari/605\",\"endpoint\":\"/api/reports/209\",\"method\":\"GET\",\"timestamp\":\"2026-03-25T07:41:46.065Z\",\"report_id\":209}', '2026-03-06 11:26:29'),
+(733, 49, 'PLAN_UPDATE', 'Updated plan: \"Construction Safety Roadmap\" — revised budget & timeline', '{\"ip_address\":\"192.168.1.152\",\"user_agent\":\"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) Safari/605\",\"endpoint\":\"/api/plans/364\",\"method\":\"PUT\",\"timestamp\":\"2026-03-25T07:41:46.065Z\",\"plan_id\":364}', '2026-03-02 21:47:01'),
+(734, 55, 'REPORT_APPROVE', 'Approved report: \"IT Incident Response Report\"', '{\"ip_address\":\"192.168.1.155\",\"user_agent\":\"Mozilla/5.0 (X11; Linux x86_64) Firefox/125\",\"endpoint\":\"/api/reports/588\",\"method\":\"GET\",\"timestamp\":\"2026-03-25T07:41:46.065Z\",\"report_id\":588}', '2026-02-28 12:55:36'),
+(735, 61, 'MEETING_JOIN', 'Joined meeting: \"Budget Review Session\"', '{\"ip_address\":\"192.168.1.109\",\"user_agent\":\"Mozilla/5.0 (X11; Linux x86_64) Firefox/125\",\"endpoint\":\"/api/meetings/8\",\"method\":\"POST\",\"timestamp\":\"2026-03-25T07:41:46.066Z\",\"meeting_id\":8}', '2026-03-23 07:21:36'),
+(736, 68, 'TASK_CREATE', 'Created task: \"Complete security audit\" assigned to team', '{\"ip_address\":\"192.168.1.30\",\"user_agent\":\"Mozilla/5.0 (X11; Linux x86_64) Firefox/125\",\"endpoint\":\"/api/tasks/140\",\"method\":\"POST\",\"timestamp\":\"2026-03-25T07:41:46.066Z\",\"task_id\":140}', '2026-03-17 12:18:44'),
+(737, 47, 'MEETING_CREATE', 'Scheduled meeting: \"Audit Debrief\" — 5 attendees invited', '{\"ip_address\":\"192.168.1.153\",\"user_agent\":\"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) Safari/605\",\"endpoint\":\"/api/meetings/83\",\"method\":\"POST\",\"timestamp\":\"2026-03-25T07:41:46.066Z\",\"meeting_id\":83}', '2026-03-12 16:12:46'),
+(738, 26, 'TASK_CREATE', 'Created task: \"Review server backups\" assigned to team', '{\"ip_address\":\"192.168.1.37\",\"user_agent\":\"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) Safari/605\",\"endpoint\":\"/api/tasks/122\",\"method\":\"POST\",\"timestamp\":\"2026-03-25T07:41:46.066Z\",\"task_id\":122}', '2026-03-07 03:03:50'),
+(739, 30, 'MEETING_CREATE', 'Scheduled meeting: \"Budget Review Session\" — 12 attendees invited', '{\"ip_address\":\"192.168.1.159\",\"user_agent\":\"Mozilla/5.0 (X11; Linux x86_64) Firefox/125\",\"endpoint\":\"/api/meetings/88\",\"method\":\"POST\",\"timestamp\":\"2026-03-25T07:41:46.066Z\",\"meeting_id\":88}', '2026-02-28 04:05:26'),
+(740, 49, 'PLAN_SUBMIT', 'Submitted plan: \"Digital Transformation Initiative\" for approval', '{\"ip_address\":\"192.168.1.108\",\"user_agent\":\"Mozilla/5.0 (X11; Linux x86_64) Firefox/125\",\"endpoint\":\"/api/plans/375\",\"method\":\"PUT\",\"timestamp\":\"2026-03-25T07:41:46.065Z\",\"plan_id\":375}', '2026-02-27 21:00:10'),
+(741, 74, 'REPORT_UPDATE', 'Updated report: \"Budget Variance Analysis\" — added Q3 data', '{\"ip_address\":\"192.168.1.138\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) Chrome/124\",\"endpoint\":\"/api/reports/296\",\"method\":\"GET\",\"timestamp\":\"2026-03-25T07:41:46.066Z\",\"report_id\":296}', '2026-03-06 03:09:50'),
+(742, NULL, 'SETTINGS_CHANGE', 'System setting changed: session_timeout updated', '{\"ip_address\":\"192.168.1.166\",\"user_agent\":\"Mozilla/5.0 (X11; Linux x86_64) Firefox/125\",\"endpoint\":\"/api/settings\",\"method\":\"POST\",\"timestamp\":\"2026-03-25T07:41:46.066Z\"}', '2026-03-16 20:26:40'),
+(743, 73, 'MEETING_CREATE', 'Scheduled meeting: \"Budget Review Session\" — 13 attendees invited', '{\"ip_address\":\"192.168.1.11\",\"user_agent\":\"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) Safari/605\",\"endpoint\":\"/api/meetings/46\",\"method\":\"POST\",\"timestamp\":\"2026-03-25T07:41:46.066Z\",\"meeting_id\":46}', '2026-03-19 19:50:49'),
+(744, 58, 'PLAN_UPDATE', 'Updated plan: \"Legal Compliance Review Plan\" — revised budget & timeline', '{\"ip_address\":\"192.168.1.153\",\"user_agent\":\"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) Safari/605\",\"endpoint\":\"/api/plans/114\",\"method\":\"PUT\",\"timestamp\":\"2026-03-25T07:41:46.065Z\",\"plan_id\":114}', '2026-03-25 01:42:24'),
+(745, 13, 'PLAN_CREATE', 'Created plan: \"Legal Compliance Review Plan\" (ID 253)', '{\"ip_address\":\"192.168.1.110\",\"user_agent\":\"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) Safari/605\",\"endpoint\":\"/api/plans/253\",\"method\":\"POST\",\"timestamp\":\"2026-03-25T07:41:46.065Z\",\"plan_id\":253}', '2026-03-17 23:31:58'),
+(746, 25, 'TASK_DELETE', 'Deleted task: \"Deploy hotfix to production\" (ID 102) — cancelled', '{\"ip_address\":\"192.168.1.163\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) Chrome/124\",\"endpoint\":\"/api/tasks/102\",\"method\":\"PUT\",\"timestamp\":\"2026-03-25T07:41:46.066Z\",\"task_id\":102}', '2026-03-04 18:03:02'),
+(747, 71, 'MENU_UPDATE', 'Updated menu item \"Admin Panel\" — changed icon & display order', '{\"ip_address\":\"192.168.1.96\",\"user_agent\":\"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) Safari/605\",\"endpoint\":\"/api/menu-permissions\",\"method\":\"POST\",\"timestamp\":\"2026-03-25T07:41:46.066Z\",\"role\":\"Staff\",\"menu\":\"Admin Panel\"}', '2026-03-02 23:06:17'),
+(748, NULL, 'SYSTEM_ERROR', 'Unhandled exception in /api/reports — Null reference', '{\"ip_address\":\"192.168.1.65\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) Chrome/124\",\"endpoint\":\"/api/system/errors\",\"method\":\"POST\",\"timestamp\":\"2026-03-25T07:41:46.066Z\"}', '2026-03-09 11:51:36'),
+(749, 53, 'REPORT_VIEW', 'Viewed report: \"Risk Assessment Report\"', '{\"ip_address\":\"192.168.1.120\",\"user_agent\":\"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) Safari/605\",\"endpoint\":\"/api/reports/302\",\"method\":\"GET\",\"timestamp\":\"2026-03-25T07:41:46.065Z\",\"report_id\":302}', '2026-03-13 05:30:39'),
+(750, 24, 'REPORT_DELETE', 'Deleted report: \"Risk Assessment Report\" (ID 372)', '{\"ip_address\":\"192.168.1.109\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) Chrome/124\",\"endpoint\":\"/api/reports/372\",\"method\":\"GET\",\"timestamp\":\"2026-03-25T07:41:46.065Z\",\"report_id\":372}', '2026-03-20 08:26:50'),
+(751, NULL, 'SYSTEM_START', 'Server started on port 5001 — DB connected, 17 routes registered', '{\"ip_address\":\"192.168.1.98\",\"user_agent\":\"Mozilla/5.0 (X11; Linux x86_64) Firefox/125\",\"endpoint\":\"/api/system/start\",\"method\":\"POST\",\"timestamp\":\"2026-03-25T07:41:46.066Z\"}', '2026-03-19 14:39:08'),
+(752, 70, 'MEETING_POSTPONE', 'Postponed meeting: \"Audit Debrief\" to next week', '{\"ip_address\":\"192.168.1.18\",\"user_agent\":\"Mozilla/5.0 (X11; Linux x86_64) Firefox/125\",\"endpoint\":\"/api/meetings/84\",\"method\":\"POST\",\"timestamp\":\"2026-03-25T07:41:46.066Z\",\"meeting_id\":84}', '2026-02-25 03:25:09'),
+(753, 42, 'PLAN_DECLINE', 'Declined plan: \"Marketing Strategy 2026\" — insufficient detail', '{\"ip_address\":\"192.168.1.144\",\"user_agent\":\"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) Safari/605\",\"endpoint\":\"/api/plans/311\",\"method\":\"PUT\",\"timestamp\":\"2026-03-25T07:41:46.065Z\",\"plan_id\":311}', '2026-03-24 17:34:08'),
+(754, NULL, 'SETTINGS_CHANGE', 'System setting changed: backup_schedule updated', '{\"ip_address\":\"192.168.1.36\",\"user_agent\":\"Mozilla/5.0 (X11; Linux x86_64) Firefox/125\",\"endpoint\":\"/api/settings\",\"method\":\"POST\",\"timestamp\":\"2026-03-25T07:41:46.066Z\"}', '2026-02-24 05:51:28'),
+(755, 45, 'SETTINGS_CHANGE', 'System setting changed: backup_schedule updated', '{\"ip_address\":\"192.168.1.10\",\"user_agent\":\"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) Safari/605\",\"endpoint\":\"/api/settings\",\"method\":\"POST\",\"timestamp\":\"2026-03-25T07:41:46.066Z\"}', '2026-03-20 10:04:14'),
+(756, 70, 'MEETING_UPDATE', 'Updated meeting: \"Annual Planning Workshop\" — agenda revised', '{\"ip_address\":\"192.168.1.163\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) Chrome/124\",\"endpoint\":\"/api/meetings/95\",\"method\":\"POST\",\"timestamp\":\"2026-03-25T07:41:46.066Z\",\"meeting_id\":95}', '2026-03-06 18:16:08'),
+(757, 50, 'REPORT_DELETE', 'Deleted report: \"IT Incident Response Report\" (ID 482)', '{\"ip_address\":\"192.168.1.73\",\"user_agent\":\"Mozilla/5.0 (X11; Linux x86_64) Firefox/125\",\"endpoint\":\"/api/reports/482\",\"method\":\"GET\",\"timestamp\":\"2026-03-25T07:41:46.065Z\",\"report_id\":482}', '2026-03-16 02:42:33'),
+(758, 65, 'PLAN_UPDATE', 'Updated plan: \"Legal Compliance Review Plan\" — revised budget & timeline', '{\"ip_address\":\"192.168.1.175\",\"user_agent\":\"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) Safari/605\",\"endpoint\":\"/api/plans/323\",\"method\":\"PUT\",\"timestamp\":\"2026-03-25T07:41:46.065Z\",\"plan_id\":323}', '2026-03-19 19:21:21'),
+(759, 50, 'REPORT_SUBMIT', 'Submitted report: \"Construction Progress Report\" for review', '{\"ip_address\":\"192.168.1.167\",\"user_agent\":\"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) Safari/605\",\"endpoint\":\"/api/reports/219\",\"method\":\"GET\",\"timestamp\":\"2026-03-25T07:41:46.065Z\",\"report_id\":219}', '2026-03-09 02:40:21'),
+(760, 27, 'PLAN_APPROVE', 'Approved plan: \"Marketing Strategy 2026\" (ID 417)', '{\"ip_address\":\"192.168.1.74\",\"user_agent\":\"Mozilla/5.0 (X11; Linux x86_64) Firefox/125\",\"endpoint\":\"/api/plans/417\",\"method\":\"PUT\",\"timestamp\":\"2026-03-25T07:41:46.065Z\",\"plan_id\":417}', '2026-03-11 00:18:27'),
+(761, 50, 'REPORT_UPDATE', 'Updated report: \"Q1 Financial Summary Report\" — added Q3 data', '{\"ip_address\":\"192.168.1.110\",\"user_agent\":\"Mozilla/5.0 (X11; Linux x86_64) Firefox/125\",\"endpoint\":\"/api/reports/483\",\"method\":\"GET\",\"timestamp\":\"2026-03-25T07:41:46.065Z\",\"report_id\":483}', '2026-02-27 14:21:31'),
+(762, 27, 'TASK_CREATE', 'Created task: \"Prepare Q2 budget sheet\" assigned to team', '{\"ip_address\":\"192.168.1.58\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) Chrome/124\",\"endpoint\":\"/api/tasks/245\",\"method\":\"POST\",\"timestamp\":\"2026-03-25T07:41:46.066Z\",\"task_id\":245}', '2026-02-27 03:49:24'),
+(763, 50, 'PLAN_APPROVE', 'Approved plan: \"Legal Compliance Review Plan\" (ID 110)', '{\"ip_address\":\"192.168.1.197\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) Chrome/124\",\"endpoint\":\"/api/plans/110\",\"method\":\"PUT\",\"timestamp\":\"2026-03-25T07:41:46.065Z\",\"plan_id\":110}', '2026-03-24 06:58:19'),
+(764, 26, 'REPORT_VIEW', 'Viewed report: \"Construction Progress Report\"', '{\"ip_address\":\"192.168.1.179\",\"user_agent\":\"Mozilla/5.0 (X11; Linux x86_64) Firefox/125\",\"endpoint\":\"/api/reports/498\",\"method\":\"GET\",\"timestamp\":\"2026-03-25T07:41:46.066Z\",\"report_id\":498}', '2026-03-17 13:51:10'),
+(765, 70, 'MEETING_POSTPONE', 'Postponed meeting: \"Q2 Strategy Meeting\" to next week', '{\"ip_address\":\"192.168.1.146\",\"user_agent\":\"Mozilla/5.0 (X11; Linux x86_64) Firefox/125\",\"endpoint\":\"/api/meetings/12\",\"method\":\"POST\",\"timestamp\":\"2026-03-25T07:41:46.066Z\",\"meeting_id\":12}', '2026-03-24 14:22:04'),
+(766, 61, 'MEETING_CREATE', 'Scheduled meeting: \"IT Daily Standup\" — 14 attendees invited', '{\"ip_address\":\"192.168.1.16\",\"user_agent\":\"Mozilla/5.0 (X11; Linux x86_64) Firefox/125\",\"endpoint\":\"/api/meetings/5\",\"method\":\"POST\",\"timestamp\":\"2026-03-25T07:41:46.066Z\",\"meeting_id\":5}', '2026-03-12 17:12:53');
+INSERT INTO `audit_logs` (`id`, `user_id`, `action`, `description`, `metadata`, `created_at`) VALUES
+(767, 56, 'ROLE_DELETE', 'Deleted role \"Team Leader\" and reassigned 3 users', '{\"ip_address\":\"192.168.1.123\",\"user_agent\":\"Mozilla/5.0 (X11; Linux x86_64) Firefox/125\",\"endpoint\":\"/api/menu-permissions\",\"method\":\"POST\",\"timestamp\":\"2026-03-25T07:41:46.066Z\",\"role\":\"Team Leader\",\"menu\":\"Tasks\"}', '2026-02-28 17:16:02'),
+(768, 75, 'MENU_DELETE', 'Deleted menu item \"Settings\" and cleaned up role_permissions', '{\"ip_address\":\"192.168.1.31\",\"user_agent\":\"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) Safari/605\",\"endpoint\":\"/api/menu-permissions\",\"method\":\"POST\",\"timestamp\":\"2026-03-25T07:41:46.066Z\",\"role\":\"Staff\",\"menu\":\"Settings\"}', '2026-03-20 00:37:37'),
+(769, 69, 'PLAN_CREATE', 'Created plan: \"Construction Safety Roadmap\" (ID 283)', '{\"ip_address\":\"192.168.1.39\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) Chrome/124\",\"endpoint\":\"/api/plans/283\",\"method\":\"POST\",\"timestamp\":\"2026-03-25T07:41:46.065Z\",\"plan_id\":283}', '2026-03-03 00:54:31'),
+(770, 60, 'MENU_DELETE', 'Deleted menu item \"Reports\" and cleaned up role_permissions', '{\"ip_address\":\"192.168.1.46\",\"user_agent\":\"Mozilla/5.0 (X11; Linux x86_64) Firefox/125\",\"endpoint\":\"/api/menu-permissions\",\"method\":\"POST\",\"timestamp\":\"2026-03-25T07:41:46.066Z\",\"role\":\"Team Leader\",\"menu\":\"Reports\"}', '2026-03-14 19:11:59'),
+(771, 60, 'PERMISSION_UPDATE', 'Updated permissions for role \"Manager\" — toggled access to [Tasks, Admin Panel]', '{\"ip_address\":\"192.168.1.54\",\"user_agent\":\"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) Safari/605\",\"endpoint\":\"/api/menu-permissions\",\"method\":\"POST\",\"timestamp\":\"2026-03-25T07:41:46.066Z\",\"role\":\"Manager\",\"menu\":\"Tasks\"}', '2026-03-12 12:20:25'),
+(772, 36, 'REPORT_SUBMIT', 'Submitted report: \"Annual Audit Report 2024\" for review', '{\"ip_address\":\"192.168.1.160\",\"user_agent\":\"Mozilla/5.0 (X11; Linux x86_64) Firefox/125\",\"endpoint\":\"/api/reports/648\",\"method\":\"GET\",\"timestamp\":\"2026-03-25T07:41:46.065Z\",\"report_id\":648}', '2026-02-28 17:17:22'),
+(773, 59, 'MEETING_CREATE', 'Scheduled meeting: \"Q2 Strategy Meeting\" — 11 attendees invited', '{\"ip_address\":\"192.168.1.81\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) Chrome/124\",\"endpoint\":\"/api/meetings/76\",\"method\":\"POST\",\"timestamp\":\"2026-03-25T07:41:46.066Z\",\"meeting_id\":76}', '2026-03-07 06:46:43'),
+(774, 60, 'TASK_COMPLETE', 'Completed task: \"Review server backups\" (ID 104) ahead of schedule', '{\"ip_address\":\"192.168.1.152\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) Chrome/124\",\"endpoint\":\"/api/tasks/104\",\"method\":\"PUT\",\"timestamp\":\"2026-03-25T07:41:46.066Z\",\"task_id\":104}', '2026-03-14 14:19:55'),
+(775, 73, 'REPORT_UPDATE', 'Updated report: \"Q1 Financial Summary Report\" — added Q3 data', '{\"ip_address\":\"192.168.1.143\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) Chrome/124\",\"endpoint\":\"/api/reports/523\",\"method\":\"GET\",\"timestamp\":\"2026-03-25T07:41:46.065Z\",\"report_id\":523}', '2026-03-18 09:19:10'),
+(776, 60, 'SYSTEM_START', 'Server started on port 5001 — DB connected, 19 routes registered', '{\"ip_address\":\"192.168.1.36\",\"user_agent\":\"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) Safari/605\",\"endpoint\":\"/api/system/start\",\"method\":\"POST\",\"timestamp\":\"2026-03-25T07:41:46.066Z\"}', '2026-03-15 13:13:19'),
+(777, 65, 'MEETING_JOIN', 'Joined meeting: \"Annual Planning Workshop\"', '{\"ip_address\":\"192.168.1.182\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) Chrome/124\",\"endpoint\":\"/api/meetings/72\",\"method\":\"POST\",\"timestamp\":\"2026-03-25T07:41:46.066Z\",\"meeting_id\":72}', '2026-03-12 05:49:18'),
+(778, 56, 'DATA_EXPORT', 'Scheduled database backup completed — 62 MB archived', '{\"ip_address\":\"192.168.1.31\",\"user_agent\":\"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) Safari/605\",\"endpoint\":\"/api/admin/backup\",\"method\":\"POST\",\"timestamp\":\"2026-03-25T07:41:46.066Z\"}', '2026-02-28 11:09:24'),
+(779, 40, 'MEETING_POSTPONE', 'Postponed meeting: \"IT Daily Standup\" to next week', '{\"ip_address\":\"192.168.1.169\",\"user_agent\":\"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) Safari/605\",\"endpoint\":\"/api/meetings/71\",\"method\":\"POST\",\"timestamp\":\"2026-03-25T07:41:46.066Z\",\"meeting_id\":71}', '2026-02-27 07:24:12'),
+(780, NULL, 'DATA_EXPORT', 'Scheduled database backup completed — 41 MB archived', '{\"ip_address\":\"192.168.1.50\",\"user_agent\":\"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) Safari/605\",\"endpoint\":\"/api/admin/backup\",\"method\":\"POST\",\"timestamp\":\"2026-03-25T07:41:46.066Z\"}', '2026-02-28 06:38:34'),
+(781, 55, 'MEETING_END', 'Ended meeting: \"Budget Review Session\" — duration 141 minutes', '{\"ip_address\":\"192.168.1.11\",\"user_agent\":\"Mozilla/5.0 (X11; Linux x86_64) Firefox/125\",\"endpoint\":\"/api/meetings/23\",\"method\":\"POST\",\"timestamp\":\"2026-03-25T07:41:46.066Z\",\"meeting_id\":23}', '2026-03-12 09:22:41'),
+(782, 37, 'SYSTEM_START', 'Server started on port 5001 — DB connected, 11 routes registered', '{\"ip_address\":\"192.168.1.67\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) Chrome/124\",\"endpoint\":\"/api/system/start\",\"method\":\"POST\",\"timestamp\":\"2026-03-25T07:41:46.066Z\"}', '2026-03-10 01:00:24'),
+(783, 73, 'SYSTEM_START', 'Server started on port 5001 — DB connected, 11 routes registered', '{\"ip_address\":\"192.168.1.135\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) Chrome/124\",\"endpoint\":\"/api/system/start\",\"method\":\"POST\",\"timestamp\":\"2026-03-25T07:41:46.066Z\"}', '2026-03-12 02:12:43'),
+(784, 64, 'MEETING_END', 'Ended meeting: \"Q2 Strategy Meeting\" — duration 25 minutes', '{\"ip_address\":\"192.168.1.33\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) Chrome/124\",\"endpoint\":\"/api/meetings/51\",\"method\":\"POST\",\"timestamp\":\"2026-03-25T07:41:46.066Z\",\"meeting_id\":51}', '2026-03-05 06:02:14'),
+(785, 27, 'DATA_EXPORT', 'Data exported: employees table — 4154 rows as CSV', '{\"ip_address\":\"192.168.1.179\",\"user_agent\":\"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) Safari/605\",\"endpoint\":\"/api/admin/export\",\"method\":\"POST\",\"timestamp\":\"2026-03-25T07:41:46.066Z\"}', '2026-03-03 05:30:46'),
+(786, 72, 'DATA_EXPORT', 'Data exported: reports table — 1809 rows as CSV', '{\"ip_address\":\"192.168.1.134\",\"user_agent\":\"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) Safari/605\",\"endpoint\":\"/api/admin/export\",\"method\":\"POST\",\"timestamp\":\"2026-03-25T07:41:46.066Z\"}', '2026-03-17 09:23:23'),
+(787, 46, 'SYSTEM_START', 'Server started on port 5001 — DB connected, 10 routes registered', '{\"ip_address\":\"192.168.1.22\",\"user_agent\":\"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) Safari/605\",\"endpoint\":\"/api/system/start\",\"method\":\"POST\",\"timestamp\":\"2026-03-25T07:41:46.066Z\"}', '2026-03-08 22:20:39'),
+(788, 67, 'MEETING_CREATE', 'Scheduled meeting: \"Audit Debrief\" — 2 attendees invited', '{\"ip_address\":\"192.168.1.37\",\"user_agent\":\"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) Safari/605\",\"endpoint\":\"/api/meetings/65\",\"method\":\"POST\",\"timestamp\":\"2026-03-25T07:41:46.066Z\",\"meeting_id\":65}', '2026-03-24 06:11:57'),
+(789, 42, 'MEETING_POSTPONE', 'Postponed meeting: \"Q2 Strategy Meeting\" to next week', '{\"ip_address\":\"192.168.1.69\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) Chrome/124\",\"endpoint\":\"/api/meetings/34\",\"method\":\"POST\",\"timestamp\":\"2026-03-25T07:41:46.066Z\",\"meeting_id\":34}', '2026-03-24 01:50:40'),
+(790, 49, 'TASK_CREATE', 'Created task: \"Complete security audit\" assigned to team', '{\"ip_address\":\"192.168.1.75\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) Chrome/124\",\"endpoint\":\"/api/tasks/177\",\"method\":\"POST\",\"timestamp\":\"2026-03-25T07:41:46.066Z\",\"task_id\":177}', '2026-03-01 12:14:12'),
+(791, 64, 'ROLE_CREATE', 'Created new role: \"Manager Level 3\"', '{\"ip_address\":\"192.168.1.155\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) Chrome/124\",\"endpoint\":\"/api/menu-permissions\",\"method\":\"POST\",\"timestamp\":\"2026-03-25T07:42:22.291Z\",\"role\":\"Manager\",\"menu\":\"Dashboard\"}', '2026-03-18 23:14:23'),
+(792, 72, 'REPORT_UPDATE', 'Updated report: \"IT Incident Response Report\" — added Q3 data', '{\"ip_address\":\"192.168.1.49\",\"user_agent\":\"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) Safari/605\",\"endpoint\":\"/api/reports/600\",\"method\":\"GET\",\"timestamp\":\"2026-03-25T07:42:22.290Z\",\"report_id\":600}', '2026-03-14 15:25:25'),
+(793, 37, 'REPORT_UPDATE', 'Updated report: \"IT Incident Response Report\" — added Q3 data', '{\"ip_address\":\"192.168.1.41\",\"user_agent\":\"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) Safari/605\",\"endpoint\":\"/api/reports/307\",\"method\":\"GET\",\"timestamp\":\"2026-03-25T07:42:22.290Z\",\"report_id\":307}', '2026-02-24 01:37:45'),
+(794, 42, 'REPORT_SUBMIT', 'Submitted report: \"Construction Progress Report\" for review', '{\"ip_address\":\"192.168.1.42\",\"user_agent\":\"Mozilla/5.0 (X11; Linux x86_64) Firefox/125\",\"endpoint\":\"/api/reports/574\",\"method\":\"GET\",\"timestamp\":\"2026-03-25T07:42:22.289Z\",\"report_id\":574}', '2026-03-15 12:15:58'),
+(795, 69, 'REPORT_DELETE', 'Deleted report: \"Budget Variance Analysis\" (ID 495)', '{\"ip_address\":\"192.168.1.18\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) Chrome/124\",\"endpoint\":\"/api/reports/495\",\"method\":\"GET\",\"timestamp\":\"2026-03-25T07:42:22.290Z\",\"report_id\":495}', '2026-03-23 22:03:41'),
+(796, 77, 'REPORT_DELETE', 'Deleted report: \"Risk Assessment Report\" (ID 340)', '{\"ip_address\":\"192.168.1.87\",\"user_agent\":\"Mozilla/5.0 (X11; Linux x86_64) Firefox/125\",\"endpoint\":\"/api/reports/340\",\"method\":\"GET\",\"timestamp\":\"2026-03-25T07:42:22.289Z\",\"report_id\":340}', '2026-03-19 18:54:52'),
+(797, 71, 'REPORT_UPDATE', 'Updated report: \"Budget Variance Analysis\" — added Q3 data', '{\"ip_address\":\"192.168.1.52\",\"user_agent\":\"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) Safari/605\",\"endpoint\":\"/api/reports/349\",\"method\":\"GET\",\"timestamp\":\"2026-03-25T07:42:22.289Z\",\"report_id\":349}', '2026-03-16 22:51:21'),
+(798, 66, 'REPORT_CREATE', 'Created report: \"Q1 Financial Summary Report\"', '{\"ip_address\":\"192.168.1.37\",\"user_agent\":\"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) Safari/605\",\"endpoint\":\"/api/reports/532\",\"method\":\"POST\",\"timestamp\":\"2026-03-25T07:42:22.289Z\",\"report_id\":532}', '2026-03-01 09:49:02'),
+(799, 65, 'REPORT_APPROVE', 'Approved report: \"Monthly Employee Performance\"', '{\"ip_address\":\"192.168.1.32\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) Chrome/124\",\"endpoint\":\"/api/reports/670\",\"method\":\"GET\",\"timestamp\":\"2026-03-25T07:42:22.289Z\",\"report_id\":670}', '2026-03-24 14:49:53'),
+(800, 44, 'REPORT_APPROVE', 'Approved report: \"Risk Assessment Report\"', '{\"ip_address\":\"192.168.1.173\",\"user_agent\":\"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) Safari/605\",\"endpoint\":\"/api/reports/236\",\"method\":\"GET\",\"timestamp\":\"2026-03-25T07:42:22.290Z\",\"report_id\":236}', '2026-02-23 17:46:26'),
+(801, 76, 'REPORT_APPROVE', 'Approved report: \"Q1 Financial Summary Report\"', '{\"ip_address\":\"192.168.1.131\",\"user_agent\":\"Mozilla/5.0 (X11; Linux x86_64) Firefox/125\",\"endpoint\":\"/api/reports/547\",\"method\":\"GET\",\"timestamp\":\"2026-03-25T07:42:22.290Z\",\"report_id\":547}', '2026-03-11 18:35:19'),
+(802, 69, 'REPORT_DECLINE', 'Declined report: \"Construction Progress Report\" — data inconsistency', '{\"ip_address\":\"192.168.1.198\",\"user_agent\":\"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) Safari/605\",\"endpoint\":\"/api/reports/432\",\"method\":\"GET\",\"timestamp\":\"2026-03-25T07:42:22.289Z\",\"report_id\":432}', '2026-03-07 03:06:25'),
+(803, 78, 'REPORT_DELETE', 'Deleted report: \"Risk Assessment Report\" (ID 315)', '{\"ip_address\":\"192.168.1.37\",\"user_agent\":\"Mozilla/5.0 (X11; Linux x86_64) Firefox/125\",\"endpoint\":\"/api/reports/315\",\"method\":\"GET\",\"timestamp\":\"2026-03-25T07:42:22.289Z\",\"report_id\":315}', '2026-03-11 03:48:54'),
+(804, 25, 'REPORT_VIEW', 'Viewed report: \"Annual Audit Report 2024\"', '{\"ip_address\":\"192.168.1.159\",\"user_agent\":\"Mozilla/5.0 (X11; Linux x86_64) Firefox/125\",\"endpoint\":\"/api/reports/415\",\"method\":\"GET\",\"timestamp\":\"2026-03-25T07:42:22.290Z\",\"report_id\":415}', '2026-03-04 12:33:51'),
+(805, 51, 'REPORT_CREATE', 'Created report: \"IT Incident Response Report\"', '{\"ip_address\":\"192.168.1.112\",\"user_agent\":\"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) Safari/605\",\"endpoint\":\"/api/reports/523\",\"method\":\"POST\",\"timestamp\":\"2026-03-25T07:42:22.289Z\",\"report_id\":523}', '2026-03-21 16:54:05'),
+(806, 36, 'REPORT_APPROVE', 'Approved report: \"Q1 Financial Summary Report\"', '{\"ip_address\":\"192.168.1.165\",\"user_agent\":\"Mozilla/5.0 (X11; Linux x86_64) Firefox/125\",\"endpoint\":\"/api/reports/671\",\"method\":\"GET\",\"timestamp\":\"2026-03-25T07:42:22.290Z\",\"report_id\":671}', '2026-03-23 02:27:57'),
+(807, 37, 'REPORT_SUBMIT', 'Submitted report: \"Budget Variance Analysis\" for review', '{\"ip_address\":\"192.168.1.22\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) Chrome/124\",\"endpoint\":\"/api/reports/557\",\"method\":\"GET\",\"timestamp\":\"2026-03-25T07:42:22.290Z\",\"report_id\":557}', '2026-03-20 10:16:37'),
+(808, 6, 'REPORT_APPROVE', 'Approved report: \"Monthly Employee Performance\"', '{\"ip_address\":\"192.168.1.138\",\"user_agent\":\"Mozilla/5.0 (X11; Linux x86_64) Firefox/125\",\"endpoint\":\"/api/reports/489\",\"method\":\"GET\",\"timestamp\":\"2026-03-25T07:42:22.290Z\",\"report_id\":489}', '2026-02-25 10:01:55'),
+(809, 72, 'REPORT_DECLINE', 'Declined report: \"Q1 Financial Summary Report\" — data inconsistency', '{\"ip_address\":\"192.168.1.106\",\"user_agent\":\"Mozilla/5.0 (X11; Linux x86_64) Firefox/125\",\"endpoint\":\"/api/reports/554\",\"method\":\"GET\",\"timestamp\":\"2026-03-25T07:42:22.289Z\",\"report_id\":554}', '2026-03-06 13:34:01'),
+(810, 69, 'REPORT_SUBMIT', 'Submitted report: \"Budget Variance Analysis\" for review', '{\"ip_address\":\"192.168.1.150\",\"user_agent\":\"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) Safari/605\",\"endpoint\":\"/api/reports/255\",\"method\":\"GET\",\"timestamp\":\"2026-03-25T07:42:22.289Z\",\"report_id\":255}', '2026-03-14 21:58:03'),
+(811, 38, 'REPORT_SUBMIT', 'Submitted report: \"Budget Variance Analysis\" for review', '{\"ip_address\":\"192.168.1.97\",\"user_agent\":\"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) Safari/605\",\"endpoint\":\"/api/reports/504\",\"method\":\"GET\",\"timestamp\":\"2026-03-25T07:42:22.289Z\",\"report_id\":504}', '2026-02-25 16:14:48'),
+(812, 73, 'PLAN_CREATE', 'Created plan: \"Legal Compliance Review Plan\" (ID 479)', '{\"ip_address\":\"192.168.1.179\",\"user_agent\":\"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) Safari/605\",\"endpoint\":\"/api/plans/479\",\"method\":\"POST\",\"timestamp\":\"2026-03-25T07:42:22.288Z\",\"plan_id\":479}', '2026-02-23 05:14:35'),
+(813, 60, 'MENU_CREATE', 'Created menu item: \"Plans\" (path /plans)', '{\"ip_address\":\"192.168.1.94\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) Chrome/124\",\"endpoint\":\"/api/menu-permissions\",\"method\":\"POST\",\"timestamp\":\"2026-03-25T07:42:22.291Z\",\"role\":\"Admin\",\"menu\":\"Plans\"}', '2026-03-10 17:25:33'),
+(814, 62, 'PLAN_APPROVE', 'Approved plan: \"HR Onboarding Automation\" (ID 246)', '{\"ip_address\":\"192.168.1.116\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) Chrome/124\",\"endpoint\":\"/api/plans/246\",\"method\":\"PUT\",\"timestamp\":\"2026-03-25T07:42:22.289Z\",\"plan_id\":246}', '2026-02-28 17:00:04'),
+(815, 73, 'REPORT_UPDATE', 'Updated report: \"Budget Variance Analysis\" — added Q3 data', '{\"ip_address\":\"192.168.1.194\",\"user_agent\":\"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) Safari/605\",\"endpoint\":\"/api/reports/423\",\"method\":\"GET\",\"timestamp\":\"2026-03-25T07:42:22.290Z\",\"report_id\":423}', '2026-03-22 18:54:52'),
+(816, 51, 'MEETING_JOIN', 'Joined meeting: \"IT Daily Standup\"', '{\"ip_address\":\"192.168.1.50\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) Chrome/124\",\"endpoint\":\"/api/meetings/14\",\"method\":\"POST\",\"timestamp\":\"2026-03-25T07:42:22.293Z\",\"meeting_id\":14}', '2026-03-14 23:08:22'),
+(817, 44, 'MENU_DELETE', 'Deleted menu item \"Reports\" and cleaned up role_permissions', '{\"ip_address\":\"192.168.1.137\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) Chrome/124\",\"endpoint\":\"/api/menu-permissions\",\"method\":\"POST\",\"timestamp\":\"2026-03-25T07:42:22.291Z\",\"role\":\"Admin\",\"menu\":\"Reports\"}', '2026-02-23 16:19:08'),
+(818, 6, 'REPORT_UPDATE', 'Updated report: \"Annual Audit Report 2024\" — added Q3 data', '{\"ip_address\":\"192.168.1.46\",\"user_agent\":\"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) Safari/605\",\"endpoint\":\"/api/reports/292\",\"method\":\"GET\",\"timestamp\":\"2026-03-25T07:42:22.290Z\",\"report_id\":292}', '2026-03-12 13:07:28'),
+(819, 46, 'PLAN_DECLINE', 'Declined plan: \"Annual IT Infrastructure Upgrade\" — insufficient detail', '{\"ip_address\":\"192.168.1.144\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) Chrome/124\",\"endpoint\":\"/api/plans/348\",\"method\":\"PUT\",\"timestamp\":\"2026-03-25T07:42:22.289Z\",\"plan_id\":348}', '2026-03-02 08:11:51'),
+(820, 55, 'MENU_DELETE', 'Deleted menu item \"Settings\" and cleaned up role_permissions', '{\"ip_address\":\"192.168.1.124\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) Chrome/124\",\"endpoint\":\"/api/menu-permissions\",\"method\":\"POST\",\"timestamp\":\"2026-03-25T07:42:22.291Z\",\"role\":\"Manager\",\"menu\":\"Settings\"}', '2026-03-07 19:59:40'),
+(821, 52, 'PLAN_DELETE', 'Deleted plan: \"Digital Transformation Initiative\" (ID 230)', '{\"ip_address\":\"192.168.1.190\",\"user_agent\":\"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) Safari/605\",\"endpoint\":\"/api/plans/230\",\"method\":\"PUT\",\"timestamp\":\"2026-03-25T07:42:22.289Z\",\"plan_id\":230}', '2026-03-05 03:27:33'),
+(822, 79, 'TASK_UPDATE', 'Updated task: \"Train new team members\" — changed deadline & priority', '{\"ip_address\":\"192.168.1.151\",\"user_agent\":\"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) Safari/605\",\"endpoint\":\"/api/tasks/29\",\"method\":\"PUT\",\"timestamp\":\"2026-03-25T07:42:22.292Z\",\"task_id\":29}', '2026-02-24 06:31:02'),
+(823, 38, 'ROLE_CREATE', 'Created new role: \"Admin Level 3\"', '{\"ip_address\":\"192.168.1.59\",\"user_agent\":\"Mozilla/5.0 (X11; Linux x86_64) Firefox/125\",\"endpoint\":\"/api/menu-permissions\",\"method\":\"POST\",\"timestamp\":\"2026-03-25T07:42:22.291Z\",\"role\":\"Admin\",\"menu\":\"Settings\"}', '2026-03-24 11:11:32'),
+(824, 48, 'PLAN_VIEW', 'Viewed plan: \"Annual IT Infrastructure Upgrade\"', '{\"ip_address\":\"192.168.1.15\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) Chrome/124\",\"endpoint\":\"/api/plans/182\",\"method\":\"PUT\",\"timestamp\":\"2026-03-25T07:42:22.289Z\",\"plan_id\":182}', '2026-03-11 22:31:01'),
+(825, 79, 'PLAN_CREATE', 'Created plan: \"HR Onboarding Automation\" (ID 326)', '{\"ip_address\":\"192.168.1.109\",\"user_agent\":\"Mozilla/5.0 (X11; Linux x86_64) Firefox/125\",\"endpoint\":\"/api/plans/326\",\"method\":\"POST\",\"timestamp\":\"2026-03-25T07:42:22.288Z\",\"plan_id\":326}', '2026-03-22 15:27:33'),
+(826, 6, 'TASK_COMPLETE', 'Completed task: \"Review server backups\" (ID 241) ahead of schedule', '{\"ip_address\":\"192.168.1.35\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) Chrome/124\",\"endpoint\":\"/api/tasks/241\",\"method\":\"PUT\",\"timestamp\":\"2026-03-25T07:42:22.292Z\",\"task_id\":241}', '2026-03-20 10:02:04'),
+(827, 55, 'PLAN_DELETE', 'Deleted plan: \"Digital Transformation Initiative\" (ID 180)', '{\"ip_address\":\"192.168.1.54\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) Chrome/124\",\"endpoint\":\"/api/plans/180\",\"method\":\"PUT\",\"timestamp\":\"2026-03-25T07:42:22.288Z\",\"plan_id\":180}', '2026-03-19 11:39:10'),
+(828, 7, 'PERMISSION_UPDATE', 'Updated permissions for role \"Expert\" — toggled access to [Tasks, Dashboard]', '{\"ip_address\":\"192.168.1.135\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) Chrome/124\",\"endpoint\":\"/api/menu-permissions\",\"method\":\"POST\",\"timestamp\":\"2026-03-25T07:42:22.291Z\",\"role\":\"Expert\",\"menu\":\"Tasks\"}', '2026-03-02 03:00:28'),
+(829, 71, 'TASK_DELETE', 'Deleted task: \"Deploy hotfix to production\" (ID 157) — cancelled', '{\"ip_address\":\"192.168.1.23\",\"user_agent\":\"Mozilla/5.0 (X11; Linux x86_64) Firefox/125\",\"endpoint\":\"/api/tasks/157\",\"method\":\"PUT\",\"timestamp\":\"2026-03-25T07:42:22.292Z\",\"task_id\":157}', '2026-02-27 03:33:36'),
+(830, 66, 'MEETING_JOIN', 'Joined meeting: \"Annual Planning Workshop\"', '{\"ip_address\":\"192.168.1.97\",\"user_agent\":\"Mozilla/5.0 (X11; Linux x86_64) Firefox/125\",\"endpoint\":\"/api/meetings/18\",\"method\":\"POST\",\"timestamp\":\"2026-03-25T07:42:22.293Z\",\"meeting_id\":18}', '2026-03-23 07:11:53'),
+(831, 50, 'PLAN_CREATE', 'Created plan: \"Q2 Budget Forecast Plan\" (ID 218)', '{\"ip_address\":\"192.168.1.81\",\"user_agent\":\"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) Safari/605\",\"endpoint\":\"/api/plans/218\",\"method\":\"POST\",\"timestamp\":\"2026-03-25T07:42:22.289Z\",\"plan_id\":218}', '2026-03-18 23:53:34'),
+(832, 56, 'PLAN_VIEW', 'Viewed plan: \"Employee Training Programme 2025\"', '{\"ip_address\":\"192.168.1.137\",\"user_agent\":\"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) Safari/605\",\"endpoint\":\"/api/plans/166\",\"method\":\"PUT\",\"timestamp\":\"2026-03-25T07:42:22.288Z\",\"plan_id\":166}', '2026-03-02 17:51:52'),
+(833, 73, 'MEETING_UPDATE', 'Updated meeting: \"Audit Debrief\" — agenda revised', '{\"ip_address\":\"192.168.1.200\",\"user_agent\":\"Mozilla/5.0 (X11; Linux x86_64) Firefox/125\",\"endpoint\":\"/api/meetings/60\",\"method\":\"POST\",\"timestamp\":\"2026-03-25T07:42:22.293Z\",\"meeting_id\":60}', '2026-03-15 12:22:46'),
+(834, 60, 'PLAN_VIEW', 'Viewed plan: \"Digital Transformation Initiative\"', '{\"ip_address\":\"192.168.1.193\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) Chrome/124\",\"endpoint\":\"/api/plans/483\",\"method\":\"PUT\",\"timestamp\":\"2026-03-25T07:42:22.289Z\",\"plan_id\":483}', '2026-03-11 09:33:48'),
+(835, 38, 'REPORT_CREATE', 'Created report: \"Monthly Employee Performance\"', '{\"ip_address\":\"192.168.1.77\",\"user_agent\":\"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) Safari/605\",\"endpoint\":\"/api/reports/399\",\"method\":\"POST\",\"timestamp\":\"2026-03-25T07:42:22.289Z\",\"report_id\":399}', '2026-03-07 05:23:46'),
+(836, 45, 'PLAN_VIEW', 'Viewed plan: \"Marketing Strategy 2026\"', '{\"ip_address\":\"192.168.1.167\",\"user_agent\":\"Mozilla/5.0 (X11; Linux x86_64) Firefox/125\",\"endpoint\":\"/api/plans/179\",\"method\":\"PUT\",\"timestamp\":\"2026-03-25T07:42:22.288Z\",\"plan_id\":179}', '2026-03-15 20:07:24'),
+(837, 27, 'TASK_DELETE', 'Deleted task: \"Fix API timeout issues\" (ID 1) — cancelled', '{\"ip_address\":\"192.168.1.174\",\"user_agent\":\"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) Safari/605\",\"endpoint\":\"/api/tasks/1\",\"method\":\"PUT\",\"timestamp\":\"2026-03-25T07:42:22.292Z\",\"task_id\":1}', '2026-03-04 03:31:53'),
+(838, NULL, 'SYSTEM_START', 'Server started on port 5001 — DB connected, 8 routes registered', '{\"ip_address\":\"192.168.1.65\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) Chrome/124\",\"endpoint\":\"/api/system/start\",\"method\":\"POST\",\"timestamp\":\"2026-03-25T07:42:22.293Z\"}', '2026-03-18 01:14:06'),
+(839, 55, 'PLAN_SUBMIT', 'Submitted plan: \"Legal Compliance Review Plan\" for approval', '{\"ip_address\":\"192.168.1.24\",\"user_agent\":\"Mozilla/5.0 (X11; Linux x86_64) Firefox/125\",\"endpoint\":\"/api/plans/492\",\"method\":\"PUT\",\"timestamp\":\"2026-03-25T07:42:22.289Z\",\"plan_id\":492}', '2026-03-18 23:59:50'),
+(840, 79, 'MEETING_JOIN', 'Joined meeting: \"IT Daily Standup\"', '{\"ip_address\":\"192.168.1.32\",\"user_agent\":\"Mozilla/5.0 (X11; Linux x86_64) Firefox/125\",\"endpoint\":\"/api/meetings/53\",\"method\":\"POST\",\"timestamp\":\"2026-03-25T07:42:22.293Z\",\"meeting_id\":53}', '2026-03-02 06:25:17'),
+(841, 70, 'TASK_CREATE', 'Created task: \"Prepare Q2 budget sheet\" assigned to team', '{\"ip_address\":\"192.168.1.134\",\"user_agent\":\"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) Safari/605\",\"endpoint\":\"/api/tasks/50\",\"method\":\"POST\",\"timestamp\":\"2026-03-25T07:42:22.292Z\",\"task_id\":50}', '2026-02-27 19:26:09'),
+(842, 59, 'TASK_CREATE', 'Created task: \"Train new team members\" assigned to team', '{\"ip_address\":\"192.168.1.86\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) Chrome/124\",\"endpoint\":\"/api/tasks/267\",\"method\":\"POST\",\"timestamp\":\"2026-03-25T07:42:22.292Z\",\"task_id\":267}', '2026-03-13 22:46:22'),
+(843, 59, 'REPORT_APPROVE', 'Approved report: \"Construction Progress Report\"', '{\"ip_address\":\"192.168.1.158\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) Chrome/124\",\"endpoint\":\"/api/reports/637\",\"method\":\"GET\",\"timestamp\":\"2026-03-25T07:42:22.290Z\",\"report_id\":637}', '2026-03-20 13:39:41'),
+(844, 75, 'TASK_CREATE', 'Created task: \"Train new team members\" assigned to team', '{\"ip_address\":\"192.168.1.106\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) Chrome/124\",\"endpoint\":\"/api/tasks/57\",\"method\":\"POST\",\"timestamp\":\"2026-03-25T07:42:22.292Z\",\"task_id\":57}', '2026-03-12 16:06:26'),
+(845, 65, 'SETTINGS_CHANGE', 'System setting changed: backup_schedule updated', '{\"ip_address\":\"192.168.1.176\",\"user_agent\":\"Mozilla/5.0 (X11; Linux x86_64) Firefox/125\",\"endpoint\":\"/api/settings\",\"method\":\"POST\",\"timestamp\":\"2026-03-25T07:42:22.293Z\"}', '2026-03-22 09:34:44'),
+(846, 39, 'TASK_DELETE', 'Deleted task: \"Update employee records\" (ID 269) — cancelled', '{\"ip_address\":\"192.168.1.101\",\"user_agent\":\"Mozilla/5.0 (X11; Linux x86_64) Firefox/125\",\"endpoint\":\"/api/tasks/269\",\"method\":\"PUT\",\"timestamp\":\"2026-03-25T07:42:22.292Z\",\"task_id\":269}', '2026-03-21 20:32:49'),
+(847, 60, 'ROLE_UPDATE', 'Updated role \"Team Leader\" — renamed & permission set revised', '{\"ip_address\":\"192.168.1.70\",\"user_agent\":\"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) Safari/605\",\"endpoint\":\"/api/menu-permissions\",\"method\":\"POST\",\"timestamp\":\"2026-03-25T07:42:22.291Z\",\"role\":\"Team Leader\",\"menu\":\"Dashboard\"}', '2026-03-01 13:21:40'),
+(848, 27, 'PLAN_APPROVE', 'Approved plan: \"Legal Compliance Review Plan\" (ID 345)', '{\"ip_address\":\"192.168.1.152\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) Chrome/124\",\"endpoint\":\"/api/plans/345\",\"method\":\"PUT\",\"timestamp\":\"2026-03-25T07:42:22.288Z\",\"plan_id\":345}', '2026-02-25 23:22:46'),
+(849, 65, 'TASK_UPDATE', 'Updated task: \"Deploy hotfix to production\" — changed deadline & priority', '{\"ip_address\":\"192.168.1.155\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) Chrome/124\",\"endpoint\":\"/api/tasks/261\",\"method\":\"PUT\",\"timestamp\":\"2026-03-25T07:42:22.292Z\",\"task_id\":261}', '2026-03-19 01:37:30'),
+(850, 47, 'TASK_COMPLETE', 'Completed task: \"Update employee records\" (ID 69) ahead of schedule', '{\"ip_address\":\"192.168.1.37\",\"user_agent\":\"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) Safari/605\",\"endpoint\":\"/api/tasks/69\",\"method\":\"PUT\",\"timestamp\":\"2026-03-25T07:42:22.292Z\",\"task_id\":69}', '2026-03-05 15:16:13'),
+(851, 56, 'REPORT_SUBMIT', 'Submitted report: \"Construction Progress Report\" for review', '{\"ip_address\":\"192.168.1.46\",\"user_agent\":\"Mozilla/5.0 (X11; Linux x86_64) Firefox/125\",\"endpoint\":\"/api/reports/456\",\"method\":\"GET\",\"timestamp\":\"2026-03-25T07:42:22.290Z\",\"report_id\":456}', '2026-03-17 18:08:20'),
+(852, 26, 'TASK_CREATE', 'Created task: \"Deploy hotfix to production\" assigned to team', '{\"ip_address\":\"192.168.1.77\",\"user_agent\":\"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) Safari/605\",\"endpoint\":\"/api/tasks/239\",\"method\":\"POST\",\"timestamp\":\"2026-03-25T07:42:22.292Z\",\"task_id\":239}', '2026-03-07 18:12:30'),
+(853, 71, 'PLAN_VIEW', 'Viewed plan: \"Legal Compliance Review Plan\"', '{\"ip_address\":\"192.168.1.170\",\"user_agent\":\"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) Safari/605\",\"endpoint\":\"/api/plans/317\",\"method\":\"PUT\",\"timestamp\":\"2026-03-25T07:42:22.289Z\",\"plan_id\":317}', '2026-03-09 22:40:54'),
+(854, 79, 'TASK_CREATE', 'Created task: \"Complete security audit\" assigned to team', '{\"ip_address\":\"192.168.1.141\",\"user_agent\":\"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) Safari/605\",\"endpoint\":\"/api/tasks/176\",\"method\":\"POST\",\"timestamp\":\"2026-03-25T07:42:22.292Z\",\"task_id\":176}', '2026-03-25 02:29:27'),
+(855, 67, 'PLAN_VIEW', 'Viewed plan: \"Construction Safety Roadmap\"', '{\"ip_address\":\"192.168.1.34\",\"user_agent\":\"Mozilla/5.0 (X11; Linux x86_64) Firefox/125\",\"endpoint\":\"/api/plans/163\",\"method\":\"PUT\",\"timestamp\":\"2026-03-25T07:42:22.288Z\",\"plan_id\":163}', '2026-03-15 16:37:06'),
+(856, 51, 'PERMISSION_UPDATE', 'Updated permissions for role \"Admin\" — toggled access to [Plans, Plans]', '{\"ip_address\":\"192.168.1.33\",\"user_agent\":\"Mozilla/5.0 (X11; Linux x86_64) Firefox/125\",\"endpoint\":\"/api/menu-permissions\",\"method\":\"POST\",\"timestamp\":\"2026-03-25T07:42:22.291Z\",\"role\":\"Admin\",\"menu\":\"Plans\"}', '2026-03-18 12:13:01'),
+(857, 60, 'PERMISSION_UPDATE', 'Updated permissions for role \"Staff\" — toggled access to [Dashboard, Plans]', '{\"ip_address\":\"192.168.1.109\",\"user_agent\":\"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) Safari/605\",\"endpoint\":\"/api/menu-permissions\",\"method\":\"POST\",\"timestamp\":\"2026-03-25T07:42:22.291Z\",\"role\":\"Staff\",\"menu\":\"Dashboard\"}', '2026-03-05 08:46:11'),
+(858, 78, 'TASK_CREATE', 'Created task: \"Prepare Q2 budget sheet\" assigned to team', '{\"ip_address\":\"192.168.1.55\",\"user_agent\":\"Mozilla/5.0 (X11; Linux x86_64) Firefox/125\",\"endpoint\":\"/api/tasks/200\",\"method\":\"POST\",\"timestamp\":\"2026-03-25T07:42:22.292Z\",\"task_id\":200}', '2026-03-08 23:22:19'),
+(859, NULL, 'DATA_EXPORT', 'Data exported: employees table — 1515 rows as CSV', '{\"ip_address\":\"192.168.1.173\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) Chrome/124\",\"endpoint\":\"/api/admin/export\",\"method\":\"POST\",\"timestamp\":\"2026-03-25T07:42:22.293Z\"}', '2026-03-10 13:55:36'),
+(860, 74, 'DATA_EXPORT', 'Data exported: audit_logs table — 1474 rows as CSV', '{\"ip_address\":\"192.168.1.86\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) Chrome/124\",\"endpoint\":\"/api/admin/export\",\"method\":\"POST\",\"timestamp\":\"2026-03-25T07:42:22.293Z\"}', '2026-03-06 03:59:06'),
+(861, 41, 'PLAN_SUBMIT', 'Submitted plan: \"HR Onboarding Automation\" for approval', '{\"ip_address\":\"192.168.1.165\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) Chrome/124\",\"endpoint\":\"/api/plans/250\",\"method\":\"PUT\",\"timestamp\":\"2026-03-25T07:42:22.288Z\",\"plan_id\":250}', '2026-03-25 02:29:54'),
+(862, 56, 'DATA_EXPORT', 'Scheduled database backup completed — 162 MB archived', '{\"ip_address\":\"192.168.1.148\",\"user_agent\":\"Mozilla/5.0 (X11; Linux x86_64) Firefox/125\",\"endpoint\":\"/api/admin/backup\",\"method\":\"POST\",\"timestamp\":\"2026-03-25T07:42:22.292Z\"}', '2026-02-25 17:05:26'),
+(863, 77, 'REPORT_DELETE', 'Deleted report: \"Construction Progress Report\" (ID 411)', '{\"ip_address\":\"192.168.1.69\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) Chrome/124\",\"endpoint\":\"/api/reports/411\",\"method\":\"GET\",\"timestamp\":\"2026-03-25T07:42:22.290Z\",\"report_id\":411}', '2026-03-19 23:34:14'),
+(864, 55, 'TASK_UPDATE', 'Updated task: \"Train new team members\" — changed deadline & priority', '{\"ip_address\":\"192.168.1.161\",\"user_agent\":\"Mozilla/5.0 (X11; Linux x86_64) Firefox/125\",\"endpoint\":\"/api/tasks/1\",\"method\":\"PUT\",\"timestamp\":\"2026-03-25T07:42:22.292Z\",\"task_id\":1}', '2026-03-18 16:37:26'),
+(865, 72, 'REPORT_APPROVE', 'Approved report: \"Monthly Employee Performance\"', '{\"ip_address\":\"192.168.1.47\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) Chrome/124\",\"endpoint\":\"/api/reports/268\",\"method\":\"GET\",\"timestamp\":\"2026-03-25T07:42:22.290Z\",\"report_id\":268}', '2026-02-27 03:20:16'),
+(866, 37, 'PLAN_APPROVE', 'Approved plan: \"Digital Transformation Initiative\" (ID 297)', '{\"ip_address\":\"192.168.1.63\",\"user_agent\":\"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) Safari/605\",\"endpoint\":\"/api/plans/297\",\"method\":\"PUT\",\"timestamp\":\"2026-03-25T07:42:22.289Z\",\"plan_id\":297}', '2026-03-08 12:21:59'),
+(867, 7, 'PLAN_DECLINE', 'Declined plan: \"Marketing Strategy 2026\" — insufficient detail', '{\"ip_address\":\"192.168.1.23\",\"user_agent\":\"Mozilla/5.0 (X11; Linux x86_64) Firefox/125\",\"endpoint\":\"/api/plans/270\",\"method\":\"PUT\",\"timestamp\":\"2026-03-25T07:42:22.288Z\",\"plan_id\":270}', '2026-03-05 12:50:37'),
+(868, 50, 'MEETING_JOIN', 'Joined meeting: \"IT Daily Standup\"', '{\"ip_address\":\"192.168.1.187\",\"user_agent\":\"Mozilla/5.0 (X11; Linux x86_64) Firefox/125\",\"endpoint\":\"/api/meetings/14\",\"method\":\"POST\",\"timestamp\":\"2026-03-25T07:42:22.293Z\",\"meeting_id\":14}', '2026-02-27 10:56:30'),
+(869, 45, 'PLAN_APPROVE', 'Approved plan: \"Construction Safety Roadmap\" (ID 378)', '{\"ip_address\":\"192.168.1.122\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) Chrome/124\",\"endpoint\":\"/api/plans/378\",\"method\":\"PUT\",\"timestamp\":\"2026-03-25T07:42:22.288Z\",\"plan_id\":378}', '2026-03-01 03:45:46'),
+(870, 78, 'REPORT_DECLINE', 'Declined report: \"Q1 Financial Summary Report\" — data inconsistency', '{\"ip_address\":\"192.168.1.159\",\"user_agent\":\"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) Safari/605\",\"endpoint\":\"/api/reports/561\",\"method\":\"GET\",\"timestamp\":\"2026-03-25T07:42:22.290Z\",\"report_id\":561}', '2026-03-16 15:33:12'),
+(871, 38, 'PLAN_DELETE', 'Deleted plan: \"HR Onboarding Automation\" (ID 419)', '{\"ip_address\":\"192.168.1.134\",\"user_agent\":\"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) Safari/605\",\"endpoint\":\"/api/plans/419\",\"method\":\"PUT\",\"timestamp\":\"2026-03-25T07:42:22.289Z\",\"plan_id\":419}', '2026-02-27 04:33:07'),
+(872, 59, 'PLAN_SUBMIT', 'Submitted plan: \"Marketing Strategy 2026\" for approval', '{\"ip_address\":\"192.168.1.76\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) Chrome/124\",\"endpoint\":\"/api/plans/329\",\"method\":\"PUT\",\"timestamp\":\"2026-03-25T07:42:22.289Z\",\"plan_id\":329}', '2026-03-04 14:38:42'),
+(873, 38, 'TASK_COMPLETE', 'Completed task: \"Fix API timeout issues\" (ID 46) ahead of schedule', '{\"ip_address\":\"192.168.1.60\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) Chrome/124\",\"endpoint\":\"/api/tasks/46\",\"method\":\"PUT\",\"timestamp\":\"2026-03-25T07:42:22.292Z\",\"task_id\":46}', '2026-03-17 19:36:43'),
+(874, 42, 'MEETING_POSTPONE', 'Postponed meeting: \"Annual Planning Workshop\" to next week', '{\"ip_address\":\"192.168.1.84\",\"user_agent\":\"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) Safari/605\",\"endpoint\":\"/api/meetings/21\",\"method\":\"POST\",\"timestamp\":\"2026-03-25T07:42:22.293Z\",\"meeting_id\":21}', '2026-03-23 17:41:07'),
+(875, 24, 'MEETING_JOIN', 'Joined meeting: \"IT Daily Standup\"', '{\"ip_address\":\"192.168.1.52\",\"user_agent\":\"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) Safari/605\",\"endpoint\":\"/api/meetings/8\",\"method\":\"POST\",\"timestamp\":\"2026-03-25T07:42:22.293Z\",\"meeting_id\":8}', '2026-02-25 01:17:08'),
+(876, 59, 'REPORT_DELETE', 'Deleted report: \"Q1 Financial Summary Report\" (ID 498)', '{\"ip_address\":\"192.168.1.109\",\"user_agent\":\"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) Safari/605\",\"endpoint\":\"/api/reports/498\",\"method\":\"GET\",\"timestamp\":\"2026-03-25T07:42:22.290Z\",\"report_id\":498}', '2026-03-24 01:06:20'),
+(877, 25, 'PLAN_CREATE', 'Created plan: \"Legal Compliance Review Plan\" (ID 136)', '{\"ip_address\":\"192.168.1.51\",\"user_agent\":\"Mozilla/5.0 (X11; Linux x86_64) Firefox/125\",\"endpoint\":\"/api/plans/136\",\"method\":\"POST\",\"timestamp\":\"2026-03-25T07:42:22.288Z\",\"plan_id\":136}', '2026-03-04 17:28:39'),
+(878, 7, 'TASK_CREATE', 'Created task: \"Prepare Q2 budget sheet\" assigned to team', '{\"ip_address\":\"192.168.1.78\",\"user_agent\":\"Mozilla/5.0 (X11; Linux x86_64) Firefox/125\",\"endpoint\":\"/api/tasks/189\",\"method\":\"POST\",\"timestamp\":\"2026-03-25T07:42:22.292Z\",\"task_id\":189}', '2026-02-27 00:01:13'),
+(879, 59, 'SYSTEM_ERROR', 'Unhandled exception in /api/plans/approve — Null reference', '{\"ip_address\":\"192.168.1.82\",\"user_agent\":\"Mozilla/5.0 (X11; Linux x86_64) Firefox/125\",\"endpoint\":\"/api/system/errors\",\"method\":\"POST\",\"timestamp\":\"2026-03-25T07:42:22.293Z\"}', '2026-03-24 18:21:08'),
+(880, 43, 'MEETING_CREATE', 'Scheduled meeting: \"Q2 Strategy Meeting\" — 9 attendees invited', '{\"ip_address\":\"192.168.1.137\",\"user_agent\":\"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) Safari/605\",\"endpoint\":\"/api/meetings/32\",\"method\":\"POST\",\"timestamp\":\"2026-03-25T07:42:22.293Z\",\"meeting_id\":32}', '2026-03-16 12:47:33'),
+(881, 13, 'MENU_CREATE', 'Created menu item: \"Settings\" (path /settings)', '{\"ip_address\":\"192.168.1.154\",\"user_agent\":\"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) Safari/605\",\"endpoint\":\"/api/menu-permissions\",\"method\":\"POST\",\"timestamp\":\"2026-03-25T07:42:22.291Z\",\"role\":\"Admin\",\"menu\":\"Settings\"}', '2026-03-10 02:29:20'),
+(882, 66, 'DATA_EXPORT', 'Data exported: audit_logs table — 2184 rows as CSV', '{\"ip_address\":\"192.168.1.57\",\"user_agent\":\"Mozilla/5.0 (X11; Linux x86_64) Firefox/125\",\"endpoint\":\"/api/admin/export\",\"method\":\"POST\",\"timestamp\":\"2026-03-25T07:42:22.293Z\"}', '2026-03-14 20:42:43'),
+(883, 41, 'SYSTEM_START', 'Server started on port 5001 — DB connected, 18 routes registered', '{\"ip_address\":\"192.168.1.85\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) Chrome/124\",\"endpoint\":\"/api/system/start\",\"method\":\"POST\",\"timestamp\":\"2026-03-25T07:42:22.293Z\"}', '2026-03-10 14:48:54'),
+(884, 43, 'PLAN_DELETE', 'Deleted plan: \"Employee Training Programme 2025\" (ID 327)', '{\"ip_address\":\"192.168.1.24\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) Chrome/124\",\"endpoint\":\"/api/plans/327\",\"method\":\"PUT\",\"timestamp\":\"2026-03-25T07:42:22.289Z\",\"plan_id\":327}', '2026-03-15 00:17:01'),
+(885, 66, 'MENU_DELETE', 'Deleted menu item \"Dashboard\" and cleaned up role_permissions', '{\"ip_address\":\"192.168.1.188\",\"user_agent\":\"Mozilla/5.0 (X11; Linux x86_64) Firefox/125\",\"endpoint\":\"/api/menu-permissions\",\"method\":\"POST\",\"timestamp\":\"2026-03-25T07:42:22.291Z\",\"role\":\"Staff\",\"menu\":\"Dashboard\"}', '2026-03-10 12:59:20'),
+(886, 51, 'MENU_DELETE', 'Deleted menu item \"Reports\" and cleaned up role_permissions', '{\"ip_address\":\"192.168.1.141\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) Chrome/124\",\"endpoint\":\"/api/menu-permissions\",\"method\":\"POST\",\"timestamp\":\"2026-03-25T07:42:22.291Z\",\"role\":\"Manager\",\"menu\":\"Reports\"}', '2026-02-27 03:55:31'),
+(887, 13, 'REPORT_VIEW', 'Viewed report: \"Construction Progress Report\"', '{\"ip_address\":\"192.168.1.134\",\"user_agent\":\"Mozilla/5.0 (X11; Linux x86_64) Firefox/125\",\"endpoint\":\"/api/reports/305\",\"method\":\"GET\",\"timestamp\":\"2026-03-25T07:42:22.289Z\",\"report_id\":305}', '2026-03-07 21:32:07'),
+(888, 61, 'ROLE_DELETE', 'Deleted role \"Admin\" and reassigned 6 users', '{\"ip_address\":\"192.168.1.122\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) Chrome/124\",\"endpoint\":\"/api/menu-permissions\",\"method\":\"POST\",\"timestamp\":\"2026-03-25T07:42:22.291Z\",\"role\":\"Admin\",\"menu\":\"Tasks\"}', '2026-03-18 23:26:55'),
+(889, 6, 'TASK_UPDATE', 'Updated task: \"Train new team members\" — changed deadline & priority', '{\"ip_address\":\"192.168.1.13\",\"user_agent\":\"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) Safari/605\",\"endpoint\":\"/api/tasks/277\",\"method\":\"PUT\",\"timestamp\":\"2026-03-25T07:42:22.292Z\",\"task_id\":277}', '2026-03-04 09:03:11'),
+(890, 47, 'ROLE_DELETE', 'Deleted role \"Staff\" and reassigned 6 users', '{\"ip_address\":\"192.168.1.136\",\"user_agent\":\"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) Safari/605\",\"endpoint\":\"/api/menu-permissions\",\"method\":\"POST\",\"timestamp\":\"2026-03-25T07:42:22.291Z\",\"role\":\"Staff\",\"menu\":\"Plans\"}', '2026-02-27 03:29:47'),
+(891, 56, 'MENU_UPDATE', 'Updated menu item \"Plans\" — changed icon & display order', '{\"ip_address\":\"192.168.1.106\",\"user_agent\":\"Mozilla/5.0 (X11; Linux x86_64) Firefox/125\",\"endpoint\":\"/api/menu-permissions\",\"method\":\"POST\",\"timestamp\":\"2026-03-25T07:42:22.290Z\",\"role\":\"Expert\",\"menu\":\"Plans\"}', '2026-03-24 04:20:28'),
+(892, 65, 'TASK_COMPLETE', 'Completed task: \"Fix API timeout issues\" (ID 173) ahead of schedule', '{\"ip_address\":\"192.168.1.11\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) Chrome/124\",\"endpoint\":\"/api/tasks/173\",\"method\":\"PUT\",\"timestamp\":\"2026-03-25T07:42:22.292Z\",\"task_id\":173}', '2026-03-23 07:12:27'),
+(893, 51, 'REPORT_VIEW', 'Viewed report: \"Q1 Financial Summary Report\"', '{\"ip_address\":\"192.168.1.154\",\"user_agent\":\"Mozilla/5.0 (X11; Linux x86_64) Firefox/125\",\"endpoint\":\"/api/reports/323\",\"method\":\"GET\",\"timestamp\":\"2026-03-25T07:42:22.290Z\",\"report_id\":323}', '2026-03-16 17:33:39'),
+(894, 25, 'MEETING_JOIN', 'Joined meeting: \"Q2 Strategy Meeting\"', '{\"ip_address\":\"192.168.1.172\",\"user_agent\":\"Mozilla/5.0 (X11; Linux x86_64) Firefox/125\",\"endpoint\":\"/api/meetings/73\",\"method\":\"POST\",\"timestamp\":\"2026-03-25T07:42:22.293Z\",\"meeting_id\":73}', '2026-03-21 06:07:09'),
+(895, 27, 'PLAN_VIEW', 'Viewed plan: \"Digital Transformation Initiative\"', '{\"ip_address\":\"192.168.1.167\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) Chrome/124\",\"endpoint\":\"/api/plans/137\",\"method\":\"PUT\",\"timestamp\":\"2026-03-25T07:42:22.289Z\",\"plan_id\":137}', '2026-03-06 13:13:32'),
+(896, 64, 'PLAN_DECLINE', 'Declined plan: \"Legal Compliance Review Plan\" — insufficient detail', '{\"ip_address\":\"192.168.1.95\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) Chrome/124\",\"endpoint\":\"/api/plans/170\",\"method\":\"PUT\",\"timestamp\":\"2026-03-25T07:42:22.289Z\",\"plan_id\":170}', '2026-03-15 05:14:23'),
+(897, 79, 'PLAN_UPDATE', 'Updated plan: \"HR Onboarding Automation\" — revised budget & timeline', '{\"ip_address\":\"192.168.1.15\",\"user_agent\":\"Mozilla/5.0 (X11; Linux x86_64) Firefox/125\",\"endpoint\":\"/api/plans/239\",\"method\":\"PUT\",\"timestamp\":\"2026-03-25T07:42:22.288Z\",\"plan_id\":239}', '2026-02-26 04:40:23'),
+(898, 70, 'DATA_EXPORT', 'Data exported: employees table — 1316 rows as CSV', '{\"ip_address\":\"192.168.1.195\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) Chrome/124\",\"endpoint\":\"/api/admin/export\",\"method\":\"POST\",\"timestamp\":\"2026-03-25T07:42:22.292Z\"}', '2026-03-04 21:42:39'),
+(899, 47, 'PLAN_CREATE', 'Created plan: \"Q2 Budget Forecast Plan\" (ID 265)', '{\"ip_address\":\"192.168.1.60\",\"user_agent\":\"Mozilla/5.0 (X11; Linux x86_64) Firefox/125\",\"endpoint\":\"/api/plans/265\",\"method\":\"POST\",\"timestamp\":\"2026-03-25T07:42:22.289Z\",\"plan_id\":265}', '2026-03-20 15:09:37'),
+(900, NULL, 'DATA_EXPORT', 'Scheduled database backup completed — 108 MB archived', '{\"ip_address\":\"192.168.1.22\",\"user_agent\":\"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) Safari/605\",\"endpoint\":\"/api/admin/backup\",\"method\":\"POST\",\"timestamp\":\"2026-03-25T07:42:22.293Z\"}', '2026-03-04 20:02:47'),
+(901, 60, 'PLAN_VIEW', 'Viewed plan: \"HR Onboarding Automation\"', '{\"ip_address\":\"192.168.1.198\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) Chrome/124\",\"endpoint\":\"/api/plans/388\",\"method\":\"PUT\",\"timestamp\":\"2026-03-25T07:42:22.288Z\",\"plan_id\":388}', '2026-03-07 09:00:34'),
+(902, 79, 'REPORT_SUBMIT', 'Submitted report: \"Budget Variance Analysis\" for review', '{\"ip_address\":\"192.168.1.96\",\"user_agent\":\"Mozilla/5.0 (X11; Linux x86_64) Firefox/125\",\"endpoint\":\"/api/reports/378\",\"method\":\"GET\",\"timestamp\":\"2026-03-25T07:42:22.290Z\",\"report_id\":378}', '2026-03-22 14:42:08'),
+(903, 52, 'DATA_EXPORT', 'Data exported: reports table — 2170 rows as CSV', '{\"ip_address\":\"192.168.1.88\",\"user_agent\":\"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) Safari/605\",\"endpoint\":\"/api/admin/export\",\"method\":\"POST\",\"timestamp\":\"2026-03-25T07:42:22.293Z\"}', '2026-03-09 01:54:17'),
+(904, 46, 'PLAN_VIEW', 'Viewed plan: \"Marketing Strategy 2026\"', '{\"ip_address\":\"192.168.1.101\",\"user_agent\":\"Mozilla/5.0 (X11; Linux x86_64) Firefox/125\",\"endpoint\":\"/api/plans/313\",\"method\":\"PUT\",\"timestamp\":\"2026-03-25T07:42:22.288Z\",\"plan_id\":313}', '2026-02-26 04:25:53'),
+(905, 42, 'DATA_EXPORT', 'Data exported: reports table — 1549 rows as CSV', '{\"ip_address\":\"192.168.1.165\",\"user_agent\":\"Mozilla/5.0 (X11; Linux x86_64) Firefox/125\",\"endpoint\":\"/api/admin/export\",\"method\":\"POST\",\"timestamp\":\"2026-03-25T07:42:22.292Z\"}', '2026-02-27 21:13:07'),
+(906, 56, 'PLAN_APPROVE', 'Approved plan: \"Q2 Budget Forecast Plan\" (ID 103)', '{\"ip_address\":\"192.168.1.86\",\"user_agent\":\"Mozilla/5.0 (X11; Linux x86_64) Firefox/125\",\"endpoint\":\"/api/plans/103\",\"method\":\"PUT\",\"timestamp\":\"2026-03-25T07:42:22.288Z\",\"plan_id\":103}', '2026-03-05 17:39:22'),
+(907, 69, 'REPORT_SUBMIT', 'Submitted report: \"Monthly Employee Performance\" for review', '{\"ip_address\":\"192.168.1.191\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) Chrome/124\",\"endpoint\":\"/api/reports/401\",\"method\":\"GET\",\"timestamp\":\"2026-03-25T07:42:22.289Z\",\"report_id\":401}', '2026-03-21 23:50:41'),
+(908, 65, 'TASK_CREATE', 'Created task: \"Prepare Q2 budget sheet\" assigned to team', '{\"ip_address\":\"192.168.1.150\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) Chrome/124\",\"endpoint\":\"/api/tasks/255\",\"method\":\"POST\",\"timestamp\":\"2026-03-25T07:42:22.292Z\",\"task_id\":255}', '2026-02-24 01:18:28'),
+(909, 78, 'TASK_DELETE', 'Deleted task: \"Review server backups\" (ID 217) — cancelled', '{\"ip_address\":\"192.168.1.123\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) Chrome/124\",\"endpoint\":\"/api/tasks/217\",\"method\":\"PUT\",\"timestamp\":\"2026-03-25T07:42:22.292Z\",\"task_id\":217}', '2026-03-03 12:27:31'),
+(910, 78, 'MENU_CREATE', 'Created menu item: \"Plans\" (path /plans)', '{\"ip_address\":\"192.168.1.29\",\"user_agent\":\"Mozilla/5.0 (X11; Linux x86_64) Firefox/125\",\"endpoint\":\"/api/menu-permissions\",\"method\":\"POST\",\"timestamp\":\"2026-03-25T07:42:22.291Z\",\"role\":\"Manager\",\"menu\":\"Plans\"}', '2026-03-02 06:56:52'),
+(911, 38, 'SETTINGS_CHANGE', 'System setting changed: email_notifications updated', '{\"ip_address\":\"192.168.1.167\",\"user_agent\":\"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) Safari/605\",\"endpoint\":\"/api/settings\",\"method\":\"POST\",\"timestamp\":\"2026-03-25T07:42:22.293Z\"}', '2026-03-18 16:38:41'),
+(912, 64, 'PLAN_VIEW', 'Viewed plan: \"Construction Safety Roadmap\"', '{\"ip_address\":\"192.168.1.74\",\"user_agent\":\"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) Safari/605\",\"endpoint\":\"/api/plans/481\",\"method\":\"PUT\",\"timestamp\":\"2026-03-25T07:42:22.288Z\",\"plan_id\":481}', '2026-03-06 06:28:00'),
+(913, 78, 'REPORT_CREATE', 'Created report: \"Annual Audit Report 2024\"', '{\"ip_address\":\"192.168.1.167\",\"user_agent\":\"Mozilla/5.0 (X11; Linux x86_64) Firefox/125\",\"endpoint\":\"/api/reports/580\",\"method\":\"POST\",\"timestamp\":\"2026-03-25T07:42:22.290Z\",\"report_id\":580}', '2026-03-06 18:45:32'),
+(914, 63, 'PLAN_DECLINE', 'Declined plan: \"Annual IT Infrastructure Upgrade\" — insufficient detail', '{\"ip_address\":\"192.168.1.165\",\"user_agent\":\"Mozilla/5.0 (X11; Linux x86_64) Firefox/125\",\"endpoint\":\"/api/plans/134\",\"method\":\"PUT\",\"timestamp\":\"2026-03-25T07:42:22.289Z\",\"plan_id\":134}', '2026-02-25 16:27:04'),
+(915, 41, 'MEETING_END', 'Ended meeting: \"Q2 Strategy Meeting\" — duration 131 minutes', '{\"ip_address\":\"192.168.1.50\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) Chrome/124\",\"endpoint\":\"/api/meetings/27\",\"method\":\"POST\",\"timestamp\":\"2026-03-25T07:42:22.293Z\",\"meeting_id\":27}', '2026-03-08 11:32:06'),
+(916, 53, 'REPORT_APPROVE', 'Approved report: \"Budget Variance Analysis\"', '{\"ip_address\":\"192.168.1.94\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) Chrome/124\",\"endpoint\":\"/api/reports/632\",\"method\":\"GET\",\"timestamp\":\"2026-03-25T07:42:22.289Z\",\"report_id\":632}', '2026-03-04 14:31:58');
+INSERT INTO `audit_logs` (`id`, `user_id`, `action`, `description`, `metadata`, `created_at`) VALUES
+(917, 51, 'MENU_DELETE', 'Deleted menu item \"Settings\" and cleaned up role_permissions', '{\"ip_address\":\"192.168.1.179\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) Chrome/124\",\"endpoint\":\"/api/menu-permissions\",\"method\":\"POST\",\"timestamp\":\"2026-03-25T07:42:22.291Z\",\"role\":\"Expert\",\"menu\":\"Settings\"}', '2026-02-28 11:22:02'),
+(918, 30, 'MEETING_END', 'Ended meeting: \"Audit Debrief\" — duration 136 minutes', '{\"ip_address\":\"192.168.1.94\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) Chrome/124\",\"endpoint\":\"/api/meetings/88\",\"method\":\"POST\",\"timestamp\":\"2026-03-25T07:42:22.293Z\",\"meeting_id\":88}', '2026-02-25 16:48:05'),
+(919, 39, 'PLAN_DELETE', 'Deleted plan: \"HR Onboarding Automation\" (ID 202)', '{\"ip_address\":\"192.168.1.63\",\"user_agent\":\"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) Safari/605\",\"endpoint\":\"/api/plans/202\",\"method\":\"PUT\",\"timestamp\":\"2026-03-25T07:42:22.286Z\",\"plan_id\":202}', '2026-03-07 05:48:39'),
+(920, 72, 'MEETING_CREATE', 'Scheduled meeting: \"Audit Debrief\" — 7 attendees invited', '{\"ip_address\":\"192.168.1.18\",\"user_agent\":\"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) Safari/605\",\"endpoint\":\"/api/meetings/41\",\"method\":\"POST\",\"timestamp\":\"2026-03-25T07:42:22.293Z\",\"meeting_id\":41}', '2026-02-28 19:25:04'),
+(921, 61, 'TASK_COMPLETE', 'Completed task: \"Train new team members\" (ID 256) ahead of schedule', '{\"ip_address\":\"192.168.1.115\",\"user_agent\":\"Mozilla/5.0 (X11; Linux x86_64) Firefox/125\",\"endpoint\":\"/api/tasks/256\",\"method\":\"PUT\",\"timestamp\":\"2026-03-25T07:42:22.292Z\",\"task_id\":256}', '2026-02-28 16:09:57'),
+(922, 47, 'PLAN_SUBMIT', 'Submitted plan: \"Digital Transformation Initiative\" for approval', '{\"ip_address\":\"192.168.1.27\",\"user_agent\":\"Mozilla/5.0 (X11; Linux x86_64) Firefox/125\",\"endpoint\":\"/api/plans/305\",\"method\":\"PUT\",\"timestamp\":\"2026-03-25T07:42:22.289Z\",\"plan_id\":305}', '2026-03-06 16:20:52'),
+(923, 38, 'PLAN_DECLINE', 'Declined plan: \"Digital Transformation Initiative\" — insufficient detail', '{\"ip_address\":\"192.168.1.165\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) Chrome/124\",\"endpoint\":\"/api/plans/292\",\"method\":\"PUT\",\"timestamp\":\"2026-03-25T07:42:22.289Z\",\"plan_id\":292}', '2026-03-08 07:52:02'),
+(924, 78, 'PLAN_DECLINE', 'Declined plan: \"Q2 Budget Forecast Plan\" — insufficient detail', '{\"ip_address\":\"192.168.1.44\",\"user_agent\":\"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) Safari/605\",\"endpoint\":\"/api/plans/160\",\"method\":\"PUT\",\"timestamp\":\"2026-03-25T07:42:22.288Z\",\"plan_id\":160}', '2026-03-03 07:56:32'),
+(925, NULL, 'SYSTEM_START', 'Server started on port 5001 — DB connected, 17 routes registered', '{\"ip_address\":\"192.168.1.113\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) Chrome/124\",\"endpoint\":\"/api/system/start\",\"method\":\"POST\",\"timestamp\":\"2026-03-25T07:42:22.293Z\"}', '2026-03-11 04:52:51'),
+(926, 64, 'PLAN_UPDATE', 'Updated plan: \"Marketing Strategy 2026\" — revised budget & timeline', '{\"ip_address\":\"192.168.1.128\",\"user_agent\":\"Mozilla/5.0 (X11; Linux x86_64) Firefox/125\",\"endpoint\":\"/api/plans/200\",\"method\":\"PUT\",\"timestamp\":\"2026-03-25T07:42:22.288Z\",\"plan_id\":200}', '2026-03-13 10:10:07'),
+(927, 52, 'REPORT_DELETE', 'Deleted report: \"Monthly Employee Performance\" (ID 615)', '{\"ip_address\":\"192.168.1.83\",\"user_agent\":\"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) Safari/605\",\"endpoint\":\"/api/reports/615\",\"method\":\"GET\",\"timestamp\":\"2026-03-25T07:42:22.289Z\",\"report_id\":615}', '2026-02-23 14:29:38'),
+(928, 40, 'SETTINGS_CHANGE', 'System setting changed: session_timeout updated', '{\"ip_address\":\"192.168.1.73\",\"user_agent\":\"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) Safari/605\",\"endpoint\":\"/api/settings\",\"method\":\"POST\",\"timestamp\":\"2026-03-25T07:42:22.293Z\"}', '2026-03-17 05:11:46'),
+(929, 45, 'TASK_DELETE', 'Deleted task: \"Fix API timeout issues\" (ID 17) — cancelled', '{\"ip_address\":\"192.168.1.25\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) Chrome/124\",\"endpoint\":\"/api/tasks/17\",\"method\":\"PUT\",\"timestamp\":\"2026-03-25T07:42:22.292Z\",\"task_id\":17}', '2026-03-02 06:04:03'),
+(930, 50, 'PLAN_VIEW', 'Viewed plan: \"HR Onboarding Automation\"', '{\"ip_address\":\"192.168.1.56\",\"user_agent\":\"Mozilla/5.0 (X11; Linux x86_64) Firefox/125\",\"endpoint\":\"/api/plans/169\",\"method\":\"PUT\",\"timestamp\":\"2026-03-25T07:42:22.288Z\",\"plan_id\":169}', '2026-03-05 06:53:23'),
+(931, 37, 'REPORT_DELETE', 'Deleted report: \"Risk Assessment Report\" (ID 635)', '{\"ip_address\":\"192.168.1.119\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) Chrome/124\",\"endpoint\":\"/api/reports/635\",\"method\":\"GET\",\"timestamp\":\"2026-03-25T07:42:22.290Z\",\"report_id\":635}', '2026-03-11 03:58:46'),
+(932, 72, 'TASK_COMPLETE', 'Completed task: \"Prepare Q2 budget sheet\" (ID 192) ahead of schedule', '{\"ip_address\":\"192.168.1.96\",\"user_agent\":\"Mozilla/5.0 (X11; Linux x86_64) Firefox/125\",\"endpoint\":\"/api/tasks/192\",\"method\":\"PUT\",\"timestamp\":\"2026-03-25T07:42:22.292Z\",\"task_id\":192}', '2026-03-07 06:03:15'),
+(933, NULL, 'SYSTEM_ERROR', 'Unhandled exception in /api/reports — DB connection lost', '{\"ip_address\":\"192.168.1.54\",\"user_agent\":\"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) Safari/605\",\"endpoint\":\"/api/system/errors\",\"method\":\"POST\",\"timestamp\":\"2026-03-25T07:42:22.293Z\"}', '2026-03-24 16:53:33'),
+(934, 6, 'PLAN_VIEW', 'Viewed plan: \"Employee Training Programme 2025\"', '{\"ip_address\":\"192.168.1.72\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) Chrome/124\",\"endpoint\":\"/api/plans/391\",\"method\":\"PUT\",\"timestamp\":\"2026-03-25T07:42:22.289Z\",\"plan_id\":391}', '2026-02-28 18:21:37'),
+(935, 7, 'MENU_UPDATE', 'Updated menu item \"Dashboard\" — changed icon & display order', '{\"ip_address\":\"192.168.1.105\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) Chrome/124\",\"endpoint\":\"/api/menu-permissions\",\"method\":\"POST\",\"timestamp\":\"2026-03-25T07:42:22.290Z\",\"role\":\"Manager\",\"menu\":\"Dashboard\"}', '2026-03-05 14:59:32'),
+(936, 56, 'TASK_COMPLETE', 'Completed task: \"Review server backups\" (ID 165) ahead of schedule', '{\"ip_address\":\"192.168.1.130\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) Chrome/124\",\"endpoint\":\"/api/tasks/165\",\"method\":\"PUT\",\"timestamp\":\"2026-03-25T07:42:22.292Z\",\"task_id\":165}', '2026-03-06 20:47:05'),
+(937, 56, 'MENU_CREATE', 'Created menu item: \"Plans\" (path /plans)', '{\"ip_address\":\"192.168.1.94\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) Chrome/124\",\"endpoint\":\"/api/menu-permissions\",\"method\":\"POST\",\"timestamp\":\"2026-03-25T07:42:22.291Z\",\"role\":\"Manager\",\"menu\":\"Plans\"}', '2026-02-26 18:15:47'),
+(938, 37, 'REPORT_APPROVE', 'Approved report: \"Monthly Employee Performance\"', '{\"ip_address\":\"192.168.1.136\",\"user_agent\":\"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) Safari/605\",\"endpoint\":\"/api/reports/618\",\"method\":\"GET\",\"timestamp\":\"2026-03-25T07:42:22.289Z\",\"report_id\":618}', '2026-03-09 19:38:57'),
+(939, 50, 'REPORT_DELETE', 'Deleted report: \"IT Incident Response Report\" (ID 491)', '{\"ip_address\":\"192.168.1.51\",\"user_agent\":\"Mozilla/5.0 (X11; Linux x86_64) Firefox/125\",\"endpoint\":\"/api/reports/491\",\"method\":\"GET\",\"timestamp\":\"2026-03-25T07:42:22.289Z\",\"report_id\":491}', '2026-02-26 22:08:45'),
+(940, 79, 'MEETING_UPDATE', 'Updated meeting: \"Budget Review Session\" — agenda revised', '{\"ip_address\":\"192.168.1.105\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) Chrome/124\",\"endpoint\":\"/api/meetings/66\",\"method\":\"POST\",\"timestamp\":\"2026-03-25T07:42:22.293Z\",\"meeting_id\":66}', '2026-03-15 11:47:40'),
+(941, 62, 'DATA_EXPORT', 'Scheduled database backup completed — 180 MB archived', '{\"ip_address\":\"192.168.1.69\",\"user_agent\":\"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) Safari/605\",\"endpoint\":\"/api/admin/backup\",\"method\":\"POST\",\"timestamp\":\"2026-03-25T07:42:22.292Z\"}', '2026-03-19 19:25:18'),
+(942, 6, 'TASK_DELETE', 'Deleted task: \"Prepare Q2 budget sheet\" (ID 275) — cancelled', '{\"ip_address\":\"192.168.1.193\",\"user_agent\":\"Mozilla/5.0 (X11; Linux x86_64) Firefox/125\",\"endpoint\":\"/api/tasks/275\",\"method\":\"PUT\",\"timestamp\":\"2026-03-25T07:42:22.292Z\",\"task_id\":275}', '2026-03-11 21:18:59'),
+(943, 58, 'PLAN_DECLINE', 'Declined plan: \"Legal Compliance Review Plan\" — insufficient detail', '{\"ip_address\":\"192.168.1.76\",\"user_agent\":\"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) Safari/605\",\"endpoint\":\"/api/plans/110\",\"method\":\"PUT\",\"timestamp\":\"2026-03-25T07:42:22.288Z\",\"plan_id\":110}', '2026-02-25 17:14:19'),
+(944, 26, 'ROLE_UPDATE', 'Updated role \"Manager\" — renamed & permission set revised', '{\"ip_address\":\"192.168.1.186\",\"user_agent\":\"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) Safari/605\",\"endpoint\":\"/api/menu-permissions\",\"method\":\"POST\",\"timestamp\":\"2026-03-25T07:42:22.291Z\",\"role\":\"Manager\",\"menu\":\"Tasks\"}', '2026-02-25 11:01:45'),
+(945, 45, 'REPORT_APPROVE', 'Approved report: \"Budget Variance Analysis\"', '{\"ip_address\":\"192.168.1.180\",\"user_agent\":\"Mozilla/5.0 (X11; Linux x86_64) Firefox/125\",\"endpoint\":\"/api/reports/609\",\"method\":\"GET\",\"timestamp\":\"2026-03-25T07:42:22.289Z\",\"report_id\":609}', '2026-02-24 01:13:40'),
+(946, 68, 'TASK_COMPLETE', 'Completed task: \"Fix API timeout issues\" (ID 104) ahead of schedule', '{\"ip_address\":\"192.168.1.84\",\"user_agent\":\"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) Safari/605\",\"endpoint\":\"/api/tasks/104\",\"method\":\"PUT\",\"timestamp\":\"2026-03-25T07:42:22.292Z\",\"task_id\":104}', '2026-03-22 19:13:21'),
+(947, 70, 'MEETING_UPDATE', 'Updated meeting: \"Q2 Strategy Meeting\" — agenda revised', '{\"ip_address\":\"192.168.1.17\",\"user_agent\":\"Mozilla/5.0 (X11; Linux x86_64) Firefox/125\",\"endpoint\":\"/api/meetings/33\",\"method\":\"POST\",\"timestamp\":\"2026-03-25T07:42:22.293Z\",\"meeting_id\":33}', '2026-02-24 19:17:15'),
+(948, 79, 'PLAN_VIEW', 'Viewed plan: \"Marketing Strategy 2026\"', '{\"ip_address\":\"192.168.1.55\",\"user_agent\":\"Mozilla/5.0 (X11; Linux x86_64) Firefox/125\",\"endpoint\":\"/api/plans/209\",\"method\":\"PUT\",\"timestamp\":\"2026-03-25T07:42:22.288Z\",\"plan_id\":209}', '2026-03-18 06:19:36'),
+(949, NULL, 'SYSTEM_ERROR', 'Unhandled exception in /api/reports — Null reference', '{\"ip_address\":\"192.168.1.21\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) Chrome/124\",\"endpoint\":\"/api/system/errors\",\"method\":\"POST\",\"timestamp\":\"2026-03-25T07:42:22.293Z\"}', '2026-03-19 15:11:21'),
+(950, 74, 'PLAN_UPDATE', 'Updated plan: \"Construction Safety Roadmap\" — revised budget & timeline', '{\"ip_address\":\"192.168.1.188\",\"user_agent\":\"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) Safari/605\",\"endpoint\":\"/api/plans/495\",\"method\":\"PUT\",\"timestamp\":\"2026-03-25T07:42:22.288Z\",\"plan_id\":495}', '2026-03-11 00:21:41'),
+(951, 74, 'MENU_DELETE', 'Deleted menu item \"Reports\" and cleaned up role_permissions', '{\"ip_address\":\"192.168.1.184\",\"user_agent\":\"Mozilla/5.0 (X11; Linux x86_64) Firefox/125\",\"endpoint\":\"/api/menu-permissions\",\"method\":\"POST\",\"timestamp\":\"2026-03-25T07:42:22.291Z\",\"role\":\"Manager\",\"menu\":\"Reports\"}', '2026-02-23 18:05:28'),
+(952, 7, 'MENU_CREATE', 'Created menu item: \"Tasks\" (path /tasks)', '{\"ip_address\":\"192.168.1.108\",\"user_agent\":\"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) Safari/605\",\"endpoint\":\"/api/menu-permissions\",\"method\":\"POST\",\"timestamp\":\"2026-03-25T07:42:22.291Z\",\"role\":\"Expert\",\"menu\":\"Tasks\"}', '2026-02-27 05:20:57'),
+(953, 30, 'MENU_UPDATE', 'Updated menu item \"Settings\" — changed icon & display order', '{\"ip_address\":\"192.168.1.92\",\"user_agent\":\"Mozilla/5.0 (X11; Linux x86_64) Firefox/125\",\"endpoint\":\"/api/menu-permissions\",\"method\":\"POST\",\"timestamp\":\"2026-03-25T07:42:22.291Z\",\"role\":\"Team Leader\",\"menu\":\"Settings\"}', '2026-03-02 19:52:00'),
+(954, 71, 'REPORT_SUBMIT', 'Submitted report: \"Annual Audit Report 2024\" for review', '{\"ip_address\":\"192.168.1.91\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) Chrome/124\",\"endpoint\":\"/api/reports/261\",\"method\":\"GET\",\"timestamp\":\"2026-03-25T07:42:22.290Z\",\"report_id\":261}', '2026-03-14 01:10:31'),
+(955, 46, 'PLAN_CREATE', 'Created plan: \"Digital Transformation Initiative\" (ID 150)', '{\"ip_address\":\"192.168.1.199\",\"user_agent\":\"Mozilla/5.0 (X11; Linux x86_64) Firefox/125\",\"endpoint\":\"/api/plans/150\",\"method\":\"POST\",\"timestamp\":\"2026-03-25T07:42:22.289Z\",\"plan_id\":150}', '2026-03-16 17:04:31'),
+(956, 64, 'REPORT_APPROVE', 'Approved report: \"Monthly Employee Performance\"', '{\"ip_address\":\"192.168.1.96\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) Chrome/124\",\"endpoint\":\"/api/reports/605\",\"method\":\"GET\",\"timestamp\":\"2026-03-25T07:42:22.290Z\",\"report_id\":605}', '2026-02-26 00:16:31'),
+(957, 64, 'TASK_COMPLETE', 'Completed task: \"Update employee records\" (ID 218) ahead of schedule', '{\"ip_address\":\"192.168.1.46\",\"user_agent\":\"Mozilla/5.0 (X11; Linux x86_64) Firefox/125\",\"endpoint\":\"/api/tasks/218\",\"method\":\"PUT\",\"timestamp\":\"2026-03-25T07:42:22.292Z\",\"task_id\":218}', '2026-03-03 06:42:16'),
+(958, 74, 'PLAN_UPDATE', 'Updated plan: \"Digital Transformation Initiative\" — revised budget & timeline', '{\"ip_address\":\"192.168.1.174\",\"user_agent\":\"Mozilla/5.0 (X11; Linux x86_64) Firefox/125\",\"endpoint\":\"/api/plans/191\",\"method\":\"PUT\",\"timestamp\":\"2026-03-25T07:42:22.289Z\",\"plan_id\":191}', '2026-02-26 20:45:49'),
+(959, 77, 'PLAN_APPROVE', 'Approved plan: \"Marketing Strategy 2026\" (ID 217)', '{\"ip_address\":\"192.168.1.106\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) Chrome/124\",\"endpoint\":\"/api/plans/217\",\"method\":\"PUT\",\"timestamp\":\"2026-03-25T07:42:22.288Z\",\"plan_id\":217}', '2026-02-28 06:28:10'),
+(960, 13, 'MEETING_UPDATE', 'Updated meeting: \"Annual Planning Workshop\" — agenda revised', '{\"ip_address\":\"192.168.1.99\",\"user_agent\":\"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) Safari/605\",\"endpoint\":\"/api/meetings/63\",\"method\":\"POST\",\"timestamp\":\"2026-03-25T07:42:22.293Z\",\"meeting_id\":63}', '2026-03-12 22:31:58'),
+(961, 57, 'REPORT_UPDATE', 'Updated report: \"Construction Progress Report\" — added Q3 data', '{\"ip_address\":\"192.168.1.177\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) Chrome/124\",\"endpoint\":\"/api/reports/602\",\"method\":\"GET\",\"timestamp\":\"2026-03-25T07:42:22.290Z\",\"report_id\":602}', '2026-02-27 11:55:07'),
+(962, 79, 'MEETING_UPDATE', 'Updated meeting: \"Budget Review Session\" — agenda revised', '{\"ip_address\":\"192.168.1.87\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) Chrome/124\",\"endpoint\":\"/api/meetings/64\",\"method\":\"POST\",\"timestamp\":\"2026-03-25T07:42:22.293Z\",\"meeting_id\":64}', '2026-02-27 01:15:16'),
+(963, 56, 'ROLE_UPDATE', 'Updated role \"Expert\" — renamed & permission set revised', '{\"ip_address\":\"192.168.1.166\",\"user_agent\":\"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) Safari/605\",\"endpoint\":\"/api/menu-permissions\",\"method\":\"POST\",\"timestamp\":\"2026-03-25T07:42:22.291Z\",\"role\":\"Expert\",\"menu\":\"Admin Panel\"}', '2026-02-27 00:13:05'),
+(964, 26, 'TASK_COMPLETE', 'Completed task: \"Fix API timeout issues\" (ID 280) ahead of schedule', '{\"ip_address\":\"192.168.1.112\",\"user_agent\":\"Mozilla/5.0 (X11; Linux x86_64) Firefox/125\",\"endpoint\":\"/api/tasks/280\",\"method\":\"PUT\",\"timestamp\":\"2026-03-25T07:42:22.292Z\",\"task_id\":280}', '2026-03-17 16:23:10'),
+(965, 50, 'MEETING_CREATE', 'Scheduled meeting: \"IT Daily Standup\" — 13 attendees invited', '{\"ip_address\":\"192.168.1.132\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) Chrome/124\",\"endpoint\":\"/api/meetings/47\",\"method\":\"POST\",\"timestamp\":\"2026-03-25T07:42:22.293Z\",\"meeting_id\":47}', '2026-03-16 10:29:12'),
+(966, 62, 'TASK_COMPLETE', 'Completed task: \"Fix API timeout issues\" (ID 150) ahead of schedule', '{\"ip_address\":\"192.168.1.15\",\"user_agent\":\"Mozilla/5.0 (X11; Linux x86_64) Firefox/125\",\"endpoint\":\"/api/tasks/150\",\"method\":\"PUT\",\"timestamp\":\"2026-03-25T07:42:22.292Z\",\"task_id\":150}', '2026-03-24 15:11:46'),
+(967, 75, 'PLAN_CREATE', 'Created plan: \"Annual IT Infrastructure Upgrade\" (ID 478)', '{\"ip_address\":\"192.168.1.92\",\"user_agent\":\"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) Safari/605\",\"endpoint\":\"/api/plans/478\",\"method\":\"POST\",\"timestamp\":\"2026-03-25T07:42:22.288Z\",\"plan_id\":478}', '2026-03-04 16:10:20'),
+(968, 66, 'MENU_UPDATE', 'Updated menu item \"Admin Panel\" — changed icon & display order', '{\"ip_address\":\"192.168.1.57\",\"user_agent\":\"Mozilla/5.0 (X11; Linux x86_64) Firefox/125\",\"endpoint\":\"/api/menu-permissions\",\"method\":\"POST\",\"timestamp\":\"2026-03-25T07:42:22.291Z\",\"role\":\"Staff\",\"menu\":\"Admin Panel\"}', '2026-02-28 11:17:29'),
+(969, 73, 'REPORT_SUBMIT', 'Submitted report: \"Budget Variance Analysis\" for review', '{\"ip_address\":\"192.168.1.152\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) Chrome/124\",\"endpoint\":\"/api/reports/202\",\"method\":\"GET\",\"timestamp\":\"2026-03-25T07:42:22.289Z\",\"report_id\":202}', '2026-03-15 00:47:44'),
+(970, 24, 'REPORT_APPROVE', 'Approved report: \"Q1 Financial Summary Report\"', '{\"ip_address\":\"192.168.1.46\",\"user_agent\":\"Mozilla/5.0 (X11; Linux x86_64) Firefox/125\",\"endpoint\":\"/api/reports/478\",\"method\":\"GET\",\"timestamp\":\"2026-03-25T07:42:22.289Z\",\"report_id\":478}', '2026-03-23 02:04:50'),
+(971, 53, 'ROLE_UPDATE', 'Updated role \"Expert\" — renamed & permission set revised', '{\"ip_address\":\"192.168.1.186\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) Chrome/124\",\"endpoint\":\"/api/menu-permissions\",\"method\":\"POST\",\"timestamp\":\"2026-03-25T07:42:22.291Z\",\"role\":\"Expert\",\"menu\":\"Admin Panel\"}', '2026-03-18 08:04:23'),
+(972, 60, 'TASK_CREATE', 'Created task: \"Review server backups\" assigned to team', '{\"ip_address\":\"192.168.1.146\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) Chrome/124\",\"endpoint\":\"/api/tasks/281\",\"method\":\"POST\",\"timestamp\":\"2026-03-25T07:42:22.292Z\",\"task_id\":281}', '2026-03-04 22:28:57'),
+(973, 43, 'ROLE_CREATE', 'Created new role: \"Team Leader Level 2\"', '{\"ip_address\":\"192.168.1.20\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) Chrome/124\",\"endpoint\":\"/api/menu-permissions\",\"method\":\"POST\",\"timestamp\":\"2026-03-25T07:42:22.291Z\",\"role\":\"Team Leader\",\"menu\":\"Settings\"}', '2026-03-06 16:45:13'),
+(974, 59, 'ROLE_CREATE', 'Created new role: \"Staff Level 1\"', '{\"ip_address\":\"192.168.1.166\",\"user_agent\":\"Mozilla/5.0 (X11; Linux x86_64) Firefox/125\",\"endpoint\":\"/api/menu-permissions\",\"method\":\"POST\",\"timestamp\":\"2026-03-25T07:42:22.290Z\",\"role\":\"Staff\",\"menu\":\"Tasks\"}', '2026-02-27 21:23:33'),
+(975, 54, 'SYSTEM_ERROR', 'Unhandled exception in /api/users — JWT expired', '{\"ip_address\":\"192.168.1.28\",\"user_agent\":\"Mozilla/5.0 (X11; Linux x86_64) Firefox/125\",\"endpoint\":\"/api/system/errors\",\"method\":\"POST\",\"timestamp\":\"2026-03-25T07:42:22.292Z\"}', '2026-02-28 10:23:59'),
+(976, 70, 'PLAN_UPDATE', 'Updated plan: \"HR Onboarding Automation\" — revised budget & timeline', '{\"ip_address\":\"192.168.1.127\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) Chrome/124\",\"endpoint\":\"/api/plans/392\",\"method\":\"PUT\",\"timestamp\":\"2026-03-25T07:42:22.289Z\",\"plan_id\":392}', '2026-02-24 03:17:17'),
+(977, 77, 'PLAN_SUBMIT', 'Submitted plan: \"Digital Transformation Initiative\" for approval', '{\"ip_address\":\"192.168.1.115\",\"user_agent\":\"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) Safari/605\",\"endpoint\":\"/api/plans/499\",\"method\":\"PUT\",\"timestamp\":\"2026-03-25T07:42:22.289Z\",\"plan_id\":499}', '2026-02-26 18:17:02'),
+(978, 59, 'SYSTEM_ERROR', 'Unhandled exception in /api/plans/approve — Null reference', '{\"ip_address\":\"192.168.1.116\",\"user_agent\":\"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) Safari/605\",\"endpoint\":\"/api/system/errors\",\"method\":\"POST\",\"timestamp\":\"2026-03-25T07:42:22.293Z\"}', '2026-02-26 03:18:22'),
+(979, 24, 'PLAN_UPDATE', 'Updated plan: \"Legal Compliance Review Plan\" — revised budget & timeline', '{\"ip_address\":\"192.168.1.138\",\"user_agent\":\"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) Safari/605\",\"endpoint\":\"/api/plans/156\",\"method\":\"PUT\",\"timestamp\":\"2026-03-25T07:42:22.289Z\",\"plan_id\":156}', '2026-03-04 10:01:12'),
+(980, 68, 'MENU_DELETE', 'Deleted menu item \"Reports\" and cleaned up role_permissions', '{\"ip_address\":\"192.168.1.100\",\"user_agent\":\"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) Safari/605\",\"endpoint\":\"/api/menu-permissions\",\"method\":\"POST\",\"timestamp\":\"2026-03-25T07:42:22.291Z\",\"role\":\"Admin\",\"menu\":\"Reports\"}', '2026-02-25 09:37:07'),
+(981, 38, 'TASK_COMPLETE', 'Completed task: \"Train new team members\" (ID 290) ahead of schedule', '{\"ip_address\":\"192.168.1.42\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) Chrome/124\",\"endpoint\":\"/api/tasks/290\",\"method\":\"PUT\",\"timestamp\":\"2026-03-25T07:42:22.292Z\",\"task_id\":290}', '2026-03-11 15:14:57'),
+(982, 38, 'SYSTEM_ERROR', 'Unhandled exception in /api/users — Timeout', '{\"ip_address\":\"192.168.1.113\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) Chrome/124\",\"endpoint\":\"/api/system/errors\",\"method\":\"POST\",\"timestamp\":\"2026-03-25T07:42:22.292Z\"}', '2026-02-26 09:08:19'),
+(983, 46, 'TASK_UPDATE', 'Updated task: \"Update employee records\" — changed deadline & priority', '{\"ip_address\":\"192.168.1.85\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) Chrome/124\",\"endpoint\":\"/api/tasks/14\",\"method\":\"PUT\",\"timestamp\":\"2026-03-25T07:42:22.292Z\",\"task_id\":14}', '2026-03-24 10:28:35'),
+(984, 40, 'REPORT_DELETE', 'Deleted report: \"IT Incident Response Report\" (ID 469)', '{\"ip_address\":\"192.168.1.192\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) Chrome/124\",\"endpoint\":\"/api/reports/469\",\"method\":\"GET\",\"timestamp\":\"2026-03-25T07:42:22.290Z\",\"report_id\":469}', '2026-03-03 22:04:05'),
+(985, NULL, 'SYSTEM_START', 'Server started on port 5001 — DB connected, 20 routes registered', '{\"ip_address\":\"192.168.1.118\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) Chrome/124\",\"endpoint\":\"/api/system/start\",\"method\":\"POST\",\"timestamp\":\"2026-03-25T07:42:22.293Z\"}', '2026-02-25 12:32:03'),
+(986, 36, 'PLAN_SUBMIT', 'Submitted plan: \"HR Onboarding Automation\" for approval', '{\"ip_address\":\"192.168.1.48\",\"user_agent\":\"Mozilla/5.0 (X11; Linux x86_64) Firefox/125\",\"endpoint\":\"/api/plans/402\",\"method\":\"PUT\",\"timestamp\":\"2026-03-25T07:42:22.289Z\",\"plan_id\":402}', '2026-02-25 10:07:01'),
+(987, NULL, 'SYSTEM_START', 'Server started on port 5001 — DB connected, 13 routes registered', '{\"ip_address\":\"192.168.1.74\",\"user_agent\":\"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) Safari/605\",\"endpoint\":\"/api/system/start\",\"method\":\"POST\",\"timestamp\":\"2026-03-25T07:42:22.293Z\"}', '2026-03-10 22:34:17'),
+(988, 27, 'PLAN_VIEW', 'Viewed plan: \"Marketing Strategy 2026\"', '{\"ip_address\":\"192.168.1.184\",\"user_agent\":\"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) Safari/605\",\"endpoint\":\"/api/plans/130\",\"method\":\"PUT\",\"timestamp\":\"2026-03-25T07:42:22.289Z\",\"plan_id\":130}', '2026-02-27 01:18:53'),
+(989, 53, 'MEETING_JOIN', 'Joined meeting: \"Budget Review Session\"', '{\"ip_address\":\"192.168.1.28\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) Chrome/124\",\"endpoint\":\"/api/meetings/53\",\"method\":\"POST\",\"timestamp\":\"2026-03-25T07:42:22.293Z\",\"meeting_id\":53}', '2026-03-13 06:31:19'),
+(990, 7, 'ROLE_UPDATE', 'Updated role \"Staff\" — renamed & permission set revised', '{\"ip_address\":\"192.168.1.25\",\"user_agent\":\"Mozilla/5.0 (X11; Linux x86_64) Firefox/125\",\"endpoint\":\"/api/menu-permissions\",\"method\":\"POST\",\"timestamp\":\"2026-03-25T07:42:22.291Z\",\"role\":\"Staff\",\"menu\":\"Dashboard\"}', '2026-03-04 02:06:51'),
+(991, NULL, 'DATA_EXPORT', 'Data exported: plans table — 869 rows as CSV', '{\"ip_address\":\"192.168.1.85\",\"user_agent\":\"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) Safari/605\",\"endpoint\":\"/api/admin/export\",\"method\":\"POST\",\"timestamp\":\"2026-03-25T07:42:22.293Z\"}', '2026-03-22 00:00:22'),
+(992, 62, 'SYSTEM_START', 'Server started on port 5001 — DB connected, 15 routes registered', '{\"ip_address\":\"192.168.1.195\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) Chrome/124\",\"endpoint\":\"/api/system/start\",\"method\":\"POST\",\"timestamp\":\"2026-03-25T07:42:22.293Z\"}', '2026-03-01 18:59:33'),
+(993, 61, 'TASK_UPDATE', 'Updated task: \"Fix API timeout issues\" — changed deadline & priority', '{\"ip_address\":\"192.168.1.30\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) Chrome/124\",\"endpoint\":\"/api/tasks/110\",\"method\":\"PUT\",\"timestamp\":\"2026-03-25T07:42:22.292Z\",\"task_id\":110}', '2026-03-18 02:20:56'),
+(994, 53, 'TASK_CREATE', 'Created task: \"Fix API timeout issues\" assigned to team', '{\"ip_address\":\"192.168.1.76\",\"user_agent\":\"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) Safari/605\",\"endpoint\":\"/api/tasks/186\",\"method\":\"POST\",\"timestamp\":\"2026-03-25T07:42:22.291Z\",\"task_id\":186}', '2026-03-03 13:36:11'),
+(995, 38, 'TASK_UPDATE', 'Updated task: \"Complete security audit\" — changed deadline & priority', '{\"ip_address\":\"192.168.1.188\",\"user_agent\":\"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) Safari/605\",\"endpoint\":\"/api/tasks/274\",\"method\":\"PUT\",\"timestamp\":\"2026-03-25T07:42:22.292Z\",\"task_id\":274}', '2026-03-24 16:17:08'),
+(996, 26, 'MENU_DELETE', 'Deleted menu item \"Settings\" and cleaned up role_permissions', '{\"ip_address\":\"192.168.1.96\",\"user_agent\":\"Mozilla/5.0 (X11; Linux x86_64) Firefox/125\",\"endpoint\":\"/api/menu-permissions\",\"method\":\"POST\",\"timestamp\":\"2026-03-25T07:42:22.291Z\",\"role\":\"Manager\",\"menu\":\"Settings\"}', '2026-03-19 19:39:26'),
+(997, 40, 'TASK_UPDATE', 'Updated task: \"Complete security audit\" — changed deadline & priority', '{\"ip_address\":\"192.168.1.160\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) Chrome/124\",\"endpoint\":\"/api/tasks/233\",\"method\":\"PUT\",\"timestamp\":\"2026-03-25T07:42:22.292Z\",\"task_id\":233}', '2026-03-05 14:45:56'),
+(998, NULL, 'SYSTEM_ERROR', 'Unhandled exception in /api/reports — DB connection lost', '{\"ip_address\":\"192.168.1.179\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) Chrome/124\",\"endpoint\":\"/api/system/errors\",\"method\":\"POST\",\"timestamp\":\"2026-03-25T07:42:22.293Z\"}', '2026-03-01 07:18:37'),
+(999, 61, 'PLAN_DELETE', 'Deleted plan: \"Marketing Strategy 2026\" (ID 273)', '{\"ip_address\":\"192.168.1.154\",\"user_agent\":\"Mozilla/5.0 (X11; Linux x86_64) Firefox/125\",\"endpoint\":\"/api/plans/273\",\"method\":\"PUT\",\"timestamp\":\"2026-03-25T07:42:22.288Z\",\"plan_id\":273}', '2026-02-23 06:01:50'),
+(1000, 48, 'TASK_CREATE', 'Created task: \"Update employee records\" assigned to team', '{\"ip_address\":\"192.168.1.68\",\"user_agent\":\"Mozilla/5.0 (X11; Linux x86_64) Firefox/125\",\"endpoint\":\"/api/tasks/275\",\"method\":\"POST\",\"timestamp\":\"2026-03-25T07:42:22.292Z\",\"task_id\":275}', '2026-03-08 23:59:32'),
+(1001, 40, 'ROLE_CREATE', 'Created new role: \"Manager Level 1\"', '{\"ip_address\":\"192.168.1.182\",\"user_agent\":\"Mozilla/5.0 (X11; Linux x86_64) Firefox/125\",\"endpoint\":\"/api/menu-permissions\",\"method\":\"POST\",\"timestamp\":\"2026-03-25T07:42:22.290Z\",\"role\":\"Manager\",\"menu\":\"Plans\"}', '2026-03-23 22:43:38'),
+(1002, 59, 'PLAN_UPDATE', 'Updated plan: \"Digital Transformation Initiative\" — revised budget & timeline', '{\"ip_address\":\"192.168.1.53\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) Chrome/124\",\"endpoint\":\"/api/plans/317\",\"method\":\"PUT\",\"timestamp\":\"2026-03-25T07:42:22.288Z\",\"plan_id\":317}', '2026-03-10 01:00:31'),
+(1003, 56, 'MEETING_CREATE', 'Scheduled meeting: \"IT Daily Standup\" — 10 attendees invited', '{\"ip_address\":\"192.168.1.55\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) Chrome/124\",\"endpoint\":\"/api/meetings/96\",\"method\":\"POST\",\"timestamp\":\"2026-03-25T07:42:22.293Z\",\"meeting_id\":96}', '2026-02-27 21:38:09'),
+(1004, 75, 'DATA_EXPORT', 'Scheduled database backup completed — 186 MB archived', '{\"ip_address\":\"192.168.1.40\",\"user_agent\":\"Mozilla/5.0 (X11; Linux x86_64) Firefox/125\",\"endpoint\":\"/api/admin/backup\",\"method\":\"POST\",\"timestamp\":\"2026-03-25T07:42:22.293Z\"}', '2026-03-22 16:56:34'),
+(1005, 75, 'TASK_COMPLETE', 'Completed task: \"Review server backups\" (ID 105) ahead of schedule', '{\"ip_address\":\"192.168.1.55\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) Chrome/124\",\"endpoint\":\"/api/tasks/105\",\"method\":\"PUT\",\"timestamp\":\"2026-03-25T07:42:22.292Z\",\"task_id\":105}', '2026-02-26 05:57:12'),
+(1006, 27, 'PLAN_DELETE', 'Deleted plan: \"Annual IT Infrastructure Upgrade\" (ID 168)', '{\"ip_address\":\"192.168.1.194\",\"user_agent\":\"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) Safari/605\",\"endpoint\":\"/api/plans/168\",\"method\":\"PUT\",\"timestamp\":\"2026-03-25T07:42:22.289Z\",\"plan_id\":168}', '2026-03-11 00:38:32'),
+(1007, 46, 'TASK_COMPLETE', 'Completed task: \"Fix API timeout issues\" (ID 88) ahead of schedule', '{\"ip_address\":\"192.168.1.89\",\"user_agent\":\"Mozilla/5.0 (X11; Linux x86_64) Firefox/125\",\"endpoint\":\"/api/tasks/88\",\"method\":\"PUT\",\"timestamp\":\"2026-03-25T07:42:22.292Z\",\"task_id\":88}', '2026-03-01 15:43:19'),
+(1008, 65, 'REPORT_DELETE', 'Deleted report: \"Monthly Employee Performance\" (ID 256)', '{\"ip_address\":\"192.168.1.144\",\"user_agent\":\"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) Safari/605\",\"endpoint\":\"/api/reports/256\",\"method\":\"GET\",\"timestamp\":\"2026-03-25T07:42:22.290Z\",\"report_id\":256}', '2026-03-22 19:36:41'),
+(1009, 38, 'TASK_DELETE', 'Deleted task: \"Complete security audit\" (ID 97) — cancelled', '{\"ip_address\":\"192.168.1.92\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) Chrome/124\",\"endpoint\":\"/api/tasks/97\",\"method\":\"PUT\",\"timestamp\":\"2026-03-25T07:42:22.292Z\",\"task_id\":97}', '2026-03-01 14:27:55'),
+(1010, 63, 'PLAN_DELETE', 'Deleted plan: \"Legal Compliance Review Plan\" (ID 344)', '{\"ip_address\":\"192.168.1.54\",\"user_agent\":\"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) Safari/605\",\"endpoint\":\"/api/plans/344\",\"method\":\"PUT\",\"timestamp\":\"2026-03-25T07:42:22.289Z\",\"plan_id\":344}', '2026-02-27 08:56:57'),
+(1011, 70, 'MEETING_JOIN', 'Joined meeting: \"Audit Debrief\"', '{\"ip_address\":\"192.168.1.67\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) Chrome/124\",\"endpoint\":\"/api/meetings/36\",\"method\":\"POST\",\"timestamp\":\"2026-03-25T07:42:22.293Z\",\"meeting_id\":36}', '2026-03-12 16:59:52'),
+(1012, 64, 'TASK_COMPLETE', 'Completed task: \"Review server backups\" (ID 18) ahead of schedule', '{\"ip_address\":\"192.168.1.19\",\"user_agent\":\"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) Safari/605\",\"endpoint\":\"/api/tasks/18\",\"method\":\"PUT\",\"timestamp\":\"2026-03-25T07:42:22.292Z\",\"task_id\":18}', '2026-03-20 20:44:00'),
+(1013, NULL, 'SYSTEM_START', 'Server started on port 5001 — DB connected, 19 routes registered', '{\"ip_address\":\"192.168.1.122\",\"user_agent\":\"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) Safari/605\",\"endpoint\":\"/api/system/start\",\"method\":\"POST\",\"timestamp\":\"2026-03-25T07:42:22.292Z\"}', '2026-03-21 10:17:12'),
+(1014, 73, 'REPORT_SUBMIT', 'Submitted report: \"Risk Assessment Report\" for review', '{\"ip_address\":\"192.168.1.76\",\"user_agent\":\"Mozilla/5.0 (X11; Linux x86_64) Firefox/125\",\"endpoint\":\"/api/reports/277\",\"method\":\"GET\",\"timestamp\":\"2026-03-25T07:42:22.290Z\",\"report_id\":277}', '2026-03-21 01:09:30'),
+(1015, 70, 'TASK_COMPLETE', 'Completed task: \"Review server backups\" (ID 283) ahead of schedule', '{\"ip_address\":\"192.168.1.118\",\"user_agent\":\"Mozilla/5.0 (X11; Linux x86_64) Firefox/125\",\"endpoint\":\"/api/tasks/283\",\"method\":\"PUT\",\"timestamp\":\"2026-03-25T07:42:22.292Z\",\"task_id\":283}', '2026-02-23 15:06:43'),
+(1016, 66, 'MEETING_END', 'Ended meeting: \"Annual Planning Workshop\" — duration 51 minutes', '{\"ip_address\":\"192.168.1.187\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) Chrome/124\",\"endpoint\":\"/api/meetings/41\",\"method\":\"POST\",\"timestamp\":\"2026-03-25T07:42:22.293Z\",\"meeting_id\":41}', '2026-02-27 06:38:24'),
+(1017, 50, 'PERMISSION_UPDATE', 'Updated permissions for role \"Expert\" — toggled access to [Settings, Plans]', '{\"ip_address\":\"192.168.1.91\",\"user_agent\":\"Mozilla/5.0 (X11; Linux x86_64) Firefox/125\",\"endpoint\":\"/api/menu-permissions\",\"method\":\"POST\",\"timestamp\":\"2026-03-25T07:42:22.291Z\",\"role\":\"Expert\",\"menu\":\"Settings\"}', '2026-02-28 21:23:35'),
+(1018, 58, 'PLAN_UPDATE', 'Updated plan: \"Legal Compliance Review Plan\" — revised budget & timeline', '{\"ip_address\":\"192.168.1.119\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) Chrome/124\",\"endpoint\":\"/api/plans/370\",\"method\":\"PUT\",\"timestamp\":\"2026-03-25T07:42:22.289Z\",\"plan_id\":370}', '2026-02-23 04:56:19'),
+(1019, 55, 'MENU_DELETE', 'Deleted menu item \"Plans\" and cleaned up role_permissions', '{\"ip_address\":\"192.168.1.115\",\"user_agent\":\"Mozilla/5.0 (X11; Linux x86_64) Firefox/125\",\"endpoint\":\"/api/menu-permissions\",\"method\":\"POST\",\"timestamp\":\"2026-03-25T07:42:22.291Z\",\"role\":\"Team Leader\",\"menu\":\"Plans\"}', '2026-03-17 13:25:51'),
+(1020, 44, 'MEETING_CREATE', 'Scheduled meeting: \"Q2 Strategy Meeting\" — 12 attendees invited', '{\"ip_address\":\"192.168.1.65\",\"user_agent\":\"Mozilla/5.0 (X11; Linux x86_64) Firefox/125\",\"endpoint\":\"/api/meetings/65\",\"method\":\"POST\",\"timestamp\":\"2026-03-25T07:42:22.293Z\",\"meeting_id\":65}', '2026-03-13 00:51:36'),
+(1021, 70, 'ROLE_CREATE', 'Created new role: \"Staff Level 3\"', '{\"ip_address\":\"192.168.1.98\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) Chrome/124\",\"endpoint\":\"/api/menu-permissions\",\"method\":\"POST\",\"timestamp\":\"2026-03-25T07:42:22.291Z\",\"role\":\"Staff\",\"menu\":\"Admin Panel\"}', '2026-03-23 03:01:28'),
+(1022, 72, 'PLAN_SUBMIT', 'Submitted plan: \"Legal Compliance Review Plan\" for approval', '{\"ip_address\":\"192.168.1.195\",\"user_agent\":\"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) Safari/605\",\"endpoint\":\"/api/plans/295\",\"method\":\"PUT\",\"timestamp\":\"2026-03-25T07:42:22.289Z\",\"plan_id\":295}', '2026-03-15 08:29:29'),
+(1023, 78, 'ROLE_UPDATE', 'Updated role \"Expert\" — renamed & permission set revised', '{\"ip_address\":\"192.168.1.77\",\"user_agent\":\"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) Safari/605\",\"endpoint\":\"/api/menu-permissions\",\"method\":\"POST\",\"timestamp\":\"2026-03-25T07:42:22.291Z\",\"role\":\"Expert\",\"menu\":\"Dashboard\"}', '2026-03-20 19:17:44'),
+(1024, 37, 'TASK_COMPLETE', 'Completed task: \"Update employee records\" (ID 274) ahead of schedule', '{\"ip_address\":\"192.168.1.43\",\"user_agent\":\"Mozilla/5.0 (X11; Linux x86_64) Firefox/125\",\"endpoint\":\"/api/tasks/274\",\"method\":\"PUT\",\"timestamp\":\"2026-03-25T07:42:22.292Z\",\"task_id\":274}', '2026-03-21 07:17:21'),
+(1025, 42, 'SYSTEM_ERROR', 'Unhandled exception in /api/plans/approve — JWT expired', '{\"ip_address\":\"192.168.1.37\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) Chrome/124\",\"endpoint\":\"/api/system/errors\",\"method\":\"POST\",\"timestamp\":\"2026-03-25T07:42:22.292Z\"}', '2026-02-25 02:16:20'),
+(1026, 49, 'REPORT_UPDATE', 'Updated report: \"Monthly Employee Performance\" — added Q3 data', '{\"ip_address\":\"192.168.1.140\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) Chrome/124\",\"endpoint\":\"/api/reports/435\",\"method\":\"GET\",\"timestamp\":\"2026-03-25T07:42:22.290Z\",\"report_id\":435}', '2026-03-13 04:36:22'),
+(1027, 41, 'DATA_EXPORT', 'Data exported: plans table — 1918 rows as CSV', '{\"ip_address\":\"192.168.1.96\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) Chrome/124\",\"endpoint\":\"/api/admin/export\",\"method\":\"POST\",\"timestamp\":\"2026-03-25T07:42:22.292Z\"}', '2026-02-28 07:36:49'),
+(1028, 54, 'MENU_DELETE', 'Deleted menu item \"Plans\" and cleaned up role_permissions', '{\"ip_address\":\"192.168.1.156\",\"user_agent\":\"Mozilla/5.0 (X11; Linux x86_64) Firefox/125\",\"endpoint\":\"/api/menu-permissions\",\"method\":\"POST\",\"timestamp\":\"2026-03-25T07:42:22.291Z\",\"role\":\"Team Leader\",\"menu\":\"Plans\"}', '2026-03-19 07:35:31'),
+(1029, 61, 'TASK_DELETE', 'Deleted task: \"Complete security audit\" (ID 151) — cancelled', '{\"ip_address\":\"192.168.1.183\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) Chrome/124\",\"endpoint\":\"/api/tasks/151\",\"method\":\"PUT\",\"timestamp\":\"2026-03-25T07:42:22.292Z\",\"task_id\":151}', '2026-03-06 19:12:24'),
+(1030, 39, 'REPORT_DELETE', 'Deleted report: \"IT Incident Response Report\" (ID 385)', '{\"ip_address\":\"192.168.1.16\",\"user_agent\":\"Mozilla/5.0 (X11; Linux x86_64) Firefox/125\",\"endpoint\":\"/api/reports/385\",\"method\":\"GET\",\"timestamp\":\"2026-03-25T07:42:22.290Z\",\"report_id\":385}', '2026-03-02 09:45:16'),
+(1031, 51, 'TASK_UPDATE', 'Updated task: \"Deploy hotfix to production\" — changed deadline & priority', '{\"ip_address\":\"192.168.1.148\",\"user_agent\":\"Mozilla/5.0 (X11; Linux x86_64) Firefox/125\",\"endpoint\":\"/api/tasks/31\",\"method\":\"PUT\",\"timestamp\":\"2026-03-25T07:42:22.291Z\",\"task_id\":31}', '2026-03-18 13:47:14'),
+(1032, 58, 'REPORT_DECLINE', 'Declined report: \"Risk Assessment Report\" — data inconsistency', '{\"ip_address\":\"192.168.1.141\",\"user_agent\":\"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) Safari/605\",\"endpoint\":\"/api/reports/475\",\"method\":\"GET\",\"timestamp\":\"2026-03-25T07:42:22.290Z\",\"report_id\":475}', '2026-03-07 18:11:33'),
+(1033, 30, 'PERMISSION_UPDATE', 'Updated permissions for role \"Team Leader\" — toggled access to [Reports, Plans]', '{\"ip_address\":\"192.168.1.18\",\"user_agent\":\"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) Safari/605\",\"endpoint\":\"/api/menu-permissions\",\"method\":\"POST\",\"timestamp\":\"2026-03-25T07:42:22.291Z\",\"role\":\"Team Leader\",\"menu\":\"Reports\"}', '2026-03-07 01:43:39'),
+(1034, 59, 'MEETING_CREATE', 'Scheduled meeting: \"Q2 Strategy Meeting\" — 10 attendees invited', '{\"ip_address\":\"192.168.1.76\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) Chrome/124\",\"endpoint\":\"/api/meetings/83\",\"method\":\"POST\",\"timestamp\":\"2026-03-25T07:42:22.293Z\",\"meeting_id\":83}', '2026-03-21 22:10:23'),
+(1035, 44, 'REPORT_VIEW', 'Viewed report: \"Q1 Financial Summary Report\"', '{\"ip_address\":\"192.168.1.71\",\"user_agent\":\"Mozilla/5.0 (X11; Linux x86_64) Firefox/125\",\"endpoint\":\"/api/reports/291\",\"method\":\"GET\",\"timestamp\":\"2026-03-25T07:42:22.289Z\",\"report_id\":291}', '2026-03-08 01:53:42'),
+(1036, 69, 'ROLE_CREATE', 'Created new role: \"Staff Level 3\"', '{\"ip_address\":\"192.168.1.150\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) Chrome/124\",\"endpoint\":\"/api/menu-permissions\",\"method\":\"POST\",\"timestamp\":\"2026-03-25T07:42:22.291Z\",\"role\":\"Staff\",\"menu\":\"Tasks\"}', '2026-03-13 14:29:53'),
+(1037, 56, 'TASK_COMPLETE', 'Completed task: \"Deploy hotfix to production\" (ID 107) ahead of schedule', '{\"ip_address\":\"192.168.1.86\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) Chrome/124\",\"endpoint\":\"/api/tasks/107\",\"method\":\"PUT\",\"timestamp\":\"2026-03-25T07:42:22.292Z\",\"task_id\":107}', '2026-03-23 12:48:02'),
+(1038, 26, 'PLAN_UPDATE', 'Updated plan: \"Marketing Strategy 2026\" — revised budget & timeline', '{\"ip_address\":\"192.168.1.86\",\"user_agent\":\"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) Safari/605\",\"endpoint\":\"/api/plans/145\",\"method\":\"PUT\",\"timestamp\":\"2026-03-25T07:42:22.289Z\",\"plan_id\":145}', '2026-03-06 11:51:27'),
+(1039, 55, 'PLAN_DECLINE', 'Declined plan: \"Annual IT Infrastructure Upgrade\" — insufficient detail', '{\"ip_address\":\"192.168.1.143\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) Chrome/124\",\"endpoint\":\"/api/plans/205\",\"method\":\"PUT\",\"timestamp\":\"2026-03-25T07:42:22.289Z\",\"plan_id\":205}', '2026-03-21 02:09:37'),
+(1040, 26, 'MEETING_POSTPONE', 'Postponed meeting: \"Budget Review Session\" to next week', '{\"ip_address\":\"192.168.1.53\",\"user_agent\":\"Mozilla/5.0 (X11; Linux x86_64) Firefox/125\",\"endpoint\":\"/api/meetings/15\",\"method\":\"POST\",\"timestamp\":\"2026-03-25T07:42:22.293Z\",\"meeting_id\":15}', '2026-03-09 12:17:20'),
+(1041, 67, 'ROLE_UPDATE', 'Updated role \"Expert\" — renamed & permission set revised', '{\"ip_address\":\"192.168.1.54\",\"user_agent\":\"Mozilla/5.0 (X11; Linux x86_64) Firefox/125\",\"endpoint\":\"/api/menu-permissions\",\"method\":\"POST\",\"timestamp\":\"2026-03-25T07:42:22.291Z\",\"role\":\"Expert\",\"menu\":\"Tasks\"}', '2026-03-22 19:28:55'),
+(1042, 76, 'DATA_EXPORT', 'Scheduled database backup completed — 148 MB archived', '{\"ip_address\":\"192.168.1.120\",\"user_agent\":\"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) Safari/605\",\"endpoint\":\"/api/admin/backup\",\"method\":\"POST\",\"timestamp\":\"2026-03-25T07:42:22.293Z\"}', '2026-03-24 03:52:20'),
+(1043, 76, 'TASK_DELETE', 'Deleted task: \"Update employee records\" (ID 71) — cancelled', '{\"ip_address\":\"192.168.1.114\",\"user_agent\":\"Mozilla/5.0 (X11; Linux x86_64) Firefox/125\",\"endpoint\":\"/api/tasks/71\",\"method\":\"PUT\",\"timestamp\":\"2026-03-25T07:42:22.292Z\",\"task_id\":71}', '2026-03-07 04:17:35'),
+(1044, 79, 'REPORT_CREATE', 'Created report: \"Monthly Employee Performance\"', '{\"ip_address\":\"192.168.1.97\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) Chrome/124\",\"endpoint\":\"/api/reports/664\",\"method\":\"POST\",\"timestamp\":\"2026-03-25T07:42:22.290Z\",\"report_id\":664}', '2026-03-10 15:29:12'),
+(1045, 51, 'TASK_COMPLETE', 'Completed task: \"Complete security audit\" (ID 170) ahead of schedule', '{\"ip_address\":\"192.168.1.110\",\"user_agent\":\"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) Safari/605\",\"endpoint\":\"/api/tasks/170\",\"method\":\"PUT\",\"timestamp\":\"2026-03-25T07:42:22.292Z\",\"task_id\":170}', '2026-03-09 07:00:55'),
+(1046, 56, 'PLAN_DECLINE', 'Declined plan: \"HR Onboarding Automation\" — insufficient detail', '{\"ip_address\":\"192.168.1.44\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) Chrome/124\",\"endpoint\":\"/api/plans/176\",\"method\":\"PUT\",\"timestamp\":\"2026-03-25T07:42:22.288Z\",\"plan_id\":176}', '2026-03-14 18:56:05'),
+(1047, 52, 'REPORT_DELETE', 'Deleted report: \"Q1 Financial Summary Report\" (ID 589)', '{\"ip_address\":\"192.168.1.36\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) Chrome/124\",\"endpoint\":\"/api/reports/589\",\"method\":\"GET\",\"timestamp\":\"2026-03-25T07:42:22.289Z\",\"report_id\":589}', '2026-02-28 16:03:31'),
+(1048, 73, 'REPORT_APPROVE', 'Approved report: \"Construction Progress Report\"', '{\"ip_address\":\"192.168.1.174\",\"user_agent\":\"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) Safari/605\",\"endpoint\":\"/api/reports/573\",\"method\":\"GET\",\"timestamp\":\"2026-03-25T07:42:22.289Z\",\"report_id\":573}', '2026-03-24 08:19:35'),
+(1049, 64, 'SETTINGS_CHANGE', 'System setting changed: backup_schedule updated', '{\"ip_address\":\"192.168.1.65\",\"user_agent\":\"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) Safari/605\",\"endpoint\":\"/api/settings\",\"method\":\"POST\",\"timestamp\":\"2026-03-25T07:42:22.293Z\"}', '2026-03-09 10:42:18'),
+(1050, 75, 'TASK_COMPLETE', 'Completed task: \"Deploy hotfix to production\" (ID 253) ahead of schedule', '{\"ip_address\":\"192.168.1.151\",\"user_agent\":\"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) Safari/605\",\"endpoint\":\"/api/tasks/253\",\"method\":\"PUT\",\"timestamp\":\"2026-03-25T07:42:22.292Z\",\"task_id\":253}', '2026-03-07 00:18:59'),
+(1051, NULL, 'SETTINGS_CHANGE', 'System setting changed: backup_schedule updated', '{\"ip_address\":\"192.168.1.134\",\"user_agent\":\"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) Safari/605\",\"endpoint\":\"/api/settings\",\"method\":\"POST\",\"timestamp\":\"2026-03-25T07:42:22.293Z\"}', '2026-03-11 07:02:48'),
+(1052, 72, 'SYSTEM_ERROR', 'Unhandled exception in /api/reports — DB connection lost', '{\"ip_address\":\"192.168.1.74\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) Chrome/124\",\"endpoint\":\"/api/system/errors\",\"method\":\"POST\",\"timestamp\":\"2026-03-25T07:42:22.292Z\"}', '2026-03-21 03:06:36'),
+(1053, 67, 'MEETING_CREATE', 'Scheduled meeting: \"IT Daily Standup\" — 10 attendees invited', '{\"ip_address\":\"192.168.1.66\",\"user_agent\":\"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) Safari/605\",\"endpoint\":\"/api/meetings/17\",\"method\":\"POST\",\"timestamp\":\"2026-03-25T07:42:22.293Z\",\"meeting_id\":17}', '2026-03-20 12:22:59'),
+(1054, 26, 'TASK_CREATE', 'Created task: \"Review server backups\" assigned to team', '{\"ip_address\":\"192.168.1.181\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) Chrome/124\",\"endpoint\":\"/api/tasks/202\",\"method\":\"POST\",\"timestamp\":\"2026-03-25T07:42:22.292Z\",\"task_id\":202}', '2026-03-02 23:34:34'),
+(1055, 49, 'SYSTEM_ERROR', 'Unhandled exception in /api/plans/approve — Null reference', '{\"ip_address\":\"192.168.1.195\",\"user_agent\":\"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) Safari/605\",\"endpoint\":\"/api/system/errors\",\"method\":\"POST\",\"timestamp\":\"2026-03-25T07:42:22.292Z\"}', '2026-03-05 09:43:55'),
+(1056, 40, 'LOGOUT', 'User ezira@itpark.et logged out', '{\"user_id\":\"40\",\"username\":\"ezira@itpark.et\",\"employee_name\":\"Ezira\",\"logout_time\":\"2026-03-25T07:55:21.413Z\",\"timestamp\":\"2026-03-25T07:55:21.413Z\",\"ip_address\":\"127.0.0.1\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36\",\"endpoint\":\"/logout/40\",\"method\":\"PUT\"}', '2026-03-25 07:55:21'),
+(1057, 40, 'LOGIN', 'User ezira@itpark.et logged in successfully', '{\"username\":\"ezira@itpark.et\",\"user_id\":40,\"role_id\":1,\"employee_id\":109,\"employee_name\":\"Ezira\",\"department_id\":null,\"login_time\":\"2026-03-25T08:14:06.413Z\",\"timestamp\":\"2026-03-25T08:14:06.413Z\",\"ip_address\":\"127.0.0.1\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36\",\"endpoint\":\"/login\",\"method\":\"POST\"}', '2026-03-25 08:14:06'),
+(1058, 40, 'LOGOUT', 'User ezira@itpark.et logged out', '{\"user_id\":\"40\",\"username\":\"ezira@itpark.et\",\"employee_name\":\"Ezira\",\"logout_time\":\"2026-03-25T10:52:15.280Z\",\"timestamp\":\"2026-03-25T10:52:15.281Z\",\"ip_address\":\"127.0.0.1\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36\",\"endpoint\":\"/logout/40\",\"method\":\"PUT\"}', '2026-03-25 10:52:15'),
+(1059, NULL, 'LOGIN_FAILED', 'Login failed: User not found - ewunetu@itp.et', '{\"username\":\"ewunetu@itp.et\",\"reason\":\"user_not_found\",\"timestamp\":\"2026-04-07T16:30:59.927Z\",\"ip_address\":\"127.0.0.1\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36\",\"endpoint\":\"/login\",\"method\":\"POST\"}', '2026-04-07 16:30:59'),
+(1060, 40, 'LOGIN', 'User ezira@itpark.et logged in successfully', '{\"username\":\"ezira@itpark.et\",\"user_id\":40,\"role_id\":1,\"employee_id\":109,\"employee_name\":\"Ezira\",\"department_id\":null,\"login_time\":\"2026-04-07T16:31:09.845Z\",\"timestamp\":\"2026-04-07T16:31:09.845Z\",\"ip_address\":\"127.0.0.1\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36\",\"endpoint\":\"/login\",\"method\":\"POST\"}', '2026-04-07 16:31:09'),
+(1061, 40, 'LOGOUT', 'User ezira@itpark.et logged out', '{\"user_id\":\"40\",\"username\":\"ezira@itpark.et\",\"employee_name\":\"Ezira\",\"logout_time\":\"2026-04-07T16:31:17.928Z\",\"timestamp\":\"2026-04-07T16:31:17.928Z\",\"ip_address\":\"127.0.0.1\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36\",\"endpoint\":\"/logout/40\",\"method\":\"PUT\"}', '2026-04-07 16:31:17');
+INSERT INTO `audit_logs` (`id`, `user_id`, `action`, `description`, `metadata`, `created_at`) VALUES
+(1062, 40, 'LOGIN', 'User ezira@itpark.et logged in successfully', '{\"username\":\"ezira@itpark.et\",\"user_id\":40,\"role_id\":1,\"employee_id\":109,\"employee_name\":\"Ezira\",\"department_id\":null,\"login_time\":\"2026-04-07T16:31:59.512Z\",\"timestamp\":\"2026-04-07T16:31:59.512Z\",\"ip_address\":\"127.0.0.1\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36\",\"endpoint\":\"/login\",\"method\":\"POST\"}', '2026-04-07 16:31:59'),
+(1063, 40, 'LOGOUT', 'User ezira@itpark.et logged out', '{\"user_id\":\"40\",\"username\":\"ezira@itpark.et\",\"employee_name\":\"Ezira\",\"logout_time\":\"2026-04-07T16:32:37.328Z\",\"timestamp\":\"2026-04-07T16:32:37.328Z\",\"ip_address\":\"127.0.0.1\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36\",\"endpoint\":\"/logout/40\",\"method\":\"PUT\"}', '2026-04-07 16:32:37'),
+(1064, 40, 'LOGIN', 'User ezira@itpark.et logged in successfully', '{\"username\":\"ezira@itpark.et\",\"user_id\":40,\"role_id\":1,\"employee_id\":109,\"employee_name\":\"Ezira\",\"department_id\":null,\"login_time\":\"2026-04-07T16:37:01.096Z\",\"timestamp\":\"2026-04-07T16:37:01.096Z\",\"ip_address\":\"127.0.0.1\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36\",\"endpoint\":\"/login\",\"method\":\"POST\"}', '2026-04-07 16:37:01'),
+(1065, 40, 'LOGOUT', 'User ezira@itpark.et logged out', '{\"user_id\":\"40\",\"username\":\"ezira@itpark.et\",\"employee_name\":\"Ezira\",\"logout_time\":\"2026-04-07T16:58:24.654Z\",\"timestamp\":\"2026-04-07T16:58:24.654Z\",\"ip_address\":\"127.0.0.1\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36\",\"endpoint\":\"/logout/40\",\"method\":\"PUT\"}', '2026-04-07 16:58:24'),
+(1066, 79, 'LOGIN', 'User Milliongoraw@gmail.com logged in successfully', '{\"username\":\"Milliongoraw@gmail.com\",\"user_id\":79,\"role_id\":6,\"employee_id\":152,\"employee_name\":\"Million  Goraw\",\"department_id\":null,\"login_time\":\"2026-04-07T16:58:31.863Z\",\"timestamp\":\"2026-04-07T16:58:31.863Z\",\"ip_address\":\"127.0.0.1\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36\",\"endpoint\":\"/login\",\"method\":\"POST\"}', '2026-04-07 16:58:31'),
+(1067, 79, 'LOGOUT', 'User Milliongoraw@gmail.com logged out', '{\"user_id\":\"79\",\"username\":\"Milliongoraw@gmail.com\",\"employee_name\":\"Million  Goraw\",\"logout_time\":\"2026-04-07T17:08:30.221Z\",\"timestamp\":\"2026-04-07T17:08:30.221Z\",\"ip_address\":\"127.0.0.1\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36\",\"endpoint\":\"/logout/79\",\"method\":\"PUT\"}', '2026-04-07 17:08:30'),
+(1068, 40, 'LOGIN', 'User ezira@itpark.et logged in successfully', '{\"username\":\"ezira@itpark.et\",\"user_id\":40,\"role_id\":1,\"employee_id\":109,\"employee_name\":\"Ezira\",\"department_id\":null,\"login_time\":\"2026-04-07T17:08:38.721Z\",\"timestamp\":\"2026-04-07T17:08:38.721Z\",\"ip_address\":\"127.0.0.1\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36\",\"endpoint\":\"/login\",\"method\":\"POST\"}', '2026-04-07 17:08:38'),
+(1069, 40, 'LOGOUT', 'User ezira@itpark.et logged out', '{\"user_id\":\"40\",\"username\":\"ezira@itpark.et\",\"employee_name\":\"Ezira\",\"logout_time\":\"2026-04-07T17:09:49.934Z\",\"timestamp\":\"2026-04-07T17:09:49.934Z\",\"ip_address\":\"127.0.0.1\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36\",\"endpoint\":\"/logout/40\",\"method\":\"PUT\"}', '2026-04-07 17:09:49'),
+(1070, 40, 'LOGIN', 'User ezira@itpark.et logged in successfully', '{\"username\":\"ezira@itpark.et\",\"user_id\":40,\"role_id\":1,\"employee_id\":109,\"employee_name\":\"Ezira\",\"department_id\":null,\"login_time\":\"2026-07-12T09:28:35.656Z\",\"timestamp\":\"2026-07-12T09:28:35.656Z\",\"ip_address\":\"127.0.0.1\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/150.0.0.0 Safari/537.36\",\"endpoint\":\"/login\",\"method\":\"POST\"}', '2026-07-12 09:28:35'),
+(1071, 40, 'LOGOUT', 'User ezira@itpark.et logged out', '{\"user_id\":\"40\",\"username\":\"ezira@itpark.et\",\"employee_name\":\"Ezira\",\"logout_time\":\"2026-07-12T09:30:34.498Z\",\"timestamp\":\"2026-07-12T09:30:34.498Z\",\"ip_address\":\"127.0.0.1\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/150.0.0.0 Safari/537.36\",\"endpoint\":\"/logout/40\",\"method\":\"PUT\"}', '2026-07-12 09:30:34'),
+(1072, 40, 'LOGIN', 'User ezira@itpark.et logged in successfully', '{\"username\":\"ezira@itpark.et\",\"user_id\":40,\"role_id\":1,\"employee_id\":109,\"employee_name\":\"Ezira\",\"department_id\":null,\"login_time\":\"2026-07-12T09:33:38.774Z\",\"timestamp\":\"2026-07-12T09:33:38.774Z\",\"ip_address\":\"127.0.0.1\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/150.0.0.0 Safari/537.36\",\"endpoint\":\"/login\",\"method\":\"POST\"}', '2026-07-12 09:33:38'),
+(1074, 25, 'LOGIN', 'User olana@itp.et logged in successfully', '{\"username\":\"olana@itp.et\",\"user_id\":25,\"role_id\":2,\"employee_id\":72,\"employee_name\":\"Olana\",\"department_id\":2,\"login_time\":\"2026-07-12T10:13:07.480Z\",\"timestamp\":\"2026-07-12T10:13:07.480Z\",\"ip_address\":\"127.0.0.1\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/150.0.0.0 Safari/537.36\",\"endpoint\":\"/login\",\"method\":\"POST\"}', '2026-07-12 10:13:07'),
+(1075, 40, 'LOGOUT', 'User ezira@itpark.et logged out', '{\"user_id\":\"40\",\"username\":\"ezira@itpark.et\",\"employee_name\":\"Ezira\",\"logout_time\":\"2026-07-15T08:08:49.553Z\",\"timestamp\":\"2026-07-15T08:08:49.553Z\",\"ip_address\":\"127.0.0.1\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/150.0.0.0 Safari/537.36\",\"endpoint\":\"/logout/40\",\"method\":\"PUT\"}', '2026-07-15 08:08:49'),
+(1076, 80, 'LOGIN', 'User feruzkorichoyimer@gmail.com logged in successfully', '{\"username\":\"feruzkorichoyimer@gmail.com\",\"user_id\":80,\"role_id\":9,\"employee_id\":153,\"employee_name\":\"feruz  koricho\",\"department_id\":null,\"login_time\":\"2026-07-15T08:08:57.576Z\",\"timestamp\":\"2026-07-15T08:08:57.576Z\",\"ip_address\":\"127.0.0.1\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/150.0.0.0 Safari/537.36\",\"endpoint\":\"/login\",\"method\":\"POST\"}', '2026-07-15 08:08:57'),
+(1077, 80, 'LOGOUT', 'User feruzkorichoyimer@gmail.com logged out', '{\"user_id\":\"80\",\"username\":\"feruzkorichoyimer@gmail.com\",\"employee_name\":\"feruz  koricho\",\"logout_time\":\"2026-07-15T08:09:06.073Z\",\"timestamp\":\"2026-07-15T08:09:06.073Z\",\"ip_address\":\"127.0.0.1\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/150.0.0.0 Safari/537.36\",\"endpoint\":\"/logout/80\",\"method\":\"PUT\"}', '2026-07-15 08:09:06'),
+(1078, 40, 'LOGIN', 'User ezira@itpark.et logged in successfully', '{\"username\":\"ezira@itpark.et\",\"user_id\":40,\"role_id\":1,\"employee_id\":109,\"employee_name\":\"Ezira\",\"department_id\":null,\"login_time\":\"2026-07-15T08:09:11.307Z\",\"timestamp\":\"2026-07-15T08:09:11.307Z\",\"ip_address\":\"127.0.0.1\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/150.0.0.0 Safari/537.36\",\"endpoint\":\"/login\",\"method\":\"POST\"}', '2026-07-15 08:09:11'),
+(1079, 40, 'LOGOUT', 'User ezira@itpark.et logged out', '{\"user_id\":\"40\",\"username\":\"ezira@itpark.et\",\"employee_name\":\"Ezira\",\"logout_time\":\"2026-07-15T08:11:51.758Z\",\"timestamp\":\"2026-07-15T08:11:51.758Z\",\"ip_address\":\"127.0.0.1\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/150.0.0.0 Safari/537.36\",\"endpoint\":\"/logout/40\",\"method\":\"PUT\"}', '2026-07-15 08:11:51'),
+(1080, 80, 'LOGIN', 'User feruzkorichoyimer@gmail.com logged in successfully', '{\"username\":\"feruzkorichoyimer@gmail.com\",\"user_id\":80,\"role_id\":9,\"employee_id\":153,\"employee_name\":\"feruz  koricho\",\"department_id\":null,\"login_time\":\"2026-07-15T08:12:00.120Z\",\"timestamp\":\"2026-07-15T08:12:00.120Z\",\"ip_address\":\"127.0.0.1\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/150.0.0.0 Safari/537.36\",\"endpoint\":\"/login\",\"method\":\"POST\"}', '2026-07-15 08:12:00'),
+(1081, 25, 'LOGOUT', 'User olana@itp.et logged out', '{\"user_id\":\"25\",\"username\":\"olana@itp.et\",\"employee_name\":\"Olana\",\"logout_time\":\"2026-07-15T08:12:21.508Z\",\"timestamp\":\"2026-07-15T08:12:21.508Z\",\"ip_address\":\"127.0.0.1\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/150.0.0.0 Safari/537.36\",\"endpoint\":\"/logout/25\",\"method\":\"PUT\"}', '2026-07-15 08:12:21'),
+(1082, 80, 'LOGIN', 'User feruzkorichoyimer@gmail.com logged in successfully', '{\"username\":\"feruzkorichoyimer@gmail.com\",\"user_id\":80,\"role_id\":9,\"employee_id\":153,\"employee_name\":\"feruz  koricho\",\"department_id\":null,\"login_time\":\"2026-07-15T08:12:29.109Z\",\"timestamp\":\"2026-07-15T08:12:29.109Z\",\"ip_address\":\"127.0.0.1\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/150.0.0.0 Safari/537.36\",\"endpoint\":\"/login\",\"method\":\"POST\"}', '2026-07-15 08:12:29'),
+(1083, 80, 'LOGIN_FAILED', 'Login failed: Invalid credentials or inactive account for feruzkorichoyimer@gmail.com', '{\"username\":\"feruzkorichoyimer@gmail.com\",\"user_id\":80,\"reason\":\"invalid_password\",\"user_status\":\"1\",\"timestamp\":\"2026-07-15T08:20:18.326Z\",\"ip_address\":\"172.21.96.1\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/150.0.0.0 Safari/537.36\",\"endpoint\":\"/login\",\"method\":\"POST\"}', '2026-07-15 08:20:18'),
+(1084, 80, 'LOGOUT', 'User feruzkorichoyimer@gmail.com logged out', '{\"user_id\":\"80\",\"username\":\"feruzkorichoyimer@gmail.com\",\"employee_name\":\"feruz  koricho\",\"logout_time\":\"2026-07-15T08:20:30.863Z\",\"timestamp\":\"2026-07-15T08:20:30.863Z\",\"ip_address\":\"172.21.96.1\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/150.0.0.0 Safari/537.36\",\"endpoint\":\"/logout/80\",\"method\":\"PUT\"}', '2026-07-15 08:20:30'),
+(1085, 80, 'LOGIN', 'User feruzkorichoyimer@gmail.com logged in successfully', '{\"username\":\"feruzkorichoyimer@gmail.com\",\"user_id\":80,\"role_id\":9,\"employee_id\":153,\"employee_name\":\"feruz  koricho\",\"department_id\":null,\"login_time\":\"2026-07-15T08:20:48.211Z\",\"timestamp\":\"2026-07-15T08:20:48.211Z\",\"ip_address\":\"172.21.96.1\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/150.0.0.0 Safari/537.36\",\"endpoint\":\"/login\",\"method\":\"POST\"}', '2026-07-15 08:20:48'),
+(1086, 80, 'LOGIN', 'User feruzkorichoyimer@gmail.com logged in successfully', '{\"username\":\"feruzkorichoyimer@gmail.com\",\"user_id\":80,\"role_id\":9,\"employee_id\":153,\"employee_name\":\"feruz  koricho\",\"department_id\":null,\"login_time\":\"2026-07-15T08:20:56.944Z\",\"timestamp\":\"2026-07-15T08:20:56.944Z\",\"ip_address\":\"172.21.96.1\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/150.0.0.0 Safari/537.36\",\"endpoint\":\"/login\",\"method\":\"POST\"}', '2026-07-15 08:20:56'),
+(1087, 80, 'LOGIN', 'User feruzkorichoyimer@gmail.com logged in successfully', '{\"username\":\"feruzkorichoyimer@gmail.com\",\"user_id\":80,\"role_id\":9,\"employee_id\":153,\"employee_name\":\"feruz  koricho\",\"department_id\":null,\"login_time\":\"2026-07-15T08:27:49.595Z\",\"timestamp\":\"2026-07-15T08:27:49.595Z\",\"ip_address\":\"192.168.0.178\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/150.0.0.0 Safari/537.36 Edg/150.0.0.0\",\"endpoint\":\"/login\",\"method\":\"POST\"}', '2026-07-15 08:27:49'),
+(1088, 80, 'LOGOUT', 'User feruzkorichoyimer@gmail.com logged out', '{\"user_id\":\"80\",\"username\":\"feruzkorichoyimer@gmail.com\",\"employee_name\":\"feruz  koricho\",\"logout_time\":\"2026-07-15T08:38:41.925Z\",\"timestamp\":\"2026-07-15T08:38:41.925Z\",\"ip_address\":\"192.168.0.223\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/150.0.0.0 Safari/537.36\",\"endpoint\":\"/logout/80\",\"method\":\"PUT\"}', '2026-07-15 08:38:41'),
+(1089, 80, 'LOGOUT', 'User feruzkorichoyimer@gmail.com logged out', '{\"user_id\":\"80\",\"username\":\"feruzkorichoyimer@gmail.com\",\"employee_name\":\"feruz  koricho\",\"logout_time\":\"2026-07-15T08:39:49.673Z\",\"timestamp\":\"2026-07-15T08:39:49.673Z\",\"ip_address\":\"192.168.0.223\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/150.0.0.0 Safari/537.36\",\"endpoint\":\"/logout/80\",\"method\":\"PUT\"}', '2026-07-15 08:39:49'),
+(1090, NULL, 'LOGIN_FAILED', 'Login failed: User not found - ezira@itpark.et	', '{\"username\":\"ezira@itpark.et\\t\",\"reason\":\"user_not_found\",\"timestamp\":\"2026-07-15T08:39:56.629Z\",\"ip_address\":\"192.168.0.223\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/150.0.0.0 Safari/537.36\",\"endpoint\":\"/login\",\"method\":\"POST\"}', '2026-07-15 08:39:56'),
+(1091, 40, 'LOGIN', 'User ezira@itpark.et logged in successfully', '{\"username\":\"ezira@itpark.et\",\"user_id\":40,\"role_id\":1,\"employee_id\":109,\"employee_name\":\"Ezira\",\"department_id\":null,\"login_time\":\"2026-07-15T08:40:00.606Z\",\"timestamp\":\"2026-07-15T08:40:00.606Z\",\"ip_address\":\"192.168.0.223\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/150.0.0.0 Safari/537.36\",\"endpoint\":\"/login\",\"method\":\"POST\"}', '2026-07-15 08:40:00'),
+(1092, 80, 'LOGOUT', 'User feruzkorichoyimer@gmail.com logged out', '{\"user_id\":\"80\",\"username\":\"feruzkorichoyimer@gmail.com\",\"employee_name\":\"feruz  koricho\",\"logout_time\":\"2026-07-31T07:56:53.478Z\",\"timestamp\":\"2026-07-31T07:56:53.478Z\",\"ip_address\":\"192.168.32.1\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/150.0.0.0 Safari/537.36\",\"endpoint\":\"/logout/80\",\"method\":\"PUT\"}', '2026-07-31 07:56:53'),
+(1093, 73, 'LOGIN', 'User tsehayu@itp.et logged in successfully', '{\"username\":\"tsehayu@itp.et\",\"user_id\":73,\"role_id\":5,\"employee_id\":146,\"employee_name\":\"tsuhayu directorate\",\"department_id\":11,\"login_time\":\"2026-07-31T07:56:59.519Z\",\"timestamp\":\"2026-07-31T07:56:59.520Z\",\"ip_address\":\"192.168.32.1\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/150.0.0.0 Safari/537.36\",\"endpoint\":\"/login\",\"method\":\"POST\"}', '2026-07-31 07:56:59'),
+(1094, 73, 'LOGOUT', 'User tsehayu@itp.et logged out', '{\"user_id\":\"73\",\"username\":\"tsehayu@itp.et\",\"employee_name\":\"tsuhayu directorate\",\"logout_time\":\"2026-07-31T09:14:26.256Z\",\"timestamp\":\"2026-07-31T09:14:26.256Z\",\"ip_address\":\"192.168.32.1\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/150.0.0.0 Safari/537.36\",\"endpoint\":\"/logout/73\",\"method\":\"PUT\"}', '2026-07-31 09:14:26'),
+(1095, 80, 'LOGIN', 'User feruzkorichoyimer@gmail.com logged in successfully', '{\"username\":\"feruzkorichoyimer@gmail.com\",\"user_id\":80,\"role_id\":9,\"employee_id\":153,\"employee_name\":\"feruz  koricho\",\"department_id\":50,\"login_time\":\"2026-07-31T09:14:34.647Z\",\"timestamp\":\"2026-07-31T09:14:34.647Z\",\"ip_address\":\"192.168.32.1\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/150.0.0.0 Safari/537.36\",\"endpoint\":\"/login\",\"method\":\"POST\"}', '2026-07-31 09:14:34'),
+(1096, 80, 'LOGOUT', 'User feruzkorichoyimer@gmail.com logged out', '{\"user_id\":\"80\",\"username\":\"feruzkorichoyimer@gmail.com\",\"employee_name\":\"feruz  koricho\",\"logout_time\":\"2026-07-31T17:37:48.146Z\",\"timestamp\":\"2026-07-31T17:37:48.146Z\",\"ip_address\":\"192.168.32.1\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/150.0.0.0 Safari/537.36\",\"endpoint\":\"/logout/80\",\"method\":\"PUT\"}', '2026-07-31 17:37:48'),
+(1097, 40, 'LOGIN', 'User ezira@itpark.et logged in successfully', '{\"username\":\"ezira@itpark.et\",\"user_id\":40,\"role_id\":1,\"employee_id\":109,\"employee_name\":\"Ezira\",\"department_id\":null,\"login_time\":\"2026-08-02T17:41:06.851Z\",\"timestamp\":\"2026-08-02T17:41:06.851Z\",\"ip_address\":\"192.168.32.1\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/150.0.0.0 Safari/537.36\",\"endpoint\":\"/login\",\"method\":\"POST\"}', '2026-08-02 17:41:06'),
+(1098, 40, 'LOGOUT', 'User ezira@itpark.et logged out', '{\"user_id\":\"40\",\"username\":\"ezira@itpark.et\",\"employee_name\":\"Ezira\",\"logout_time\":\"2026-08-02T17:41:57.156Z\",\"timestamp\":\"2026-08-02T17:41:57.156Z\",\"ip_address\":\"192.168.32.1\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/150.0.0.0 Safari/537.36\",\"endpoint\":\"/logout/40\",\"method\":\"PUT\"}', '2026-08-02 17:41:57'),
+(1099, 80, 'LOGIN', 'User feruzkorichoyimer@gmail.com logged in successfully', '{\"username\":\"feruzkorichoyimer@gmail.com\",\"user_id\":80,\"role_id\":9,\"employee_id\":153,\"employee_name\":\"feruz  koricho\",\"department_id\":50,\"login_time\":\"2026-08-02T17:42:07.945Z\",\"timestamp\":\"2026-08-02T17:42:07.945Z\",\"ip_address\":\"192.168.32.1\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/150.0.0.0 Safari/537.36\",\"endpoint\":\"/login\",\"method\":\"POST\"}', '2026-08-02 17:42:08'),
+(1100, 80, 'LOGOUT', 'User feruzkorichoyimer@gmail.com logged out', '{\"user_id\":\"80\",\"username\":\"feruzkorichoyimer@gmail.com\",\"employee_name\":\"feruz  koricho\",\"logout_time\":\"2026-08-02T17:53:02.586Z\",\"timestamp\":\"2026-08-02T17:53:02.586Z\",\"ip_address\":\"192.168.32.1\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/150.0.0.0 Safari/537.36\",\"endpoint\":\"/logout/80\",\"method\":\"PUT\"}', '2026-08-02 17:53:02'),
+(1101, 40, 'LOGIN', 'User ezira@itpark.et logged in successfully', '{\"username\":\"ezira@itpark.et\",\"user_id\":40,\"role_id\":1,\"employee_id\":109,\"employee_name\":\"Ezira\",\"department_id\":null,\"login_time\":\"2026-08-02T17:53:13.969Z\",\"timestamp\":\"2026-08-02T17:53:13.969Z\",\"ip_address\":\"192.168.32.1\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/150.0.0.0 Safari/537.36\",\"endpoint\":\"/login\",\"method\":\"POST\"}', '2026-08-02 17:53:13'),
+(1102, 40, 'LOGOUT', 'User ezira@itpark.et logged out', '{\"user_id\":\"40\",\"username\":\"ezira@itpark.et\",\"employee_name\":\"Ezira\",\"logout_time\":\"2026-08-02T17:57:30.093Z\",\"timestamp\":\"2026-08-02T17:57:30.093Z\",\"ip_address\":\"192.168.32.1\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/150.0.0.0 Safari/537.36\",\"endpoint\":\"/logout/40\",\"method\":\"PUT\"}', '2026-08-02 17:57:30'),
+(1103, 80, 'LOGIN', 'User feruzkorichoyimer@gmail.com logged in successfully', '{\"username\":\"feruzkorichoyimer@gmail.com\",\"user_id\":80,\"role_id\":9,\"employee_id\":153,\"employee_name\":\"feruz  koricho\",\"department_id\":50,\"login_time\":\"2026-08-02T17:57:39.365Z\",\"timestamp\":\"2026-08-02T17:57:39.365Z\",\"ip_address\":\"192.168.32.1\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/150.0.0.0 Safari/537.36\",\"endpoint\":\"/login\",\"method\":\"POST\"}', '2026-08-02 17:57:39'),
+(1104, 80, 'LOGOUT', 'User feruzkorichoyimer@gmail.com logged out', '{\"user_id\":\"80\",\"username\":\"feruzkorichoyimer@gmail.com\",\"employee_name\":\"feruz  koricho\",\"logout_time\":\"2026-08-02T18:25:47.605Z\",\"timestamp\":\"2026-08-02T18:25:47.606Z\",\"ip_address\":\"192.168.32.1\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/150.0.0.0 Safari/537.36\",\"endpoint\":\"/logout/80\",\"method\":\"PUT\"}', '2026-08-02 18:25:47'),
+(1105, 80, 'LOGIN', 'User feruzkorichoyimer@gmail.com logged in successfully', '{\"username\":\"feruzkorichoyimer@gmail.com\",\"user_id\":80,\"role_id\":9,\"employee_id\":153,\"employee_name\":\"feruz  koricho\",\"department_id\":50,\"login_time\":\"2026-08-02T18:25:49.801Z\",\"timestamp\":\"2026-08-02T18:25:49.801Z\",\"ip_address\":\"192.168.32.1\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/150.0.0.0 Safari/537.36\",\"endpoint\":\"/login\",\"method\":\"POST\"}', '2026-08-02 18:25:49'),
+(1106, 40, 'LOGIN_FAILED', 'Login failed: Invalid credentials or inactive account for ezira@itpark.et', '{\"username\":\"ezira@itpark.et\",\"user_id\":40,\"reason\":\"invalid_password\",\"user_status\":\"1\",\"timestamp\":\"2026-08-05T06:49:52.858Z\",\"ip_address\":\"192.168.32.1\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/150.0.0.0 Safari/537.36\",\"endpoint\":\"/login\",\"method\":\"POST\"}', '2026-08-05 06:49:52'),
+(1107, 40, 'LOGIN', 'User ezira@itpark.et logged in successfully', '{\"username\":\"ezira@itpark.et\",\"user_id\":40,\"role_id\":1,\"employee_id\":109,\"employee_name\":\"Ezira\",\"department_id\":null,\"login_time\":\"2026-08-05T06:49:58.513Z\",\"timestamp\":\"2026-08-05T06:49:58.513Z\",\"ip_address\":\"192.168.32.1\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/150.0.0.0 Safari/537.36\",\"endpoint\":\"/login\",\"method\":\"POST\"}', '2026-08-05 06:49:58'),
+(1108, 25, 'LOGOUT', 'User olana@itp.et logged out', '{\"user_id\":\"25\",\"username\":\"olana@itp.et\",\"employee_name\":\"Olana\",\"logout_time\":\"2026-08-07T12:58:13.598Z\",\"timestamp\":\"2026-08-07T12:58:13.599Z\",\"ip_address\":\"192.168.32.1\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/150.0.0.0 Safari/537.36\",\"endpoint\":\"/logout/25\",\"method\":\"PUT\"}', '2026-08-07 12:58:13'),
+(1109, 40, 'LOGIN', 'User ezira@itpark.et logged in successfully', '{\"username\":\"ezira@itpark.et\",\"user_id\":40,\"role_id\":1,\"employee_id\":109,\"employee_name\":\"Ezira\",\"department_id\":null,\"login_time\":\"2026-08-07T12:58:19.942Z\",\"timestamp\":\"2026-08-07T12:58:19.942Z\",\"ip_address\":\"192.168.32.1\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/150.0.0.0 Safari/537.36\",\"endpoint\":\"/login\",\"method\":\"POST\"}', '2026-08-07 12:58:19'),
+(1110, 40, 'LOGOUT', 'User ezira@itpark.et logged out', '{\"user_id\":\"40\",\"username\":\"ezira@itpark.et\",\"employee_name\":\"Ezira\",\"logout_time\":\"2026-08-07T13:02:16.455Z\",\"timestamp\":\"2026-08-07T13:02:16.455Z\",\"ip_address\":\"192.168.32.1\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/150.0.0.0 Safari/537.36\",\"endpoint\":\"/logout/40\",\"method\":\"PUT\"}', '2026-08-07 13:02:16'),
+(1111, 40, 'LOGIN', 'User ezira@itpark.et logged in successfully', '{\"username\":\"ezira@itpark.et\",\"user_id\":40,\"role_id\":1,\"employee_id\":109,\"employee_name\":\"Ezira\",\"department_id\":null,\"login_time\":\"2026-08-07T13:02:21.868Z\",\"timestamp\":\"2026-08-07T13:02:21.868Z\",\"ip_address\":\"192.168.32.1\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/150.0.0.0 Safari/537.36\",\"endpoint\":\"/login\",\"method\":\"POST\"}', '2026-08-07 13:02:21'),
+(1112, 40, 'LOGOUT', 'User ezira@itpark.et logged out', '{\"user_id\":\"40\",\"username\":\"ezira@itpark.et\",\"employee_name\":\"Ezira\",\"logout_time\":\"2026-08-07T13:02:45.285Z\",\"timestamp\":\"2026-08-07T13:02:45.285Z\",\"ip_address\":\"192.168.32.1\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/150.0.0.0 Safari/537.36\",\"endpoint\":\"/logout/40\",\"method\":\"PUT\"}', '2026-08-07 13:02:45'),
+(1113, 40, 'LOGIN', 'User ezira@itpark.et logged in successfully', '{\"username\":\"ezira@itpark.et\",\"user_id\":40,\"role_id\":1,\"employee_id\":109,\"employee_name\":\"Ezira\",\"department_id\":null,\"login_time\":\"2026-08-07T13:02:55.021Z\",\"timestamp\":\"2026-08-07T13:02:55.021Z\",\"ip_address\":\"192.168.32.1\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/150.0.0.0 Safari/537.36\",\"endpoint\":\"/login\",\"method\":\"POST\"}', '2026-08-07 13:02:55'),
+(1114, 40, 'LOGOUT', 'User ezira@itpark.et logged out', '{\"user_id\":\"40\",\"username\":\"ezira@itpark.et\",\"employee_name\":\"Ezira\",\"logout_time\":\"2026-08-07T13:04:04.580Z\",\"timestamp\":\"2026-08-07T13:04:04.580Z\",\"ip_address\":\"192.168.32.1\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/150.0.0.0 Safari/537.36\",\"endpoint\":\"/logout/40\",\"method\":\"PUT\"}', '2026-08-07 13:04:04'),
+(1115, 40, 'LOGIN', 'User ezira@itpark.et logged in successfully', '{\"username\":\"ezira@itpark.et\",\"user_id\":40,\"role_id\":1,\"employee_id\":109,\"employee_name\":\"Ezira\",\"department_id\":null,\"login_time\":\"2026-08-07T13:04:30.731Z\",\"timestamp\":\"2026-08-07T13:04:30.731Z\",\"ip_address\":\"192.168.32.1\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/150.0.0.0 Safari/537.36\",\"endpoint\":\"/login\",\"method\":\"POST\"}', '2026-08-07 13:04:30'),
+(1116, 25, 'LOGIN', 'User olana@itp.et logged in successfully', '{\"username\":\"olana@itp.et\",\"user_id\":25,\"role_id\":2,\"employee_id\":72,\"employee_name\":\"Olana\",\"department_id\":2,\"login_time\":\"2026-08-07T13:05:35.416Z\",\"timestamp\":\"2026-08-07T13:05:35.416Z\",\"ip_address\":\"192.168.32.1\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/150.0.0.0 Safari/537.36\",\"endpoint\":\"/login\",\"method\":\"POST\"}', '2026-08-07 13:05:35'),
+(1117, 40, 'LOGIN', 'User ezira@itpark.et logged in successfully', '{\"username\":\"ezira@itpark.et\",\"user_id\":40,\"role_id\":1,\"employee_id\":109,\"employee_name\":\"Ezira\",\"department_id\":null,\"login_time\":\"2026-08-07T13:25:30.963Z\",\"timestamp\":\"2026-08-07T13:25:30.964Z\",\"ip_address\":\"192.168.32.1\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/150.0.0.0 Safari/537.36\",\"endpoint\":\"/login\",\"method\":\"POST\"}', '2026-08-07 13:25:30'),
+(1118, 40, 'LOGOUT', 'User ezira@itpark.et logged out', '{\"user_id\":\"40\",\"username\":\"ezira@itpark.et\",\"employee_name\":\"Ezira\",\"logout_time\":\"2026-08-07T13:36:03.505Z\",\"timestamp\":\"2026-08-07T13:36:03.505Z\",\"ip_address\":\"192.168.32.1\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/150.0.0.0 Safari/537.36\",\"endpoint\":\"/logout/40\",\"method\":\"PUT\"}', '2026-08-07 13:36:03'),
+(1119, 25, 'LOGIN', 'User olana@itp.et logged in successfully', '{\"username\":\"olana@itp.et\",\"user_id\":25,\"role_id\":2,\"employee_id\":72,\"employee_name\":\"Olana\",\"department_id\":2,\"login_time\":\"2026-08-07T13:36:06.312Z\",\"timestamp\":\"2026-08-07T13:36:06.312Z\",\"ip_address\":\"192.168.32.1\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/150.0.0.0 Safari/537.36\",\"endpoint\":\"/login\",\"method\":\"POST\"}', '2026-08-07 13:36:06'),
+(1120, 25, 'LOGOUT', 'User olana@itp.et logged out', '{\"user_id\":\"25\",\"username\":\"olana@itp.et\",\"employee_name\":\"Olana\",\"logout_time\":\"2026-08-07T13:38:59.609Z\",\"timestamp\":\"2026-08-07T13:38:59.609Z\",\"ip_address\":\"192.168.32.1\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/150.0.0.0 Safari/537.36\",\"endpoint\":\"/logout/25\",\"method\":\"PUT\"}', '2026-08-07 13:38:59'),
+(1121, 79, 'LOGIN', 'User milliongoraw@gmail.com logged in successfully', '{\"username\":\"milliongoraw@gmail.com\",\"user_id\":79,\"role_id\":6,\"employee_id\":152,\"employee_name\":\"Million  Goraw\",\"department_id\":null,\"login_time\":\"2026-08-07T13:39:04.779Z\",\"timestamp\":\"2026-08-07T13:39:04.779Z\",\"ip_address\":\"192.168.32.1\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/150.0.0.0 Safari/537.36\",\"endpoint\":\"/login\",\"method\":\"POST\"}', '2026-08-07 13:39:04'),
+(1122, 79, 'LOGIN', 'User milliongoraw@gmail.com logged in successfully', '{\"username\":\"milliongoraw@gmail.com\",\"user_id\":79,\"role_id\":6,\"employee_id\":152,\"employee_name\":\"Million  Goraw\",\"department_id\":null,\"login_time\":\"2026-08-08T04:49:17.987Z\",\"timestamp\":\"2026-08-08T04:49:17.988Z\",\"ip_address\":\"192.168.32.1\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/150.0.0.0 Safari/537.36\",\"endpoint\":\"/login\",\"method\":\"POST\"}', '2026-08-08 04:49:17'),
+(1123, 79, 'LOGOUT', 'User Milliongoraw@gmail.com logged out', '{\"user_id\":\"79\",\"username\":\"Milliongoraw@gmail.com\",\"employee_name\":\"Million  Goraw\",\"logout_time\":\"2026-08-08T04:51:35.722Z\",\"timestamp\":\"2026-08-08T04:51:35.722Z\",\"ip_address\":\"192.168.32.1\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/150.0.0.0 Safari/537.36\",\"endpoint\":\"/logout/79\",\"method\":\"PUT\"}', '2026-08-08 04:51:35'),
+(1124, 40, 'LOGIN', 'User ezira@itpark.et logged in successfully', '{\"username\":\"ezira@itpark.et\",\"user_id\":40,\"role_id\":1,\"employee_id\":109,\"employee_name\":\"Ezira\",\"department_id\":null,\"login_time\":\"2026-08-08T04:51:40.481Z\",\"timestamp\":\"2026-08-08T04:51:40.481Z\",\"ip_address\":\"192.168.32.1\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/150.0.0.0 Safari/537.36\",\"endpoint\":\"/login\",\"method\":\"POST\"}', '2026-08-08 04:51:40'),
+(1125, 40, 'LOGOUT', 'User ezira@itpark.et logged out', '{\"user_id\":\"40\",\"username\":\"ezira@itpark.et\",\"employee_name\":\"Ezira\",\"logout_time\":\"2026-08-08T04:57:43.648Z\",\"timestamp\":\"2026-08-08T04:57:43.648Z\",\"ip_address\":\"192.168.32.1\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/150.0.0.0 Safari/537.36\",\"endpoint\":\"/logout/40\",\"method\":\"PUT\"}', '2026-08-08 04:57:43'),
+(1126, 40, 'LOGIN', 'User ezira@itpark.et logged in successfully', '{\"username\":\"ezira@itpark.et\",\"user_id\":40,\"role_id\":1,\"employee_id\":109,\"employee_name\":\"Ezira\",\"department_id\":null,\"login_time\":\"2026-08-08T04:57:50.819Z\",\"timestamp\":\"2026-08-08T04:57:50.819Z\",\"ip_address\":\"192.168.32.1\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/150.0.0.0 Safari/537.36\",\"endpoint\":\"/login\",\"method\":\"POST\"}', '2026-08-08 04:57:50'),
+(1127, 40, 'LOGOUT', 'User ezira@itpark.et logged out', '{\"user_id\":\"40\",\"username\":\"ezira@itpark.et\",\"employee_name\":\"Ezira\",\"logout_time\":\"2026-08-08T05:05:41.847Z\",\"timestamp\":\"2026-08-08T05:05:41.847Z\",\"ip_address\":\"192.168.32.1\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/150.0.0.0 Safari/537.36\",\"endpoint\":\"/logout/40\",\"method\":\"PUT\"}', '2026-08-08 05:05:41'),
+(1128, 40, 'LOGIN', 'User ezira@itpark.et logged in successfully', '{\"username\":\"ezira@itpark.et\",\"user_id\":40,\"role_id\":1,\"employee_id\":109,\"employee_name\":\"Ezira\",\"department_id\":null,\"login_time\":\"2026-08-08T05:05:43.461Z\",\"timestamp\":\"2026-08-08T05:05:43.461Z\",\"ip_address\":\"192.168.32.1\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/150.0.0.0 Safari/537.36\",\"endpoint\":\"/login\",\"method\":\"POST\"}', '2026-08-08 05:05:43'),
+(1129, 40, 'LOGOUT', 'User ezira@itpark.et logged out', '{\"user_id\":\"40\",\"username\":\"ezira@itpark.et\",\"employee_name\":\"Ezira\",\"logout_time\":\"2026-08-08T05:12:54.797Z\",\"timestamp\":\"2026-08-08T05:12:54.797Z\",\"ip_address\":\"192.168.32.1\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/150.0.0.0 Safari/537.36\",\"endpoint\":\"/logout/40\",\"method\":\"PUT\"}', '2026-08-08 05:12:54'),
+(1130, 40, 'LOGIN', 'User ezira@itpark.et logged in successfully', '{\"username\":\"ezira@itpark.et\",\"user_id\":40,\"role_id\":1,\"employee_id\":109,\"employee_name\":\"Ezira\",\"department_id\":null,\"login_time\":\"2026-08-08T05:13:10.157Z\",\"timestamp\":\"2026-08-08T05:13:10.157Z\",\"ip_address\":\"192.168.32.1\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/150.0.0.0 Safari/537.36\",\"endpoint\":\"/login\",\"method\":\"POST\"}', '2026-08-08 05:13:10'),
+(1131, 40, 'LOGOUT', 'User ezira@itpark.et logged out', '{\"user_id\":\"40\",\"username\":\"ezira@itpark.et\",\"employee_name\":\"Ezira\",\"logout_time\":\"2026-08-08T05:14:48.120Z\",\"timestamp\":\"2026-08-08T05:14:48.120Z\",\"ip_address\":\"192.168.32.1\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/150.0.0.0 Safari/537.36\",\"endpoint\":\"/logout/40\",\"method\":\"PUT\"}', '2026-08-08 05:14:48'),
+(1132, 40, 'LOGIN', 'User ezira@itpark.et logged in successfully', '{\"username\":\"ezira@itpark.et\",\"user_id\":40,\"role_id\":1,\"employee_id\":109,\"employee_name\":\"Ezira\",\"department_id\":null,\"login_time\":\"2026-08-08T05:15:18.837Z\",\"timestamp\":\"2026-08-08T05:15:18.837Z\",\"ip_address\":\"192.168.32.1\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/150.0.0.0 Safari/537.36\",\"endpoint\":\"/login\",\"method\":\"POST\"}', '2026-08-08 05:15:18'),
+(1133, 40, 'LOGOUT', 'User ezira@itpark.et logged out', '{\"user_id\":\"40\",\"username\":\"ezira@itpark.et\",\"employee_name\":\"Ezira\",\"logout_time\":\"2026-08-08T05:19:29.050Z\",\"timestamp\":\"2026-08-08T05:19:29.050Z\",\"ip_address\":\"192.168.32.1\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/150.0.0.0 Safari/537.36\",\"endpoint\":\"/logout/40\",\"method\":\"PUT\"}', '2026-08-08 05:19:29'),
+(1134, 40, 'LOGIN', 'User ezira@itpark.et logged in successfully', '{\"username\":\"ezira@itpark.et\",\"user_id\":40,\"role_id\":1,\"employee_id\":109,\"employee_name\":\"Ezira\",\"department_id\":null,\"login_time\":\"2026-08-08T05:19:31.653Z\",\"timestamp\":\"2026-08-08T05:19:31.653Z\",\"ip_address\":\"192.168.32.1\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/150.0.0.0 Safari/537.36\",\"endpoint\":\"/login\",\"method\":\"POST\"}', '2026-08-08 05:19:31'),
+(1135, 40, 'LOGOUT', 'User ezira@itpark.et logged out', '{\"user_id\":\"40\",\"username\":\"ezira@itpark.et\",\"employee_name\":\"Ezira\",\"logout_time\":\"2026-08-08T05:23:29.101Z\",\"timestamp\":\"2026-08-08T05:23:29.101Z\",\"ip_address\":\"192.168.32.1\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/150.0.0.0 Safari/537.36\",\"endpoint\":\"/logout/40\",\"method\":\"PUT\"}', '2026-08-08 05:23:29'),
+(1136, 40, 'LOGIN', 'User ezira@itpark.et logged in successfully', '{\"username\":\"ezira@itpark.et\",\"user_id\":40,\"role_id\":1,\"employee_id\":109,\"employee_name\":\"Ezira\",\"department_id\":null,\"login_time\":\"2026-08-08T05:23:45.198Z\",\"timestamp\":\"2026-08-08T05:23:45.198Z\",\"ip_address\":\"192.168.32.1\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/150.0.0.0 Safari/537.36\",\"endpoint\":\"/login\",\"method\":\"POST\"}', '2026-08-08 05:23:45'),
+(1137, 40, 'LOGOUT', 'User ezira@itpark.et logged out', '{\"user_id\":\"40\",\"username\":\"ezira@itpark.et\",\"employee_name\":\"Ezira\",\"logout_time\":\"2026-08-08T05:26:55.284Z\",\"timestamp\":\"2026-08-08T05:26:55.284Z\",\"ip_address\":\"192.168.32.1\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/150.0.0.0 Safari/537.36\",\"endpoint\":\"/logout/40\",\"method\":\"PUT\"}', '2026-08-08 05:26:55'),
+(1138, 40, 'LOGOUT', 'User ezira@itpark.et logged out', '{\"user_id\":\"40\",\"username\":\"ezira@itpark.et\",\"employee_name\":\"Ezira\",\"logout_time\":\"2026-08-08T05:27:57.532Z\",\"timestamp\":\"2026-08-08T05:27:57.532Z\",\"ip_address\":\"192.168.32.1\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/150.0.0.0 Safari/537.36\",\"endpoint\":\"/logout/40\",\"method\":\"PUT\"}', '2026-08-08 05:27:57'),
+(1139, 79, 'LOGIN', 'User milliongoraw@gmail.com logged in successfully', '{\"username\":\"milliongoraw@gmail.com\",\"user_id\":79,\"role_id\":6,\"employee_id\":152,\"employee_name\":\"Million  Goraw\",\"department_id\":null,\"login_time\":\"2026-08-08T05:28:02.748Z\",\"timestamp\":\"2026-08-08T05:28:02.748Z\",\"ip_address\":\"192.168.32.1\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/150.0.0.0 Safari/537.36\",\"endpoint\":\"/login\",\"method\":\"POST\"}', '2026-08-08 05:28:02'),
+(1140, 79, 'LOGOUT', 'User Milliongoraw@gmail.com logged out', '{\"user_id\":\"79\",\"username\":\"Milliongoraw@gmail.com\",\"employee_name\":\"Million  Goraw\",\"logout_time\":\"2026-08-08T05:29:23.900Z\",\"timestamp\":\"2026-08-08T05:29:23.900Z\",\"ip_address\":\"192.168.32.1\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/150.0.0.0 Safari/537.36\",\"endpoint\":\"/logout/79\",\"method\":\"PUT\"}', '2026-08-08 05:29:23'),
+(1141, 79, 'LOGIN', 'User milliongoraw@gmail.com logged in successfully', '{\"username\":\"milliongoraw@gmail.com\",\"user_id\":79,\"role_id\":6,\"employee_id\":152,\"employee_name\":\"Million  Goraw\",\"department_id\":null,\"login_time\":\"2026-08-08T05:29:27.553Z\",\"timestamp\":\"2026-08-08T05:29:27.553Z\",\"ip_address\":\"192.168.32.1\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/150.0.0.0 Safari/537.36\",\"endpoint\":\"/login\",\"method\":\"POST\"}', '2026-08-08 05:29:27'),
+(1142, 40, 'LOGIN', 'User ezira@itpark.et logged in successfully', '{\"username\":\"ezira@itpark.et\",\"user_id\":40,\"role_id\":1,\"employee_id\":109,\"employee_name\":\"Ezira\",\"department_id\":null,\"login_time\":\"2026-08-08T05:33:27.155Z\",\"timestamp\":\"2026-08-08T05:33:27.155Z\",\"ip_address\":\"192.168.32.1\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/150.0.0.0 Safari/537.36\",\"endpoint\":\"/login\",\"method\":\"POST\"}', '2026-08-08 05:33:27'),
+(1143, 40, 'LOGIN', 'User ezira@itpark.et logged in successfully', '{\"username\":\"ezira@itpark.et\",\"user_id\":40,\"role_id\":1,\"employee_id\":109,\"employee_name\":\"Ezira\",\"department_id\":null,\"login_time\":\"2026-08-08T07:25:57.338Z\",\"timestamp\":\"2026-08-08T07:25:57.338Z\",\"ip_address\":\"192.168.32.1\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/150.0.0.0 Safari/537.36\",\"endpoint\":\"/login\",\"method\":\"POST\"}', '2026-08-08 07:25:57'),
+(1144, 40, 'LOGOUT', 'User ezira@itpark.et logged out', '{\"user_id\":\"40\",\"username\":\"ezira@itpark.et\",\"employee_name\":\"Ezira\",\"logout_time\":\"2026-08-08T07:26:23.048Z\",\"timestamp\":\"2026-08-08T07:26:23.048Z\",\"ip_address\":\"192.168.32.1\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/150.0.0.0 Safari/537.36\",\"endpoint\":\"/logout/40\",\"method\":\"PUT\"}', '2026-08-08 07:26:23'),
+(1145, 40, 'LOGOUT', 'User ezira@itpark.et logged out', '{\"user_id\":\"40\",\"username\":\"ezira@itpark.et\",\"employee_name\":\"Ezira\",\"logout_time\":\"2026-08-08T07:26:30.611Z\",\"timestamp\":\"2026-08-08T07:26:30.611Z\",\"ip_address\":\"192.168.32.1\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/150.0.0.0 Safari/537.36\",\"endpoint\":\"/logout/40\",\"method\":\"PUT\"}', '2026-08-08 07:26:30'),
+(1146, 40, 'LOGIN', 'User ezira@itpark.et logged in successfully', '{\"username\":\"ezira@itpark.et\",\"user_id\":40,\"role_id\":1,\"employee_id\":109,\"employee_name\":\"Ezira\",\"department_id\":null,\"login_time\":\"2026-08-08T07:27:48.422Z\",\"timestamp\":\"2026-08-08T07:27:48.422Z\",\"ip_address\":\"192.168.32.1\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/150.0.0.0 Safari/537.36\",\"endpoint\":\"/login\",\"method\":\"POST\"}', '2026-08-08 07:27:48'),
+(1147, 79, 'LOGOUT', 'User Milliongoraw@gmail.com logged out', '{\"user_id\":\"79\",\"username\":\"Milliongoraw@gmail.com\",\"employee_name\":\"Million  Goraw\",\"logout_time\":\"2026-08-08T07:35:49.956Z\",\"timestamp\":\"2026-08-08T07:35:49.956Z\",\"ip_address\":\"192.168.32.1\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/150.0.0.0 Safari/537.36\",\"endpoint\":\"/logout/79\",\"method\":\"PUT\"}', '2026-08-08 07:35:49'),
+(1148, 73, 'LOGIN', 'User tsehayu@itp.et logged in successfully', '{\"username\":\"tsehayu@itp.et\",\"user_id\":73,\"role_id\":5,\"employee_id\":146,\"employee_name\":\"tsuhayu directorate\",\"department_id\":11,\"login_time\":\"2026-08-08T07:35:55.164Z\",\"timestamp\":\"2026-08-08T07:35:55.164Z\",\"ip_address\":\"192.168.32.1\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/150.0.0.0 Safari/537.36\",\"endpoint\":\"/login\",\"method\":\"POST\"}', '2026-08-08 07:35:55'),
+(1149, 73, 'LOGOUT', 'User tsehayu@itp.et logged out', '{\"user_id\":\"73\",\"username\":\"tsehayu@itp.et\",\"employee_name\":\"tsuhayu directorate\",\"logout_time\":\"2026-08-08T07:36:22.863Z\",\"timestamp\":\"2026-08-08T07:36:22.863Z\",\"ip_address\":\"192.168.32.1\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/150.0.0.0 Safari/537.36\",\"endpoint\":\"/logout/73\",\"method\":\"PUT\"}', '2026-08-08 07:36:22'),
+(1150, 79, 'LOGIN', 'User milliongoraw@gmail.com logged in successfully', '{\"username\":\"milliongoraw@gmail.com\",\"user_id\":79,\"role_id\":6,\"employee_id\":152,\"employee_name\":\"Million  Goraw\",\"department_id\":null,\"login_time\":\"2026-08-08T07:36:30.996Z\",\"timestamp\":\"2026-08-08T07:36:30.996Z\",\"ip_address\":\"192.168.32.1\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/150.0.0.0 Safari/537.36\",\"endpoint\":\"/login\",\"method\":\"POST\"}', '2026-08-08 07:36:31'),
+(1151, 79, 'LOGIN', 'User milliongoraw@gmail.com logged in successfully', '{\"username\":\"milliongoraw@gmail.com\",\"user_id\":79,\"role_id\":6,\"employee_id\":152,\"employee_name\":\"Million  Goraw\",\"department_id\":null,\"login_time\":\"2026-08-08T17:30:12.426Z\",\"timestamp\":\"2026-08-08T17:30:12.427Z\",\"ip_address\":\"192.168.32.1\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/150.0.0.0 Safari/537.36\",\"endpoint\":\"/login\",\"method\":\"POST\"}', '2026-08-08 17:30:12'),
+(1152, 79, 'LOGOUT', 'User Milliongoraw@gmail.com logged out', '{\"user_id\":\"79\",\"username\":\"Milliongoraw@gmail.com\",\"employee_name\":\"Million  Goraw\",\"logout_time\":\"2026-08-09T06:21:49.784Z\",\"timestamp\":\"2026-08-09T06:21:49.785Z\",\"ip_address\":\"192.168.32.1\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/150.0.0.0 Safari/537.36\",\"endpoint\":\"/logout/79\",\"method\":\"PUT\"}', '2026-08-09 06:21:49'),
+(1153, 73, 'LOGIN', 'User tsehayu@itp.et logged in successfully', '{\"username\":\"tsehayu@itp.et\",\"user_id\":73,\"role_id\":5,\"employee_id\":146,\"employee_name\":\"tsuhayu directorate\",\"department_id\":11,\"login_time\":\"2026-08-09T06:21:59.995Z\",\"timestamp\":\"2026-08-09T06:21:59.995Z\",\"ip_address\":\"192.168.32.1\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/150.0.0.0 Safari/537.36\",\"endpoint\":\"/login\",\"method\":\"POST\"}', '2026-08-09 06:21:59'),
+(1154, 73, 'LOGOUT', 'User tsehayu@itp.et logged out', '{\"user_id\":\"73\",\"username\":\"tsehayu@itp.et\",\"employee_name\":\"tsuhayu directorate\",\"logout_time\":\"2026-08-09T06:26:37.252Z\",\"timestamp\":\"2026-08-09T06:26:37.252Z\",\"ip_address\":\"192.168.32.1\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/150.0.0.0 Safari/537.36\",\"endpoint\":\"/logout/73\",\"method\":\"PUT\"}', '2026-08-09 06:26:37'),
+(1155, 73, 'LOGIN', 'User tsehayu@itp.et logged in successfully', '{\"username\":\"tsehayu@itp.et\",\"user_id\":73,\"role_id\":5,\"employee_id\":146,\"employee_name\":\"tsuhayu directorate\",\"department_id\":11,\"login_time\":\"2026-08-09T06:26:45.611Z\",\"timestamp\":\"2026-08-09T06:26:45.611Z\",\"ip_address\":\"192.168.32.1\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/150.0.0.0 Safari/537.36\",\"endpoint\":\"/login\",\"method\":\"POST\"}', '2026-08-09 06:26:45'),
+(1156, 73, 'LOGOUT', 'User tsehayu@itp.et logged out', '{\"user_id\":\"73\",\"username\":\"tsehayu@itp.et\",\"employee_name\":\"tsuhayu directorate\",\"logout_time\":\"2026-08-09T06:49:06.472Z\",\"timestamp\":\"2026-08-09T06:49:06.473Z\",\"ip_address\":\"192.168.32.1\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/150.0.0.0 Safari/537.36\",\"endpoint\":\"/logout/73\",\"method\":\"PUT\"}', '2026-08-09 06:49:06'),
+(1157, 25, 'LOGIN', 'User olana@itp.et logged in successfully', '{\"username\":\"olana@itp.et\",\"user_id\":25,\"role_id\":2,\"employee_id\":72,\"employee_name\":\"Olana\",\"department_id\":2,\"login_time\":\"2026-08-09T06:49:13.932Z\",\"timestamp\":\"2026-08-09T06:49:13.932Z\",\"ip_address\":\"192.168.32.1\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/150.0.0.0 Safari/537.36\",\"endpoint\":\"/login\",\"method\":\"POST\"}', '2026-08-09 06:49:13'),
+(1158, 25, 'LOGOUT', 'User olana@itp.et logged out', '{\"user_id\":\"25\",\"username\":\"olana@itp.et\",\"employee_name\":\"Olana\",\"logout_time\":\"2026-08-09T06:51:03.232Z\",\"timestamp\":\"2026-08-09T06:51:03.233Z\",\"ip_address\":\"192.168.32.1\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/150.0.0.0 Safari/537.36\",\"endpoint\":\"/logout/25\",\"method\":\"PUT\"}', '2026-08-09 06:51:03'),
+(1159, 25, 'LOGIN', 'User olana@itp.et logged in successfully', '{\"username\":\"olana@itp.et\",\"user_id\":25,\"role_id\":2,\"employee_id\":72,\"employee_name\":\"Olana\",\"department_id\":2,\"login_time\":\"2026-08-09T06:51:09.455Z\",\"timestamp\":\"2026-08-09T06:51:09.455Z\",\"ip_address\":\"192.168.32.1\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/150.0.0.0 Safari/537.36\",\"endpoint\":\"/login\",\"method\":\"POST\"}', '2026-08-09 06:51:09'),
+(1160, 25, 'LOGOUT', 'User olana@itp.et logged out', '{\"user_id\":\"25\",\"username\":\"olana@itp.et\",\"employee_name\":\"Olana\",\"logout_time\":\"2026-08-09T06:51:36.829Z\",\"timestamp\":\"2026-08-09T06:51:36.829Z\",\"ip_address\":\"192.168.32.1\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/150.0.0.0 Safari/537.36\",\"endpoint\":\"/logout/25\",\"method\":\"PUT\"}', '2026-08-09 06:51:36'),
+(1161, 73, 'LOGIN', 'User tsehayu@itp.et logged in successfully', '{\"username\":\"tsehayu@itp.et\",\"user_id\":73,\"role_id\":5,\"employee_id\":146,\"employee_name\":\"tsuhayu directorate\",\"department_id\":11,\"login_time\":\"2026-08-09T06:51:42.641Z\",\"timestamp\":\"2026-08-09T06:51:42.641Z\",\"ip_address\":\"192.168.32.1\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/150.0.0.0 Safari/537.36\",\"endpoint\":\"/login\",\"method\":\"POST\"}', '2026-08-09 06:51:42');
+INSERT INTO `audit_logs` (`id`, `user_id`, `action`, `description`, `metadata`, `created_at`) VALUES
+(1162, 73, 'LOGIN', 'User tsehayu@itp.et logged in successfully', '{\"username\":\"tsehayu@itp.et\",\"user_id\":73,\"role_id\":5,\"employee_id\":146,\"employee_name\":\"tsuhayu directorate\",\"department_id\":11,\"login_time\":\"2026-08-09T09:40:59.482Z\",\"timestamp\":\"2026-08-09T09:40:59.483Z\",\"ip_address\":\"192.168.32.1\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36\",\"endpoint\":\"/login\",\"method\":\"POST\"}', '2026-08-09 09:40:59'),
+(1163, 73, 'LOGOUT', 'User tsehayu@itp.et logged out', '{\"user_id\":\"73\",\"username\":\"tsehayu@itp.et\",\"employee_name\":\"tsuhayu directorate\",\"logout_time\":\"2026-08-09T09:52:29.689Z\",\"timestamp\":\"2026-08-09T09:52:29.689Z\",\"ip_address\":\"192.168.32.1\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36\",\"endpoint\":\"/logout/73\",\"method\":\"PUT\"}', '2026-08-09 09:52:29'),
+(1164, 79, 'LOGIN', 'User milliongoraw@gmail.com logged in successfully', '{\"username\":\"milliongoraw@gmail.com\",\"user_id\":79,\"role_id\":6,\"employee_id\":152,\"employee_name\":\"Million  Goraw\",\"department_id\":null,\"login_time\":\"2026-08-09T09:52:40.948Z\",\"timestamp\":\"2026-08-09T09:52:40.948Z\",\"ip_address\":\"192.168.32.1\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36\",\"endpoint\":\"/login\",\"method\":\"POST\"}', '2026-08-09 09:52:40'),
+(1165, 79, 'LOGOUT', 'User Milliongoraw@gmail.com logged out', '{\"user_id\":\"79\",\"username\":\"Milliongoraw@gmail.com\",\"employee_name\":\"Million  Goraw\",\"logout_time\":\"2026-08-09T12:06:39.013Z\",\"timestamp\":\"2026-08-09T12:06:39.014Z\",\"ip_address\":\"192.168.32.1\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36\",\"endpoint\":\"/logout/79\",\"method\":\"PUT\"}', '2026-08-09 12:06:39'),
+(1166, 25, 'LOGIN', 'User olana@itp.et logged in successfully', '{\"username\":\"olana@itp.et\",\"user_id\":25,\"role_id\":2,\"employee_id\":72,\"employee_name\":\"Olana\",\"department_id\":2,\"login_time\":\"2026-08-09T12:06:46.821Z\",\"timestamp\":\"2026-08-09T12:06:46.821Z\",\"ip_address\":\"192.168.32.1\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36\",\"endpoint\":\"/login\",\"method\":\"POST\"}', '2026-08-09 12:06:46'),
+(1167, 25, 'LOGOUT', 'User olana@itp.et logged out', '{\"user_id\":\"25\",\"username\":\"olana@itp.et\",\"employee_name\":\"Olana\",\"logout_time\":\"2026-08-09T17:10:00.421Z\",\"timestamp\":\"2026-08-09T17:10:00.421Z\",\"ip_address\":\"192.168.32.1\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36\",\"endpoint\":\"/logout/25\",\"method\":\"PUT\"}', '2026-08-09 17:10:00'),
+(1168, 40, 'LOGIN', 'User ezira@itpark.et logged in successfully', '{\"username\":\"ezira@itpark.et\",\"user_id\":40,\"role_id\":1,\"employee_id\":109,\"employee_name\":\"Ezira\",\"department_id\":null,\"login_time\":\"2026-08-09T17:10:07.068Z\",\"timestamp\":\"2026-08-09T17:10:07.068Z\",\"ip_address\":\"192.168.32.1\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36\",\"endpoint\":\"/login\",\"method\":\"POST\"}', '2026-08-09 17:10:07'),
+(1169, 40, 'LOGOUT', 'User ezira@itpark.et logged out', '{\"user_id\":\"40\",\"username\":\"ezira@itpark.et\",\"employee_name\":\"Ezira\",\"logout_time\":\"2026-08-09T17:11:00.546Z\",\"timestamp\":\"2026-08-09T17:11:00.547Z\",\"ip_address\":\"192.168.32.1\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36\",\"endpoint\":\"/logout/40\",\"method\":\"PUT\"}', '2026-08-09 17:11:00'),
+(1170, 25, 'LOGIN', 'User olana@itp.et logged in successfully', '{\"username\":\"olana@itp.et\",\"user_id\":25,\"role_id\":2,\"employee_id\":72,\"employee_name\":\"Olana\",\"department_id\":2,\"login_time\":\"2026-08-09T17:11:08.568Z\",\"timestamp\":\"2026-08-09T17:11:08.568Z\",\"ip_address\":\"192.168.32.1\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36\",\"endpoint\":\"/login\",\"method\":\"POST\"}', '2026-08-09 17:11:08'),
+(1171, 25, 'LOGOUT', 'User olana@itp.et logged out', '{\"user_id\":\"25\",\"username\":\"olana@itp.et\",\"employee_name\":\"Olana\",\"logout_time\":\"2026-08-09T18:19:53.164Z\",\"timestamp\":\"2026-08-09T18:19:53.164Z\",\"ip_address\":\"192.168.32.1\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36\",\"endpoint\":\"/logout/25\",\"method\":\"PUT\"}', '2026-08-09 18:19:53'),
+(1172, 40, 'LOGIN', 'User ezira@itpark.et logged in successfully', '{\"username\":\"ezira@itpark.et\",\"user_id\":40,\"role_id\":1,\"employee_id\":109,\"employee_name\":\"Ezira\",\"department_id\":null,\"login_time\":\"2026-08-09T18:19:58.701Z\",\"timestamp\":\"2026-08-09T18:19:58.701Z\",\"ip_address\":\"192.168.32.1\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36\",\"endpoint\":\"/login\",\"method\":\"POST\"}', '2026-08-09 18:19:58'),
+(1173, 40, 'LOGOUT', 'User ezira@itpark.et logged out', '{\"user_id\":\"40\",\"username\":\"ezira@itpark.et\",\"employee_name\":\"Ezira\",\"logout_time\":\"2026-08-09T18:20:41.926Z\",\"timestamp\":\"2026-08-09T18:20:41.926Z\",\"ip_address\":\"192.168.32.1\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36\",\"endpoint\":\"/logout/40\",\"method\":\"PUT\"}', '2026-08-09 18:20:41'),
+(1174, 73, 'LOGIN', 'User tsehayu@itp.et logged in successfully', '{\"username\":\"tsehayu@itp.et\",\"user_id\":73,\"role_id\":5,\"employee_id\":146,\"employee_name\":\"tsuhayu directorate\",\"department_id\":11,\"login_time\":\"2026-08-09T18:20:50.249Z\",\"timestamp\":\"2026-08-09T18:20:50.250Z\",\"ip_address\":\"192.168.32.1\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36\",\"endpoint\":\"/login\",\"method\":\"POST\"}', '2026-08-09 18:20:50'),
+(1175, 73, 'LOGOUT', 'User tsehayu@itp.et logged out', '{\"user_id\":\"73\",\"username\":\"tsehayu@itp.et\",\"employee_name\":\"tsuhayu directorate\",\"logout_time\":\"2026-08-09T18:24:02.107Z\",\"timestamp\":\"2026-08-09T18:24:02.107Z\",\"ip_address\":\"192.168.32.1\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36\",\"endpoint\":\"/logout/73\",\"method\":\"PUT\"}', '2026-08-09 18:24:02'),
+(1176, 40, 'LOGIN', 'User ezira@itpark.et logged in successfully', '{\"username\":\"ezira@itpark.et\",\"user_id\":40,\"role_id\":1,\"employee_id\":109,\"employee_name\":\"Ezira\",\"department_id\":null,\"login_time\":\"2026-08-09T18:24:07.694Z\",\"timestamp\":\"2026-08-09T18:24:07.694Z\",\"ip_address\":\"192.168.32.1\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36\",\"endpoint\":\"/login\",\"method\":\"POST\"}', '2026-08-09 18:24:07'),
+(1177, 40, 'LOGOUT', 'User ezira@itpark.et logged out', '{\"user_id\":\"40\",\"username\":\"ezira@itpark.et\",\"employee_name\":\"Ezira\",\"logout_time\":\"2026-08-09T18:35:19.482Z\",\"timestamp\":\"2026-08-09T18:35:19.482Z\",\"ip_address\":\"192.168.32.1\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36\",\"endpoint\":\"/logout/40\",\"method\":\"PUT\"}', '2026-08-09 18:35:19'),
+(1178, 73, 'LOGIN', 'User tsehayu@itp.et logged in successfully', '{\"username\":\"tsehayu@itp.et\",\"user_id\":73,\"role_id\":5,\"employee_id\":146,\"employee_name\":\"tsuhayu directorate\",\"department_id\":11,\"login_time\":\"2026-08-09T18:35:31.235Z\",\"timestamp\":\"2026-08-09T18:35:31.235Z\",\"ip_address\":\"192.168.32.1\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36\",\"endpoint\":\"/login\",\"method\":\"POST\"}', '2026-08-09 18:35:31'),
+(1179, 73, 'LOGOUT', 'User tsehayu@itp.et logged out', '{\"user_id\":\"73\",\"username\":\"tsehayu@itp.et\",\"employee_name\":\"tsuhayu directorate\",\"logout_time\":\"2026-08-09T18:47:57.180Z\",\"timestamp\":\"2026-08-09T18:47:57.180Z\",\"ip_address\":\"192.168.32.1\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36\",\"endpoint\":\"/logout/73\",\"method\":\"PUT\"}', '2026-08-09 18:47:57'),
+(1180, 40, 'LOGIN', 'User ezira@itpark.et logged in successfully', '{\"username\":\"ezira@itpark.et\",\"user_id\":40,\"role_id\":1,\"employee_id\":109,\"employee_name\":\"Ezira\",\"department_id\":null,\"login_time\":\"2026-08-09T18:48:04.155Z\",\"timestamp\":\"2026-08-09T18:48:04.155Z\",\"ip_address\":\"192.168.32.1\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36\",\"endpoint\":\"/login\",\"method\":\"POST\"}', '2026-08-09 18:48:04'),
+(1181, 40, 'LOGOUT', 'User ezira@itpark.et logged out', '{\"user_id\":\"40\",\"username\":\"ezira@itpark.et\",\"employee_name\":\"Ezira\",\"logout_time\":\"2026-08-09T18:50:27.097Z\",\"timestamp\":\"2026-08-09T18:50:27.098Z\",\"ip_address\":\"192.168.32.1\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36\",\"endpoint\":\"/logout/40\",\"method\":\"PUT\"}', '2026-08-09 18:50:27'),
+(1182, 73, 'LOGIN', 'User tsehayu@itp.et logged in successfully', '{\"username\":\"tsehayu@itp.et\",\"user_id\":73,\"role_id\":5,\"employee_id\":146,\"employee_name\":\"tsuhayu directorate\",\"department_id\":11,\"login_time\":\"2026-08-09T18:50:55.060Z\",\"timestamp\":\"2026-08-09T18:50:55.060Z\",\"ip_address\":\"192.168.32.1\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36\",\"endpoint\":\"/login\",\"method\":\"POST\"}', '2026-08-09 18:50:55'),
+(1183, 40, 'LOGIN', 'User ezira@itpark.et logged in successfully', '{\"username\":\"ezira@itpark.et\",\"user_id\":40,\"role_id\":1,\"employee_id\":109,\"employee_name\":\"Ezira\",\"department_id\":null,\"login_time\":\"2026-08-09T19:03:58.742Z\",\"timestamp\":\"2026-08-09T19:03:58.742Z\",\"ip_address\":\"192.168.32.1\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36\",\"endpoint\":\"/login\",\"method\":\"POST\"}', '2026-08-09 19:03:58'),
+(1184, 40, 'LOGOUT', 'User ezira@itpark.et logged out', '{\"user_id\":\"40\",\"username\":\"ezira@itpark.et\",\"employee_name\":\"Ezira\",\"logout_time\":\"2026-08-09T20:00:44.207Z\",\"timestamp\":\"2026-08-09T20:00:44.208Z\",\"ip_address\":\"192.168.32.1\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36\",\"endpoint\":\"/logout/40\",\"method\":\"PUT\"}', '2026-08-09 20:00:44'),
+(1185, 40, 'LOGIN', 'User ezira@itpark.et logged in successfully', '{\"username\":\"ezira@itpark.et\",\"user_id\":40,\"role_id\":1,\"employee_id\":109,\"employee_name\":\"Ezira\",\"department_id\":null,\"login_time\":\"2026-08-09T20:00:46.798Z\",\"timestamp\":\"2026-08-09T20:00:46.798Z\",\"ip_address\":\"192.168.32.1\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36\",\"endpoint\":\"/login\",\"method\":\"POST\"}', '2026-08-09 20:00:46'),
+(1186, 73, 'LOGOUT', 'User tsehayu@itp.et logged out', '{\"user_id\":\"73\",\"username\":\"tsehayu@itp.et\",\"employee_name\":\"tsuhayu directorate\",\"logout_time\":\"2026-08-10T07:30:02.469Z\",\"timestamp\":\"2026-08-10T07:30:02.470Z\",\"ip_address\":\"192.168.32.1\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36\",\"endpoint\":\"/logout/73\",\"method\":\"PUT\"}', '2026-08-10 07:30:02'),
+(1187, 40, 'LOGOUT', 'User ezira@itpark.et logged out', '{\"user_id\":\"40\",\"username\":\"ezira@itpark.et\",\"employee_name\":\"Ezira\",\"logout_time\":\"2026-08-10T07:30:11.852Z\",\"timestamp\":\"2026-08-10T07:30:11.852Z\",\"ip_address\":\"192.168.32.1\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36\",\"endpoint\":\"/logout/40\",\"method\":\"PUT\"}', '2026-08-10 07:30:11'),
+(1188, 25, 'LOGIN', 'User olana@itp.et logged in successfully', '{\"username\":\"olana@itp.et\",\"user_id\":25,\"role_id\":2,\"employee_id\":72,\"employee_name\":\"Olana\",\"department_id\":2,\"login_time\":\"2026-08-10T07:30:18.994Z\",\"timestamp\":\"2026-08-10T07:30:18.994Z\",\"ip_address\":\"192.168.32.1\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36\",\"endpoint\":\"/login\",\"method\":\"POST\"}', '2026-08-10 07:30:18'),
+(1189, 73, 'LOGIN', 'User tsehayu@itp.et logged in successfully', '{\"username\":\"tsehayu@itp.et\",\"user_id\":73,\"role_id\":5,\"employee_id\":146,\"employee_name\":\"tsuhayu directorate\",\"department_id\":11,\"login_time\":\"2026-08-10T07:38:55.489Z\",\"timestamp\":\"2026-08-10T07:38:55.489Z\",\"ip_address\":\"192.168.32.1\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36\",\"endpoint\":\"/login\",\"method\":\"POST\"}', '2026-08-10 07:38:55'),
+(1190, 73, 'LOGOUT', 'User tsehayu@itp.et logged out', '{\"user_id\":\"73\",\"username\":\"tsehayu@itp.et\",\"employee_name\":\"tsuhayu directorate\",\"logout_time\":\"2026-08-10T07:43:11.137Z\",\"timestamp\":\"2026-08-10T07:43:11.137Z\",\"ip_address\":\"192.168.32.1\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36\",\"endpoint\":\"/logout/73\",\"method\":\"PUT\"}', '2026-08-10 07:43:11'),
+(1191, 25, 'LOGOUT', 'User olana@itp.et logged out', '{\"user_id\":\"25\",\"username\":\"olana@itp.et\",\"employee_name\":\"Olana\",\"logout_time\":\"2026-08-10T07:43:19.335Z\",\"timestamp\":\"2026-08-10T07:43:19.336Z\",\"ip_address\":\"192.168.32.1\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36\",\"endpoint\":\"/logout/25\",\"method\":\"PUT\"}', '2026-08-10 07:43:19'),
+(1192, 40, 'LOGIN', 'User ezira@itpark.et logged in successfully', '{\"username\":\"ezira@itpark.et\",\"user_id\":40,\"role_id\":1,\"employee_id\":109,\"employee_name\":\"Ezira\",\"department_id\":null,\"login_time\":\"2026-08-10T07:43:23.496Z\",\"timestamp\":\"2026-08-10T07:43:23.496Z\",\"ip_address\":\"192.168.32.1\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36\",\"endpoint\":\"/login\",\"method\":\"POST\"}', '2026-08-10 07:43:23'),
+(1193, 73, 'LOGIN', 'User tsehayu@itp.et logged in successfully', '{\"username\":\"tsehayu@itp.et\",\"user_id\":73,\"role_id\":5,\"employee_id\":146,\"employee_name\":\"tsuhayu directorate\",\"department_id\":11,\"login_time\":\"2026-08-10T07:59:50.374Z\",\"timestamp\":\"2026-08-10T07:59:50.374Z\",\"ip_address\":\"192.168.32.1\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36\",\"endpoint\":\"/login\",\"method\":\"POST\"}', '2026-08-10 07:59:50'),
+(1194, 40, 'LOGIN', 'User ezira@itpark.et logged in successfully', '{\"username\":\"ezira@itpark.et\",\"user_id\":40,\"role_id\":1,\"employee_id\":109,\"employee_name\":\"Ezira\",\"department_id\":null,\"login_time\":\"2026-08-10T12:01:03.743Z\",\"timestamp\":\"2026-08-10T12:01:03.743Z\",\"ip_address\":\"192.168.32.1\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36\",\"endpoint\":\"/login\",\"method\":\"POST\"}', '2026-08-10 12:01:03'),
+(1195, 40, 'LOGOUT', 'User ezira@itpark.et logged out', '{\"user_id\":\"40\",\"username\":\"ezira@itpark.et\",\"employee_name\":\"Ezira\",\"logout_time\":\"2026-08-11T06:27:53.562Z\",\"timestamp\":\"2026-08-11T06:27:53.562Z\",\"ip_address\":\"192.168.32.1\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36\",\"endpoint\":\"/logout/40\",\"method\":\"PUT\"}', '2026-08-11 06:27:53'),
+(1196, 40, 'LOGIN', 'User ezira@itpark.et logged in successfully', '{\"username\":\"ezira@itpark.et\",\"user_id\":40,\"role_id\":1,\"employee_id\":109,\"employee_name\":\"Ezira\",\"department_id\":null,\"login_time\":\"2026-08-11T06:33:22.159Z\",\"timestamp\":\"2026-08-11T06:33:22.159Z\",\"ip_address\":\"192.168.32.1\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36\",\"endpoint\":\"/login\",\"method\":\"POST\"}', '2026-08-11 06:33:22'),
+(1197, 40, 'LOGOUT', 'User ezira@itpark.et logged out', '{\"user_id\":\"40\",\"username\":\"ezira@itpark.et\",\"employee_name\":\"Ezira\",\"logout_time\":\"2026-08-11T06:33:25.974Z\",\"timestamp\":\"2026-08-11T06:33:25.974Z\",\"ip_address\":\"192.168.32.1\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36\",\"endpoint\":\"/logout/40\",\"method\":\"PUT\"}', '2026-08-11 06:33:25'),
+(1198, 40, 'LOGIN', 'User ezira@itpark.et logged in successfully', '{\"username\":\"ezira@itpark.et\",\"user_id\":40,\"role_id\":1,\"employee_id\":109,\"employee_name\":\"Ezira\",\"department_id\":null,\"login_time\":\"2026-08-11T06:54:07.724Z\",\"timestamp\":\"2026-08-11T06:54:07.724Z\",\"ip_address\":\"192.168.32.1\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36\",\"endpoint\":\"/login\",\"method\":\"POST\"}', '2026-08-11 06:54:07'),
+(1199, 40, 'LOGOUT', 'User ezira@itpark.et logged out', '{\"user_id\":\"40\",\"username\":\"ezira@itpark.et\",\"employee_name\":\"Ezira\",\"logout_time\":\"2026-08-11T06:54:10.218Z\",\"timestamp\":\"2026-08-11T06:54:10.218Z\",\"ip_address\":\"192.168.32.1\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36\",\"endpoint\":\"/logout/40\",\"method\":\"PUT\"}', '2026-08-11 06:54:10'),
+(1200, 40, 'LOGIN', 'User ezira@itpark.et logged in successfully', '{\"username\":\"ezira@itpark.et\",\"user_id\":40,\"role_id\":1,\"employee_id\":109,\"employee_name\":\"Ezira\",\"department_id\":null,\"login_time\":\"2026-08-11T07:18:17.411Z\",\"timestamp\":\"2026-08-11T07:18:17.411Z\",\"ip_address\":\"192.168.32.1\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36\",\"endpoint\":\"/login\",\"method\":\"POST\"}', '2026-08-11 07:18:17'),
+(1201, 40, 'LOGOUT', 'User ezira@itpark.et logged out', '{\"user_id\":\"40\",\"username\":\"ezira@itpark.et\",\"employee_name\":\"Ezira\",\"logout_time\":\"2026-08-11T07:18:21.618Z\",\"timestamp\":\"2026-08-11T07:18:21.618Z\",\"ip_address\":\"192.168.32.1\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36\",\"endpoint\":\"/logout/40\",\"method\":\"PUT\"}', '2026-08-11 07:18:21'),
+(1202, 40, 'LOGIN', 'User ezira@itpark.et logged in successfully', '{\"username\":\"ezira@itpark.et\",\"user_id\":40,\"role_id\":1,\"employee_id\":109,\"employee_name\":\"Ezira\",\"department_id\":null,\"login_time\":\"2026-08-11T07:21:36.543Z\",\"timestamp\":\"2026-08-11T07:21:36.543Z\",\"ip_address\":\"192.168.32.1\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36\",\"endpoint\":\"/login\",\"method\":\"POST\"}', '2026-08-11 07:21:36'),
+(1203, 40, 'LOGOUT', 'User ezira@itpark.et logged out', '{\"user_id\":\"40\",\"username\":\"ezira@itpark.et\",\"employee_name\":\"Ezira\",\"logout_time\":\"2026-08-11T11:55:12.205Z\",\"timestamp\":\"2026-08-11T11:55:12.206Z\",\"ip_address\":\"192.168.32.1\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36\",\"endpoint\":\"/logout/40\",\"method\":\"PUT\"}', '2026-08-11 11:55:12'),
+(1204, 73, 'LOGOUT', 'User tsehayu@itp.et logged out', '{\"user_id\":\"73\",\"username\":\"tsehayu@itp.et\",\"employee_name\":\"tsuhayu directorate\",\"logout_time\":\"2026-08-11T11:55:51.733Z\",\"timestamp\":\"2026-08-11T11:55:51.733Z\",\"ip_address\":\"192.168.32.1\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36\",\"endpoint\":\"/logout/73\",\"method\":\"PUT\"}', '2026-08-11 11:55:51'),
+(1205, 40, 'LOGIN', 'User ezira@itpark.et logged in successfully', '{\"username\":\"ezira@itpark.et\",\"user_id\":40,\"role_id\":1,\"employee_id\":109,\"employee_name\":\"Ezira\",\"department_id\":null,\"login_time\":\"2026-08-11T11:56:23.694Z\",\"timestamp\":\"2026-08-11T11:56:23.694Z\",\"ip_address\":\"192.168.32.1\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36\",\"endpoint\":\"/login\",\"method\":\"POST\"}', '2026-08-11 11:56:23'),
+(1206, 40, 'LOGOUT', 'User ezira@itpark.et logged out', '{\"user_id\":\"40\",\"username\":\"ezira@itpark.et\",\"employee_name\":\"Ezira\",\"logout_time\":\"2026-08-11T12:21:18.486Z\",\"timestamp\":\"2026-08-11T12:21:18.487Z\",\"ip_address\":\"192.168.32.1\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36\",\"endpoint\":\"/logout/40\",\"method\":\"PUT\"}', '2026-08-11 12:21:18'),
+(1207, 40, 'LOGIN', 'User ezira@itpark.et logged in successfully', '{\"username\":\"ezira@itpark.et\",\"user_id\":40,\"role_id\":1,\"employee_id\":109,\"employee_name\":\"Ezira\",\"department_id\":null,\"login_time\":\"2026-08-11T12:21:19.462Z\",\"timestamp\":\"2026-08-11T12:21:19.462Z\",\"ip_address\":\"192.168.32.1\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36\",\"endpoint\":\"/login\",\"method\":\"POST\"}', '2026-08-11 12:21:19'),
+(1208, NULL, 'LOGIN_FAILED', 'Login failed: User not found - ermiyas@itp.et', '{\"username\":\"ermiyas@itp.et\",\"reason\":\"user_not_found\",\"timestamp\":\"2026-08-11T13:35:22.959Z\",\"ip_address\":\"192.168.32.1\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36\",\"endpoint\":\"/login\",\"method\":\"POST\"}', '2026-08-11 13:35:22'),
+(1209, 73, 'LOGIN', 'User tsehayu@itp.et logged in successfully', '{\"username\":\"tsehayu@itp.et\",\"user_id\":73,\"role_id\":5,\"employee_id\":146,\"employee_name\":\"tsuhayu directorate\",\"department_id\":11,\"login_time\":\"2026-08-11T13:35:42.023Z\",\"timestamp\":\"2026-08-11T13:35:42.023Z\",\"ip_address\":\"192.168.32.1\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36\",\"endpoint\":\"/login\",\"method\":\"POST\"}', '2026-08-11 13:35:42'),
+(1210, 40, 'LOGOUT', 'User ezira@itpark.et logged out', '{\"user_id\":\"40\",\"username\":\"ezira@itpark.et\",\"employee_name\":\"Ezira\",\"logout_time\":\"2026-08-11T18:55:48.755Z\",\"timestamp\":\"2026-08-11T18:55:48.757Z\",\"ip_address\":\"192.168.32.1\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36\",\"endpoint\":\"/logout/40\",\"method\":\"PUT\"}', '2026-08-11 18:55:48'),
+(1211, 67, 'LOGIN', 'User hayaltamrat@gmail.com logged in successfully', '{\"username\":\"hayaltamrat@gmail.com\",\"user_id\":67,\"role_id\":8,\"employee_id\":139,\"employee_name\":\"hayal Tamrat\",\"department_id\":null,\"login_time\":\"2026-08-11T18:55:55.475Z\",\"timestamp\":\"2026-08-11T18:55:55.475Z\",\"ip_address\":\"192.168.32.1\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36\",\"endpoint\":\"/login\",\"method\":\"POST\"}', '2026-08-11 18:55:55'),
+(1212, 67, 'LOGOUT', 'User hayaltamrat@gmail.com logged out', '{\"user_id\":\"67\",\"username\":\"hayaltamrat@gmail.com\",\"employee_name\":\"hayal Tamrat\",\"logout_time\":\"2026-08-11T18:56:11.525Z\",\"timestamp\":\"2026-08-11T18:56:11.525Z\",\"ip_address\":\"192.168.32.1\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36\",\"endpoint\":\"/logout/67\",\"method\":\"PUT\"}', '2026-08-11 18:56:11'),
+(1213, 40, 'LOGIN', 'User ezira@itpark.et logged in successfully', '{\"username\":\"ezira@itpark.et\",\"user_id\":40,\"role_id\":1,\"employee_id\":109,\"employee_name\":\"Ezira\",\"department_id\":null,\"login_time\":\"2026-08-11T18:56:16.879Z\",\"timestamp\":\"2026-08-11T18:56:16.879Z\",\"ip_address\":\"192.168.32.1\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36\",\"endpoint\":\"/login\",\"method\":\"POST\"}', '2026-08-11 18:56:16'),
+(1214, 40, 'LOGOUT', 'User ezira@itpark.et logged out', '{\"user_id\":\"40\",\"username\":\"ezira@itpark.et\",\"employee_name\":\"Ezira\",\"logout_time\":\"2026-08-11T18:56:47.061Z\",\"timestamp\":\"2026-08-11T18:56:47.061Z\",\"ip_address\":\"192.168.32.1\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36\",\"endpoint\":\"/logout/40\",\"method\":\"PUT\"}', '2026-08-11 18:56:47'),
+(1215, 79, 'LOGIN', 'User milliongoraw@gmail.com logged in successfully', '{\"username\":\"milliongoraw@gmail.com\",\"user_id\":79,\"role_id\":6,\"employee_id\":152,\"employee_name\":\"Million  Goraw\",\"department_id\":null,\"login_time\":\"2026-08-11T18:56:53.580Z\",\"timestamp\":\"2026-08-11T18:56:53.580Z\",\"ip_address\":\"192.168.32.1\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36\",\"endpoint\":\"/login\",\"method\":\"POST\"}', '2026-08-11 18:56:53'),
+(1216, 79, 'LOGOUT', 'User Milliongoraw@gmail.com logged out', '{\"user_id\":\"79\",\"username\":\"Milliongoraw@gmail.com\",\"employee_name\":\"Million  Goraw\",\"logout_time\":\"2026-08-11T19:24:08.315Z\",\"timestamp\":\"2026-08-11T19:24:08.315Z\",\"ip_address\":\"192.168.32.1\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36\",\"endpoint\":\"/logout/79\",\"method\":\"PUT\"}', '2026-08-11 19:24:08'),
+(1217, 40, 'LOGIN', 'User ezira@itpark.et logged in successfully', '{\"username\":\"ezira@itpark.et\",\"user_id\":40,\"role_id\":1,\"employee_id\":109,\"employee_name\":\"Ezira\",\"department_id\":null,\"login_time\":\"2026-08-11T19:24:19.017Z\",\"timestamp\":\"2026-08-11T19:24:19.017Z\",\"ip_address\":\"192.168.32.1\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36\",\"endpoint\":\"/login\",\"method\":\"POST\"}', '2026-08-11 19:24:19'),
+(1218, 40, 'LOGOUT', 'User ezira@itpark.et logged out', '{\"user_id\":\"40\",\"username\":\"ezira@itpark.et\",\"employee_name\":\"Ezira\",\"logout_time\":\"2026-08-11T19:25:53.513Z\",\"timestamp\":\"2026-08-11T19:25:53.513Z\",\"ip_address\":\"192.168.32.1\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36\",\"endpoint\":\"/logout/40\",\"method\":\"PUT\"}', '2026-08-11 19:25:53'),
+(1219, 79, 'LOGIN', 'User milliongoraw@gmail.com logged in successfully', '{\"username\":\"milliongoraw@gmail.com\",\"user_id\":79,\"role_id\":6,\"employee_id\":152,\"employee_name\":\"Million  Goraw\",\"department_id\":null,\"login_time\":\"2026-08-11T19:26:01.227Z\",\"timestamp\":\"2026-08-11T19:26:01.227Z\",\"ip_address\":\"192.168.32.1\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36\",\"endpoint\":\"/login\",\"method\":\"POST\"}', '2026-08-11 19:26:01'),
+(1220, 79, 'LOGOUT', 'User Milliongoraw@gmail.com logged out', '{\"user_id\":\"79\",\"username\":\"Milliongoraw@gmail.com\",\"employee_name\":\"Million  Goraw\",\"logout_time\":\"2026-08-11T19:33:07.575Z\",\"timestamp\":\"2026-08-11T19:33:07.576Z\",\"ip_address\":\"192.168.32.1\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36\",\"endpoint\":\"/logout/79\",\"method\":\"PUT\"}', '2026-08-11 19:33:07'),
+(1221, 40, 'LOGIN', 'User ezira@itpark.et logged in successfully', '{\"username\":\"ezira@itpark.et\",\"user_id\":40,\"role_id\":1,\"employee_id\":109,\"employee_name\":\"Ezira\",\"department_id\":null,\"login_time\":\"2026-08-11T19:33:16.415Z\",\"timestamp\":\"2026-08-11T19:33:16.415Z\",\"ip_address\":\"192.168.32.1\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36\",\"endpoint\":\"/login\",\"method\":\"POST\"}', '2026-08-11 19:33:16'),
+(1222, 73, 'LOGOUT', 'User tsehayu@itp.et logged out', '{\"user_id\":\"73\",\"username\":\"tsehayu@itp.et\",\"employee_name\":\"tsuhayu directorate\",\"logout_time\":\"2026-08-12T03:27:46.690Z\",\"timestamp\":\"2026-08-12T03:27:46.691Z\",\"ip_address\":\"192.168.32.1\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36\",\"endpoint\":\"/logout/73\",\"method\":\"PUT\"}', '2026-08-12 03:27:46'),
+(1223, NULL, 'LOGIN_FAILED', 'Login failed: User not found - CMS url= https://admin.ethiopianitpark.et username= million.goraw@ethiopianitpark.et pass= Itpc@123  VMMS url = https://vmms.ethiopianitpark.et username= million.goraw@ethiopianitpark.et pass= Itpc@123  Plan and Report url = https://Itpr.ethiopianitpark.et username= million.goraw@ethiopianitpark.et pass= Itpc@123   letter and document  url = https://lms.ethiopianitpark.et username= million.goraw@ethiopianitpark.et pass= Itpc@123   External letter applicant portal  https://portal.ethiopianitpark.et/login  Internal Visitor issue portal https://lms.ethiopianitpark.et/visitor', '{\"username\":\"CMS url= https://admin.ethiopianitpark.et username= million.goraw@ethiopianitpark.et pass= Itpc@123  VMMS url = https://vmms.ethiopianitpark.et username= million.goraw@ethiopianitpark.et pass= Itpc@123  Plan and Report url = https://Itpr.ethiopianitpark.et username= million.goraw@ethiopianitpark.et pass= Itpc@123   letter and document  url = https://lms.ethiopianitpark.et username= million.goraw@ethiopianitpark.et pass= Itpc@123   External letter applicant portal  https://portal.ethiopianitpark.et/login  Internal Visitor issue portal https://lms.ethiopianitpark.et/visitor\",\"reason\":\"user_not_found\",\"timestamp\":\"2026-08-12T03:29:12.979Z\",\"ip_address\":\"192.168.32.1\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36\",\"endpoint\":\"/login\",\"method\":\"POST\"}', '2026-08-12 03:29:12'),
+(1224, NULL, 'LOGIN_FAILED', 'Login failed: User not found -  million.goraw@ethiopianitpark.et', '{\"username\":\" million.goraw@ethiopianitpark.et\",\"reason\":\"user_not_found\",\"timestamp\":\"2026-08-12T03:29:31.738Z\",\"ip_address\":\"192.168.32.1\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36\",\"endpoint\":\"/login\",\"method\":\"POST\"}', '2026-08-12 03:29:31'),
+(1225, NULL, 'LOGIN_FAILED', 'Login failed: User not found - million.goraw@ethiopianitpark.et', '{\"username\":\"million.goraw@ethiopianitpark.et\",\"reason\":\"user_not_found\",\"timestamp\":\"2026-08-12T03:29:43.641Z\",\"ip_address\":\"192.168.32.1\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36\",\"endpoint\":\"/login\",\"method\":\"POST\"}', '2026-08-12 03:29:43'),
+(1226, NULL, 'LOGIN_FAILED', 'Login failed: User not found - million.goraw@ethiopianitpark.et', '{\"username\":\"million.goraw@ethiopianitpark.et\",\"reason\":\"user_not_found\",\"timestamp\":\"2026-08-12T03:30:02.173Z\",\"ip_address\":\"192.168.32.1\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36\",\"endpoint\":\"/login\",\"method\":\"POST\"}', '2026-08-12 03:30:02'),
+(1227, 40, 'LOGOUT', 'User ezira@itpark.et logged out', '{\"user_id\":\"40\",\"username\":\"ezira@itpark.et\",\"employee_name\":\"Ezira\",\"logout_time\":\"2026-08-12T03:30:13.934Z\",\"timestamp\":\"2026-08-12T03:30:13.934Z\",\"ip_address\":\"192.168.32.1\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36\",\"endpoint\":\"/logout/40\",\"method\":\"PUT\"}', '2026-08-12 03:30:13'),
+(1228, 79, 'LOGIN', 'User milliongoraw@gmail.com logged in successfully', '{\"username\":\"milliongoraw@gmail.com\",\"user_id\":79,\"role_id\":6,\"employee_id\":152,\"employee_name\":\"Million  Goraw\",\"department_id\":null,\"login_time\":\"2026-08-12T03:30:29.629Z\",\"timestamp\":\"2026-08-12T03:30:29.629Z\",\"ip_address\":\"192.168.32.1\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36\",\"endpoint\":\"/login\",\"method\":\"POST\"}', '2026-08-12 03:30:29'),
+(1229, 40, 'LOGIN', 'User ezira@itpark.et logged in successfully', '{\"username\":\"ezira@itpark.et\",\"user_id\":40,\"role_id\":1,\"employee_id\":109,\"employee_name\":\"Ezira\",\"department_id\":null,\"login_time\":\"2026-08-12T03:32:15.946Z\",\"timestamp\":\"2026-08-12T03:32:15.946Z\",\"ip_address\":\"192.168.32.1\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36\",\"endpoint\":\"/login\",\"method\":\"POST\"}', '2026-08-12 03:32:15'),
+(1230, 79, 'LOGOUT', 'User Milliongoraw@gmail.com logged out', '{\"user_id\":\"79\",\"username\":\"Milliongoraw@gmail.com\",\"employee_name\":\"Million  Goraw\",\"logout_time\":\"2026-08-12T06:02:55.296Z\",\"timestamp\":\"2026-08-12T06:02:55.298Z\",\"ip_address\":\"192.168.32.1\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36\",\"endpoint\":\"/logout/79\",\"method\":\"PUT\"}', '2026-08-12 06:02:55'),
+(1231, 73, 'LOGIN', 'User tsehayu@itp.et logged in successfully', '{\"username\":\"tsehayu@itp.et\",\"user_id\":73,\"role_id\":5,\"employee_id\":146,\"employee_name\":\"tsuhayu directorate\",\"department_id\":11,\"login_time\":\"2026-08-12T06:02:59.985Z\",\"timestamp\":\"2026-08-12T06:02:59.985Z\",\"ip_address\":\"192.168.32.1\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36\",\"endpoint\":\"/login\",\"method\":\"POST\"}', '2026-08-12 06:02:59'),
+(1232, 40, 'LOGOUT', 'User ezira@itpark.et logged out', '{\"user_id\":\"40\",\"username\":\"ezira@itpark.et\",\"employee_name\":\"Ezira\",\"logout_time\":\"2026-08-12T07:03:54.554Z\",\"timestamp\":\"2026-08-12T07:03:54.555Z\",\"ip_address\":\"192.168.32.1\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36\",\"endpoint\":\"/logout/40\",\"method\":\"PUT\"}', '2026-08-12 07:03:54'),
+(1233, 40, 'LOGIN', 'User ezira@itpark.et logged in successfully', '{\"username\":\"ezira@itpark.et\",\"user_id\":40,\"role_id\":1,\"employee_id\":109,\"employee_name\":\"Ezira\",\"department_id\":null,\"login_time\":\"2026-08-12T07:40:18.324Z\",\"timestamp\":\"2026-08-12T07:40:18.325Z\",\"ip_address\":\"192.168.32.1\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36\",\"endpoint\":\"/login\",\"method\":\"POST\"}', '2026-08-12 07:40:18'),
+(1234, 40, 'LOGOUT', 'User ezira@itpark.et logged out', '{\"user_id\":\"40\",\"username\":\"ezira@itpark.et\",\"employee_name\":\"Ezira\",\"logout_time\":\"2026-08-12T07:44:28.411Z\",\"timestamp\":\"2026-08-12T07:44:28.411Z\",\"ip_address\":\"192.168.32.1\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36\",\"endpoint\":\"/logout/40\",\"method\":\"PUT\"}', '2026-08-12 07:44:28'),
+(1235, NULL, 'LOGIN_FAILED', 'Login failed: User not found - tsehayu.tliahun@ethiopianitpark.te', '{\"username\":\"tsehayu.tliahun@ethiopianitpark.te\",\"reason\":\"user_not_found\",\"timestamp\":\"2026-08-12T07:45:18.007Z\",\"ip_address\":\"192.168.32.1\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36\",\"endpoint\":\"/login\",\"method\":\"POST\"}', '2026-08-12 07:45:18'),
+(1236, NULL, 'LOGIN_FAILED', 'Login failed: User not found - tsehayu.tliahun@ethiopianitpark.et', '{\"username\":\"tsehayu.tliahun@ethiopianitpark.et\",\"reason\":\"user_not_found\",\"timestamp\":\"2026-08-12T07:45:21.944Z\",\"ip_address\":\"192.168.32.1\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36\",\"endpoint\":\"/login\",\"method\":\"POST\"}', '2026-08-12 07:45:21'),
+(1237, NULL, 'LOGIN_FAILED', 'Login failed: User not found - tsehayu.tilahun@ethiopianitpark.et', '{\"username\":\"tsehayu.tilahun@ethiopianitpark.et\",\"reason\":\"user_not_found\",\"timestamp\":\"2026-08-12T07:45:38.497Z\",\"ip_address\":\"192.168.32.1\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36\",\"endpoint\":\"/login\",\"method\":\"POST\"}', '2026-08-12 07:45:38'),
+(1238, 73, 'LOGIN', 'User tsehayu@itp.et logged in successfully', '{\"username\":\"tsehayu@itp.et\",\"user_id\":73,\"role_id\":5,\"employee_id\":146,\"employee_name\":\"tsuhayu directorate\",\"department_id\":11,\"login_time\":\"2026-08-12T07:45:57.342Z\",\"timestamp\":\"2026-08-12T07:45:57.342Z\",\"ip_address\":\"192.168.32.1\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36\",\"endpoint\":\"/login\",\"method\":\"POST\"}', '2026-08-12 07:45:57'),
+(1239, 73, 'LOGOUT', 'User tsehayu@itp.et logged out', '{\"user_id\":\"73\",\"username\":\"tsehayu@itp.et\",\"employee_name\":\"tsuhayu directorate\",\"logout_time\":\"2026-08-12T07:48:00.770Z\",\"timestamp\":\"2026-08-12T07:48:00.770Z\",\"ip_address\":\"192.168.32.1\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36\",\"endpoint\":\"/logout/73\",\"method\":\"PUT\"}', '2026-08-12 07:48:00'),
+(1240, 40, 'LOGIN', 'User ezira@itpark.et logged in successfully', '{\"username\":\"ezira@itpark.et\",\"user_id\":40,\"role_id\":1,\"employee_id\":109,\"employee_name\":\"Ezira\",\"department_id\":null,\"login_time\":\"2026-08-12T07:48:06.591Z\",\"timestamp\":\"2026-08-12T07:48:06.591Z\",\"ip_address\":\"192.168.32.1\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36\",\"endpoint\":\"/login\",\"method\":\"POST\"}', '2026-08-12 07:48:06'),
+(1241, 40, 'LOGOUT', 'User ezira@itpark.et logged out', '{\"user_id\":\"40\",\"username\":\"ezira@itpark.et\",\"employee_name\":\"Ezira\",\"logout_time\":\"2026-08-12T07:49:54.174Z\",\"timestamp\":\"2026-08-12T07:49:54.174Z\",\"ip_address\":\"192.168.32.1\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36\",\"endpoint\":\"/logout/40\",\"method\":\"PUT\"}', '2026-08-12 07:49:54'),
+(1242, 73, 'LOGIN', 'User tsehayu@itp.et logged in successfully', '{\"username\":\"tsehayu@itp.et\",\"user_id\":73,\"role_id\":5,\"employee_id\":146,\"employee_name\":\"tsuhayu directorate\",\"department_id\":11,\"login_time\":\"2026-08-12T07:50:21.629Z\",\"timestamp\":\"2026-08-12T07:50:21.629Z\",\"ip_address\":\"192.168.32.1\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36\",\"endpoint\":\"/login\",\"method\":\"POST\"}', '2026-08-12 07:50:21'),
+(1243, 73, 'LOGOUT', 'User tsehayu@itp.et logged out', '{\"user_id\":\"73\",\"username\":\"tsehayu@itp.et\",\"employee_name\":\"tsuhayu directorate\",\"logout_time\":\"2026-08-12T07:59:31.739Z\",\"timestamp\":\"2026-08-12T07:59:31.739Z\",\"ip_address\":\"192.168.32.1\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36\",\"endpoint\":\"/logout/73\",\"method\":\"PUT\"}', '2026-08-12 07:59:31'),
+(1244, 79, 'LOGIN', 'User milliongoraw@gmail.com logged in successfully', '{\"username\":\"milliongoraw@gmail.com\",\"user_id\":79,\"role_id\":6,\"employee_id\":152,\"employee_name\":\"Million  Goraw\",\"department_id\":null,\"login_time\":\"2026-08-12T07:59:38.191Z\",\"timestamp\":\"2026-08-12T07:59:38.191Z\",\"ip_address\":\"192.168.32.1\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36\",\"endpoint\":\"/login\",\"method\":\"POST\"}', '2026-08-12 07:59:38'),
+(1245, 79, 'LOGOUT', 'User Milliongoraw@gmail.com logged out', '{\"user_id\":\"79\",\"username\":\"Milliongoraw@gmail.com\",\"employee_name\":\"Million  Goraw\",\"logout_time\":\"2026-08-12T08:08:32.890Z\",\"timestamp\":\"2026-08-12T08:08:32.890Z\",\"ip_address\":\"192.168.32.1\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36\",\"endpoint\":\"/logout/79\",\"method\":\"PUT\"}', '2026-08-12 08:08:32'),
+(1246, 73, 'LOGOUT', 'User tsehayu@itp.et logged out', '{\"user_id\":\"73\",\"username\":\"tsehayu@itp.et\",\"employee_name\":\"tsuhayu directorate\",\"logout_time\":\"2026-08-12T08:09:05.700Z\",\"timestamp\":\"2026-08-12T08:09:05.700Z\",\"ip_address\":\"192.168.32.1\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36\",\"endpoint\":\"/logout/73\",\"method\":\"PUT\"}', '2026-08-12 08:09:05'),
+(1247, 40, 'LOGIN', 'User ezira@itpark.et logged in successfully', '{\"username\":\"ezira@itpark.et\",\"user_id\":40,\"role_id\":1,\"employee_id\":109,\"employee_name\":\"Ezira\",\"department_id\":null,\"login_time\":\"2026-08-12T08:09:37.743Z\",\"timestamp\":\"2026-08-12T08:09:37.743Z\",\"ip_address\":\"192.168.32.1\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36\",\"endpoint\":\"/login\",\"method\":\"POST\"}', '2026-08-12 08:09:37'),
+(1248, 79, 'LOGIN', 'User milliongoraw@gmail.com logged in successfully', '{\"username\":\"milliongoraw@gmail.com\",\"user_id\":79,\"role_id\":6,\"employee_id\":152,\"employee_name\":\"Million  Goraw\",\"department_id\":null,\"login_time\":\"2026-08-12T11:54:23.254Z\",\"timestamp\":\"2026-08-12T11:54:23.255Z\",\"ip_address\":\"192.168.32.1\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36\",\"endpoint\":\"/login\",\"method\":\"POST\"}', '2026-08-12 11:54:23'),
+(1249, 79, 'LOGOUT', 'User Milliongoraw@gmail.com logged out', '{\"user_id\":\"79\",\"username\":\"Milliongoraw@gmail.com\",\"employee_name\":\"Million  Goraw\",\"logout_time\":\"2026-08-12T11:54:28.760Z\",\"timestamp\":\"2026-08-12T11:54:28.760Z\",\"ip_address\":\"192.168.32.1\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36\",\"endpoint\":\"/logout/79\",\"method\":\"PUT\"}', '2026-08-12 11:54:28'),
+(1250, 40, 'LOGIN', 'User ezira@itpark.et logged in successfully', '{\"username\":\"ezira@itpark.et\",\"user_id\":40,\"role_id\":1,\"employee_id\":109,\"employee_name\":\"Ezira\",\"department_id\":null,\"login_time\":\"2026-08-12T11:55:57.425Z\",\"timestamp\":\"2026-08-12T11:55:57.425Z\",\"ip_address\":\"127.0.0.1\",\"user_agent\":\"Mozilla/5.0 (Windows NT; Windows NT 10.0; en-US) WindowsPowerShell/5.1.26100.8875\",\"endpoint\":\"/login\",\"method\":\"POST\"}', '2026-08-12 11:55:57'),
+(1251, 40, 'LOGIN', 'User ezira@itpark.et logged in successfully', '{\"username\":\"ezira@itpark.et\",\"user_id\":40,\"role_id\":1,\"employee_id\":109,\"employee_name\":\"Ezira\",\"department_id\":null,\"login_time\":\"2026-08-12T11:56:54.809Z\",\"timestamp\":\"2026-08-12T11:56:54.809Z\",\"ip_address\":\"127.0.0.1\",\"user_agent\":\"Mozilla/5.0 (Windows NT; Windows NT 10.0; en-US) WindowsPowerShell/5.1.26100.8875\",\"endpoint\":\"/login\",\"method\":\"POST\"}', '2026-08-12 11:56:54'),
+(1252, 79, 'LOGIN', 'User milliongoraw@gmail.com logged in successfully', '{\"username\":\"milliongoraw@gmail.com\",\"user_id\":79,\"role_id\":6,\"employee_id\":152,\"employee_name\":\"Million  Goraw\",\"department_id\":null,\"login_time\":\"2026-08-12T12:05:58.388Z\",\"timestamp\":\"2026-08-12T12:05:58.388Z\",\"ip_address\":\"127.0.0.1\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36\",\"endpoint\":\"/login\",\"method\":\"POST\"}', '2026-08-12 12:05:58'),
+(1253, 79, 'LOGIN', 'User milliongoraw@gmail.com logged in successfully', '{\"username\":\"milliongoraw@gmail.com\",\"user_id\":79,\"role_id\":6,\"employee_id\":152,\"employee_name\":\"Million  Goraw\",\"department_id\":null,\"login_time\":\"2026-08-12T12:06:08.003Z\",\"timestamp\":\"2026-08-12T12:06:08.003Z\",\"ip_address\":\"127.0.0.1\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36\",\"endpoint\":\"/login\",\"method\":\"POST\"}', '2026-08-12 12:06:08'),
+(1254, 40, 'LOGIN', 'User ezira@itpark.et logged in successfully', '{\"username\":\"ezira@itpark.et\",\"user_id\":40,\"role_id\":1,\"employee_id\":109,\"employee_name\":\"Ezira\",\"department_id\":null,\"login_time\":\"2026-08-12T16:06:18.231Z\",\"timestamp\":\"2026-08-12T16:06:18.231Z\",\"ip_address\":\"127.0.0.1\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36\",\"endpoint\":\"/login\",\"method\":\"POST\"}', '2026-08-12 16:06:18'),
+(1255, 40, 'LOGIN', 'User ezira@itpark.et logged in successfully', '{\"username\":\"ezira@itpark.et\",\"user_id\":40,\"role_id\":1,\"employee_id\":109,\"employee_name\":\"Ezira\",\"department_id\":null,\"login_time\":\"2026-08-12T16:10:40.582Z\",\"timestamp\":\"2026-08-12T16:10:40.582Z\",\"ip_address\":\"127.0.0.1\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36\",\"endpoint\":\"/login\",\"method\":\"POST\"}', '2026-08-12 16:10:40'),
+(1256, 40, 'LOGOUT', 'User ezira@itpark.et logged out', '{\"user_id\":\"40\",\"username\":\"ezira@itpark.et\",\"employee_name\":\"Ezira\",\"logout_time\":\"2026-08-12T16:13:44.072Z\",\"timestamp\":\"2026-08-12T16:13:44.072Z\",\"ip_address\":\"127.0.0.1\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36\",\"endpoint\":\"/logout/40\",\"method\":\"PUT\"}', '2026-08-12 16:13:44'),
+(1257, 73, 'LOGIN', 'User tsehayu@itp.et logged in successfully', '{\"username\":\"tsehayu@itp.et\",\"user_id\":73,\"role_id\":5,\"employee_id\":146,\"employee_name\":\"tsuhayu directorate\",\"department_id\":11,\"login_time\":\"2026-08-12T16:13:50.837Z\",\"timestamp\":\"2026-08-12T16:13:50.837Z\",\"ip_address\":\"127.0.0.1\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36\",\"endpoint\":\"/login\",\"method\":\"POST\"}', '2026-08-12 16:13:50'),
+(1258, 73, 'LOGOUT', 'User tsehayu@itp.et logged out', '{\"user_id\":\"73\",\"username\":\"tsehayu@itp.et\",\"employee_name\":\"tsuhayu directorate\",\"logout_time\":\"2026-08-12T16:44:36.819Z\",\"timestamp\":\"2026-08-12T16:44:36.819Z\",\"ip_address\":\"127.0.0.1\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36\",\"endpoint\":\"/logout/73\",\"method\":\"PUT\"}', '2026-08-12 16:44:36'),
+(1259, 79, 'LOGIN', 'User milliongoraw@gmail.com logged in successfully', '{\"username\":\"milliongoraw@gmail.com\",\"user_id\":79,\"role_id\":6,\"employee_id\":152,\"employee_name\":\"Million  Goraw\",\"department_id\":null,\"login_time\":\"2026-08-12T16:44:44.594Z\",\"timestamp\":\"2026-08-12T16:44:44.594Z\",\"ip_address\":\"127.0.0.1\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36\",\"endpoint\":\"/login\",\"method\":\"POST\"}', '2026-08-12 16:44:44');
+INSERT INTO `audit_logs` (`id`, `user_id`, `action`, `description`, `metadata`, `created_at`) VALUES
+(1260, 79, 'LOGOUT', 'User Milliongoraw@gmail.com logged out', '{\"user_id\":\"79\",\"username\":\"Milliongoraw@gmail.com\",\"employee_name\":\"Million  Goraw\",\"logout_time\":\"2026-08-12T16:45:41.793Z\",\"timestamp\":\"2026-08-12T16:45:41.793Z\",\"ip_address\":\"127.0.0.1\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36\",\"endpoint\":\"/logout/79\",\"method\":\"PUT\"}', '2026-08-12 16:45:41'),
+(1261, 79, 'LOGIN', 'User milliongoraw@gmail.com logged in successfully', '{\"username\":\"milliongoraw@gmail.com\",\"user_id\":79,\"role_id\":6,\"employee_id\":152,\"employee_name\":\"Million  Goraw\",\"department_id\":null,\"login_time\":\"2026-08-12T16:45:56.877Z\",\"timestamp\":\"2026-08-12T16:45:56.877Z\",\"ip_address\":\"127.0.0.1\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36\",\"endpoint\":\"/login\",\"method\":\"POST\"}', '2026-08-12 16:45:56'),
+(1262, 79, 'LOGOUT', 'User Milliongoraw@gmail.com logged out', '{\"user_id\":\"79\",\"username\":\"Milliongoraw@gmail.com\",\"employee_name\":\"Million  Goraw\",\"logout_time\":\"2026-08-12T16:46:06.986Z\",\"timestamp\":\"2026-08-12T16:46:06.986Z\",\"ip_address\":\"127.0.0.1\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36\",\"endpoint\":\"/logout/79\",\"method\":\"PUT\"}', '2026-08-12 16:46:06'),
+(1263, 73, 'LOGIN', 'User tsehayu@itp.et logged in successfully', '{\"username\":\"tsehayu@itp.et\",\"user_id\":73,\"role_id\":5,\"employee_id\":146,\"employee_name\":\"tsuhayu directorate\",\"department_id\":11,\"login_time\":\"2026-08-12T16:46:12.835Z\",\"timestamp\":\"2026-08-12T16:46:12.835Z\",\"ip_address\":\"127.0.0.1\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36\",\"endpoint\":\"/login\",\"method\":\"POST\"}', '2026-08-12 16:46:12'),
+(1264, 73, 'LOGOUT', 'User tsehayu@itp.et logged out', '{\"user_id\":\"73\",\"username\":\"tsehayu@itp.et\",\"employee_name\":\"tsuhayu directorate\",\"logout_time\":\"2026-08-12T16:46:42.869Z\",\"timestamp\":\"2026-08-12T16:46:42.869Z\",\"ip_address\":\"127.0.0.1\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36\",\"endpoint\":\"/logout/73\",\"method\":\"PUT\"}', '2026-08-12 16:46:42'),
+(1265, 73, 'LOGIN', 'User tsehayu@itp.et logged in successfully', '{\"username\":\"tsehayu@itp.et\",\"user_id\":73,\"role_id\":5,\"employee_id\":146,\"employee_name\":\"tsuhayu directorate\",\"department_id\":11,\"login_time\":\"2026-08-12T16:46:46.770Z\",\"timestamp\":\"2026-08-12T16:46:46.770Z\",\"ip_address\":\"127.0.0.1\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36\",\"endpoint\":\"/login\",\"method\":\"POST\"}', '2026-08-12 16:46:46'),
+(1266, 73, 'LOGOUT', 'User tsehayu@itp.et logged out', '{\"user_id\":\"73\",\"username\":\"tsehayu@itp.et\",\"employee_name\":\"tsuhayu directorate\",\"logout_time\":\"2026-08-12T16:47:08.367Z\",\"timestamp\":\"2026-08-12T16:47:08.367Z\",\"ip_address\":\"127.0.0.1\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36\",\"endpoint\":\"/logout/73\",\"method\":\"PUT\"}', '2026-08-12 16:47:08'),
+(1267, 73, 'LOGIN', 'User tsehayu@itp.et logged in successfully', '{\"username\":\"tsehayu@itp.et\",\"user_id\":73,\"role_id\":5,\"employee_id\":146,\"employee_name\":\"tsuhayu directorate\",\"department_id\":11,\"login_time\":\"2026-08-12T16:47:10.819Z\",\"timestamp\":\"2026-08-12T16:47:10.819Z\",\"ip_address\":\"127.0.0.1\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36\",\"endpoint\":\"/login\",\"method\":\"POST\"}', '2026-08-12 16:47:10'),
+(1268, 73, 'LOGOUT', 'User tsehayu@itp.et logged out', '{\"user_id\":\"73\",\"username\":\"tsehayu@itp.et\",\"employee_name\":\"tsuhayu directorate\",\"logout_time\":\"2026-08-12T16:47:17.991Z\",\"timestamp\":\"2026-08-12T16:47:17.991Z\",\"ip_address\":\"127.0.0.1\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36\",\"endpoint\":\"/logout/73\",\"method\":\"PUT\"}', '2026-08-12 16:47:17'),
+(1269, 40, 'LOGIN', 'User ezira@itpark.et logged in successfully', '{\"username\":\"ezira@itpark.et\",\"user_id\":40,\"role_id\":1,\"employee_id\":109,\"employee_name\":\"Ezira\",\"department_id\":null,\"login_time\":\"2026-08-12T16:47:23.200Z\",\"timestamp\":\"2026-08-12T16:47:23.200Z\",\"ip_address\":\"127.0.0.1\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36\",\"endpoint\":\"/login\",\"method\":\"POST\"}', '2026-08-12 16:47:23'),
+(1270, 40, 'LOGIN', 'User ezira@itpark.et logged in successfully', '{\"username\":\"ezira@itpark.et\",\"user_id\":40,\"role_id\":1,\"employee_id\":109,\"employee_name\":\"Ezira\",\"department_id\":null,\"login_time\":\"2026-08-12T16:49:45.325Z\",\"timestamp\":\"2026-08-12T16:49:45.325Z\",\"ip_address\":\"127.0.0.1\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36 Edg/151.0.0.0\",\"endpoint\":\"/login\",\"method\":\"POST\"}', '2026-08-12 16:49:45'),
+(1271, 40, 'LOGOUT', 'User ezira@itpark.et logged out', '{\"user_id\":\"40\",\"username\":\"ezira@itpark.et\",\"employee_name\":\"Ezira\",\"logout_time\":\"2026-08-12T16:51:38.358Z\",\"timestamp\":\"2026-08-12T16:51:38.358Z\",\"ip_address\":\"127.0.0.1\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36\",\"endpoint\":\"/logout/40\",\"method\":\"PUT\"}', '2026-08-12 16:51:38'),
+(1272, 40, 'LOGIN', 'User ezira@itpark.et logged in successfully', '{\"username\":\"ezira@itpark.et\",\"user_id\":40,\"role_id\":1,\"employee_id\":109,\"employee_name\":\"Ezira\",\"department_id\":null,\"login_time\":\"2026-08-12T16:51:41.326Z\",\"timestamp\":\"2026-08-12T16:51:41.327Z\",\"ip_address\":\"127.0.0.1\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36\",\"endpoint\":\"/login\",\"method\":\"POST\"}', '2026-08-12 16:51:41'),
+(1273, 40, 'LOGOUT', 'User ezira@itpark.et logged out', '{\"user_id\":\"40\",\"username\":\"ezira@itpark.et\",\"employee_name\":\"Ezira\",\"logout_time\":\"2026-08-12T16:52:24.694Z\",\"timestamp\":\"2026-08-12T16:52:24.694Z\",\"ip_address\":\"127.0.0.1\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36 Edg/151.0.0.0\",\"endpoint\":\"/logout/40\",\"method\":\"PUT\"}', '2026-08-12 16:52:24'),
+(1274, 79, 'LOGIN', 'User milliongoraw@gmail.com logged in successfully', '{\"username\":\"milliongoraw@gmail.com\",\"user_id\":79,\"role_id\":6,\"employee_id\":152,\"employee_name\":\"Million  Goraw\",\"department_id\":null,\"login_time\":\"2026-08-12T16:52:31.199Z\",\"timestamp\":\"2026-08-12T16:52:31.199Z\",\"ip_address\":\"127.0.0.1\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36 Edg/151.0.0.0\",\"endpoint\":\"/login\",\"method\":\"POST\"}', '2026-08-12 16:52:31'),
+(1275, 79, 'LOGOUT', 'User Milliongoraw@gmail.com logged out', '{\"user_id\":\"79\",\"username\":\"Milliongoraw@gmail.com\",\"employee_name\":\"Million  Goraw\",\"logout_time\":\"2026-08-12T16:52:54.449Z\",\"timestamp\":\"2026-08-12T16:52:54.449Z\",\"ip_address\":\"127.0.0.1\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36 Edg/151.0.0.0\",\"endpoint\":\"/logout/79\",\"method\":\"PUT\"}', '2026-08-12 16:52:54'),
+(1276, 40, 'LOGIN', 'User ezira@itpark.et logged in successfully', '{\"username\":\"ezira@itpark.et\",\"user_id\":40,\"role_id\":1,\"employee_id\":109,\"employee_name\":\"Ezira\",\"department_id\":null,\"login_time\":\"2026-08-12T16:52:59.805Z\",\"timestamp\":\"2026-08-12T16:52:59.805Z\",\"ip_address\":\"127.0.0.1\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36 Edg/151.0.0.0\",\"endpoint\":\"/login\",\"method\":\"POST\"}', '2026-08-12 16:52:59'),
+(1277, 40, 'LOGOUT', 'User ezira@itpark.et logged out', '{\"user_id\":\"40\",\"username\":\"ezira@itpark.et\",\"employee_name\":\"Ezira\",\"logout_time\":\"2026-08-12T17:07:04.136Z\",\"timestamp\":\"2026-08-12T17:07:04.137Z\",\"ip_address\":\"127.0.0.1\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36 Edg/151.0.0.0\",\"endpoint\":\"/logout/40\",\"method\":\"PUT\"}', '2026-08-12 17:07:04'),
+(1278, 73, 'LOGIN', 'User tsehayu@itp.et logged in successfully', '{\"username\":\"tsehayu@itp.et\",\"user_id\":73,\"role_id\":5,\"employee_id\":146,\"employee_name\":\"tsuhayu directorate\",\"department_id\":11,\"login_time\":\"2026-08-12T17:07:10.488Z\",\"timestamp\":\"2026-08-12T17:07:10.488Z\",\"ip_address\":\"127.0.0.1\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36 Edg/151.0.0.0\",\"endpoint\":\"/login\",\"method\":\"POST\"}', '2026-08-12 17:07:10'),
+(1279, 40, 'LOGOUT', 'User ezira@itpark.et logged out', '{\"user_id\":\"40\",\"username\":\"ezira@itpark.et\",\"employee_name\":\"Ezira\",\"logout_time\":\"2026-08-12T17:27:03.223Z\",\"timestamp\":\"2026-08-12T17:27:03.223Z\",\"ip_address\":\"127.0.0.1\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36\",\"endpoint\":\"/logout/40\",\"method\":\"PUT\"}', '2026-08-12 17:27:03'),
+(1280, 79, 'LOGIN', 'User milliongoraw@gmail.com logged in successfully', '{\"username\":\"milliongoraw@gmail.com\",\"user_id\":79,\"role_id\":6,\"employee_id\":152,\"employee_name\":\"Million  Goraw\",\"department_id\":null,\"login_time\":\"2026-08-12T17:27:08.199Z\",\"timestamp\":\"2026-08-12T17:27:08.199Z\",\"ip_address\":\"127.0.0.1\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36\",\"endpoint\":\"/login\",\"method\":\"POST\"}', '2026-08-12 17:27:08'),
+(1281, 73, 'LOGOUT', 'User tsehayu@itp.et logged out', '{\"user_id\":\"73\",\"username\":\"tsehayu@itp.et\",\"employee_name\":\"tsuhayu directorate\",\"logout_time\":\"2026-08-12T17:28:18.950Z\",\"timestamp\":\"2026-08-12T17:28:18.950Z\",\"ip_address\":\"127.0.0.1\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36 Edg/151.0.0.0\",\"endpoint\":\"/logout/73\",\"method\":\"PUT\"}', '2026-08-12 17:28:18'),
+(1282, 79, 'LOGIN', 'User milliongoraw@gmail.com logged in successfully', '{\"username\":\"milliongoraw@gmail.com\",\"user_id\":79,\"role_id\":6,\"employee_id\":152,\"employee_name\":\"Million  Goraw\",\"department_id\":null,\"login_time\":\"2026-08-12T17:28:22.611Z\",\"timestamp\":\"2026-08-12T17:28:22.611Z\",\"ip_address\":\"127.0.0.1\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36 Edg/151.0.0.0\",\"endpoint\":\"/login\",\"method\":\"POST\"}', '2026-08-12 17:28:22'),
+(1283, 79, 'LOGOUT', 'User Milliongoraw@gmail.com logged out', '{\"user_id\":\"79\",\"username\":\"Milliongoraw@gmail.com\",\"employee_name\":\"Million  Goraw\",\"logout_time\":\"2026-08-12T17:30:02.322Z\",\"timestamp\":\"2026-08-12T17:30:02.322Z\",\"ip_address\":\"127.0.0.1\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36 Edg/151.0.0.0\",\"endpoint\":\"/logout/79\",\"method\":\"PUT\"}', '2026-08-12 17:30:02'),
+(1284, 73, 'LOGIN', 'User tsehayu@itp.et logged in successfully', '{\"username\":\"tsehayu@itp.et\",\"user_id\":73,\"role_id\":5,\"employee_id\":146,\"employee_name\":\"tsuhayu directorate\",\"department_id\":11,\"login_time\":\"2026-08-12T17:30:08.514Z\",\"timestamp\":\"2026-08-12T17:30:08.514Z\",\"ip_address\":\"127.0.0.1\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36 Edg/151.0.0.0\",\"endpoint\":\"/login\",\"method\":\"POST\"}', '2026-08-12 17:30:08'),
+(1285, NULL, 'LOGIN_FAILED', 'Login failed: User not found - ezira@itpark.et	', '{\"username\":\"ezira@itpark.et\\t\",\"reason\":\"user_not_found\",\"timestamp\":\"2026-08-14T13:57:20.310Z\",\"ip_address\":\"127.0.0.1\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36\",\"endpoint\":\"/login\",\"method\":\"POST\"}', '2026-08-14 13:57:20'),
+(1286, 40, 'LOGIN', 'User ezira@itpark.et logged in successfully', '{\"username\":\"ezira@itpark.et\",\"user_id\":40,\"role_id\":1,\"employee_id\":109,\"employee_name\":\"Ezira\",\"department_id\":null,\"login_time\":\"2026-08-14T13:57:26.354Z\",\"timestamp\":\"2026-08-14T13:57:26.354Z\",\"ip_address\":\"127.0.0.1\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36\",\"endpoint\":\"/login\",\"method\":\"POST\"}', '2026-08-14 13:57:26'),
+(1287, 40, 'LOGOUT', 'User ezira@itpark.et logged out', '{\"user_id\":\"40\",\"username\":\"ezira@itpark.et\",\"employee_name\":\"Ezira\",\"logout_time\":\"2026-08-15T07:19:37.122Z\",\"timestamp\":\"2026-08-15T07:19:37.123Z\",\"ip_address\":\"127.0.0.1\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36\",\"endpoint\":\"/logout/40\",\"method\":\"PUT\"}', '2026-08-15 07:19:37'),
+(1288, 79, 'LOGOUT', 'User Milliongoraw@gmail.com logged out', '{\"user_id\":\"79\",\"username\":\"Milliongoraw@gmail.com\",\"employee_name\":\"Million  Goraw\",\"logout_time\":\"2026-08-15T07:24:14.230Z\",\"timestamp\":\"2026-08-15T07:24:14.231Z\",\"ip_address\":\"127.0.0.1\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36\",\"endpoint\":\"/logout/79\",\"method\":\"PUT\"}', '2026-08-15 07:24:14'),
+(1289, 73, 'LOGIN', 'User tsehayu@itp.et logged in successfully', '{\"username\":\"tsehayu@itp.et\",\"user_id\":73,\"role_id\":5,\"employee_id\":146,\"employee_name\":\"tsuhayu directorate\",\"department_id\":11,\"login_time\":\"2026-08-15T07:24:20.180Z\",\"timestamp\":\"2026-08-15T07:24:20.180Z\",\"ip_address\":\"127.0.0.1\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36\",\"endpoint\":\"/login\",\"method\":\"POST\"}', '2026-08-15 07:24:20'),
+(1290, 40, 'LOGIN', 'User ezira@itpark.et logged in successfully', '{\"username\":\"ezira@itpark.et\",\"user_id\":40,\"role_id\":1,\"employee_id\":109,\"employee_name\":\"Ezira\",\"department_id\":null,\"login_time\":\"2026-08-15T07:30:46.149Z\",\"timestamp\":\"2026-08-15T07:30:46.150Z\",\"ip_address\":\"127.0.0.1\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36\",\"endpoint\":\"/login\",\"method\":\"POST\"}', '2026-08-15 07:30:46'),
+(1291, 73, 'LOGOUT', 'User tsehayu@itp.et logged out', '{\"user_id\":\"73\",\"username\":\"tsehayu@itp.et\",\"employee_name\":\"tsuhayu directorate\",\"logout_time\":\"2026-08-15T10:32:49.775Z\",\"timestamp\":\"2026-08-15T10:32:49.775Z\",\"ip_address\":\"127.0.0.1\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36\",\"endpoint\":\"/logout/73\",\"method\":\"PUT\"}', '2026-08-15 10:32:49'),
+(1292, 73, 'LOGIN', 'User tsehayu@itp.et logged in successfully', '{\"username\":\"tsehayu@itp.et\",\"user_id\":73,\"role_id\":5,\"employee_id\":146,\"employee_name\":\"tsuhayu directorate\",\"department_id\":11,\"login_time\":\"2026-08-15T10:32:52.173Z\",\"timestamp\":\"2026-08-15T10:32:52.173Z\",\"ip_address\":\"127.0.0.1\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36\",\"endpoint\":\"/login\",\"method\":\"POST\"}', '2026-08-15 10:32:52'),
+(1293, 73, 'LOGOUT', 'User tsehayu@itp.et logged out', '{\"user_id\":\"73\",\"username\":\"tsehayu@itp.et\",\"employee_name\":\"tsuhayu directorate\",\"logout_time\":\"2026-08-15T10:34:32.383Z\",\"timestamp\":\"2026-08-15T10:34:32.383Z\",\"ip_address\":\"127.0.0.1\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36\",\"endpoint\":\"/logout/73\",\"method\":\"PUT\"}', '2026-08-15 10:34:32'),
+(1294, 73, 'LOGIN', 'User tsehayu@itp.et logged in successfully', '{\"username\":\"tsehayu@itp.et\",\"user_id\":73,\"role_id\":5,\"employee_id\":146,\"employee_name\":\"tsuhayu directorate\",\"department_id\":11,\"login_time\":\"2026-08-15T10:34:34.197Z\",\"timestamp\":\"2026-08-15T10:34:34.197Z\",\"ip_address\":\"127.0.0.1\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36\",\"endpoint\":\"/login\",\"method\":\"POST\"}', '2026-08-15 10:34:34'),
+(1295, 73, 'LOGOUT', 'User tsehayu@itp.et logged out', '{\"user_id\":\"73\",\"username\":\"tsehayu@itp.et\",\"employee_name\":\"tsuhayu directorate\",\"logout_time\":\"2026-08-15T13:02:09.681Z\",\"timestamp\":\"2026-08-15T13:02:09.681Z\",\"ip_address\":\"127.0.0.1\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36\",\"endpoint\":\"/logout/73\",\"method\":\"PUT\"}', '2026-08-15 13:02:09'),
+(1296, 73, 'LOGIN', 'User tsehayu@itp.et logged in successfully', '{\"username\":\"tsehayu@itp.et\",\"user_id\":73,\"role_id\":5,\"employee_id\":146,\"employee_name\":\"tsuhayu directorate\",\"department_id\":11,\"login_time\":\"2026-08-15T13:03:23.423Z\",\"timestamp\":\"2026-08-15T13:03:23.423Z\",\"ip_address\":\"127.0.0.1\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36\",\"endpoint\":\"/login\",\"method\":\"POST\"}', '2026-08-15 13:03:23'),
+(1297, 40, 'LOGOUT', 'User ezira@itpark.et logged out', '{\"user_id\":\"40\",\"username\":\"ezira@itpark.et\",\"employee_name\":\"Ezira\",\"logout_time\":\"2026-08-15T13:12:43.048Z\",\"timestamp\":\"2026-08-15T13:12:43.048Z\",\"ip_address\":\"127.0.0.1\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36\",\"endpoint\":\"/logout/40\",\"method\":\"PUT\"}', '2026-08-15 13:12:43'),
+(1298, 40, 'LOGIN', 'User ezira@itpark.et logged in successfully', '{\"username\":\"ezira@itpark.et\",\"user_id\":40,\"role_id\":1,\"employee_id\":109,\"employee_name\":\"Ezira\",\"department_id\":null,\"login_time\":\"2026-08-15T13:12:51.893Z\",\"timestamp\":\"2026-08-15T13:12:51.893Z\",\"ip_address\":\"127.0.0.1\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36\",\"endpoint\":\"/login\",\"method\":\"POST\"}', '2026-08-15 13:12:51'),
+(1299, 73, 'LOGOUT', 'User tsehayu@itp.et logged out', '{\"user_id\":\"73\",\"username\":\"tsehayu@itp.et\",\"employee_name\":\"tsuhayu directorate\",\"logout_time\":\"2026-08-15T13:12:57.073Z\",\"timestamp\":\"2026-08-15T13:12:57.073Z\",\"ip_address\":\"127.0.0.1\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36\",\"endpoint\":\"/logout/73\",\"method\":\"PUT\"}', '2026-08-15 13:12:57'),
+(1300, 79, 'LOGIN', 'User milliongoraw@gmail.com logged in successfully', '{\"username\":\"milliongoraw@gmail.com\",\"user_id\":79,\"role_id\":6,\"employee_id\":152,\"employee_name\":\"Million  Goraw\",\"department_id\":null,\"login_time\":\"2026-08-15T13:13:02.068Z\",\"timestamp\":\"2026-08-15T13:13:02.068Z\",\"ip_address\":\"127.0.0.1\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36\",\"endpoint\":\"/login\",\"method\":\"POST\"}', '2026-08-15 13:13:02'),
+(1301, 40, 'LOGOUT', 'User ezira@itpark.et logged out', '{\"user_id\":\"40\",\"username\":\"ezira@itpark.et\",\"employee_name\":\"Ezira\",\"logout_time\":\"2026-08-15T14:00:20.789Z\",\"timestamp\":\"2026-08-15T14:00:20.790Z\",\"ip_address\":\"127.0.0.1\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36\",\"endpoint\":\"/logout/40\",\"method\":\"PUT\"}', '2026-08-15 14:00:20'),
+(1302, 40, 'LOGIN', 'User ezira@itpark.et logged in successfully', '{\"username\":\"ezira@itpark.et\",\"user_id\":40,\"role_id\":1,\"employee_id\":109,\"employee_name\":\"Ezira\",\"department_id\":null,\"login_time\":\"2026-08-15T14:00:39.588Z\",\"timestamp\":\"2026-08-15T14:00:39.588Z\",\"ip_address\":\"127.0.0.1\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36\",\"endpoint\":\"/login\",\"method\":\"POST\"}', '2026-08-15 14:00:39'),
+(1303, 40, 'LOGIN', 'User ezira@itpark.et logged in successfully', '{\"username\":\"ezira@itpark.et\",\"user_id\":40,\"role_id\":1,\"employee_id\":109,\"employee_name\":\"Ezira\",\"department_id\":null,\"login_time\":\"2026-08-15T15:03:24.710Z\",\"timestamp\":\"2026-08-15T15:03:24.711Z\",\"ip_address\":\"127.0.0.1\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36\",\"endpoint\":\"/login\",\"method\":\"POST\"}', '2026-08-15 15:03:24'),
+(1304, 79, 'LOGOUT', 'User Milliongoraw@gmail.com logged out', '{\"user_id\":\"79\",\"username\":\"Milliongoraw@gmail.com\",\"employee_name\":\"Million  Goraw\",\"logout_time\":\"2026-08-15T17:15:08.417Z\",\"timestamp\":\"2026-08-15T17:15:08.417Z\",\"ip_address\":\"127.0.0.1\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36\",\"endpoint\":\"/logout/79\",\"method\":\"PUT\"}', '2026-08-15 17:15:08'),
+(1305, NULL, 'LOGIN_FAILED', 'Login failed: User not found - ts', '{\"username\":\"ts\",\"reason\":\"user_not_found\",\"timestamp\":\"2026-08-15T17:15:19.177Z\",\"ip_address\":\"127.0.0.1\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36\",\"endpoint\":\"/login\",\"method\":\"POST\"}', '2026-08-15 17:15:19'),
+(1306, 73, 'LOGIN', 'User tsehayu@itp.et logged in successfully', '{\"username\":\"tsehayu@itp.et\",\"user_id\":73,\"role_id\":5,\"employee_id\":146,\"employee_name\":\"tsuhayu directorate\",\"department_id\":11,\"login_time\":\"2026-08-15T17:15:23.951Z\",\"timestamp\":\"2026-08-15T17:15:23.951Z\",\"ip_address\":\"127.0.0.1\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36\",\"endpoint\":\"/login\",\"method\":\"POST\"}', '2026-08-15 17:15:23'),
+(1307, 73, 'LOGOUT', 'User tsehayu@itp.et logged out', '{\"user_id\":\"73\",\"username\":\"tsehayu@itp.et\",\"employee_name\":\"tsuhayu directorate\",\"logout_time\":\"2026-08-15T17:34:22.953Z\",\"timestamp\":\"2026-08-15T17:34:22.953Z\",\"ip_address\":\"127.0.0.1\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36\",\"endpoint\":\"/logout/73\",\"method\":\"PUT\"}', '2026-08-15 17:34:22'),
+(1308, 79, 'LOGIN', 'User milliongoraw@gmail.com logged in successfully', '{\"username\":\"milliongoraw@gmail.com\",\"user_id\":79,\"role_id\":6,\"employee_id\":152,\"employee_name\":\"Million  Goraw\",\"department_id\":null,\"login_time\":\"2026-08-15T17:34:31.642Z\",\"timestamp\":\"2026-08-15T17:34:31.642Z\",\"ip_address\":\"127.0.0.1\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36\",\"endpoint\":\"/login\",\"method\":\"POST\"}', '2026-08-15 17:34:31'),
+(1309, 79, 'LOGOUT', 'User Milliongoraw@gmail.com logged out', '{\"user_id\":\"79\",\"username\":\"Milliongoraw@gmail.com\",\"employee_name\":\"Million  Goraw\",\"logout_time\":\"2026-08-15T17:35:24.318Z\",\"timestamp\":\"2026-08-15T17:35:24.318Z\",\"ip_address\":\"127.0.0.1\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36\",\"endpoint\":\"/logout/79\",\"method\":\"PUT\"}', '2026-08-15 17:35:24'),
+(1310, 79, 'LOGIN', 'User milliongoraw@gmail.com logged in successfully', '{\"username\":\"milliongoraw@gmail.com\",\"user_id\":79,\"role_id\":6,\"employee_id\":152,\"employee_name\":\"Million  Goraw\",\"department_id\":null,\"login_time\":\"2026-08-16T06:15:22.136Z\",\"timestamp\":\"2026-08-16T06:15:22.137Z\",\"ip_address\":\"127.0.0.1\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36\",\"endpoint\":\"/login\",\"method\":\"POST\"}', '2026-08-16 06:15:22'),
+(1311, 79, 'LOGOUT', 'User Milliongoraw@gmail.com logged out', '{\"user_id\":\"79\",\"username\":\"Milliongoraw@gmail.com\",\"employee_name\":\"Million  Goraw\",\"logout_time\":\"2026-08-16T06:15:38.571Z\",\"timestamp\":\"2026-08-16T06:15:38.571Z\",\"ip_address\":\"127.0.0.1\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36\",\"endpoint\":\"/logout/79\",\"method\":\"PUT\"}', '2026-08-16 06:15:38'),
+(1312, 73, 'LOGIN', 'User tsehayu@itp.et logged in successfully', '{\"username\":\"tsehayu@itp.et\",\"user_id\":73,\"role_id\":5,\"employee_id\":146,\"employee_name\":\"tsuhayu directorate\",\"department_id\":11,\"login_time\":\"2026-08-16T06:15:43.944Z\",\"timestamp\":\"2026-08-16T06:15:43.944Z\",\"ip_address\":\"127.0.0.1\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36\",\"endpoint\":\"/login\",\"method\":\"POST\"}', '2026-08-16 06:15:43'),
+(1313, 73, 'LOGOUT', 'User tsehayu@itp.et logged out', '{\"user_id\":\"73\",\"username\":\"tsehayu@itp.et\",\"employee_name\":\"tsuhayu directorate\",\"logout_time\":\"2026-08-16T18:54:46.802Z\",\"timestamp\":\"2026-08-16T18:54:46.803Z\",\"ip_address\":\"127.0.0.1\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36\",\"endpoint\":\"/logout/73\",\"method\":\"PUT\"}', '2026-08-16 18:54:46'),
+(1314, 79, 'LOGIN', 'User milliongoraw@gmail.com logged in successfully', '{\"username\":\"milliongoraw@gmail.com\",\"user_id\":79,\"role_id\":6,\"employee_id\":152,\"employee_name\":\"Million  Goraw\",\"department_id\":null,\"login_time\":\"2026-08-16T18:54:53.252Z\",\"timestamp\":\"2026-08-16T18:54:53.252Z\",\"ip_address\":\"127.0.0.1\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36\",\"endpoint\":\"/login\",\"method\":\"POST\"}', '2026-08-16 18:54:53'),
+(1315, 79, 'LOGOUT', 'User Milliongoraw@gmail.com logged out', '{\"user_id\":\"79\",\"username\":\"Milliongoraw@gmail.com\",\"employee_name\":\"Million  Goraw\",\"logout_time\":\"2026-08-16T19:01:10.535Z\",\"timestamp\":\"2026-08-16T19:01:10.536Z\",\"ip_address\":\"127.0.0.1\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36\",\"endpoint\":\"/logout/79\",\"method\":\"PUT\"}', '2026-08-16 19:01:10'),
+(1316, 40, 'LOGIN', 'User ezira@itpark.et logged in successfully', '{\"username\":\"ezira@itpark.et\",\"user_id\":40,\"role_id\":1,\"employee_id\":109,\"employee_name\":\"Ezira\",\"department_id\":null,\"login_time\":\"2026-08-16T19:01:19.255Z\",\"timestamp\":\"2026-08-16T19:01:19.255Z\",\"ip_address\":\"127.0.0.1\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36\",\"endpoint\":\"/login\",\"method\":\"POST\"}', '2026-08-16 19:01:19'),
+(1317, 40, 'LOGOUT', 'User ezira@itpark.et logged out', '{\"user_id\":\"40\",\"username\":\"ezira@itpark.et\",\"employee_name\":\"Ezira\",\"logout_time\":\"2026-08-17T06:16:59.446Z\",\"timestamp\":\"2026-08-17T06:16:59.446Z\",\"ip_address\":\"127.0.0.1\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36\",\"endpoint\":\"/logout/40\",\"method\":\"PUT\"}', '2026-08-17 06:16:59'),
+(1318, 40, 'LOGIN', 'User ezira@itpark.et logged in successfully', '{\"username\":\"ezira@itpark.et\",\"user_id\":40,\"role_id\":1,\"employee_id\":109,\"employee_name\":\"Ezira\",\"department_id\":null,\"login_time\":\"2026-08-17T06:17:07.267Z\",\"timestamp\":\"2026-08-17T06:17:07.267Z\",\"ip_address\":\"127.0.0.1\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36\",\"endpoint\":\"/login\",\"method\":\"POST\"}', '2026-08-17 06:17:07'),
+(1319, 40, 'LOGOUT', 'User ezira@itpark.et logged out', '{\"user_id\":\"40\",\"username\":\"ezira@itpark.et\",\"employee_name\":\"Ezira\",\"logout_time\":\"2026-08-17T06:17:11.440Z\",\"timestamp\":\"2026-08-17T06:17:11.440Z\",\"ip_address\":\"127.0.0.1\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36\",\"endpoint\":\"/logout/40\",\"method\":\"PUT\"}', '2026-08-17 06:17:11'),
+(1320, 79, 'LOGIN', 'User milliongoraw@gmail.com logged in successfully', '{\"username\":\"milliongoraw@gmail.com\",\"user_id\":79,\"role_id\":6,\"employee_id\":152,\"employee_name\":\"Million  Goraw\",\"department_id\":null,\"login_time\":\"2026-08-17T06:17:15.309Z\",\"timestamp\":\"2026-08-17T06:17:15.309Z\",\"ip_address\":\"127.0.0.1\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36\",\"endpoint\":\"/login\",\"method\":\"POST\"}', '2026-08-17 06:17:15'),
+(1321, 79, 'LOGOUT', 'User Milliongoraw@gmail.com logged out', '{\"user_id\":\"79\",\"username\":\"Milliongoraw@gmail.com\",\"employee_name\":\"Million  Goraw\",\"logout_time\":\"2026-08-17T06:47:13.691Z\",\"timestamp\":\"2026-08-17T06:47:13.692Z\",\"ip_address\":\"127.0.0.1\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36\",\"endpoint\":\"/logout/79\",\"method\":\"PUT\"}', '2026-08-17 06:47:13'),
+(1322, 73, 'LOGIN', 'User tsehayu@itp.et logged in successfully', '{\"username\":\"tsehayu@itp.et\",\"user_id\":73,\"role_id\":5,\"employee_id\":146,\"employee_name\":\"tsuhayu directorate\",\"department_id\":11,\"login_time\":\"2026-08-17T06:47:19.745Z\",\"timestamp\":\"2026-08-17T06:47:19.745Z\",\"ip_address\":\"127.0.0.1\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36\",\"endpoint\":\"/login\",\"method\":\"POST\"}', '2026-08-17 06:47:19'),
+(1323, 73, 'LOGOUT', 'User tsehayu@itp.et logged out', '{\"user_id\":\"73\",\"username\":\"tsehayu@itp.et\",\"employee_name\":\"tsuhayu directorate\",\"logout_time\":\"2026-08-17T06:52:55.511Z\",\"timestamp\":\"2026-08-17T06:52:55.511Z\",\"ip_address\":\"127.0.0.1\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36\",\"endpoint\":\"/logout/73\",\"method\":\"PUT\"}', '2026-08-17 06:52:55'),
+(1324, 73, 'LOGIN', 'User tsehayu@itp.et logged in successfully', '{\"username\":\"tsehayu@itp.et\",\"user_id\":73,\"role_id\":5,\"employee_id\":146,\"employee_name\":\"tsuhayu directorate\",\"department_id\":11,\"login_time\":\"2026-08-17T06:52:57.645Z\",\"timestamp\":\"2026-08-17T06:52:57.645Z\",\"ip_address\":\"127.0.0.1\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36\",\"endpoint\":\"/login\",\"method\":\"POST\"}', '2026-08-17 06:52:57'),
+(1325, 73, 'LOGOUT', 'User tsehayu@itp.et logged out', '{\"user_id\":\"73\",\"username\":\"tsehayu@itp.et\",\"employee_name\":\"tsuhayu directorate\",\"logout_time\":\"2026-08-17T08:14:15.129Z\",\"timestamp\":\"2026-08-17T08:14:15.129Z\",\"ip_address\":\"127.0.0.1\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36\",\"endpoint\":\"/logout/73\",\"method\":\"PUT\"}', '2026-08-17 08:14:15'),
+(1326, 73, 'LOGIN', 'User tsehayu@itp.et logged in successfully', '{\"username\":\"tsehayu@itp.et\",\"user_id\":73,\"role_id\":5,\"employee_id\":146,\"employee_name\":\"tsuhayu directorate\",\"department_id\":11,\"login_time\":\"2026-08-17T08:14:16.827Z\",\"timestamp\":\"2026-08-17T08:14:16.827Z\",\"ip_address\":\"127.0.0.1\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36\",\"endpoint\":\"/login\",\"method\":\"POST\"}', '2026-08-17 08:14:16'),
+(1327, 73, 'LOGOUT', 'User tsehayu@itp.et logged out', '{\"user_id\":\"73\",\"username\":\"tsehayu@itp.et\",\"employee_name\":\"tsuhayu directorate\",\"logout_time\":\"2026-08-17T08:14:47.142Z\",\"timestamp\":\"2026-08-17T08:14:47.142Z\",\"ip_address\":\"127.0.0.1\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36\",\"endpoint\":\"/logout/73\",\"method\":\"PUT\"}', '2026-08-17 08:14:47'),
+(1328, 73, 'LOGIN', 'User tsehayu@itp.et logged in successfully', '{\"username\":\"tsehayu@itp.et\",\"user_id\":73,\"role_id\":5,\"employee_id\":146,\"employee_name\":\"tsuhayu directorate\",\"department_id\":11,\"login_time\":\"2026-08-17T08:14:48.102Z\",\"timestamp\":\"2026-08-17T08:14:48.102Z\",\"ip_address\":\"127.0.0.1\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36\",\"endpoint\":\"/login\",\"method\":\"POST\"}', '2026-08-17 08:14:48'),
+(1329, 73, 'LOGOUT', 'User tsehayu@itp.et logged out', '{\"user_id\":\"73\",\"username\":\"tsehayu@itp.et\",\"employee_name\":\"tsuhayu directorate\",\"logout_time\":\"2026-08-17T08:47:33.741Z\",\"timestamp\":\"2026-08-17T08:47:33.742Z\",\"ip_address\":\"127.0.0.1\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36\",\"endpoint\":\"/logout/73\",\"method\":\"PUT\"}', '2026-08-17 08:47:33'),
+(1330, 73, 'LOGIN', 'User tsehayu@itp.et logged in successfully', '{\"username\":\"tsehayu@itp.et\",\"user_id\":73,\"role_id\":5,\"employee_id\":146,\"employee_name\":\"tsuhayu directorate\",\"department_id\":11,\"login_time\":\"2026-08-17T08:47:35.946Z\",\"timestamp\":\"2026-08-17T08:47:35.946Z\",\"ip_address\":\"127.0.0.1\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36\",\"endpoint\":\"/login\",\"method\":\"POST\"}', '2026-08-17 08:47:35'),
+(1331, 73, 'LOGOUT', 'User tsehayu@itp.et logged out', '{\"user_id\":\"73\",\"username\":\"tsehayu@itp.et\",\"employee_name\":\"tsuhayu directorate\",\"logout_time\":\"2026-08-17T08:49:03.774Z\",\"timestamp\":\"2026-08-17T08:49:03.774Z\",\"ip_address\":\"127.0.0.1\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36\",\"endpoint\":\"/logout/73\",\"method\":\"PUT\"}', '2026-08-17 08:49:03'),
+(1332, 73, 'LOGIN', 'User tsehayu@itp.et logged in successfully', '{\"username\":\"tsehayu@itp.et\",\"user_id\":73,\"role_id\":5,\"employee_id\":146,\"employee_name\":\"tsuhayu directorate\",\"department_id\":11,\"login_time\":\"2026-08-17T08:49:06.747Z\",\"timestamp\":\"2026-08-17T08:49:06.747Z\",\"ip_address\":\"127.0.0.1\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36\",\"endpoint\":\"/login\",\"method\":\"POST\"}', '2026-08-17 08:49:06'),
+(1333, 40, 'LOGOUT', 'User ezira@itpark.et logged out', '{\"user_id\":\"40\",\"username\":\"ezira@itpark.et\",\"employee_name\":\"Ezira\",\"logout_time\":\"2026-08-17T08:52:04.854Z\",\"timestamp\":\"2026-08-17T08:52:04.854Z\",\"ip_address\":\"127.0.0.1\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36\",\"endpoint\":\"/logout/40\",\"method\":\"PUT\"}', '2026-08-17 08:52:04'),
+(1334, 40, 'LOGIN', 'User ezira@itpark.et logged in successfully', '{\"username\":\"ezira@itpark.et\",\"user_id\":40,\"role_id\":1,\"employee_id\":109,\"employee_name\":\"Ezira\",\"department_id\":null,\"login_time\":\"2026-08-17T08:52:07.564Z\",\"timestamp\":\"2026-08-17T08:52:07.564Z\",\"ip_address\":\"127.0.0.1\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36\",\"endpoint\":\"/login\",\"method\":\"POST\"}', '2026-08-17 08:52:07'),
+(1335, 73, 'LOGOUT', 'User tsehayu@itp.et logged out', '{\"user_id\":\"73\",\"username\":\"tsehayu@itp.et\",\"employee_name\":\"tsuhayu directorate\",\"logout_time\":\"2026-08-17T08:52:56.740Z\",\"timestamp\":\"2026-08-17T08:52:56.740Z\",\"ip_address\":\"127.0.0.1\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36\",\"endpoint\":\"/logout/73\",\"method\":\"PUT\"}', '2026-08-17 08:52:56'),
+(1336, 73, 'LOGIN', 'User tsehayu@itp.et logged in successfully', '{\"username\":\"tsehayu@itp.et\",\"user_id\":73,\"role_id\":5,\"employee_id\":146,\"employee_name\":\"tsuhayu directorate\",\"department_id\":11,\"login_time\":\"2026-08-17T08:53:01.205Z\",\"timestamp\":\"2026-08-17T08:53:01.205Z\",\"ip_address\":\"127.0.0.1\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36\",\"endpoint\":\"/login\",\"method\":\"POST\"}', '2026-08-17 08:53:01'),
+(1337, 73, 'LOGOUT', 'User tsehayu@itp.et logged out', '{\"user_id\":\"73\",\"username\":\"tsehayu@itp.et\",\"employee_name\":\"tsuhayu directorate\",\"logout_time\":\"2026-08-17T08:55:15.235Z\",\"timestamp\":\"2026-08-17T08:55:15.235Z\",\"ip_address\":\"127.0.0.1\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36\",\"endpoint\":\"/logout/73\",\"method\":\"PUT\"}', '2026-08-17 08:55:15'),
+(1338, 73, 'LOGIN', 'User tsehayu@itp.et logged in successfully', '{\"username\":\"tsehayu@itp.et\",\"user_id\":73,\"role_id\":5,\"employee_id\":146,\"employee_name\":\"tsuhayu directorate\",\"department_id\":11,\"login_time\":\"2026-08-17T08:55:17.206Z\",\"timestamp\":\"2026-08-17T08:55:17.207Z\",\"ip_address\":\"127.0.0.1\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36\",\"endpoint\":\"/login\",\"method\":\"POST\"}', '2026-08-17 08:55:17'),
+(1339, 40, 'LOGOUT', 'User ezira@itpark.et logged out', '{\"user_id\":\"40\",\"username\":\"ezira@itpark.et\",\"employee_name\":\"Ezira\",\"logout_time\":\"2026-08-17T11:55:16.853Z\",\"timestamp\":\"2026-08-17T11:55:16.854Z\",\"ip_address\":\"127.0.0.1\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36\",\"endpoint\":\"/logout/40\",\"method\":\"PUT\"}', '2026-08-17 11:55:16'),
+(1340, 40, 'LOGIN', 'User ezira@itpark.et logged in successfully', '{\"username\":\"ezira@itpark.et\",\"user_id\":40,\"role_id\":1,\"employee_id\":109,\"employee_name\":\"Ezira\",\"department_id\":null,\"login_time\":\"2026-08-17T11:55:43.199Z\",\"timestamp\":\"2026-08-17T11:55:43.200Z\",\"ip_address\":\"127.0.0.1\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36\",\"endpoint\":\"/login\",\"method\":\"POST\"}', '2026-08-17 11:55:43'),
+(1341, 73, 'LOGOUT', 'User tsehayu@itp.et logged out', '{\"user_id\":\"73\",\"username\":\"tsehayu@itp.et\",\"employee_name\":\"tsuhayu directorate\",\"logout_time\":\"2026-08-17T12:55:17.811Z\",\"timestamp\":\"2026-08-17T12:55:17.812Z\",\"ip_address\":\"127.0.0.1\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36\",\"endpoint\":\"/logout/73\",\"method\":\"PUT\"}', '2026-08-17 12:55:17'),
+(1342, 73, 'LOGIN', 'User tsehayu@itp.et logged in successfully', '{\"username\":\"tsehayu@itp.et\",\"user_id\":73,\"role_id\":5,\"employee_id\":146,\"employee_name\":\"tsuhayu directorate\",\"department_id\":11,\"login_time\":\"2026-08-17T12:55:19.380Z\",\"timestamp\":\"2026-08-17T12:55:19.380Z\",\"ip_address\":\"127.0.0.1\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36\",\"endpoint\":\"/login\",\"method\":\"POST\"}', '2026-08-17 12:55:19'),
+(1343, 73, 'LOGOUT', 'User tsehayu@itp.et logged out', '{\"user_id\":\"73\",\"username\":\"tsehayu@itp.et\",\"employee_name\":\"tsuhayu directorate\",\"logout_time\":\"2026-08-17T13:24:46.059Z\",\"timestamp\":\"2026-08-17T13:24:46.060Z\",\"ip_address\":\"127.0.0.1\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36\",\"endpoint\":\"/logout/73\",\"method\":\"PUT\"}', '2026-08-17 13:24:46'),
+(1344, 73, 'LOGIN', 'User tsehayu@itp.et logged in successfully', '{\"username\":\"tsehayu@itp.et\",\"user_id\":73,\"role_id\":5,\"employee_id\":146,\"employee_name\":\"tsuhayu directorate\",\"department_id\":11,\"login_time\":\"2026-08-17T13:24:48.128Z\",\"timestamp\":\"2026-08-17T13:24:48.128Z\",\"ip_address\":\"127.0.0.1\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36\",\"endpoint\":\"/login\",\"method\":\"POST\"}', '2026-08-17 13:24:48'),
+(1345, 40, 'LOGOUT', 'User ezira@itpark.et logged out', '{\"user_id\":\"40\",\"username\":\"ezira@itpark.et\",\"employee_name\":\"Ezira\",\"logout_time\":\"2026-08-17T15:44:45.849Z\",\"timestamp\":\"2026-08-17T15:44:45.849Z\",\"ip_address\":\"127.0.0.1\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36\",\"endpoint\":\"/logout/40\",\"method\":\"PUT\"}', '2026-08-17 15:44:45'),
+(1346, 40, 'LOGIN', 'User ezira@itpark.et logged in successfully', '{\"username\":\"ezira@itpark.et\",\"user_id\":40,\"role_id\":1,\"employee_id\":109,\"employee_name\":\"Ezira\",\"department_id\":null,\"login_time\":\"2026-08-17T15:44:50.414Z\",\"timestamp\":\"2026-08-17T15:44:50.414Z\",\"ip_address\":\"127.0.0.1\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36\",\"endpoint\":\"/login\",\"method\":\"POST\"}', '2026-08-17 15:44:50'),
+(1347, 40, 'LOGOUT', 'User ezira@itpark.et logged out', '{\"user_id\":\"40\",\"username\":\"ezira@itpark.et\",\"employee_name\":\"Ezira\",\"logout_time\":\"2026-08-17T15:45:00.914Z\",\"timestamp\":\"2026-08-17T15:45:00.914Z\",\"ip_address\":\"127.0.0.1\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36\",\"endpoint\":\"/logout/40\",\"method\":\"PUT\"}', '2026-08-17 15:45:00'),
+(1348, 40, 'LOGIN', 'User ezira@itpark.et logged in successfully', '{\"username\":\"ezira@itpark.et\",\"user_id\":40,\"role_id\":1,\"employee_id\":109,\"employee_name\":\"Ezira\",\"department_id\":null,\"login_time\":\"2026-08-17T15:45:02.630Z\",\"timestamp\":\"2026-08-17T15:45:02.630Z\",\"ip_address\":\"127.0.0.1\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36\",\"endpoint\":\"/login\",\"method\":\"POST\"}', '2026-08-17 15:45:02'),
+(1349, 73, 'LOGOUT', 'User tsehayu@itp.et logged out', '{\"user_id\":\"73\",\"username\":\"tsehayu@itp.et\",\"employee_name\":\"tsuhayu directorate\",\"logout_time\":\"2026-08-17T17:30:11.738Z\",\"timestamp\":\"2026-08-17T17:30:11.738Z\",\"ip_address\":\"127.0.0.1\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36\",\"endpoint\":\"/logout/73\",\"method\":\"PUT\"}', '2026-08-17 17:30:11'),
+(1350, 73, 'LOGIN', 'User tsehayu@itp.et logged in successfully', '{\"username\":\"tsehayu@itp.et\",\"user_id\":73,\"role_id\":5,\"employee_id\":146,\"employee_name\":\"tsuhayu directorate\",\"department_id\":11,\"login_time\":\"2026-08-17T17:30:15.669Z\",\"timestamp\":\"2026-08-17T17:30:15.669Z\",\"ip_address\":\"127.0.0.1\",\"user_agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36\",\"endpoint\":\"/login\",\"method\":\"POST\"}', '2026-08-17 17:30:15');
 
 -- --------------------------------------------------------
 
@@ -322,7 +1244,7 @@ CREATE TABLE `chat_participants` (
 INSERT INTO `chat_participants` (`participant_id`, `conversation_id`, `user_id`, `joined_at`, `last_read_at`, `is_admin`, `is_muted`) VALUES
 (1, 1, 40, '2025-11-27 12:01:24', '2025-11-27 14:01:50', 1, 0),
 (2, 2, 25, '2025-11-27 12:02:29', '2025-11-28 13:28:40', 1, 0),
-(3, 3, 40, '2025-11-27 12:10:25', '2025-11-28 09:33:14', 1, 0),
+(3, 3, 40, '2025-11-27 12:10:25', '2026-04-07 16:58:22', 1, 0),
 (4, 4, 25, '2025-11-27 12:18:05', '2025-11-27 12:36:20', 1, 0),
 (5, 5, 25, '2025-11-27 12:32:21', '2025-11-27 12:37:35', 1, 0),
 (6, 5, 48, '2025-11-27 12:32:21', NULL, 0, 0),
@@ -331,7 +1253,7 @@ INSERT INTO `chat_participants` (`participant_id`, `conversation_id`, `user_id`,
 (9, 7, 25, '2025-11-27 12:37:52', '2025-11-28 08:31:13', 1, 0),
 (10, 7, 55, '2025-11-27 12:37:52', NULL, 0, 0),
 (11, 8, 25, '2025-11-27 12:39:14', '2026-03-11 06:01:25', 1, 0),
-(12, 8, 40, '2025-11-27 12:39:14', '2026-03-06 08:34:55', 0, 0),
+(12, 8, 40, '2025-11-27 12:39:14', '2026-03-24 09:32:35', 0, 0),
 (14, 9, 37, '2025-11-27 12:47:03', NULL, 0, 0),
 (15, 3, 25, '2025-11-27 12:50:37', '2025-11-28 13:38:21', 1, 0),
 (17, 10, 48, '2025-11-27 12:56:49', NULL, 0, 0),
@@ -339,7 +1261,7 @@ INSERT INTO `chat_participants` (`participant_id`, `conversation_id`, `user_id`,
 (19, 10, 25, '2025-11-27 12:57:21', '2025-11-28 13:10:17', 1, 0),
 (20, 11, 40, '2025-11-27 13:08:01', '2025-11-28 09:41:06', 1, 0),
 (21, 11, 54, '2025-11-27 13:08:01', NULL, 0, 0),
-(22, 10, 40, '2025-11-27 13:15:44', '2026-03-06 08:35:05', 0, 0),
+(22, 10, 40, '2025-11-27 13:15:44', '2026-03-25 09:08:42', 0, 0),
 (23, 12, 25, '2025-11-28 08:31:08', '2025-11-28 08:31:10', 1, 0),
 (24, 12, 54, '2025-11-28 08:31:08', NULL, 0, 0),
 (25, 13, 25, '2025-11-28 08:31:15', '2025-11-28 08:31:15', 1, 0),
@@ -347,7 +1269,24 @@ INSERT INTO `chat_participants` (`participant_id`, `conversation_id`, `user_id`,
 (27, 14, 25, '2025-11-28 08:31:16', '2025-11-28 08:31:20', 1, 0),
 (28, 14, 57, '2025-11-28 08:31:16', NULL, 0, 0),
 (29, 15, 25, '2025-11-28 09:57:43', '2025-11-29 07:44:22', 1, 0),
-(30, 15, 7, '2025-11-28 09:57:43', NULL, 0, 0);
+(30, 15, 7, '2025-11-28 09:57:43', NULL, 0, 0),
+(31, 16, 40, '2026-03-20 17:57:59', '2026-03-24 08:05:23', 1, 0),
+(32, 16, 62, '2026-03-20 17:57:59', NULL, 0, 0),
+(33, 17, 73, '2026-03-20 17:58:28', '2026-03-20 18:00:29', 1, 0),
+(34, 17, 40, '2026-03-20 17:58:28', '2026-03-24 09:10:42', 0, 0),
+(35, 18, 73, '2026-03-20 18:00:29', '2026-03-20 18:00:29', 1, 0),
+(36, 18, 79, '2026-03-20 18:00:29', '2026-03-24 11:31:40', 0, 0),
+(37, 19, 40, '2026-03-24 08:15:50', '2026-03-24 11:52:06', 1, 0),
+(38, 19, 79, '2026-03-24 08:15:50', '2026-03-24 11:52:25', 0, 0),
+(39, 20, 79, '2026-03-24 11:32:00', '2026-03-24 11:32:00', 1, 0),
+(40, 20, 24, '2026-03-24 11:32:00', NULL, 0, 0),
+(41, 3, 79, '2026-03-24 11:53:44', '2026-04-07 17:08:29', 0, 0),
+(42, 3, 76, '2026-03-24 11:54:05', NULL, 0, 0),
+(43, 3, 68, '2026-03-25 09:09:19', NULL, 0, 0),
+(44, 21, 40, '2026-03-25 09:09:59', '2026-04-07 16:53:09', 1, 0),
+(45, 21, 24, '2026-03-25 09:09:59', NULL, 0, 0),
+(46, 22, 40, '2026-04-07 16:53:08', '2026-04-07 16:53:57', 1, 0),
+(48, 22, 54, '2026-04-07 16:53:47', NULL, 0, 0);
 
 -- --------------------------------------------------------
 
@@ -389,19 +1328,26 @@ CREATE TABLE `conversations` (
 INSERT INTO `conversations` (`conversation_id`, `title`, `conversation_type`, `created_by`, `is_archived`, `updated_at`, `created_at`) VALUES
 (1, 'hayal', 'group', 40, 0, '2025-11-27 13:36:20', '2025-11-27 12:01:24'),
 (2, 'olana', 'group', 25, 0, '2025-11-28 11:55:54', '2025-11-27 12:02:29'),
-(3, 'test', 'group', 40, 0, '2025-11-28 09:31:39', '2025-11-27 12:10:25'),
+(3, 'test', 'group', 40, 0, '2026-04-07 16:54:36', '2025-11-27 12:10:25'),
 (4, 'test1', 'group', 25, 0, '2025-11-27 12:18:05', '2025-11-27 12:18:05'),
 (5, 'DM_25_48', 'direct', 25, 0, '2025-11-27 12:37:27', '2025-11-27 12:32:21'),
 (6, 'DM_25_24', 'direct', 25, 0, '2025-11-27 12:38:15', '2025-11-27 12:37:35'),
 (7, 'DM_25_55', 'direct', 25, 0, '2025-11-27 12:37:59', '2025-11-27 12:37:52'),
-(8, 'DM_25_40', 'direct', 25, 0, '2025-11-28 13:46:15', '2025-11-27 12:39:14'),
+(8, 'DM_25_40', 'direct', 25, 0, '2026-03-24 09:32:35', '2025-11-27 12:39:14'),
 (9, 'it goup', 'group', 25, 0, '2025-11-27 12:45:52', '2025-11-27 12:40:02'),
 (10, 'it staff', 'group', 40, 0, '2025-11-28 09:34:31', '2025-11-27 12:56:07'),
 (11, 'DM_40_54', 'direct', 40, 0, '2025-11-27 13:08:01', '2025-11-27 13:08:01'),
 (12, 'DM_25_54', 'direct', 25, 0, '2025-11-28 08:31:08', '2025-11-28 08:31:08'),
 (13, 'DM_25_43', 'direct', 25, 0, '2025-11-28 08:31:15', '2025-11-28 08:31:15'),
 (14, 'DM_25_57', 'direct', 25, 0, '2025-11-28 08:31:16', '2025-11-28 08:31:16'),
-(15, 'DM_25_7', 'direct', 25, 0, '2025-11-28 13:38:44', '2025-11-28 09:57:43');
+(15, 'DM_25_7', 'direct', 25, 0, '2025-11-28 13:38:44', '2025-11-28 09:57:43'),
+(16, 'DM_40_62', 'direct', 40, 0, '2026-03-20 17:58:02', '2026-03-20 17:57:59'),
+(17, 'DM_73_40', 'direct', 73, 0, '2026-03-20 17:59:56', '2026-03-20 17:58:28'),
+(18, 'DM_73_79', 'direct', 73, 0, '2026-03-20 18:00:29', '2026-03-20 18:00:29'),
+(19, 'DM_40_79', 'direct', 40, 0, '2026-03-24 11:52:06', '2026-03-24 08:15:50'),
+(20, 'DM_79_24', 'direct', 79, 0, '2026-03-24 11:32:00', '2026-03-24 11:32:00'),
+(21, 'DM_40_24', 'direct', 40, 0, '2026-03-25 09:10:03', '2026-03-25 09:09:59'),
+(22, 'demo ', 'group', 40, 0, '2026-04-07 16:53:08', '2026-04-07 16:53:08');
 
 -- --------------------------------------------------------
 
@@ -414,6 +1360,50 @@ CREATE TABLE `cost` (
   `cost_name` varchar(255) NOT NULL,
   `cost_type` varchar(100) NOT NULL,
   `exchange` decimal(15,2) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `daily_tasks`
+--
+
+CREATE TABLE `daily_tasks` (
+  `daily_task_id` int(11) NOT NULL,
+  `user_id` int(11) NOT NULL,
+  `title` varchar(255) NOT NULL,
+  `description` text DEFAULT NULL,
+  `priority` enum('low','medium','high') NOT NULL DEFAULT 'medium',
+  `status` enum('todo','in_progress','done') NOT NULL DEFAULT 'todo',
+  `task_date` date NOT NULL,
+  `start_time` time DEFAULT NULL,
+  `end_time` time DEFAULT NULL,
+  `category` varchar(100) DEFAULT 'general',
+  `notes` text DEFAULT NULL,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
+  `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `data_quality_checks`
+--
+
+CREATE TABLE `data_quality_checks` (
+  `check_id` int(11) NOT NULL,
+  `action_plan_id` int(11) NOT NULL,
+  `reporting_period` varchar(20) DEFAULT NULL,
+  `is_valid` tinyint(1) DEFAULT 0,
+  `is_reliable` tinyint(1) DEFAULT 0,
+  `is_timely` tinyint(1) DEFAULT 0,
+  `is_complete` tinyint(1) DEFAULT 0,
+  `is_accurate` tinyint(1) DEFAULT 0,
+  `is_integral` tinyint(1) DEFAULT 0,
+  `supervisor_id` int(11) DEFAULT NULL,
+  `supervisor_note` text DEFAULT NULL,
+  `signed_off_at` timestamp NULL DEFAULT NULL,
+  `submitted_at` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
@@ -444,7 +1434,8 @@ INSERT INTO `departments` (`department_id`, `name`) VALUES
 (15, 'Reaserch Section '),
 (16, 'Encubation Section '),
 (17, 'Network and Infrastructure '),
-(18, 'Software development');
+(18, 'Software development'),
+(50, 'Plan and followup ');
 
 -- --------------------------------------------------------
 
@@ -462,68 +1453,140 @@ CREATE TABLE `employees` (
   `lname` varchar(255) DEFAULT NULL,
   `email` varchar(255) DEFAULT NULL,
   `phone` varchar(20) DEFAULT NULL,
-  `sex` enum('M','F') DEFAULT NULL
+  `sex` enum('M','F') DEFAULT NULL,
+  `telegram_username` varchar(100) DEFAULT NULL,
+  `telegram_chat_id` bigint(20) DEFAULT NULL,
+  `position` varchar(255) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `employees`
 --
 
-INSERT INTO `employees` (`employee_id`, `name`, `role_id`, `department_id`, `supervisor_id`, `fname`, `lname`, `email`, `phone`, `sex`) VALUES
-(47, 'admin admin', 1, 2, 1, 'admin', 'admin', 'admin@email.com', '123-456-7890', 'M'),
-(49, 'senayt', 3, 2, 73, 'senayt', 'Brihan', 'senayt@itp.et', '0933499093', 'M'),
-(50, 'Smegnew', 5, 2, 49, 'Smegnew', 'Asemie', 'simegn@itp.org', '099000000', 'M'),
-(58, 'nebyat', 6, 17, 147, 'Nebyat', 'Tsegabirhan', 'nebyat@itp.et', '0900000000', 'F'),
-(71, 'admin', 1, 2, 72, 'admin', 'admin', 'adminadmin@itp.et', '09373773333', 'M'),
-(72, 'Olana', 2, 2, NULL, 'olana', 'olana', 'olana@itp.et', '09373773333', 'M'),
-(73, 'Getachew', 9, NULL, 72, 'Getachew', 'Atinte', 'getachew@itp.et', '09373773333', 'M'),
-(74, 'Habtam', 6, 1, 73, 'Habtamua', 'kebede', 'habtam@itp.et', '0933499097', 'F'),
-(76, 'Ermiyas', 5, 3, 49, 'Ermias', 'Ketema', 'ermiyas@itp.et', '090000000', 'M'),
-(77, 'Walelign', 6, 3, 76, 'Walelign', 'Abateneh', 'walelign@itp.et', '0988883388', 'M'),
-(103, 'Getachew Atinte', 9, NULL, 72, 'Atinte', 'Getachew', 'getachew@itpark.et', '0911000000', 'M'),
-(104, 'Merso Gobena', 6, 2, 50, 'Merso', 'Gobena', 'merso@itpark.et', '090000000', 'M'),
-(106, 'Eskedar Teshager', 6, 2, 50, 'Eskedar ', 'Teshager', 'eskedar@itpark.et', '0911000000', 'F'),
-(107, 'Samuel Medihn', 8, 2, 72, 'Samuel ', 'medhn', 'samuel@itpark.et', '091100000', 'M'),
-(108, 'Yesuf Fanta', 8, 2, 104, 'Yesuf', 'Fenta', 'yesuf@itpark.et', '0900000000', 'M'),
-(109, 'Ezira', 1, 2, 72, 'Ezira', 'Mantegaftot', 'ezira@itpark.et', '091100000', 'M'),
-(110, 'Yosef Kinfe', 8, 1, 74, 'Yosef', 'Kinfe', 'yosef@itpark.et', '0900000000', 'M'),
-(111, 'Sintayew', 8, 1, 74, 'Sintayew ', 'Mogese', 'sintayew@itpark.et', '0900000000', 'F'),
-(112, 'Arega', 8, 1, 74, 'Arega', 'Asalifew', 'arega@itpark.et', '0900000000', 'M'),
-(113, 'Birtukan', 8, 1, 74, 'Birtukan', 'Gemechu', 'birtukan@itpark.et', '0900000000', 'F'),
-(114, 'Sisaynesh', 8, 1, 74, 'Sisaynesh ', 'Gizaw', 'sisaynesh@itpark.et', '0900000000', 'F'),
-(115, 'Yetemegn', 8, 1, 74, 'Yetemegn', 'Andarge', 'yetemegn@itpark.et', '0900000000', 'F'),
-(116, 'Erimias Ketema', 5, 3, 49, 'Ermias ', 'Keteme', 'ermiasketeme@itpark.et', '0916000000', 'M'),
-(117, 'Hayal Tamrat', 8, 2, 58, 'Hayal', 'Tamrat', 'hayal@itpark.et', '0916048977', 'M'),
-(118, 'Desta Bekele', 6, 3, 116, 'Desta', 'Bekele', 'desta@itpark.et', '0911000000', 'M'),
-(119, 'Sintayehu Tesfaye', 8, 3, 118, 'Sintayehu', 'Tesfaye', 'sintayehu@itpark.et', '0910000000', 'M'),
-(120, 'Kasu Adare', 8, 3, 118, 'Kasu ', 'Adare', 'kasu@itpark.et', '0910000000', 'M'),
-(122, 'Wonde Suleman', 8, 3, 118, 'Wonde', 'Suleman', 'wonde@itpark.et', '0910000000', 'M'),
-(123, 'Eyasu Yeshitila', 8, 3, 118, 'Eyasu', 'Yeshitila', 'eyasu@itpark.et', '0910000000', 'M'),
-(125, 'Alemayehu Deresa', 8, 3, 118, 'Alemayehu', 'Deresa', 'alemayehu@itpark.et', '0910000000', 'M'),
-(126, 'Amanuel Girma', 8, 3, 77, 'Amanual', 'Girma', 'amanuelgirma@itpark.et', '0911000000', 'M'),
-(128, 'Mihretu Debebe', 8, 3, 116, 'Mihretu', 'Debebe', 'mihretu@itpark.et', '0910000000', 'M'),
-(129, 'Birhanu Legese', 8, 3, 116, 'Birhanu', 'Legese', 'birhanu@itpark.et', '0910000000', 'M'),
-(130, 'Melat Bezu', 8, 3, 77, 'Melat', 'Bezu', 'melatbezu@itpark.et', '0911000000', 'F'),
-(131, 'Teshale', 8, 1, 74, 'Teshale ', 'Mola', 'teshale@itpark.et', '0900000000', 'M'),
-(132, 'Getahun', 8, 1, 74, 'Getahun', 'Faji', 'getahun@itpark.et', '0900000000', 'M'),
-(133, 'Gelana', 8, 1, 74, 'Gelana', 'Olana', 'gelana@itpark.et', '0900000000', 'M'),
-(134, 'Tsehay', 8, 1, 74, 'Tsehay', 'Alemu', 'tsehay@itpark.et', '0900000000', 'F'),
-(135, 'Lemlem', 8, 1, 74, 'Lemlem', 'Degefe', 'lemlem@itpark.et', '0900000000', 'F'),
-(136, 'Walelign Abera', 8, 4, 103, 'Walelign', 'Abera', 'walelign@itpark.et', '0900000000', 'M'),
-(137, 'Fetane Aage', 8, 5, 103, 'Fetane', 'Arage', 'fetane@itpark.et', '0900000000', 'M'),
-(138, 'Petros', 8, 6, 103, 'Petros', 'Abraham', 'petros@itpark.et', '0900000000', 'M'),
-(139, 'hayal Tamrat', 8, 2, 72, 'hayal', 'Tamrat', 'hayaltamrat@gmail.com', '0916048978', 'M'),
-(141, 'hayal Tamrat', 7, 2, 58, 'hayal', 'Tamrat', 'Hayaltamrat1@gmail.com', '0916048977', 'M'),
-(142, 'belete esubalew', 29, NULL, NULL, 'belete', 'esubalew', 'belete@itp.et', '0913566735', 'M'),
-(143, 'olana abebe', 2, 10, 142, 'olana', 'abebe', 'olanaabebe@itp.et', '0913566735', 'M'),
-(144, 'walelgn abera', 30, NULL, 143, 'walelgn', 'abera', 'walelgnabera@itp.et', '0913566735', 'M'),
-(145, 'corporate admin', 31, NULL, 143, 'corporate', 'admin', 'coporateadmin@itp.et', '0913566735', 'M'),
-(146, 'tsuhayu directorate', 5, 11, 143, 'tsuhayu', 'directorate', 'tsehayu@itp.et', '0913566735', 'M'),
-(147, 'it deparment', 6, 14, 146, 'it', 'deparment', 'itdepartment@itp.et', '0913566735', 'M'),
-(148, 'software section', 7, 18, 147, 'software', 'section', 'softwaresection@itp.et', '0913566735', 'F'),
-(149, 'Hayal Tamrat', 8, 18, 148, 'Hayal', 'Tamrat', 'hayaltamrat@itp.et', '0913566735', 'M'),
-(150, 'ecubation department', 6, 16, 146, 'ecubation', 'department', 'encubationdepartment@itp.et', '0913566735', 'M'),
-(151, 'simegnew asme', 7, 15, 150, 'simegnew', 'asme', 'simegnewasme@itp.et', '0916048977', 'M');
+INSERT INTO `employees` (`employee_id`, `name`, `role_id`, `department_id`, `supervisor_id`, `fname`, `lname`, `email`, `phone`, `sex`, `telegram_username`, `telegram_chat_id`, `position`) VALUES
+(47, 'admin admin', 1, 2, 1, 'admin', 'admin', 'admin@email.com', '123-456-7890', 'M', NULL, NULL, NULL),
+(49, 'senayt', 3, 2, 73, 'senayt', 'Brihan', 'senayt@itp.et', '0933499093', 'M', NULL, NULL, NULL),
+(50, 'Smegnew', 5, 2, 49, 'Smegnew', 'Asemie', 'simegn@itp.org', '099000000', 'M', NULL, NULL, NULL),
+(58, 'nebyat', 6, 17, 147, 'Nebyat', 'Tsegabirhan', 'nebyat@itp.et', '0900000000', 'F', NULL, NULL, NULL),
+(71, 'admin', 1, 2, 118, 'admin', 'admin', 'adminadmin@itp.et', '09373773333', 'M', NULL, NULL, NULL),
+(72, 'Olana', 2, 2, NULL, 'olana', 'olana', 'olana@itp.et', '09373773333', 'M', NULL, NULL, NULL),
+(73, 'Getachew', 9, NULL, 72, 'Getachew', 'Atinte', 'getachew@itp.et', '09373773333', 'M', NULL, NULL, NULL),
+(74, 'Habtam', 6, 1, 73, 'Habtamua', 'kebede', 'habtam@itp.et', '0933499097', 'F', NULL, NULL, NULL),
+(76, 'Ermiyas', 5, 3, 49, 'Ermias', 'Ketema', 'ermiyas@itp.et', '090000000', 'M', NULL, NULL, NULL),
+(77, 'Walelign', 6, 3, 76, 'Walelign', 'Abateneh', 'walelign@itp.et', '0988883388', 'M', NULL, NULL, NULL),
+(103, 'Getachew Atinte', 9, NULL, 72, 'Atinte', 'Getachew', 'getachew@itpark.et', '0911000000', 'M', NULL, NULL, NULL),
+(104, 'Merso Gobena', 6, 2, 50, 'Merso', 'Gobena', 'merso@itpark.et', '090000000', 'M', NULL, NULL, NULL),
+(106, 'Eskedar Teshager', 6, 2, 50, 'Eskedar ', 'Teshager', 'eskedar@itpark.et', '0911000000', 'F', NULL, NULL, NULL),
+(107, 'Samuel Medihn', 8, 2, 72, 'Samuel ', 'medhn', 'samuel@itpark.et', '091100000', 'M', NULL, NULL, NULL),
+(108, 'Yesuf Fanta', 8, 2, 104, 'Yesuf', 'Fenta', 'yesuf@itpark.et', '0900000000', 'M', NULL, NULL, NULL),
+(109, 'Ezira', 1, NULL, 72, 'Ezira', 'Mantegaftot', 'ezira@itpark.et', '091100000', 'M', NULL, NULL, NULL),
+(110, 'Yosef Kinfe', 8, 1, 74, 'Yosef', 'Kinfe', 'yosef@itpark.et', '0900000000', 'M', NULL, NULL, NULL),
+(111, 'Sintayew', 8, 1, 74, 'Sintayew ', 'Mogese', 'sintayew@itpark.et', '0900000000', 'F', NULL, NULL, NULL),
+(112, 'Arega', 8, 1, 74, 'Arega', 'Asalifew', 'arega@itpark.et', '0900000000', 'M', NULL, NULL, NULL),
+(113, 'Birtukan', 8, 1, 74, 'Birtukan', 'Gemechu', 'birtukan@itpark.et', '0900000000', 'F', NULL, NULL, NULL),
+(114, 'Sisaynesh', 8, 1, 74, 'Sisaynesh ', 'Gizaw', 'sisaynesh@itpark.et', '0900000000', 'F', NULL, NULL, NULL),
+(115, 'Yetemegn', 8, 1, 74, 'Yetemegn', 'Andarge', 'yetemegn@itpark.et', '0900000000', 'F', NULL, NULL, NULL),
+(116, 'Erimias Ketema', 5, 3, 49, 'Ermias ', 'Keteme', 'ermiasketeme@itpark.et', '0916000000', 'M', NULL, NULL, NULL),
+(117, 'Hayal Tamrat', 8, 2, 58, 'Hayal', 'Tamrat', 'hayal@itpark.et', '0916048977', 'M', NULL, NULL, NULL),
+(118, 'Desta Bekele', 6, 3, 116, 'Desta', 'Bekele', 'desta@itpark.et', '0911000000', 'M', NULL, NULL, NULL),
+(119, 'Sintayehu Tesfaye', 8, 3, 118, 'Sintayehu', 'Tesfaye', 'sintayehu@itpark.et', '0910000000', 'M', NULL, NULL, NULL),
+(120, 'Kasu Adare', 8, 3, 118, 'Kasu ', 'Adare', 'kasu@itpark.et', '0910000000', 'M', NULL, NULL, NULL),
+(122, 'Wonde Suleman', 8, 3, 118, 'Wonde', 'Suleman', 'wonde@itpark.et', '0910000000', 'M', NULL, NULL, NULL),
+(123, 'Eyasu Yeshitila', 8, 3, 118, 'Eyasu', 'Yeshitila', 'eyasu@itpark.et', '0910000000', 'M', NULL, NULL, NULL),
+(125, 'Alemayehu Deresa', 8, 3, 118, 'Alemayehu', 'Deresa', 'alemayehu@itpark.et', '0910000000', 'M', NULL, NULL, NULL),
+(126, 'Amanuel Girma', 8, 3, 77, 'Amanual', 'Girma', 'amanuelgirma@itpark.et', '0911000000', 'M', NULL, NULL, NULL),
+(128, 'Mihretu Debebe', 8, 3, 116, 'Mihretu', 'Debebe', 'mihretu@itpark.et', '0910000000', 'M', NULL, NULL, NULL),
+(129, 'Birhanu Legese', 8, 3, 116, 'Birhanu', 'Legese', 'birhanu@itpark.et', '0910000000', 'M', NULL, NULL, NULL),
+(130, 'Melat Bezu', 8, 1, 77, 'melat', 'bezu', 'melatbezu@itpark.et', '09112211232', 'F', NULL, NULL, NULL),
+(131, 'Teshale', 8, 1, 74, 'Teshale ', 'Mola', 'teshale@itpark.et', '0900000000', 'M', NULL, NULL, NULL),
+(132, 'Getahun', 8, 1, 74, 'Getahun', 'Faji', 'getahun@itpark.et', '0900000000', 'M', NULL, NULL, NULL),
+(133, 'Gelana', 8, 1, 74, 'Gelana', 'Olana', 'gelana@itpark.et', '0900000000', 'M', NULL, NULL, NULL),
+(134, 'Tsehay', 8, 1, 74, 'Tsehay', 'Alemu', 'tsehay@itpark.et', '0900000000', 'F', NULL, NULL, NULL),
+(135, 'Lemlem', 8, 1, 74, 'Lemlem', 'Degefe', 'lemlem@itpark.et', '0900000000', 'F', NULL, NULL, NULL),
+(136, 'Walelign Abera', 8, 4, 103, 'Walelign', 'Abera', 'walelign@itpark.et', '0900000000', 'M', NULL, NULL, NULL),
+(137, 'Fetane Aage', 8, 5, 103, 'Fetane', 'Arage', 'fetane@itpark.et', '0900000000', 'M', NULL, NULL, NULL),
+(138, 'Petros', 8, 6, 103, 'Petros', 'Abraham', 'petros@itpark.et', '0900000000', 'M', NULL, NULL, NULL),
+(139, 'hayal Tamrat', 8, NULL, 72, 'hayal', 'Tamrat', 'hayaltamrat@gmail.com', '0916048978', 'M', NULL, NULL, NULL),
+(141, 'hayal Tamrat', 7, 2, 58, 'hayal', 'Tamrat', 'Hayaltamrat1@gmail.com', '0916048977', 'M', NULL, NULL, NULL),
+(142, 'belete esubalew', 29, NULL, NULL, 'belete', 'esubalew', 'belete@itp.et', '0913566735', 'M', NULL, NULL, NULL),
+(143, 'olana abebe', 2, 10, 142, 'olana', 'abebe', 'olanaabebe@itp.et', '0913566735', 'M', NULL, NULL, NULL),
+(144, 'walelgn abera', 30, NULL, 143, 'walelgn', 'abera', 'walelgnabera@itp.et', '0913566735', 'M', NULL, NULL, NULL),
+(145, 'corporate admin', 31, NULL, 143, 'corporate', 'admin', 'coporateadmin@itp.et', '0913566735', 'M', NULL, NULL, NULL),
+(146, 'tsuhayu directorate', 5, 11, 143, 'tsuhayu', 'directorate', 'tsehayu@itp.et', '0913566735', 'M', NULL, NULL, NULL),
+(147, 'it deparment', 6, 14, 146, 'it', 'deparment', 'itdepartment@itp.et', '0913566735', 'M', NULL, NULL, NULL),
+(148, 'software section', 7, 18, 147, 'software', 'section', 'softwaresection@itp.et', '0913566735', 'F', NULL, NULL, NULL),
+(149, 'Hayal Tamrat', 8, 18, 148, 'Hayal', 'Tamrat Girum', 'hayaltamrat@itp.et', '0913566735', 'M', 'https://t.me/Hayal_tamrat', 6158593976, NULL),
+(150, 'ecubation department', 6, 16, 146, 'ecubation', 'department', 'encubationdepartment@itp.et', '0913566735', 'M', NULL, NULL, NULL),
+(151, 'simegnew asme', 7, 15, 150, 'simegnew', 'asme', 'simegnewasme@itp.et', '0916048977', 'M', NULL, NULL, NULL),
+(152, 'Million  Goraw', 6, NULL, NULL, 'Million ', 'Goraw', 'Milliongoraw@gmail.com', '0916048977', 'M', NULL, NULL, NULL),
+(153, 'feruz  koricho', 9, 50, 143, 'feruz ', 'koricho', 'feruzkorichoyimer@gmail.com', '0913566735', 'F', '@ethiocloud', NULL, NULL);
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `employee_positions`
+--
+
+CREATE TABLE `employee_positions` (
+  `id` int(11) NOT NULL,
+  `employee_id` int(11) NOT NULL,
+  `org_node_id` int(11) NOT NULL,
+  `is_primary` tinyint(1) DEFAULT 0,
+  `is_delegation` tinyint(1) DEFAULT 0,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
+  `position_id` int(11) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `employee_positions`
+--
+
+INSERT INTO `employee_positions` (`id`, `employee_id`, `org_node_id`, `is_primary`, `is_delegation`, `created_at`, `position_id`) VALUES
+(1, 151, 13, 1, 0, '2026-03-19 11:10:44', NULL),
+(2, 151, 15, 0, 1, '2026-03-19 11:11:39', NULL),
+(3, 151, 16, 0, 1, '2026-03-19 11:11:50', NULL),
+(4, 146, 11, 1, 0, '2026-03-19 11:12:47', NULL),
+(5, 149, 52, 1, 0, '2026-03-19 11:21:25', NULL),
+(6, 109, 55, 1, 0, '2026-03-20 05:31:29', NULL),
+(7, 152, 14, 1, 1, '2026-03-20 05:38:43', NULL),
+(8, 152, 17, 0, 1, '2026-03-20 05:39:19', NULL),
+(9, 152, 18, 0, 1, '2026-03-20 05:39:35', NULL),
+(10, 143, 10, 1, 0, '2026-03-20 05:40:11', NULL),
+(11, 142, 9, 1, 0, '2026-03-20 05:41:17', NULL),
+(12, 139, 52, 1, 0, '2026-03-20 11:47:21', NULL),
+(13, 72, 10, 1, 0, '2026-03-20 14:00:50', NULL),
+(14, 146, 14, 1, 0, '2026-03-23 06:56:06', NULL),
+(15, 117, 19, 1, 0, '2026-03-23 06:56:06', NULL),
+(17, 109, 55, 1, 0, '2026-03-23 08:48:56', NULL),
+(18, 139, 26, 1, 0, '2026-03-23 08:48:56', NULL);
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `evaluations`
+--
+
+CREATE TABLE `evaluations` (
+  `evaluation_id` int(11) NOT NULL,
+  `type` enum('mid_term','annual','thematic') NOT NULL,
+  `title` varchar(255) NOT NULL,
+  `timing` varchar(100) DEFAULT NULL,
+  `key_questions` text DEFAULT NULL,
+  `led_by` varchar(255) DEFAULT NULL,
+  `status` enum('planned','in_progress','completed') DEFAULT 'planned',
+  `findings` text DEFAULT NULL,
+  `recommendations` text DEFAULT NULL,
+  `period_year` int(11) DEFAULT NULL,
+  `created_by` int(11) DEFAULT NULL,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `evaluations`
+--
+
+INSERT INTO `evaluations` (`evaluation_id`, `type`, `title`, `timing`, `key_questions`, `led_by`, `status`, `findings`, `recommendations`, `period_year`, `created_by`, `created_at`) VALUES
+(1, 'thematic', 'test', NULL, 'test', 'test', 'planned', NULL, NULL, 2026, 25, '2026-08-09 18:06:08');
 
 -- --------------------------------------------------------
 
@@ -552,7 +1615,8 @@ INSERT INTO `forwarded_messages` (`forward_id`, `original_message_id`, `forwarde
 (6, 12, 17, 25, '2025-11-27 13:02:18'),
 (7, 7, 24, 40, '2025-11-27 13:35:56'),
 (8, 18, 30, 40, '2025-11-27 14:02:34'),
-(9, 81, 83, 25, '2025-11-28 13:39:40');
+(9, 81, 83, 25, '2025-11-28 13:39:40'),
+(10, 89, 90, 73, '2026-03-20 18:00:29');
 
 -- --------------------------------------------------------
 
@@ -570,22 +1634,99 @@ CREATE TABLE `goals` (
   `created_by` int(11) DEFAULT NULL,
   `year` int(11) DEFAULT NULL,
   `quarter` varchar(2) DEFAULT NULL,
-  `employee_id` int(11) NOT NULL
+  `employee_id` int(11) NOT NULL,
+  `weight` float DEFAULT 100,
+  `pillar_id` int(11) DEFAULT NULL,
+  `start_year` int(11) DEFAULT NULL,
+  `end_year` int(11) DEFAULT NULL,
+  `is_active` tinyint(1) DEFAULT 1
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `goals`
 --
 
-INSERT INTO `goals` (`goal_id`, `user_id`, `name`, `description`, `created_at`, `updated_at`, `created_by`, `year`, `quarter`, `employee_id`) VALUES
-(87, 26, 'ግብ 1. የIT ካምፓኒዎችን ወደ ፓርኩ በመሳብ የሥራ ዕድልና የውጭ ቀጥተኛ ኢንቨስትመንት መፍጠር', 'የIT ካምፓኒዎችን ወደ ፓርኩ በመሳብ የሥራ ዕድልና የውጭ ቀጥተኛ ኢንቨስትመንት መፍጠር', '2025-03-12 04:36:46', '2025-04-16 03:39:28', NULL, 2017, '3', 73),
-(88, 26, 'ግብ 2. የፓርኩ ነዋሪዎች (የአይቲ ካምፓኒዎች) ቴክኖልጂ እንዲያሸጋግሩ እና ምርታቸውን ወይም አገሌግልታቸውን ለውጪ ገበያ በማቅረብ የውጭ ምንዛሪ እንዱያስገኙ ማዴረግ', 'የፓርኩ ነዋሪዎች (የአይቲ ካምፓኒዎች) ቴክኖልጂ እንዲያሸጋግሩ እና ምርታቸውን ወይም አገሌግልታቸውን ለውጪ ገበያ በማቅረብ የውጭ ምንዛሪ እንዱያስገኙ ማዴረግ', '2025-03-12 04:44:06', '2025-04-16 03:39:33', NULL, 2017, '3', 73),
-(89, 26, 'ግብ 3. ለደንበኞች  ደረጃውን የጠበቀ አገልግልት ማቅረብ ', 'የፓርኩ ነዋሪዎች (የአይቲ ካምፓኒዎች) ቴክኖልጂ እንዲያሸጋግሩ እና ምርታቸውን ወይም አገሌግልታቸውን ለውጪ ገበያ በማቅረብ የውጭ ምንዛሪ እንዱያስገኙ ማዴረግ', '2025-03-12 04:52:17', '2025-04-16 03:39:36', NULL, 2017, '3', 73),
-(90, 26, 'ግብ 4. በIT ኢንደስትሪ የተሰማሩ ካምፓኒዎችን ለመሳብ የሚያስችል ዓለም አቀፍ ደረጃ የጠበቀ መሰረተ -ልማትና ፋሲሉቲ ሟሟላት/ማደስ ', 'በIT ኢንደስትሪ የተሰማሩ ካምፓኒዎችን ለመሳብ የሚያስችል ዓለም አቀፍ ደረጃ የጠበቀ መሰረተ -ልማትና ፋሲሉቲ ሟሟላት/ማደስ ', '2025-03-13 04:35:15', '2025-04-16 03:39:40', NULL, 2017, '3', 73),
-(91, 26, 'ግብ 5. የሥራ አመራር፣ የገቢ አሰባበሰብ፣ የሀብት አስተዳደር እና አጠቃቀም ተግባራትንና አቅሞችን አጠናክሮ ማስቀጠል ', 'የሥራ አመራር፣ የገቢ አሰባበሰብ፣ የሀብት አስተዳደር እና አጠቃቀም ተግባራትንና አቅሞችን አጠናክሮ ማስቀጠል', '2025-03-13 04:37:15', '2025-04-16 03:39:44', NULL, 2017, '3', 73),
-(94, 40, 'test goal', 'test goal', '2025-12-11 02:33:31', '2025-12-11 02:33:31', NULL, 2025, '1', 109),
-(95, 40, 'my test', 'my test', '2025-12-11 03:19:32', '2026-03-10 11:01:19', NULL, 2019, '1', 109),
-(96, 40, 'my test 2', 'my test 2', '2026-03-10 11:02:09', '2026-03-10 11:02:09', NULL, 2018, '3', 109);
+INSERT INTO `goals` (`goal_id`, `user_id`, `name`, `description`, `created_at`, `updated_at`, `created_by`, `year`, `quarter`, `employee_id`, `weight`, `pillar_id`, `start_year`, `end_year`, `is_active`) VALUES
+(225, 80, 'ግብ 1 .  ዓለም አቀፍ ደረጃውን የጠበቀ እና ዘመናዊ መሰረተ ልማት ማልማት', 'Smart infrastructure and Digital Platform ', '2026-07-15 11:30:45', '2026-08-11 16:00:35', NULL, 2019, '1', 153, 12, 1, 2018, 2024, 1),
+(226, 40, 'ግብ 2 የፓርኩን ተወዳዳሪነትና ገፅታን በማጠናከር ኢንቨስትመንትን መሳብ', 'የፓርኩን ተወዳዳሪነትና ገፅታን በማጠናከር ኢንቨስትመንትን መሳብ', '2026-08-10 20:17:45', '2026-08-11 15:59:57', NULL, 2019, '1', 109, 10, 1, 2018, 2024, 1);
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `goal_quarter_activations`
+--
+
+CREATE TABLE `goal_quarter_activations` (
+  `id` int(11) NOT NULL,
+  `goal_id` int(11) NOT NULL,
+  `year` int(11) NOT NULL,
+  `quarter` varchar(10) NOT NULL,
+  `is_active` tinyint(1) DEFAULT 1,
+  `created_at` datetime DEFAULT current_timestamp(),
+  `updated_at` datetime DEFAULT current_timestamp() ON UPDATE current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `goal_quarter_activations`
+--
+
+INSERT INTO `goal_quarter_activations` (`id`, `goal_id`, `year`, `quarter`, `is_active`, `created_at`, `updated_at`) VALUES
+(1, 225, 2019, '1', 1, '2026-08-11 15:30:15', '2026-08-11 21:51:55'),
+(2, 225, 2019, '2', 0, '2026-08-11 15:30:19', '2026-08-11 15:35:57'),
+(5, 226, 2019, '2', 1, '2026-08-11 15:35:42', '2026-08-17 16:34:56'),
+(6, 226, 2019, '3', 0, '2026-08-11 15:35:42', '2026-08-11 15:35:42'),
+(7, 226, 2019, '4', 0, '2026-08-11 15:35:43', '2026-08-11 15:35:43'),
+(8, 226, 2020, '1', 0, '2026-08-11 15:35:44', '2026-08-11 15:35:44'),
+(9, 226, 2020, '2', 0, '2026-08-11 15:35:45', '2026-08-11 15:35:45'),
+(10, 226, 2020, '4', 0, '2026-08-11 15:35:46', '2026-08-11 15:35:46'),
+(11, 226, 2023, '3', 0, '2026-08-11 15:35:49', '2026-08-11 15:35:49'),
+(12, 226, 2023, '4', 0, '2026-08-11 15:35:49', '2026-08-11 15:35:49'),
+(13, 226, 2023, '2', 0, '2026-08-11 15:35:50', '2026-08-11 15:35:50'),
+(14, 226, 2024, '1', 0, '2026-08-11 15:35:51', '2026-08-11 15:35:51'),
+(16, 225, 2019, '4', 0, '2026-08-11 15:35:59', '2026-08-11 15:35:59'),
+(17, 225, 2023, '2', 0, '2026-08-11 15:36:00', '2026-08-11 15:36:00'),
+(18, 225, 2023, '1', 0, '2026-08-11 15:36:00', '2026-08-11 15:36:00'),
+(19, 225, 2023, '3', 0, '2026-08-11 15:36:01', '2026-08-11 15:36:01'),
+(20, 225, 2023, '4', 0, '2026-08-11 15:36:02', '2026-08-11 15:36:02'),
+(21, 225, 2020, '3', 0, '2026-08-11 15:36:04', '2026-08-11 15:36:04'),
+(22, 225, 2020, '2', 0, '2026-08-11 15:36:05', '2026-08-11 15:36:05'),
+(23, 225, 2020, '1', 0, '2026-08-11 15:36:06', '2026-08-11 15:36:06'),
+(24, 225, 2020, '4', 0, '2026-08-11 15:36:08', '2026-08-11 15:36:08'),
+(25, 225, 2024, '1', 0, '2026-08-11 15:36:09', '2026-08-11 15:36:09'),
+(26, 226, 2023, '1', 0, '2026-08-11 15:36:19', '2026-08-11 15:36:19'),
+(27, 226, 2020, '3', 0, '2026-08-11 15:36:19', '2026-08-11 15:36:19'),
+(28, 226, 2024, '2', 0, '2026-08-11 15:36:20', '2026-08-11 15:36:20'),
+(29, 226, 2024, '3', 0, '2026-08-11 15:36:20', '2026-08-11 15:36:20'),
+(30, 226, 2024, '4', 0, '2026-08-11 15:36:21', '2026-08-11 15:36:21'),
+(31, 226, 2021, '1', 0, '2026-08-11 15:36:21', '2026-08-11 15:36:21'),
+(32, 226, 2021, '2', 0, '2026-08-11 15:36:22', '2026-08-11 15:36:22'),
+(33, 226, 2021, '3', 0, '2026-08-11 15:36:23', '2026-08-11 15:36:23'),
+(34, 226, 2021, '4', 0, '2026-08-11 15:36:24', '2026-08-11 15:36:24'),
+(35, 226, 2022, '1', 0, '2026-08-11 15:36:24', '2026-08-11 15:36:24'),
+(36, 226, 2022, '2', 0, '2026-08-11 15:36:25', '2026-08-11 15:36:25'),
+(37, 226, 2022, '3', 0, '2026-08-11 15:36:25', '2026-08-11 15:36:25'),
+(38, 226, 2022, '4', 0, '2026-08-11 15:36:25', '2026-08-11 16:00:47'),
+(39, 225, 2019, '3', 0, '2026-08-11 15:36:29', '2026-08-11 15:36:29'),
+(40, 225, 2024, '2', 0, '2026-08-11 15:36:30', '2026-08-11 15:36:30'),
+(41, 225, 2024, '3', 0, '2026-08-11 15:36:30', '2026-08-11 15:36:30'),
+(42, 225, 2024, '4', 0, '2026-08-11 15:36:31', '2026-08-11 15:36:31'),
+(43, 225, 2021, '1', 0, '2026-08-11 15:36:31', '2026-08-11 15:36:31'),
+(44, 225, 2021, '2', 0, '2026-08-11 15:36:32', '2026-08-11 15:36:32'),
+(45, 225, 2021, '3', 0, '2026-08-11 15:36:32', '2026-08-11 15:36:32'),
+(46, 225, 2021, '4', 0, '2026-08-11 15:36:32', '2026-08-11 15:36:32'),
+(47, 225, 2022, '1', 0, '2026-08-11 15:36:33', '2026-08-11 15:36:33'),
+(48, 225, 2022, '2', 0, '2026-08-11 15:36:33', '2026-08-11 15:36:33'),
+(49, 225, 2022, '3', 0, '2026-08-11 15:36:34', '2026-08-11 15:36:34'),
+(50, 225, 2022, '4', 0, '2026-08-11 15:36:34', '2026-08-11 15:36:34'),
+(51, 226, 2019, '1', 1, '2026-08-11 15:48:10', '2026-08-17 16:34:58'),
+(54, 226, 2018, '1', 0, '2026-08-11 16:00:00', '2026-08-11 16:00:00'),
+(55, 226, 2018, '2', 0, '2026-08-11 16:00:01', '2026-08-11 16:00:01'),
+(56, 226, 2018, '3', 0, '2026-08-11 16:00:02', '2026-08-11 16:00:02'),
+(59, 225, 2018, '4', 1, '2026-08-11 16:00:39', '2026-08-15 12:16:57'),
+(60, 225, 2018, '3', 0, '2026-08-11 16:00:40', '2026-08-11 16:00:40'),
+(61, 225, 2018, '2', 0, '2026-08-11 16:00:41', '2026-08-11 16:00:41'),
+(64, 225, 2018, '1', 0, '2026-08-11 16:01:10', '2026-08-11 16:01:10'),
+(66, 226, 2018, '4', 1, '2026-08-11 16:01:37', '2026-08-17 16:35:46');
 
 -- --------------------------------------------------------
 
@@ -600,6 +1741,29 @@ CREATE TABLE `income` (
   `income_exchange_dollar` decimal(15,2) DEFAULT NULL,
   `income_exchange_etb` decimal(15,2) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `kpi_quarter_activations`
+--
+
+CREATE TABLE `kpi_quarter_activations` (
+  `id` int(11) NOT NULL,
+  `specific_objective_id` int(11) NOT NULL,
+  `year` int(11) NOT NULL,
+  `quarter` varchar(10) NOT NULL,
+  `is_active` tinyint(1) DEFAULT 1,
+  `created_at` datetime DEFAULT current_timestamp(),
+  `updated_at` datetime DEFAULT current_timestamp() ON UPDATE current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `kpi_quarter_activations`
+--
+
+INSERT INTO `kpi_quarter_activations` (`id`, `specific_objective_id`, `year`, `quarter`, `is_active`, `created_at`, `updated_at`) VALUES
+(1, 734, 2018, '4', 1, '2026-08-11 16:36:15', '2026-08-17 16:23:20');
 
 -- --------------------------------------------------------
 
@@ -643,7 +1807,11 @@ INSERT INTO `meetings` (`meeting_id`, `title`, `description`, `meeting_type`, `s
 (6, 'Test Meeting - Email Notification Test', 'This is an automated test to verify email notifications', 'team', '2025-11-30 03:11:59', '2025-11-30 04:11:59', 'Conference Room A', 'https://zoom.us/j/test123456', '123 456 789', 'test123', 'scheduled', 'medium', 0, NULL, 6, '2025-11-29 08:11:59', '2025-11-29 08:11:59', 0, 'Test agenda for email verification', NULL),
 (7, 'qwe', 'weqweqwe', 'department', '2025-11-29 03:18:00', '2025-11-29 03:19:00', '', '', '', '', 'scheduled', 'medium', 0, '', 25, '2025-11-29 08:14:28', '2025-11-29 08:14:28', 0, 'eqweqwe', NULL),
 (8, 'Test Meeting - Email Notification Test', 'This is an automated test to verify email notifications', 'team', '2025-11-30 03:22:13', '2025-11-30 04:22:13', 'Conference Room A', 'https://zoom.us/j/test123456', '123 456 789', 'test123', 'scheduled', 'medium', 0, NULL, 6, '2025-11-29 08:22:13', '2025-11-29 08:22:13', 0, 'Test agenda for email verification', NULL),
-(9, 'wqqq', '', 'team', '2025-12-06 03:29:00', '2026-02-19 03:31:00', '', '', '', '', 'scheduled', 'medium', 0, '', 40, '2025-11-29 08:31:56', '2025-11-29 08:31:56', 0, '', NULL);
+(9, 'wqqq', '', 'team', '2025-12-06 03:29:00', '2026-02-19 03:31:00', '', '', '', '', 'scheduled', 'medium', 0, '', 40, '2025-11-29 08:31:56', '2025-11-29 08:31:56', 0, '', NULL),
+(10, 'test', 'test', 'team', '2026-03-24 11:29:00', '2026-03-24 11:54:00', 'test', '', '', '', 'scheduled', 'high', 0, '', 40, '2026-03-24 07:30:49', '2026-03-24 07:30:49', 0, 'test', NULL),
+(11, 'test', 'test', 'team', '2026-03-24 10:40:00', '2026-03-24 11:37:00', 'smart...', '', '', '', 'scheduled', 'medium', 0, '', 79, '2026-03-24 07:37:47', '2026-03-24 07:37:47', 0, 'scrum', NULL),
+(12, 'tets', 'tets', 'department', '2026-08-10 12:08:00', '2026-08-10 13:06:00', 'smart ...', '', '', '', 'scheduled', 'medium', 0, '', 40, '2026-08-10 08:07:56', '2026-08-10 08:07:56', 0, 'tets ', NULL),
+(13, 'test ', 'test', 'team', '2026-08-17 11:56:00', '2026-08-17 12:56:00', 'ITPC smart room ', '', '', '', 'scheduled', 'medium', 0, '', 40, '2026-08-17 06:58:44', '2026-08-17 06:58:44', 0, 'tets ', NULL);
 
 -- --------------------------------------------------------
 
@@ -668,7 +1836,9 @@ CREATE TABLE `meeting_attachments` (
 
 INSERT INTO `meeting_attachments` (`attachment_id`, `meeting_id`, `file_name`, `file_path`, `file_type`, `file_size`, `uploaded_by`, `uploaded_at`) VALUES
 (1, 5, 'Screenshot From 2025-09-07 06-26-16.png', 'uploads/meeting_attachments/attachments-1764403634570-427323425.png', 'image/png', 150378, 40, '2025-11-29 08:07:14'),
-(2, 7, 'power.jpg', 'uploads/meeting_attachments/attachments-1764404068410-26135534.jpg', 'image/jpeg', 482302, 25, '2025-11-29 08:14:28');
+(2, 7, 'power.jpg', 'uploads/meeting_attachments/attachments-1764404068410-26135534.jpg', 'image/jpeg', 482302, 25, '2025-11-29 08:14:28'),
+(3, 10, 'DIKO-Receipt-DIKO-18098e6a-3cb4-4fab-88e9-a2b7bd7dd7c7.pdf', 'uploads\\meeting_attachments\\attachments-1774337449502-729872282.pdf', 'application/pdf', 7058540, 40, '2026-03-24 07:30:49'),
+(4, 11, 'photo_2026-03-23_17-00-16.jpg', 'uploads\\meeting_attachments\\attachments-1774337867014-836665245.jpg', 'image/jpeg', 196429, 79, '2026-03-24 07:37:47');
 
 -- --------------------------------------------------------
 
@@ -762,7 +1932,26 @@ INSERT INTO `meeting_participants` (`participant_id`, `meeting_id`, `user_id`, `
 (39, 9, 40, 'organizer', 'accepted', 0, 0, 0, NULL, NULL, NULL, '2025-11-29 08:31:56'),
 (40, 9, 24, 'required', 'pending', 0, 1, 0, NULL, NULL, NULL, '2025-11-29 08:31:56'),
 (41, 9, 43, 'required', 'pending', 0, 1, 0, NULL, NULL, NULL, '2025-11-29 08:31:56'),
-(42, 9, 25, 'required', 'pending', 0, 1, 0, NULL, NULL, NULL, '2025-11-29 08:31:56');
+(42, 9, 25, 'required', 'pending', 0, 1, 0, NULL, NULL, NULL, '2025-11-29 08:31:56'),
+(43, 10, 40, 'organizer', 'accepted', 0, 0, 0, NULL, NULL, NULL, '2026-03-24 07:30:49'),
+(44, 10, 48, 'required', 'pending', 0, 1, 0, NULL, NULL, NULL, '2026-03-24 07:30:49'),
+(45, 11, 79, 'organizer', 'accepted', 0, 0, 0, NULL, NULL, NULL, '2026-03-24 07:37:47'),
+(46, 11, 76, 'required', 'pending', 0, 1, 0, NULL, NULL, NULL, '2026-03-24 07:37:47'),
+(47, 11, 48, 'required', 'pending', 0, 1, 0, NULL, NULL, NULL, '2026-03-24 07:37:47'),
+(48, 11, 68, 'required', 'pending', 0, 1, 0, NULL, NULL, NULL, '2026-03-24 07:37:47'),
+(49, 11, 67, 'required', 'pending', 0, 1, 0, NULL, NULL, NULL, '2026-03-24 07:37:47'),
+(50, 11, 40, 'required', 'tentative', 0, 1, 0, NULL, NULL, 'test ', '2026-03-24 07:37:47'),
+(51, 11, 62, 'required', 'pending', 0, 1, 0, NULL, NULL, NULL, '2026-03-24 07:37:47'),
+(52, 11, 24, 'required', 'pending', 0, 1, 0, NULL, NULL, NULL, '2026-03-24 07:37:47'),
+(53, 12, 24, 'required', 'pending', 0, 1, 0, NULL, NULL, NULL, '2026-08-10 08:07:56'),
+(54, 12, 40, 'organizer', 'accepted', 0, 0, 0, NULL, NULL, NULL, '2026-08-10 08:07:56'),
+(55, 12, 69, 'required', 'pending', 0, 1, 0, NULL, NULL, NULL, '2026-08-10 08:07:56'),
+(56, 12, 73, 'required', 'tentative', 0, 1, 0, NULL, NULL, 'I cant ', '2026-08-10 08:07:56'),
+(57, 12, 76, 'required', 'pending', 0, 1, 0, NULL, NULL, NULL, '2026-08-10 08:07:56'),
+(58, 13, 40, 'organizer', 'accepted', 0, 0, 0, NULL, NULL, NULL, '2026-08-17 06:58:44'),
+(59, 13, 26, 'required', 'pending', 0, 1, 0, NULL, NULL, NULL, '2026-08-17 06:58:44'),
+(60, 13, 24, 'required', 'pending', 0, 1, 0, NULL, NULL, NULL, '2026-08-17 06:58:44'),
+(61, 13, 69, 'required', 'pending', 0, 1, 0, NULL, NULL, NULL, '2026-08-17 06:58:44');
 
 -- --------------------------------------------------------
 
@@ -780,6 +1969,14 @@ CREATE TABLE `meeting_reminders` (
   `sent_at` datetime DEFAULT NULL,
   `created_at` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `meeting_reminders`
+--
+
+INSERT INTO `meeting_reminders` (`reminder_id`, `meeting_id`, `user_id`, `reminder_time`, `reminder_type`, `sent`, `sent_at`, `created_at`) VALUES
+(1, 11, 76, '2026-03-24 10:40:00', 'both', 1, '2026-03-24 10:40:00', '2026-03-24 07:40:00'),
+(2, 12, 76, '2026-08-10 12:05:11', 'both', 1, '2026-08-10 12:05:11', '2026-08-10 09:05:11');
 
 -- --------------------------------------------------------
 
@@ -805,17 +2002,14 @@ CREATE TABLE `menu_items` (
 --
 
 INSERT INTO `menu_items` (`id`, `name`, `path`, `icon`, `parent_id`, `sort_order`, `file_name`, `is_active`, `created_at`, `updated_at`) VALUES
-(1, 'Dashboard', '/', 'bi-speedometer2', NULL, 1, NULL, 1, '2025-08-12 09:45:03', '2025-11-29 09:20:20'),
-(2, 'User Management', '#', 'bi-people', NULL, 2, NULL, 1, '2025-08-12 09:45:03', '2025-08-12 09:45:03'),
-(3, 'Add Employee', '/EmployeeForm', 'bi-person-plus', 2, 1, NULL, 1, '2025-08-12 09:45:03', '2025-08-12 09:45:03'),
-(4, 'Manage Accounts', '/UserTable', 'bi-table', 2, 2, NULL, 1, '2025-08-12 09:45:03', '2025-08-12 09:45:03'),
+(2, 'User Management', '/UserTable', 'bi-people', 24, 2, NULL, 1, '2025-08-12 09:45:03', '2026-03-25 07:42:24'),
+(3, 'Add Employee', '/EmployeeForm', 'bi-person-plus', 24, 1, NULL, 1, '2025-08-12 09:45:03', '2026-03-25 07:51:48'),
+(4, 'Manage Accounts', '/UserTable', 'bi-table', 24, 2, NULL, 1, '2025-08-12 09:45:03', '2026-03-25 07:52:07'),
 (5, 'User Registration', '/UserForm', 'bi-person-add', 2, 3, NULL, 1, '2025-08-12 09:45:03', '2025-08-12 09:45:03'),
 (6, 'Reports', '#', 'bi-file-earmark-text', NULL, 3, NULL, 1, '2025-08-12 09:45:03', '2025-08-12 09:45:03'),
-(7, 'Analytics', '/reports/analytics', 'bi-graph-up', 6, 1, NULL, 1, '2025-08-12 09:45:03', '2025-08-12 09:45:03'),
 (8, 'Export Data', '/reports/export', 'bi-download', 6, 2, NULL, 1, '2025-08-12 09:45:03', '2025-08-12 09:45:03'),
 (9, 'Planning & Strategy', '#', 'bi-diagram-3', NULL, 4, NULL, 1, '2025-08-12 09:45:03', '2025-08-12 09:45:03'),
 (10, 'Strategy Plans', '/Stategy-plan/View', 'bi-clipboard-check', 9, 1, NULL, 1, '2025-08-12 09:45:03', '2025-12-11 08:49:16'),
-(11, 'add plan', '/plan/PlanSteps/Add', 'bi-bullseye', 9, 2, 'StafPlanSteps.jsx', 0, '2025-08-12 09:45:03', '2025-08-13 11:36:42'),
 (12, 'Objectives', '/objectives', 'bi-target', 9, 3, NULL, 1, '2025-08-12 09:45:03', '2025-08-12 09:45:03'),
 (13, 'Main Dashboard', '/ceo/dashboard', 'bi-building', NULL, 5, NULL, 1, '2025-08-12 09:45:03', '2025-12-16 12:21:40'),
 (14, 'Organization Plans', '/ceo/plans', 'bi-diagram-2', 13, 1, NULL, 1, '2025-08-12 09:45:03', '2025-08-12 09:45:03'),
@@ -823,7 +2017,6 @@ INSERT INTO `menu_items` (`id`, `name`, `path`, `icon`, `parent_id`, `sort_order
 (16, 'Team Management', '#', 'bi-people-fill', NULL, 6, NULL, 1, '2025-08-12 09:45:03', '2025-08-12 09:45:03'),
 (17, 'Team Dashboard', '/team/dashboard', 'bi-kanban', 16, 1, NULL, 1, '2025-08-12 09:45:03', '2025-08-12 09:45:03'),
 (18, 'Team Plans', '/team/plans', 'bi-list-check', 16, 2, NULL, 1, '2025-08-12 09:45:03', '2025-08-12 09:45:03'),
-(19, 'Team Reports', '/team/reports', 'bi-clipboard-data', 16, 3, NULL, 1, '2025-08-12 09:45:03', '2025-08-12 09:45:03'),
 (20, 'My Workspace', '#', 'bi-person-workspace', NULL, 7, NULL, 1, '2025-08-12 09:45:03', '2025-08-12 09:45:03'),
 (21, 'My Plans', '/staff/plans', 'bi-journal-check', 20, 1, NULL, 1, '2025-08-12 09:45:03', '2025-08-12 09:45:03'),
 (22, 'My Reports', '/staff/reports', 'bi-journal-text', 20, 2, NULL, 1, '2025-08-12 09:45:03', '2025-08-12 09:45:03'),
@@ -832,47 +2025,55 @@ INSERT INTO `menu_items` (`id`, `name`, `path`, `icon`, `parent_id`, `sort_order
 (25, 'Settings', '/settings', 'bi-gear', 24, 1, NULL, 1, '2025-08-12 09:45:03', '2025-08-12 09:45:03'),
 (26, 'Menu Permissions', '/menu-permissions', 'bi-shield-lock', 24, 2, NULL, 1, '2025-08-12 09:45:03', '2025-08-12 09:45:03'),
 (27, 'System Logs', '/admin/logs', 'bi-file-text', 24, 3, NULL, 1, '2025-08-12 09:45:03', '2025-08-12 09:45:03'),
-(28, 'Backup & Restore', '/admin/backup', 'bi-cloud-arrow-up', 24, 4, NULL, 1, '2025-08-12 09:45:03', '2025-08-12 09:45:03'),
 (29, 'Profile', '/ProfilePictureUpload', 'bi-person-circle', NULL, 9, NULL, 1, '2025-08-12 09:45:03', '2025-08-12 09:45:03'),
-(30, 'Communication', '#', 'bi-chat-dots', NULL, 10, NULL, 1, '2025-08-12 09:45:03', '2025-08-12 09:45:03'),
-(31, 'Messages', '/messages', 'bi-envelope', 30, 1, NULL, 1, '2025-08-12 09:45:03', '2025-08-12 09:45:03'),
+(30, 'Communication', '#', 'bi-chat-dots', NULL, 10, NULL, 0, '2025-08-12 09:45:03', '2026-03-25 07:08:35'),
+(31, 'Messages', '/messages', 'bi-envelope', 30, 1, NULL, 0, '2025-08-12 09:45:03', '2026-03-25 07:12:08'),
 (32, 'Notifications', '/notifications', 'bi-bell', 30, 2, NULL, 1, '2025-08-12 09:45:03', '2025-08-12 09:45:03'),
-(33, 'Finance & Resources', '#', 'bi-currency-dollar', NULL, 11, NULL, 1, '2025-08-12 09:45:03', '2025-08-12 09:45:03'),
-(34, 'Budget Planning', '/finance/budget', 'bi-calculator', 33, 1, NULL, 1, '2025-08-12 09:45:03', '2025-08-12 09:45:03'),
+(33, 'Finance & Resources', '#', 'bi-currency-dollar', NULL, 11, NULL, 0, '2025-08-12 09:45:03', '2026-03-25 07:08:42'),
+(34, 'Budget Planning', '/finance/budget', 'bi-calculator', 33, 1, NULL, 0, '2025-08-12 09:45:03', '2026-03-25 07:10:45'),
 (35, 'Resource Allocation', '/finance/resources', 'bi-pie-chart', 33, 2, NULL, 1, '2025-08-12 09:45:03', '2025-08-12 09:45:03'),
-(36, 'Help & Support', '#', 'bi-question-circle', NULL, 12, NULL, 1, '2025-08-12 09:45:03', '2025-08-12 09:45:03'),
-(37, 'Documentation', '/help/docs', 'bi-book', 36, 1, NULL, 1, '2025-08-12 09:45:03', '2025-08-12 09:45:03'),
+(36, 'Help & Support', '#', 'bi-question-circle', NULL, 12, NULL, 0, '2025-08-12 09:45:03', '2026-03-25 07:08:48'),
+(37, 'Documentation', '/help/docs', 'bi-book', 36, 1, NULL, 0, '2025-08-12 09:45:03', '2026-03-25 07:11:45'),
 (38, 'Support Tickets', '/help/tickets', 'bi-headset', 36, 2, NULL, 1, '2025-08-12 09:45:03', '2025-08-12 09:45:03'),
 (40, 'Plan Managment', '/admin', 'bi-file-earmark-text', NULL, 1, 'UserManagement.jsx', 1, '2025-08-12 12:44:57', '2025-12-16 12:20:49'),
-(41, 'CEO View Submitted Plan', '/plan/View', 'bi-shield-lock', 40, 1, 'UserManagement.jsx', 0, '2025-08-12 12:54:13', '2025-08-13 11:22:44'),
-(42, 'CEO Plan', './', 'bi-file-earmark-text', NULL, 2, NULL, 0, '2025-08-12 13:41:19', '2025-08-12 19:03:29'),
 (43, 'Report', './', 'bi-activity', NULL, 1, NULL, 1, '2025-08-12 13:46:59', '2025-12-16 12:21:22'),
-(44, 'CEO view submitted plan', '../plan/View', 'bi-activity', 40, 1, 'CeoSubmittedViewPlan.jsx', 0, '2025-08-12 13:56:53', '2025-08-13 12:08:27'),
 (45, 'My Plan Managment', './', 'bi-file-earmark-text', NULL, 4, NULL, 1, '2025-08-12 14:00:41', '2025-12-16 12:22:47'),
-(46, 'Add Report', '/report/Add', 'bi-activity', 6, 2, 'StaffAddReport.jsx', 0, '2025-08-12 14:02:38', '2025-08-13 13:07:34'),
 (47, 'Add Report', '/plan/view/add-report/', 'bi-file-plus', 6, 3, 'StafAddReport.jsx', 0, '2025-08-12 17:57:39', '2025-08-14 18:45:58'),
 (48, 'Admin Dashboard ', '/admin/dashboard-analytics', 'bi-house', NULL, 2, 'AdminDashboard.jsx', 1, '2025-08-12 19:08:35', '2025-11-29 10:05:45'),
-(49, 'CEO View Submitted Plan', '/plan/View', 'bi-gear', 40, 1, 'CeoSubmittedViewPlan.jsx', 0, '2025-08-13 11:14:34', '2025-08-13 11:19:22'),
-(50, 'Ceo viewe submitted plans', '/plan/View', 'bi-gear', 40, 1, 'CeoSubmittedViewPlan', 0, '2025-08-13 11:41:23', '2025-08-13 11:43:04'),
 (51, 'Organization Plan ', '/plan/ViewOrgPlan', 'bi-file-earmark-text', NULL, 1, 'CeoViewOrgPlan.jsx', 1, '2025-08-13 12:24:12', '2025-08-13 12:24:12'),
 (52, 'Organization Report', '/report/ViewOrgReport', 'bi-file-earmark-text', NULL, 1, 'CeoViewOrgReport.jsx', 1, '2025-08-13 12:26:57', '2025-08-13 12:26:57'),
-(53, 'Ceo View Declined Report', '/report/CeoViewDeclinedReport', 'bi-file-earmark-text', 43, 1, 'CeoViewDeclinedReport.jsx', 0, '2025-08-13 12:30:26', '2025-08-13 12:33:20'),
-(54, 'View declined report', '/report/CeoViewDeclinedReport', 'bi-file-earmark-text', 43, 1, 'CeoViewDeclinedReport', 1, '2025-08-13 12:37:11', '2025-12-16 12:21:08'),
 (55, 'Incoming Plans', '/plan/View', '', 40, 1, 'CeoSubmittedViewPlan.jsx', 1, '2025-08-13 12:40:32', '2025-12-16 12:20:38'),
 (56, 'View Declined Plan', '/plan/CeoViewDeclinedPlan', 'bi-file-earmark-text', NULL, 1, 'CeoViewDeclinedPlan.jsx', 1, '2025-08-13 12:44:34', '2025-08-13 12:44:34'),
 (57, 'My report', '/report/View_myreport', 'bi-file-earmark-text', 6, 1, 'CeoViewReport.jsx', 1, '2025-08-13 12:52:45', '2025-08-13 12:52:45'),
-(58, 'View submitted report', '/report/Viewapprovedreport', '', 6, 1, 'TeamleaderSubmittedViewReport.jsx', 1, '2025-08-13 13:04:31', '2025-08-13 13:04:31'),
-(59, 'add plan', '/plan/PlanSteps/Add', '', 45, 1, 'StafPlanSteps.jsx', 1, '2025-08-13 13:08:42', '2025-08-13 13:08:42'),
-(60, 'View my plan', '/plan/View_myplan', '', 45, 1, 'StaffViewPlan.jsx', 1, '2025-08-13 17:27:37', '2025-08-13 17:27:37'),
-(61, 'add report', '/plan/view/add-report/:planId', 'bi-file-earmark-text', 6, 1, 'StafAddReport.jsx', 0, '2025-08-14 03:32:48', '2025-08-14 03:38:13'),
-(62, 'add report', '/plan/view/add-report/', 'bi-file-earmark-text', 6, 1, 'StafAddReport.jsx', 0, '2025-08-14 18:53:30', '2025-08-14 19:01:28'),
-(63, 'AddReport', '/plan/view/add-report/', '', NULL, 1, 'StafAddReport.jsx', 0, '2025-08-14 19:05:20', '2025-08-14 19:07:41'),
+(59, 'add action plan', '/plan/PlanSteps/Add', '', 45, 1, 'StafPlanSteps.jsx', 1, '2025-08-13 13:08:42', '2026-08-17 06:49:19'),
 (64, 'resreved Dashboard', '/ceo/dashboard', 'bi-house', NULL, 1, 'CeoDashboard.jsx', 1, '2025-08-14 19:28:06', '2025-11-29 10:05:18'),
-(65, 'declined-plan ', '/plan/StaffViewDeclinedPlan', 'bi-file-earmark-text', 45, 3, 'StaffViewDeclinedPlan.jsx', 1, '2025-08-18 12:28:58', '2025-08-18 12:28:58'),
 (66, 'Submitted Reports', '/report/Viewapprovedreport', 'bi-file-earmark-text', 6, 2, 'TeamleaderSubmittedViewReport.jsx', 1, '2025-08-18 13:14:21', '2025-08-18 13:14:21'),
 (67, 'approved plan', '/plan/View_myplan', 'bi-file-earmark-text', 40, 2, 'StaffViewPlan.jsx', 1, '2025-08-18 17:57:06', '2025-08-18 17:57:06'),
-(68, 'add report ', '/plan/view/add-report/:planId', '', 6, 4, 'StafAddReport.jsx', 1, '2025-08-19 05:48:57', '2025-08-19 05:48:57'),
-(69, 'Organization Structure', '/admin/org-structure', 'bi bi-diagram-3', NULL, 99, NULL, 1, '2025-12-15 13:18:47', '2025-12-15 13:18:47');
+(69, 'Organization Structure', '/admin/org-structure', 'bi bi-diagram-3', NULL, 99, NULL, 1, '2025-12-15 13:18:47', '2025-12-15 13:18:47'),
+(70, 'Task Management', '#', 'bi-list-check', NULL, 15, NULL, 1, '2026-03-18 12:31:28', '2026-03-18 12:31:28'),
+(71, 'Task Assignment', '/tasks/assignment', 'bi-person-plus', 70, 1, NULL, 0, '2026-03-18 12:31:28', '2026-08-17 06:03:52'),
+(72, 'My Tasks', '/tasks/management', 'bi-journal-check', 70, 2, NULL, 1, '2026-03-18 12:31:28', '2026-03-18 12:31:28'),
+(73, 'Daily Planner', '/tasks/daily', 'bi-calendar-event', 70, 3, NULL, 1, '2026-03-18 12:31:28', '2026-03-18 12:31:28'),
+(74, 'Task Breakdowns', '/tasks/breakdown', 'bi-diagram-3', 70, 5, NULL, 1, '2026-03-19 09:01:16', '2026-03-19 09:01:16'),
+(75, 'Employee Positions', '/admin/employee-positions', 'bi-diagram-2', 24, 4, NULL, 1, '2026-03-19 11:00:37', '2026-03-25 07:51:38'),
+(76, 'Plan Types', '/plan-types', 'bi bi-tags', NULL, 90, 'PlanTypesManager.jsx', 1, '2026-08-07 12:59:24', '2026-08-07 12:59:24'),
+(77, 'Action Plan Breakdown', '/plan/action-plan-breakdown', 'bi bi-diagram-3', 45, 55, 'ActionPlanBreakdownPage.jsx', 1, '2026-08-08 04:51:13', '2026-08-08 05:22:25'),
+(78, 'M&E Compliance', '/me/compliance', 'bi bi-shield-check', NULL, 60, 'MECompliancePage.jsx', 1, '2026-08-09 16:40:45', '2026-08-09 16:40:45'),
+(79, 'Executive Report', '/reports/executive', 'bi bi-bar-chart-steps', NULL, 65, 'ExecutiveReportPage.jsx', 1, '2026-08-09 20:02:54', '2026-08-09 20:02:54'),
+(80, 'Plan Pillars', '/plan-pillars', 'bi-columns-gap', 9, 15, 'PlanPillarsPage.jsx', 1, '2026-08-11 12:19:43', '2026-08-11 12:19:43'),
+(81, 'Goal Configuration', '/goal-config', 'bi-sliders', 9, 16, 'GoalConfigPage.jsx', 1, '2026-08-11 12:19:43', '2026-08-11 12:19:43'),
+(83, 'Plan Report', '/reports/plans', 'bi bi-clipboard-data', 87, 11, NULL, 1, '2026-08-16 07:58:18', '2026-08-16 08:00:36'),
+(85, 'Employee Report', '/reports/employees', 'bi bi-person-lines-fill', 87, 13, NULL, 1, '2026-08-16 07:58:18', '2026-08-16 08:00:36'),
+(86, 'Org Structure Report', '/reports/org-structure', 'bi bi-diagram-3', 87, 14, NULL, 1, '2026-08-16 07:58:18', '2026-08-16 08:00:36'),
+(87, 'Report Module', '#reports', 'bi bi-pie-chart-fill', NULL, 11, NULL, 1, '2026-08-16 08:00:36', '2026-08-16 08:00:36'),
+(88, 'Assign New Task', '/tasks/assignment/assign', 'bi bi-plus-circle', 70, 1, 'TaskAssignment.jsx', 1, '2026-08-17 04:03:48', '2026-08-17 06:03:52'),
+(89, 'Received Tasks', '/tasks/assignment/received', 'bi bi-inbox', 70, 3, 'TaskAssignment.jsx', 1, '2026-08-17 04:03:48', '2026-08-17 06:03:52'),
+(90, 'Sent Tasks', '/tasks/assignment/sent', 'bi bi-send', 70, 2, 'TaskAssignment.jsx', 1, '2026-08-17 04:03:48', '2026-08-17 06:03:52'),
+(91, 'Subordinates', '/tasks/assignment/subordinates', 'bi bi-people', 70, 4, 'TaskAssignment.jsx', 1, '2026-08-17 04:03:48', '2026-08-17 06:03:52'),
+(92, 'KPI Position Assignment', '/kpi/my-assigned', 'bi bi-award-fill', 9, 18, 'KPIAssignmentPage.jsx', 1, '2026-08-17 07:39:18', '2026-08-17 08:05:19'),
+(93, 'Report Submissions', '/reports/submissions', 'bi bi-file-earmark-check', 87, 2, NULL, 1, '2026-08-17 08:32:55', '2026-08-17 08:32:55'),
+(94, 'Dashboard', '/', '', NULL, 1, 'dashboard.jsx', 1, '2026-08-17 08:54:37', '2026-08-17 08:54:37'),
+(95, 'Backup & Export Center', '/reports/export', 'bi bi-cloud-arrow-down-fill', 87, 5, NULL, 1, '2026-08-21 08:40:29', '2026-08-21 08:40:29');
 
 -- --------------------------------------------------------
 
@@ -886,9 +2087,10 @@ CREATE TABLE `messages` (
   `sender_id` int(11) NOT NULL,
   `receiver_id` int(11) DEFAULT NULL,
   `content` text NOT NULL,
-  `message_type` enum('text','image','file','system') DEFAULT 'text',
+  `message_type` enum('text','image','file','system','plan') DEFAULT 'text',
   `file_path` varchar(500) DEFAULT NULL,
   `file_name` varchar(255) DEFAULT NULL,
+  `metadata` text DEFAULT NULL,
   `is_edited` tinyint(1) DEFAULT 0,
   `edited_at` timestamp NULL DEFAULT NULL,
   `is_deleted` tinyint(1) DEFAULT 0,
@@ -896,98 +2098,122 @@ CREATE TABLE `messages` (
   `parent_message_id` int(11) DEFAULT NULL,
   `reaction_count` int(11) DEFAULT 0,
   `sent_at` timestamp NOT NULL DEFAULT current_timestamp()
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 --
 -- Dumping data for table `messages`
 --
 
-INSERT INTO `messages` (`message_id`, `conversation_id`, `sender_id`, `receiver_id`, `content`, `message_type`, `file_path`, `file_name`, `is_edited`, `edited_at`, `is_deleted`, `deleted_at`, `parent_message_id`, `reaction_count`, `sent_at`) VALUES
-(1, 2, 25, NULL, 'hello', 'text', NULL, NULL, 0, NULL, 0, NULL, NULL, 0, '2025-11-27 12:02:36'),
-(2, 5, 25, NULL, 'hello', 'text', NULL, NULL, 0, NULL, 0, NULL, NULL, 0, '2025-11-27 12:37:27'),
-(3, 7, 25, NULL, 'ato aman', 'text', NULL, NULL, 0, NULL, 0, NULL, NULL, 0, '2025-11-27 12:37:59'),
-(4, 6, 25, NULL, 'ato ezira', 'text', NULL, NULL, 0, NULL, 0, NULL, NULL, 0, '2025-11-27 12:38:15'),
-(5, 8, 25, NULL, 'ee sewye', 'text', NULL, NULL, 0, NULL, 0, NULL, NULL, 0, '2025-11-27 12:39:19'),
-(6, 8, 40, NULL, 'selam aleka', 'text', NULL, NULL, 0, NULL, 0, NULL, NULL, 0, '2025-11-27 12:39:33'),
-(7, 8, 25, NULL, 'qq', 'text', NULL, NULL, 0, NULL, 0, NULL, NULL, 0, '2025-11-27 12:45:21'),
-(8, 9, 25, NULL, '[Forwarded] ee sewye', 'text', NULL, NULL, 0, NULL, 0, NULL, NULL, 0, '2025-11-27 12:45:38'),
-(9, 9, 25, NULL, '[Forwarded] ee sewye', 'text', NULL, NULL, 0, NULL, 0, NULL, NULL, 0, '2025-11-27 12:45:42'),
-(10, 9, 25, NULL, '@null ', 'text', NULL, NULL, 0, NULL, 0, NULL, NULL, 0, '2025-11-27 12:45:52'),
-(11, 8, 25, NULL, '@null dasda', 'text', NULL, NULL, 0, NULL, 0, NULL, NULL, 0, '2025-11-27 12:46:08'),
-(12, 10, 25, NULL, 'hello', 'text', NULL, NULL, 0, NULL, 0, NULL, NULL, 0, '2025-11-27 12:57:48'),
-(13, 10, 25, NULL, 'ehh', 'text', NULL, NULL, 0, NULL, 0, NULL, NULL, 0, '2025-11-27 12:58:30'),
-(14, 8, 25, NULL, '[Forwarded] hello', 'text', NULL, NULL, 0, NULL, 0, NULL, NULL, 0, '2025-11-27 13:02:10'),
-(15, 8, 25, NULL, '[Forwarded] hello', 'text', NULL, NULL, 0, NULL, 0, NULL, NULL, 0, '2025-11-27 13:02:13'),
-(16, 8, 25, NULL, '[Forwarded] hello', 'text', NULL, NULL, 0, NULL, 0, NULL, NULL, 0, '2025-11-27 13:02:17'),
-(17, 8, 25, NULL, '[Forwarded] hello', 'text', NULL, NULL, 0, NULL, 0, NULL, NULL, 0, '2025-11-27 13:02:18'),
-(18, 10, 25, NULL, 'test', 'text', NULL, NULL, 0, NULL, 0, NULL, NULL, 0, '2025-11-27 13:13:45'),
-(19, 10, 40, NULL, 'test replay', 'text', NULL, NULL, 0, NULL, 0, NULL, NULL, 0, '2025-11-27 13:14:07'),
-(20, 10, 25, NULL, '@Olana I thinh it is good', 'text', NULL, NULL, 0, NULL, 0, NULL, NULL, 0, '2025-11-27 13:28:12'),
-(21, 8, 40, NULL, 'hello sir', 'text', NULL, NULL, 0, NULL, 0, NULL, NULL, 0, '2025-11-27 13:29:25'),
-(22, 8, 40, NULL, 'hello sir', 'text', NULL, NULL, 0, NULL, 0, NULL, NULL, 0, '2025-11-27 13:29:28'),
-(23, 8, 40, NULL, 'hello', 'text', NULL, NULL, 0, NULL, 0, NULL, NULL, 0, '2025-11-27 13:29:50'),
-(24, 1, 40, NULL, '[Forwarded] qq', 'text', NULL, NULL, 0, NULL, 0, NULL, NULL, 0, '2025-11-27 13:35:56'),
-(25, 1, 40, NULL, 'asd', 'text', NULL, NULL, 0, NULL, 0, NULL, NULL, 0, '2025-11-27 13:36:20'),
-(26, 8, 40, NULL, 'enya', 'text', NULL, NULL, 0, NULL, 0, NULL, NULL, 0, '2025-11-27 13:41:23'),
-(27, 10, 40, NULL, 'beseb', 'text', NULL, NULL, 0, NULL, 0, NULL, NULL, 0, '2025-11-27 13:42:01'),
-(28, 10, 40, NULL, '@Ezira eeh', 'text', NULL, NULL, 0, NULL, 0, NULL, NULL, 0, '2025-11-27 14:00:53'),
-(29, 10, 40, NULL, 'baya', 'text', NULL, NULL, 0, NULL, 0, NULL, NULL, 0, '2025-11-27 14:01:06'),
-(30, 8, 40, NULL, '[Forwarded] test', 'text', NULL, NULL, 0, NULL, 0, NULL, NULL, 0, '2025-11-27 14:02:34'),
-(31, 3, 25, NULL, 'endet aderk ezira', 'text', NULL, NULL, 0, NULL, 0, NULL, NULL, 0, '2025-11-28 08:21:12'),
-(32, 8, 25, NULL, 'dena aderk ezira', 'text', NULL, NULL, 0, NULL, 0, NULL, NULL, 0, '2025-11-28 08:21:46'),
-(33, 10, 25, NULL, '??', 'text', NULL, NULL, 0, NULL, 0, NULL, NULL, 0, '2025-11-28 08:37:30'),
-(34, 3, 40, NULL, 'hello', 'text', NULL, NULL, 0, NULL, 0, NULL, NULL, 0, '2025-11-28 08:46:51'),
-(35, 3, 40, NULL, 'ymesgen', 'text', NULL, NULL, 0, NULL, 0, NULL, NULL, 0, '2025-11-28 08:51:23'),
-(36, 10, 40, NULL, 'as', 'text', NULL, NULL, 0, NULL, 0, NULL, NULL, 0, '2025-11-28 09:01:52'),
-(37, 10, 40, NULL, 'ds', 'text', NULL, NULL, 0, NULL, 0, NULL, NULL, 0, '2025-11-28 09:11:08'),
-(38, 10, 40, NULL, 'belew', 'text', NULL, NULL, 0, NULL, 0, NULL, NULL, 0, '2025-11-28 09:11:22'),
-(39, 10, 40, NULL, 'dadad', 'text', NULL, NULL, 0, NULL, 0, NULL, NULL, 0, '2025-11-28 09:11:59'),
-(40, 3, 40, NULL, 'sa', 'text', NULL, NULL, 0, NULL, 0, NULL, NULL, 0, '2025-11-28 09:18:18'),
-(41, 3, 40, NULL, 'oriya', 'text', NULL, NULL, 0, NULL, 0, NULL, NULL, 0, '2025-11-28 09:31:39'),
-(42, 10, 40, NULL, 'dadad', 'text', NULL, NULL, 0, NULL, 0, NULL, NULL, 0, '2025-11-28 09:34:22'),
-(43, 10, 40, NULL, 'das', 'text', NULL, NULL, 0, NULL, 0, NULL, NULL, 0, '2025-11-28 09:34:23'),
-(44, 10, 40, NULL, 'dasdas', 'text', NULL, NULL, 0, NULL, 0, NULL, NULL, 0, '2025-11-28 09:34:23'),
-(45, 10, 40, NULL, 'd', 'text', NULL, NULL, 0, NULL, 0, NULL, NULL, 0, '2025-11-28 09:34:24'),
-(46, 10, 40, NULL, 'd', 'text', NULL, NULL, 0, NULL, 0, NULL, NULL, 0, '2025-11-28 09:34:25'),
-(47, 10, 40, NULL, 'ddas', 'text', NULL, NULL, 0, NULL, 0, NULL, NULL, 0, '2025-11-28 09:34:25'),
-(48, 10, 40, NULL, 'ddasdasd', 'text', NULL, NULL, 0, NULL, 0, NULL, NULL, 0, '2025-11-28 09:34:25'),
-(49, 10, 40, NULL, 'dass', 'text', NULL, NULL, 0, NULL, 0, NULL, NULL, 0, '2025-11-28 09:34:26'),
-(50, 10, 40, NULL, 'dad', 'text', NULL, NULL, 0, NULL, 0, NULL, NULL, 0, '2025-11-28 09:34:26'),
-(51, 10, 40, NULL, 'dadasd', 'text', NULL, NULL, 0, NULL, 0, NULL, NULL, 0, '2025-11-28 09:34:26'),
-(52, 10, 40, NULL, 'dadasdasdas', 'text', NULL, NULL, 0, NULL, 0, NULL, NULL, 0, '2025-11-28 09:34:27'),
-(53, 10, 40, NULL, 'assd', 'text', NULL, NULL, 0, NULL, 0, NULL, NULL, 0, '2025-11-28 09:34:27'),
-(54, 10, 40, NULL, 'assdasd', 'text', NULL, NULL, 0, NULL, 0, NULL, NULL, 0, '2025-11-28 09:34:28'),
-(55, 10, 40, NULL, 'da', 'text', NULL, NULL, 0, NULL, 0, NULL, NULL, 0, '2025-11-28 09:34:28'),
-(56, 10, 40, NULL, 'dadas', 'text', NULL, NULL, 0, NULL, 0, NULL, NULL, 0, '2025-11-28 09:34:28'),
-(57, 10, 40, NULL, 'dsa', 'text', NULL, NULL, 0, NULL, 0, NULL, NULL, 0, '2025-11-28 09:34:29'),
-(58, 10, 40, NULL, 'dsaa', 'text', NULL, NULL, 0, NULL, 0, NULL, NULL, 0, '2025-11-28 09:34:30'),
-(59, 10, 40, NULL, 'da', 'text', NULL, NULL, 0, NULL, 0, NULL, NULL, 0, '2025-11-28 09:34:30'),
-(60, 10, 40, NULL, 'a', 'text', NULL, NULL, 0, NULL, 0, NULL, NULL, 0, '2025-11-28 09:34:31'),
-(61, 10, 40, NULL, 'a', 'text', NULL, NULL, 0, NULL, 0, NULL, NULL, 0, '2025-11-28 09:34:31'),
-(62, 8, 40, NULL, 'l', 'text', NULL, NULL, 0, NULL, 0, NULL, NULL, 0, '2025-11-28 09:37:21'),
-(63, 8, 40, NULL, '1', 'text', NULL, NULL, 0, NULL, 0, NULL, NULL, 0, '2025-11-28 09:41:35'),
-(64, 8, 40, NULL, '2', 'text', NULL, NULL, 0, NULL, 0, NULL, NULL, 0, '2025-11-28 09:41:39'),
-(65, 8, 40, NULL, '23', 'text', NULL, NULL, 0, NULL, 0, NULL, NULL, 0, '2025-11-28 09:41:40'),
-(66, 8, 40, NULL, '4', 'text', NULL, NULL, 0, NULL, 0, NULL, NULL, 0, '2025-11-28 09:41:48'),
-(67, 8, 40, NULL, '5', 'text', NULL, NULL, 0, NULL, 0, NULL, NULL, 0, '2025-11-28 09:41:49'),
-(68, 8, 40, NULL, '6', 'text', NULL, NULL, 0, NULL, 0, NULL, NULL, 0, '2025-11-28 09:41:51'),
-(69, 8, 40, NULL, '7', 'text', NULL, NULL, 0, NULL, 0, NULL, NULL, 0, '2025-11-28 09:41:53'),
-(70, 8, 40, NULL, '8', 'text', NULL, NULL, 0, NULL, 0, NULL, NULL, 0, '2025-11-28 09:41:54'),
-(71, 8, 40, NULL, '9', 'text', NULL, NULL, 0, NULL, 0, NULL, NULL, 0, '2025-11-28 09:41:56'),
-(72, 8, 40, NULL, '12', 'text', NULL, NULL, 0, NULL, 0, NULL, NULL, 0, '2025-11-28 09:41:58'),
-(73, 8, 40, NULL, '13', 'text', NULL, NULL, 0, NULL, 0, NULL, NULL, 0, '2025-11-28 09:42:00'),
-(74, 8, 40, NULL, '14', 'text', NULL, NULL, 0, NULL, 0, NULL, NULL, 0, '2025-11-28 09:42:01'),
-(75, 8, 40, NULL, '15', 'text', NULL, NULL, 0, NULL, 0, NULL, NULL, 0, '2025-11-28 09:42:03'),
-(76, 8, 40, NULL, '1', 'text', NULL, NULL, 0, NULL, 0, NULL, NULL, 0, '2025-11-28 09:42:04'),
-(77, 8, 40, NULL, '1', 'text', NULL, NULL, 0, NULL, 0, NULL, NULL, 0, '2025-11-28 09:42:06'),
-(78, 8, 40, NULL, 'd', 'text', NULL, NULL, 0, NULL, 0, NULL, NULL, 0, '2025-11-28 09:46:44'),
-(79, 15, 25, NULL, 'selam', 'text', NULL, NULL, 0, NULL, 0, NULL, NULL, 0, '2025-11-28 09:57:54'),
-(80, 2, 25, NULL, 'a', 'text', NULL, NULL, 0, NULL, 0, NULL, NULL, 0, '2025-11-28 11:55:54'),
-(81, 15, 25, NULL, 'power.jpg', 'image', '/uploads/1764337076677-749029094-power.jpg', 'power.jpg', 0, NULL, 0, NULL, NULL, 1, '2025-11-28 13:37:56'),
-(82, 15, 25, NULL, 'lonchina.txt', 'file', '/uploads/1764337123988-379555737-lonchina.txt', 'lonchina.txt', 0, NULL, 0, NULL, NULL, 0, '2025-11-28 13:38:44'),
-(83, 8, 25, NULL, '[Forwarded] power.jpg', 'image', '/uploads/1764337076677-749029094-power.jpg', 'power.jpg', 0, NULL, 0, NULL, NULL, 1, '2025-11-28 13:39:40'),
-(84, 8, 40, NULL, '123 test', 'text', NULL, NULL, 0, NULL, 0, NULL, NULL, 0, '2025-11-28 13:45:41'),
-(85, 8, 40, NULL, 'test 2', 'text', NULL, NULL, 0, NULL, 0, NULL, NULL, 0, '2025-11-28 13:46:15');
+INSERT INTO `messages` (`message_id`, `conversation_id`, `sender_id`, `receiver_id`, `content`, `message_type`, `file_path`, `file_name`, `metadata`, `is_edited`, `edited_at`, `is_deleted`, `deleted_at`, `parent_message_id`, `reaction_count`, `sent_at`) VALUES
+(1, 2, 25, NULL, 'hello', 'text', NULL, NULL, NULL, 0, NULL, 0, NULL, NULL, 0, '2025-11-27 12:02:36'),
+(2, 5, 25, NULL, 'hello', 'text', NULL, NULL, NULL, 0, NULL, 0, NULL, NULL, 0, '2025-11-27 12:37:27'),
+(3, 7, 25, NULL, 'ato aman', 'text', NULL, NULL, NULL, 0, NULL, 0, NULL, NULL, 0, '2025-11-27 12:37:59'),
+(4, 6, 25, NULL, 'ato ezira', 'text', NULL, NULL, NULL, 0, NULL, 0, NULL, NULL, 0, '2025-11-27 12:38:15'),
+(5, 8, 25, NULL, 'ee sewye', 'text', NULL, NULL, NULL, 0, NULL, 0, NULL, NULL, 0, '2025-11-27 12:39:19'),
+(6, 8, 40, NULL, 'selam aleka', 'text', NULL, NULL, NULL, 0, NULL, 0, NULL, NULL, 0, '2025-11-27 12:39:33'),
+(7, 8, 25, NULL, 'qq', 'text', NULL, NULL, NULL, 0, NULL, 0, NULL, NULL, 0, '2025-11-27 12:45:21'),
+(8, 9, 25, NULL, '[Forwarded] ee sewye', 'text', NULL, NULL, NULL, 0, NULL, 0, NULL, NULL, 0, '2025-11-27 12:45:38'),
+(9, 9, 25, NULL, '[Forwarded] ee sewye', 'text', NULL, NULL, NULL, 0, NULL, 0, NULL, NULL, 0, '2025-11-27 12:45:42'),
+(10, 9, 25, NULL, '@null ', 'text', NULL, NULL, NULL, 0, NULL, 0, NULL, NULL, 0, '2025-11-27 12:45:52'),
+(11, 8, 25, NULL, '@null dasda', 'text', NULL, NULL, NULL, 0, NULL, 0, NULL, NULL, 0, '2025-11-27 12:46:08'),
+(12, 10, 25, NULL, 'hello', 'text', NULL, NULL, NULL, 0, NULL, 0, NULL, NULL, 0, '2025-11-27 12:57:48'),
+(13, 10, 25, NULL, 'ehh', 'text', NULL, NULL, NULL, 0, NULL, 0, NULL, NULL, 0, '2025-11-27 12:58:30'),
+(14, 8, 25, NULL, '[Forwarded] hello', 'text', NULL, NULL, NULL, 0, NULL, 0, NULL, NULL, 0, '2025-11-27 13:02:10'),
+(15, 8, 25, NULL, '[Forwarded] hello', 'text', NULL, NULL, NULL, 0, NULL, 0, NULL, NULL, 0, '2025-11-27 13:02:13'),
+(16, 8, 25, NULL, '[Forwarded] hello', 'text', NULL, NULL, NULL, 0, NULL, 0, NULL, NULL, 0, '2025-11-27 13:02:17'),
+(17, 8, 25, NULL, '[Forwarded] hello', 'text', NULL, NULL, NULL, 0, NULL, 0, NULL, NULL, 0, '2025-11-27 13:02:18'),
+(18, 10, 25, NULL, 'test', 'text', NULL, NULL, NULL, 0, NULL, 0, NULL, NULL, 0, '2025-11-27 13:13:45'),
+(19, 10, 40, NULL, 'test replay', 'text', NULL, NULL, NULL, 0, NULL, 0, NULL, NULL, 0, '2025-11-27 13:14:07'),
+(20, 10, 25, NULL, '@Olana I thinh it is good', 'text', NULL, NULL, NULL, 0, NULL, 0, NULL, NULL, 0, '2025-11-27 13:28:12'),
+(21, 8, 40, NULL, 'hello sir', 'text', NULL, NULL, NULL, 0, NULL, 0, NULL, NULL, 0, '2025-11-27 13:29:25'),
+(22, 8, 40, NULL, 'hello sir', 'text', NULL, NULL, NULL, 0, NULL, 0, NULL, NULL, 0, '2025-11-27 13:29:28'),
+(23, 8, 40, NULL, 'hello', 'text', NULL, NULL, NULL, 0, NULL, 0, NULL, NULL, 0, '2025-11-27 13:29:50'),
+(24, 1, 40, NULL, '[Forwarded] qq', 'text', NULL, NULL, NULL, 0, NULL, 0, NULL, NULL, 0, '2025-11-27 13:35:56'),
+(25, 1, 40, NULL, 'asd', 'text', NULL, NULL, NULL, 0, NULL, 0, NULL, NULL, 0, '2025-11-27 13:36:20'),
+(26, 8, 40, NULL, 'enya', 'text', NULL, NULL, NULL, 0, NULL, 0, NULL, NULL, 0, '2025-11-27 13:41:23'),
+(27, 10, 40, NULL, 'beseb', 'text', NULL, NULL, NULL, 0, NULL, 0, NULL, NULL, 0, '2025-11-27 13:42:01'),
+(28, 10, 40, NULL, '@Ezira eeh', 'text', NULL, NULL, NULL, 0, NULL, 0, NULL, NULL, 0, '2025-11-27 14:00:53'),
+(29, 10, 40, NULL, 'baya', 'text', NULL, NULL, NULL, 0, NULL, 0, NULL, NULL, 0, '2025-11-27 14:01:06'),
+(30, 8, 40, NULL, '[Forwarded] test', 'text', NULL, NULL, NULL, 0, NULL, 0, NULL, NULL, 0, '2025-11-27 14:02:34'),
+(31, 3, 25, NULL, 'endet aderk ezira', 'text', NULL, NULL, NULL, 0, NULL, 0, NULL, NULL, 0, '2025-11-28 08:21:12'),
+(32, 8, 25, NULL, 'dena aderk ezira', 'text', NULL, NULL, NULL, 0, NULL, 0, NULL, NULL, 0, '2025-11-28 08:21:46'),
+(33, 10, 25, NULL, '??', 'text', NULL, NULL, NULL, 0, NULL, 0, NULL, NULL, 0, '2025-11-28 08:37:30'),
+(34, 3, 40, NULL, 'hello', 'text', NULL, NULL, NULL, 0, NULL, 0, NULL, NULL, 0, '2025-11-28 08:46:51'),
+(35, 3, 40, NULL, 'ymesgen', 'text', NULL, NULL, NULL, 0, NULL, 0, NULL, NULL, 0, '2025-11-28 08:51:23'),
+(36, 10, 40, NULL, 'as', 'text', NULL, NULL, NULL, 0, NULL, 0, NULL, NULL, 0, '2025-11-28 09:01:52'),
+(37, 10, 40, NULL, 'ds', 'text', NULL, NULL, NULL, 0, NULL, 0, NULL, NULL, 0, '2025-11-28 09:11:08'),
+(38, 10, 40, NULL, 'belew', 'text', NULL, NULL, NULL, 0, NULL, 0, NULL, NULL, 0, '2025-11-28 09:11:22'),
+(39, 10, 40, NULL, 'dadad', 'text', NULL, NULL, NULL, 0, NULL, 0, NULL, NULL, 0, '2025-11-28 09:11:59'),
+(40, 3, 40, NULL, 'sa', 'text', NULL, NULL, NULL, 0, NULL, 0, NULL, NULL, 0, '2025-11-28 09:18:18'),
+(41, 3, 40, NULL, 'oriya', 'text', NULL, NULL, NULL, 0, NULL, 0, NULL, NULL, 0, '2025-11-28 09:31:39'),
+(42, 10, 40, NULL, 'dadad', 'text', NULL, NULL, NULL, 0, NULL, 0, NULL, NULL, 0, '2025-11-28 09:34:22'),
+(43, 10, 40, NULL, 'das', 'text', NULL, NULL, NULL, 0, NULL, 0, NULL, NULL, 0, '2025-11-28 09:34:23'),
+(44, 10, 40, NULL, 'dasdas', 'text', NULL, NULL, NULL, 0, NULL, 0, NULL, NULL, 0, '2025-11-28 09:34:23'),
+(45, 10, 40, NULL, 'd', 'text', NULL, NULL, NULL, 0, NULL, 0, NULL, NULL, 0, '2025-11-28 09:34:24'),
+(46, 10, 40, NULL, 'd', 'text', NULL, NULL, NULL, 0, NULL, 0, NULL, NULL, 0, '2025-11-28 09:34:25'),
+(47, 10, 40, NULL, 'ddas', 'text', NULL, NULL, NULL, 0, NULL, 0, NULL, NULL, 0, '2025-11-28 09:34:25'),
+(48, 10, 40, NULL, 'ddasdasd', 'text', NULL, NULL, NULL, 0, NULL, 0, NULL, NULL, 0, '2025-11-28 09:34:25'),
+(49, 10, 40, NULL, 'dass', 'text', NULL, NULL, NULL, 0, NULL, 0, NULL, NULL, 0, '2025-11-28 09:34:26'),
+(50, 10, 40, NULL, 'dad', 'text', NULL, NULL, NULL, 0, NULL, 0, NULL, NULL, 0, '2025-11-28 09:34:26'),
+(51, 10, 40, NULL, 'dadasd', 'text', NULL, NULL, NULL, 0, NULL, 0, NULL, NULL, 0, '2025-11-28 09:34:26'),
+(52, 10, 40, NULL, 'dadasdasdas', 'text', NULL, NULL, NULL, 0, NULL, 0, NULL, NULL, 0, '2025-11-28 09:34:27'),
+(53, 10, 40, NULL, 'assd', 'text', NULL, NULL, NULL, 0, NULL, 0, NULL, NULL, 0, '2025-11-28 09:34:27'),
+(54, 10, 40, NULL, 'assdasd', 'text', NULL, NULL, NULL, 0, NULL, 0, NULL, NULL, 0, '2025-11-28 09:34:28'),
+(55, 10, 40, NULL, 'da', 'text', NULL, NULL, NULL, 0, NULL, 0, NULL, NULL, 0, '2025-11-28 09:34:28'),
+(56, 10, 40, NULL, 'dadas', 'text', NULL, NULL, NULL, 0, NULL, 0, NULL, NULL, 0, '2025-11-28 09:34:28'),
+(57, 10, 40, NULL, 'dsa', 'text', NULL, NULL, NULL, 0, NULL, 0, NULL, NULL, 0, '2025-11-28 09:34:29'),
+(58, 10, 40, NULL, 'dsaa', 'text', NULL, NULL, NULL, 0, NULL, 0, NULL, NULL, 0, '2025-11-28 09:34:30'),
+(59, 10, 40, NULL, 'da', 'text', NULL, NULL, NULL, 0, NULL, 0, NULL, NULL, 0, '2025-11-28 09:34:30'),
+(60, 10, 40, NULL, 'a', 'text', NULL, NULL, NULL, 0, NULL, 0, NULL, NULL, 0, '2025-11-28 09:34:31'),
+(61, 10, 40, NULL, 'a', 'text', NULL, NULL, NULL, 0, NULL, 0, NULL, NULL, 0, '2025-11-28 09:34:31'),
+(62, 8, 40, NULL, 'l', 'text', NULL, NULL, NULL, 0, NULL, 0, NULL, NULL, 0, '2025-11-28 09:37:21'),
+(63, 8, 40, NULL, '1', 'text', NULL, NULL, NULL, 0, NULL, 0, NULL, NULL, 0, '2025-11-28 09:41:35'),
+(64, 8, 40, NULL, '2', 'text', NULL, NULL, NULL, 0, NULL, 0, NULL, NULL, 0, '2025-11-28 09:41:39'),
+(65, 8, 40, NULL, '23', 'text', NULL, NULL, NULL, 0, NULL, 0, NULL, NULL, 0, '2025-11-28 09:41:40'),
+(66, 8, 40, NULL, '4', 'text', NULL, NULL, NULL, 0, NULL, 0, NULL, NULL, 0, '2025-11-28 09:41:48'),
+(67, 8, 40, NULL, '5', 'text', NULL, NULL, NULL, 0, NULL, 0, NULL, NULL, 0, '2025-11-28 09:41:49'),
+(68, 8, 40, NULL, '6', 'text', NULL, NULL, NULL, 0, NULL, 0, NULL, NULL, 0, '2025-11-28 09:41:51'),
+(69, 8, 40, NULL, '7', 'text', NULL, NULL, NULL, 0, NULL, 0, NULL, NULL, 0, '2025-11-28 09:41:53'),
+(70, 8, 40, NULL, '8', 'text', NULL, NULL, NULL, 0, NULL, 0, NULL, NULL, 0, '2025-11-28 09:41:54'),
+(71, 8, 40, NULL, '9', 'text', NULL, NULL, NULL, 0, NULL, 0, NULL, NULL, 0, '2025-11-28 09:41:56'),
+(72, 8, 40, NULL, '12', 'text', NULL, NULL, NULL, 0, NULL, 0, NULL, NULL, 0, '2025-11-28 09:41:58'),
+(73, 8, 40, NULL, '13', 'text', NULL, NULL, NULL, 0, NULL, 0, NULL, NULL, 0, '2025-11-28 09:42:00'),
+(74, 8, 40, NULL, '14', 'text', NULL, NULL, NULL, 0, NULL, 0, NULL, NULL, 0, '2025-11-28 09:42:01'),
+(75, 8, 40, NULL, '15', 'text', NULL, NULL, NULL, 0, NULL, 0, NULL, NULL, 0, '2025-11-28 09:42:03'),
+(76, 8, 40, NULL, '1', 'text', NULL, NULL, NULL, 0, NULL, 0, NULL, NULL, 0, '2025-11-28 09:42:04'),
+(77, 8, 40, NULL, '1', 'text', NULL, NULL, NULL, 0, NULL, 0, NULL, NULL, 0, '2025-11-28 09:42:06'),
+(78, 8, 40, NULL, 'd', 'text', NULL, NULL, NULL, 0, NULL, 0, NULL, NULL, 0, '2025-11-28 09:46:44'),
+(79, 15, 25, NULL, 'selam', 'text', NULL, NULL, NULL, 0, NULL, 0, NULL, NULL, 0, '2025-11-28 09:57:54'),
+(80, 2, 25, NULL, 'a', 'text', NULL, NULL, NULL, 0, NULL, 0, NULL, NULL, 0, '2025-11-28 11:55:54'),
+(81, 15, 25, NULL, 'power.jpg', 'image', '/uploads/1764337076677-749029094-power.jpg', 'power.jpg', NULL, 0, NULL, 0, NULL, NULL, 1, '2025-11-28 13:37:56'),
+(82, 15, 25, NULL, 'lonchina.txt', 'file', '/uploads/1764337123988-379555737-lonchina.txt', 'lonchina.txt', NULL, 0, NULL, 0, NULL, NULL, 0, '2025-11-28 13:38:44'),
+(83, 8, 25, NULL, '[Forwarded] power.jpg', 'image', '/uploads/1764337076677-749029094-power.jpg', 'power.jpg', NULL, 0, NULL, 0, NULL, NULL, 2, '2025-11-28 13:39:40'),
+(84, 8, 40, NULL, '123 test', 'text', NULL, NULL, NULL, 0, NULL, 0, NULL, NULL, 0, '2025-11-28 13:45:41'),
+(85, 8, 40, NULL, 'test 2', 'text', NULL, NULL, NULL, 0, NULL, 0, NULL, NULL, 1, '2025-11-28 13:46:15'),
+(86, 16, 40, NULL, 'hey', 'text', NULL, NULL, NULL, 0, NULL, 0, NULL, NULL, 0, '2026-03-20 17:58:02'),
+(87, 17, 73, NULL, 'ezra', 'text', NULL, NULL, NULL, 0, NULL, 0, NULL, NULL, 0, '2026-03-20 17:58:35'),
+(88, 17, 40, NULL, 'hi selam selam', 'text', NULL, NULL, NULL, 0, NULL, 0, NULL, NULL, 0, '2026-03-20 17:59:05'),
+(89, 17, 73, NULL, 'photo-1769516414427-210211205.png', 'image', '/uploads/1774029596146-55626248-photo-1769516414427-210211205.png', 'photo-1769516414427-210211205.png', NULL, 0, NULL, 0, NULL, NULL, 0, '2026-03-20 17:59:56'),
+(90, 18, 73, NULL, '[Forwarded] photo-1769516414427-210211205.png', 'image', '/uploads/1774029596146-55626248-photo-1769516414427-210211205.png', 'photo-1769516414427-210211205.png', NULL, 0, NULL, 0, NULL, NULL, 1, '2026-03-20 18:00:29'),
+(91, 8, 40, NULL, 'what', 'text', NULL, NULL, NULL, 0, NULL, 0, NULL, NULL, 0, '2026-03-24 09:05:50'),
+(92, 8, 40, NULL, 'ERP Software', '', NULL, NULL, NULL, 0, NULL, 0, NULL, NULL, 0, '2026-03-24 09:32:35'),
+(93, 19, 40, NULL, 'ERP Software', '', NULL, NULL, NULL, 0, NULL, 0, NULL, NULL, 0, '2026-03-24 09:33:02'),
+(94, 19, 79, NULL, 'የቢሮ ኪራይ ገቢ', '', NULL, NULL, NULL, 0, NULL, 0, NULL, NULL, 0, '2026-03-24 09:38:22'),
+(95, 19, 40, NULL, 'ERP Software', '', NULL, NULL, NULL, 0, NULL, 0, NULL, NULL, 0, '2026-03-24 09:39:42'),
+(96, 19, 40, NULL, 'የቢሮ ኪራይ ገቢ', '', NULL, NULL, NULL, 0, NULL, 0, NULL, NULL, 0, '2026-03-24 09:44:04'),
+(97, 19, 79, NULL, 'የቢሮ ኪራይ ገቢ', '', NULL, NULL, NULL, 0, NULL, 0, NULL, NULL, 0, '2026-03-24 11:22:00'),
+(98, 19, 79, NULL, 'የቢሮ ኪራይ ገቢ', '', NULL, NULL, NULL, 0, NULL, 0, NULL, NULL, 0, '2026-03-24 11:30:31'),
+(99, 19, 79, NULL, 'የቢሮ ኪራይ ገቢ', 'plan', NULL, NULL, '{\"plan_id\":372,\"goal\":\"ግብ 2. የቴክኖሎጂ ፓርክ አገልግሎት ጥራት ማሻሻል\",\"detail\":\"የቢሮ ኪራይ ገቢ\",\"status\":\"completed\",\"weight\":\"50\",\"year\":2024}', 0, NULL, 0, NULL, NULL, 2, '2026-03-24 11:50:19'),
+(100, 19, 40, NULL, '@Million  Goraw test message', 'text', NULL, NULL, NULL, 0, NULL, 0, NULL, NULL, 0, '2026-03-24 11:52:06'),
+(101, 3, 79, NULL, 'የቢሮ ኪራይ ገቢ', 'plan', NULL, NULL, '{\"plan_id\":372,\"goal\":\"ግብ 2. የቴክኖሎጂ ፓርክ አገልግሎት ጥራት ማሻሻል\",\"detail\":\"የቢሮ ኪራይ ገቢ\",\"status\":\"completed\",\"weight\":\"50\",\"year\":2024}', 0, NULL, 0, NULL, NULL, 0, '2026-03-24 12:12:00'),
+(102, 3, 40, NULL, 'የክላውድ ሰርቨር ማሳደጊያ', 'plan', NULL, NULL, '{\"plan_id\":345,\"goal\":\"ግብ 1. የIT ካምፓኒዎችን ወደ ፓርኩ በመሳብ የሥራ ዕድልና የውጭ ቀጥተኛ ኢንቨስትመንት መፍጠር\",\"detail\":\"የክላውድ ሰርቨር ማሳደጊያ\",\"status\":\"Pending\",\"weight\":\"10\",\"year\":2017}', 0, NULL, 0, NULL, NULL, 0, '2026-03-25 09:09:37'),
+(103, 21, 40, NULL, 'hello', 'text', NULL, NULL, NULL, 0, NULL, 0, NULL, NULL, 0, '2026-03-25 09:10:03'),
+(104, 3, 40, NULL, 'የመሠረተ ልማት ዝርጋታ', 'plan', NULL, NULL, '{\"plan_id\":334,\"goal\":\"ግብ 1. የIT ካምፓኒዎችን ወደ ፓርኩ በመሳብ የሥራ ዕድልና የውጭ ቀጥተኛ ኢንቨስትመንት መፍጠር\",\"detail\":\"የመሠረተ ልማት ዝርጋታ\",\"status\":\"Pending\",\"weight\":\"500\",\"year\":2017}', 0, NULL, 0, NULL, NULL, 0, '2026-04-07 16:52:11'),
+(105, 3, 40, NULL, 'hell gays what do you think about this plan', 'text', NULL, NULL, NULL, 0, NULL, 0, NULL, NULL, 0, '2026-04-07 16:52:38'),
+(106, 3, 40, NULL, 'something', 'text', NULL, NULL, NULL, 0, NULL, 0, NULL, NULL, 0, '2026-04-07 16:54:14'),
+(107, 3, 40, NULL, 'EITP_VMMS_Presentation (5).pptx', 'file', '/uploads/1775580854239-167838816-EITP_VMMS_Presentation__5_.pptx', 'EITP_VMMS_Presentation (5).pptx', NULL, 0, NULL, 0, NULL, NULL, 0, '2026-04-07 16:54:14'),
+(108, 3, 40, NULL, 'tes', 'text', NULL, NULL, NULL, 0, NULL, 0, NULL, NULL, 0, '2026-04-07 16:54:36'),
+(109, 3, 40, NULL, 'ChatGPT Image Mar 25, 2026, 06_07_43 AM.png', 'image', '/uploads/1775580876720-141362684-ChatGPT_Image_Mar_25__2026__06_07_43_AM.png', 'ChatGPT Image Mar 25, 2026, 06_07_43 AM.png', NULL, 0, NULL, 0, NULL, NULL, 1, '2026-04-07 16:54:36');
 
 -- --------------------------------------------------------
 
@@ -1031,7 +2257,7 @@ CREATE TABLE `message_reactions` (
   `user_id` int(11) NOT NULL,
   `emoji` varchar(10) NOT NULL,
   `created_at` timestamp NOT NULL DEFAULT current_timestamp()
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 --
 -- Dumping data for table `message_reactions`
@@ -1039,7 +2265,13 @@ CREATE TABLE `message_reactions` (
 
 INSERT INTO `message_reactions` (`reaction_id`, `message_id`, `user_id`, `emoji`, `created_at`) VALUES
 (1, 81, 25, '❤️', '2025-11-28 13:38:00'),
-(2, 83, 40, '❤️', '2025-11-28 13:44:10');
+(2, 83, 40, '❤️', '2025-11-28 13:44:10'),
+(3, 90, 79, '????', '2026-03-20 18:01:09'),
+(4, 83, 40, '????', '2026-03-24 09:05:25'),
+(5, 85, 40, '????', '2026-03-24 09:05:38'),
+(7, 99, 40, '????', '2026-03-24 11:51:36'),
+(8, 99, 40, '❤️', '2026-03-24 11:51:23'),
+(10, 109, 40, '❤️', '2026-04-07 16:54:43');
 
 -- --------------------------------------------------------
 
@@ -1130,7 +2362,32 @@ INSERT INTO `message_read_receipts` (`receipt_id`, `message_id`, `user_id`, `rea
 (95, 41, 25, '2025-11-28 13:38:21'),
 (96, 83, 40, '2025-11-28 13:39:56'),
 (97, 84, 25, '2026-03-11 06:01:25'),
-(98, 85, 25, '2026-03-11 06:01:25');
+(98, 85, 25, '2026-03-11 06:01:25'),
+(99, 87, 40, '2026-03-20 17:58:53'),
+(100, 88, 73, '2026-03-20 17:59:18'),
+(101, 90, 79, '2026-03-20 18:00:56'),
+(102, 89, 40, '2026-03-20 18:01:25'),
+(103, 93, 79, '2026-03-24 09:33:14'),
+(104, 94, 40, '2026-03-24 09:39:42'),
+(105, 95, 79, '2026-03-24 09:41:44'),
+(106, 96, 79, '2026-03-24 09:45:34'),
+(107, 97, 40, '2026-03-24 11:50:45'),
+(108, 98, 40, '2026-03-24 11:50:45'),
+(109, 99, 40, '2026-03-24 11:50:45'),
+(110, 100, 79, '2026-03-24 11:52:25'),
+(111, 31, 79, '2026-03-24 12:11:55'),
+(112, 34, 79, '2026-03-24 12:11:55'),
+(113, 35, 79, '2026-03-24 12:11:55'),
+(114, 40, 79, '2026-03-24 12:11:55'),
+(115, 41, 79, '2026-03-24 12:11:55'),
+(118, 101, 40, '2026-03-24 12:12:09'),
+(119, 102, 79, '2026-03-25 11:14:10'),
+(120, 104, 79, '2026-04-07 17:04:17'),
+(121, 105, 79, '2026-04-07 17:04:17'),
+(122, 106, 79, '2026-04-07 17:04:17'),
+(123, 107, 79, '2026-04-07 17:04:17'),
+(124, 108, 79, '2026-04-07 17:04:17'),
+(125, 109, 79, '2026-04-07 17:04:17');
 
 -- --------------------------------------------------------
 
@@ -1143,41 +2400,57 @@ CREATE TABLE `monthly_tasks` (
   `specific_objective_detail_id` int(11) NOT NULL,
   `name` varchar(255) NOT NULL,
   `weight` decimal(5,2) NOT NULL DEFAULT 0.00,
+  `plan_amount` decimal(15,2) DEFAULT 0.00,
   `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
   `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
   `progress` decimal(5,2) NOT NULL DEFAULT 0.00,
+  `plan_progress` decimal(5,2) DEFAULT 0.00,
   `status` enum('Pending','In Progress','Completed') NOT NULL DEFAULT 'Pending',
   `description` text DEFAULT NULL,
-  `attachment` varchar(255) DEFAULT NULL
+  `attachment` varchar(255) DEFAULT NULL,
+  `actual_amount` decimal(15,4) DEFAULT NULL,
+  `start_date` date DEFAULT NULL,
+  `deadline` date DEFAULT NULL,
+  `wbr_group` varchar(100) NOT NULL DEFAULT 'WBR1',
+  `wbr_group_weight` decimal(5,2) NOT NULL DEFAULT 0.00,
+  `wbr_group_plan_amount` decimal(15,4) NOT NULL DEFAULT 0.0000
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `monthly_tasks`
 --
 
-INSERT INTO `monthly_tasks` (`monthly_task_id`, `specific_objective_detail_id`, `name`, `weight`, `created_at`, `updated_at`, `progress`, `status`, `description`, `attachment`) VALUES
-(1, 795, 'test1 month', 4.00, '2025-12-11 13:24:05', '2025-12-11 13:24:05', 0.00, 'Pending', NULL, NULL),
-(2, 795, 'test2 month', 4.00, '2025-12-11 13:24:05', '2025-12-11 13:24:05', 0.00, 'Pending', NULL, NULL),
-(3, 795, 'test3 month', 4.00, '2025-12-11 13:24:05', '2025-12-11 13:24:05', 0.00, 'Pending', NULL, NULL),
-(4, 782, '1', 1.00, '2025-12-15 07:09:20', '2025-12-15 07:09:20', 0.00, 'Pending', NULL, NULL),
-(5, 785, '1', 1.00, '2025-12-15 07:20:28', '2025-12-15 07:20:28', 0.00, 'Pending', NULL, NULL),
-(6, 779, '2', 2.00, '2025-12-15 07:21:42', '2025-12-15 08:53:58', 0.00, 'Pending', '1ssfsddsd', NULL),
-(7, 797, '10', 10.00, '2025-12-15 08:00:25', '2025-12-15 08:58:26', 100.00, 'Pending', '100', NULL),
-(8, 797, '2', 2.00, '2025-12-15 08:00:25', '2025-12-15 08:59:49', 2.00, 'Pending', 'dsasdasdas', '1765788878386-164123216-Screenshot_From_2025-09-07_06-26-16.png'),
-(9, 797, '10', 10.00, '2025-12-15 09:08:23', '2025-12-15 09:08:23', 0.00, 'Pending', NULL, NULL),
-(10, 797, '2', 2.00, '2025-12-15 09:08:23', '2025-12-15 09:08:23', 0.00, 'Pending', NULL, NULL),
-(11, 798, 'm1 ', 12.00, '2025-12-15 11:47:52', '2025-12-15 11:55:40', 12.00, 'Pending', 'something here', '1765799303724-592166953-Screenshot_From_2025-10-25_08-22-05.png'),
-(12, 798, 'm2', 12.00, '2025-12-15 11:47:52', '2025-12-15 11:50:19', 12.00, 'Pending', NULL, NULL),
-(13, 794, 'test', 100.00, '2025-12-15 12:13:29', '2025-12-15 12:13:39', 100.00, 'Pending', 'sfafasf', NULL),
-(22, 800, 'dasds', 3.00, '2025-12-15 12:45:02', '2025-12-15 12:45:40', 100.00, 'Pending', 'ggfgdg', NULL),
-(23, 800, 'fsdfs', 3.00, '2025-12-15 12:45:02', '2025-12-15 12:46:32', 55.00, 'Pending', 'fdsf', NULL),
-(24, 793, 'month 1', 30.00, '2026-03-06 08:25:30', '2026-03-06 08:26:55', 30.00, 'Pending', NULL, NULL),
-(25, 793, 'month 1', 30.00, '2026-03-06 08:29:28', '2026-03-06 08:29:28', 0.00, 'Pending', NULL, NULL),
-(26, 793, 'm2', 70.00, '2026-03-06 08:29:28', '2026-03-06 08:29:28', 0.00, 'Pending', NULL, NULL),
-(27, 793, 'month 1', 30.00, '2026-03-06 08:29:36', '2026-03-06 08:29:36', 0.00, 'Pending', NULL, NULL),
-(28, 793, 'month 1', 30.00, '2026-03-06 08:29:36', '2026-03-06 08:29:36', 0.00, 'Pending', NULL, NULL),
-(29, 793, 'm2', 70.00, '2026-03-06 08:29:36', '2026-03-06 08:30:38', 70.00, 'Pending', 'somthing', NULL),
-(30, 786, 'tet1', 100.00, '2026-03-06 08:32:52', '2026-03-06 08:33:36', 100.00, 'Pending', 'test', '1772785997904-331430856-qr-code__8_.png');
+INSERT INTO `monthly_tasks` (`monthly_task_id`, `specific_objective_detail_id`, `name`, `weight`, `plan_amount`, `created_at`, `updated_at`, `progress`, `plan_progress`, `status`, `description`, `attachment`, `actual_amount`, `start_date`, `deadline`, `wbr_group`, `wbr_group_weight`, `wbr_group_plan_amount`) VALUES
+(1, 1, 'ezira', 0.33, 0.00, '2026-08-15 10:23:58', '2026-08-15 16:53:35', 68.00, 100.00, 'Pending', 'test', '1786809052106-158105202-Detailed_Member_Demographics_Report_2026-07-24__1_.pdf', 22342.0000, '2026-08-16', '2027-09-06', 'WBR1', 0.00, 0.0000),
+(2, 1, 'hayal', 0.33, 0.00, '2026-08-15 16:02:52', '2026-08-15 16:02:52', 0.00, 0.00, 'Pending', NULL, NULL, NULL, '2026-08-15', '2027-10-09', 'WBR1', 0.00, 0.0000),
+(3, 1, 'me ', 0.34, 0.00, '2026-08-15 16:02:52', '2026-08-15 16:52:33', 10.00, 100.00, 'Pending', '', NULL, 3242.0000, '2026-08-15', '2027-10-09', 'WBR1', 0.00, 0.0000),
+(4, 4, 'test for ato ezira', 0.30, 6000.00, '2026-08-17 14:15:00', '2026-08-17 14:20:04', 67.00, 67.00, 'Pending', 'test I have achived ', '1786976404314-384980513-TEST_FOR_EZRA_-_____________-002-1231-2018.pdf', 4000.0000, '2026-08-13', '2026-10-05', 'WBR1', 0.00, 0.0000),
+(5, 5, 'test cost ', 0.20, 40000.00, '2026-08-17 15:42:53', '2026-08-17 15:47:50', 75.00, 75.00, 'Pending', '', NULL, 30000.0000, '2026-08-15', '2026-10-07', 'WBR1', 0.00, 0.0000);
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `monthly_task_assignees`
+--
+
+CREATE TABLE `monthly_task_assignees` (
+  `id` int(11) NOT NULL,
+  `monthly_task_id` int(11) NOT NULL,
+  `user_id` int(11) NOT NULL,
+  `assigned_by` int(11) NOT NULL,
+  `assigned_at` timestamp NOT NULL DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `monthly_task_assignees`
+--
+
+INSERT INTO `monthly_task_assignees` (`id`, `monthly_task_id`, `user_id`, `assigned_by`, `assigned_at`) VALUES
+(2, 1, 40, 79, '2026-08-15 15:49:47'),
+(6, 2, 48, 79, '2026-08-15 16:31:53'),
+(7, 3, 79, 79, '2026-08-15 16:31:56'),
+(10, 4, 40, 73, '2026-08-17 14:18:08'),
+(12, 5, 40, 73, '2026-08-17 15:43:12');
 
 -- --------------------------------------------------------
 
@@ -1205,8 +2478,66 @@ CREATE TABLE `notifications` (
 --
 
 INSERT INTO `notifications` (`notification_id`, `user_id`, `plan_id`, `type`, `title`, `message`, `data`, `is_read`, `priority`, `created_at`, `read_at`, `expires_at`) VALUES
-(38, 78, 248, 'deadline_alert', 'Plan Deadline Alert: 3 days remaining', 'Plan \"ግብ 1. የIT ካምፓኒዎችን ወደ ፓርኩ በመሳብ የሥራ ዕድልና የውጭ ቀጥተኛ ኢንቨስትመንት መፍጠር\" deadline is approaching in 3 days. Please review and take necessary action.', '{\"deadline\":\"2026-03-15T21:00:00.000Z\",\"days_until_deadline\":3,\"plan_name\":\"ግብ 1. የIT ካምፓኒዎችን ወደ ፓርኩ በመሳብ የሥራ ዕድልና የውጭ ቀጥተኛ ኢንቨስትመንት መፍጠር\",\"execution_percentage\":0}', 0, 'high', '2026-03-13 07:42:49', NULL, '2026-03-20 07:42:49'),
-(39, 78, 248, 'deadline_alert', 'Plan Deadline Passed!', 'Plan \"ግብ 1. የIT ካምፓኒዎችን ወደ ፓርኩ በመሳብ የሥራ ዕድልና የውጭ ቀጥተኛ ኢንቨስትመንት መፍጠር\" deadline has passed. Immediate action required.', '{\"deadline\":\"2026-03-15T21:00:00.000Z\",\"days_until_deadline\":0,\"plan_name\":\"ግብ 1. የIT ካምፓኒዎችን ወደ ፓርኩ በመሳብ የሥራ ዕድልና የውጭ ቀጥተኛ ኢንቨስትመንት መፍጠር\",\"execution_percentage\":0}', 0, 'urgent', '2026-03-16 07:32:49', NULL, '2026-03-23 07:32:49');
+(73, 79, NULL, '', '⚡ Progress Pushed: sytem requrment', 'Ezira Mantegaftot updated progress to 71% on \"sytem requrment\". Notes: testt.', '{\"task_id\":\"57\",\"task_type\":\"monthly\",\"detail_id\":1029,\"progress\":\"71\",\"pusher_name\":\"Ezira Mantegaftot\",\"target_page\":\"supervisor_breakdown\"}', 1, 'high', '2026-08-09 05:00:29', '2026-08-09 05:00:50', NULL),
+(74, 70, 469, '', 'New Plan Approval Request', 'A new plan has been submitted for approval at the Deputy CEO level.', NULL, 0, 'high', '2026-08-09 06:41:47', NULL, NULL),
+(77, 73, NULL, '', '⚡ Progress Pushed: income KPI', 'Ezira Mantegaftot pushed progress on \"income KPI\" for Action Plan \"income KPI\" (Weight: 1). Target: 0.5 ETB | Achieved: 100 ETB (100% completed). Notes: No notes provided.', '{\"task_id\":\"60\",\"task_type\":\"monthly\",\"detail_id\":1031,\"plan_name\":\"income KPI\",\"plan_type\":\"income\",\"plan_weight\":1,\"plan_target\":0.5,\"actual_amount\":100,\"unit\":\"ETB\",\"progress\":100,\"pusher_name\":\"Ezira Mantegaftot\",\"target_page\":\"supervisor_breakdown\"}', 1, 'high', '2026-08-09 19:20:54', '2026-08-09 19:26:15', NULL),
+(79, 73, NULL, '', '⚡ Progress Pushed: system requ...', 'Ezira Mantegaftot pushed progress on \"system requ...\" for Action Plan \"bonus\" (Weight: 1). Target: 0.5 number | Achieved: 49,982 number (100% completed). Notes: test .', '{\"task_id\":\"61\",\"task_type\":\"monthly\",\"detail_id\":1032,\"plan_name\":\"bonus\",\"plan_type\":\"cost\",\"plan_weight\":1,\"plan_target\":0.5,\"actual_amount\":49982,\"unit\":\"number\",\"progress\":100,\"pusher_name\":\"Ezira Mantegaftot\",\"target_page\":\"supervisor_breakdown\"}', 1, 'high', '2026-08-10 07:27:02', '2026-08-10 07:27:11', NULL),
+(80, 73, NULL, '', '⚠️ Task Progress Alert from Supervisor', 'Attention tsuhayu directorate: Your assigned breakdown task progress requires an urgent update. Please push your progress and evidence as soon as possible.', NULL, 1, 'urgent', '2026-08-10 07:38:48', '2026-08-10 07:39:01', NULL),
+(83, 76, NULL, 'meeting', 'New Meeting Invitation: tets', 'You\'ve been invited to a meeting \"tets\" scheduled for 8/10/2026, 12:08:00 PM', NULL, 0, 'medium', '2026-08-10 08:07:56', NULL, NULL),
+(84, 69, NULL, 'meeting', 'New Meeting Invitation: tets', 'You\'ve been invited to a meeting \"tets\" scheduled for 8/10/2026, 12:08:00 PM', NULL, 0, 'medium', '2026-08-10 08:07:56', NULL, NULL),
+(85, 73, NULL, 'meeting', 'New Meeting Invitation: tets', 'You\'ve been invited to a meeting \"tets\" scheduled for 8/10/2026, 12:08:00 PM', NULL, 0, 'medium', '2026-08-10 08:07:56', NULL, NULL),
+(86, 24, NULL, 'meeting', 'New Meeting Invitation: tets', 'You\'ve been invited to a meeting \"tets\" scheduled for 8/10/2026, 12:08:00 PM', NULL, 0, 'medium', '2026-08-10 08:07:56', NULL, NULL),
+(89, 73, NULL, '', '⚡ Progress Pushed: preparing bid', 'Ezira Mantegaftot pushed progress on \"preparing bid\" for Action Plan \"ግዢ (Purchase)\" (Weight: 0.5). Target: 0.5 number | Achieved: 7 number (100% completed). Notes: No notes provided.', '{\"task_id\":\"62\",\"task_type\":\"monthly\",\"detail_id\":1033,\"plan_name\":\"ግዢ (Purchase)\",\"plan_type\":\"purchase\",\"plan_weight\":0.5,\"plan_target\":0.5,\"actual_amount\":7,\"unit\":\"number\",\"progress\":100,\"pusher_name\":\"Ezira Mantegaftot\",\"target_page\":\"supervisor_breakdown\"}', 0, 'high', '2026-08-10 13:21:40', NULL, NULL),
+(90, 70, 473, '', 'New Plan Approval Request', 'A new plan has been submitted for approval at the Deputy CEO level.', NULL, 0, 'high', '2026-08-10 17:26:00', NULL, NULL),
+(91, 73, NULL, '', '⚡ Progress Pushed: local investment ', 'Ezira Mantegaftot pushed progress on \"local investment \" for Action Plan \"local investment\" (Weight: 2). Target: 2 number | Achieved: 200,000 number (100% completed). Notes: No notes provided.', '{\"task_id\":\"63\",\"task_type\":\"monthly\",\"detail_id\":1034,\"plan_name\":\"local investment\",\"plan_type\":\"_________________\",\"plan_weight\":2,\"plan_target\":2,\"actual_amount\":200000,\"unit\":\"number\",\"progress\":100,\"pusher_name\":\"Ezira Mantegaftot\",\"target_page\":\"supervisor_breakdown\"}', 0, 'high', '2026-08-10 18:21:43', NULL, NULL),
+(92, 70, 474, '', 'New Plan Approval Request', 'A new plan has been submitted for approval at the Deputy CEO level.', NULL, 0, 'high', '2026-08-11 07:34:14', NULL, NULL),
+(93, 73, NULL, '', '⚡ Progress Pushed: FDI', 'Ezira Mantegaftot pushed progress on \"FDI\" for Action Plan \"test action \" (Weight: 1). Target: 1 number | Achieved: 500,000 number (100% completed). Notes: note .', '{\"task_id\":\"64\",\"task_type\":\"monthly\",\"detail_id\":1035,\"plan_name\":\"test action \",\"plan_type\":\"____\",\"plan_weight\":1,\"plan_target\":1,\"actual_amount\":500000,\"unit\":\"number\",\"progress\":100,\"pusher_name\":\"Ezira Mantegaftot\",\"target_page\":\"supervisor_breakdown\"}', 1, 'high', '2026-08-11 07:41:25', '2026-08-11 07:41:46', NULL),
+(94, 73, NULL, '', '⚠️ Task Progress Alert from Supervisor', 'Attention tsuhayu directorate: Your assigned breakdown task progress requires an urgent update. Please push your progress and evidence as soon as possible.', NULL, 0, 'urgent', '2026-08-11 07:43:31', NULL, NULL),
+(95, 76, NULL, '', '⚠️ Task Progress Alert from Supervisor', 'Attention Hayal Tamrat Girum: Your assigned breakdown task progress requires an urgent update. Please push your progress and evidence as soon as possible.', NULL, 0, 'urgent', '2026-08-11 07:44:58', NULL, NULL),
+(97, 70, 475, '', 'New Plan Approval Request', 'A new plan has been submitted for approval at the Deputy CEO level.', NULL, 0, 'high', '2026-08-11 18:47:09', NULL, NULL),
+(98, 79, NULL, '', '⚡ Action Plan Breakdown Delegation', 'You have been designated as Breakdown Manager/Supervisor for \" KPI አስተማማኝ የፋሲሊቲ ኦፕሬሽንስ እና የአገልግሎት አቅርቦትን ማረጋገጥ\". You can now access and manage its breakdown on the Action Plan Breakdown page.', NULL, 1, 'high', '2026-08-11 19:14:49', '2026-08-11 19:15:08', NULL),
+(106, 73, NULL, 'task', '📋 Self-Assigned Breakdown Task', 'You self-assigned monthly task \"test self\"', NULL, 0, 'medium', '2026-08-12 06:06:32', NULL, NULL),
+(108, 73, NULL, 'task', '📋 Self-Assigned Breakdown Task', 'You self-assigned monthly task \"test self\"', NULL, 0, 'medium', '2026-08-12 06:06:32', NULL, NULL),
+(109, 79, NULL, '', '⚡ Action Plan Breakdown Delegation', 'You have been designated as Breakdown Manager/Supervisor for \" KPI አስተማማኝ የፋሲሊቲ ኦፕሬሽንስ እና የአገልግሎት አቅርቦትን ማረጋገጥ\". You can now access and manage its breakdown on the Action Plan Breakdown page.', NULL, 1, 'high', '2026-08-12 07:58:43', '2026-08-12 16:44:51', NULL),
+(110, 73, NULL, '', '⚡ Progress Pushed: hayal', 'Ezira Mantegaftot pushed progress on \"hayal\" for Action Plan \" KPI አስተማማኝ የፋሲሊቲ ኦፕሬሽንስ እና የአገልግሎት አቅርቦትን ማረጋገጥ\" (Weight: 2). Target: 2 number | Achieved: 700,000 number (100% completed). Notes: No notes provided.', '{\"task_id\":\"67\",\"task_type\":\"monthly\",\"detail_id\":1036,\"plan_name\":\" KPI አስተማማኝ የፋሲሊቲ ኦፕሬሽንስ እና የአገልግሎት አቅርቦትን ማረጋገጥ\",\"plan_type\":\"income\",\"plan_weight\":2,\"plan_target\":2,\"actual_amount\":700000,\"unit\":\"number\",\"progress\":100,\"pusher_name\":\"Ezira Mantegaftot\",\"target_page\":\"supervisor_breakdown\"}', 0, 'high', '2026-08-12 16:56:45', NULL, NULL),
+(111, 70, 1, '', 'New Plan Approval Request', 'A new plan has been submitted for approval at the Deputy CEO level.', NULL, 0, 'high', '2026-08-12 17:08:20', NULL, NULL),
+(113, 79, NULL, 'task', '📋 Breakdown Task Assigned', 'You have been assigned to monthly breakdown task \"INCOME DETAILS 2\"', NULL, 0, 'medium', '2026-08-12 17:11:01', NULL, NULL),
+(114, 73, NULL, '', '⚡ Progress Pushed: INCOME DETAILS', 'Ezira Mantegaftot pushed progress on \"INCOME DETAILS\" for Action Plan \"INCOME DETAILS\" (Weight: 2). Target: 1 number | Achieved: 30,000 number (100% completed). Notes: 3000.', '{\"task_id\":\"1\",\"task_type\":\"monthly\",\"detail_id\":1,\"plan_name\":\"INCOME DETAILS\",\"plan_type\":\"income\",\"plan_weight\":2,\"plan_target\":1,\"actual_amount\":30000,\"unit\":\"number\",\"progress\":100,\"pusher_name\":\"Ezira Mantegaftot\",\"target_page\":\"supervisor_breakdown\"}', 0, 'high', '2026-08-12 17:12:24', NULL, NULL),
+(116, 79, NULL, 'task', '📋 Breakdown Task Assigned', 'You have been assigned to monthly breakdown task \"INCOME DETAILS 2\"', NULL, 1, 'medium', '2026-08-12 17:25:30', '2026-08-12 17:29:14', NULL),
+(118, 79, NULL, 'task', '📋 Breakdown Task Assigned', 'You have been assigned to monthly breakdown task \"INCOME DETAILS 2\"', NULL, 0, 'medium', '2026-08-12 17:25:30', NULL, NULL),
+(119, 73, NULL, '', '⚡ Progress Pushed: INCOME DETAILS', 'Ezira Mantegaftot pushed progress on \"INCOME DETAILS\" for Action Plan \"INCOME DETAILS\" (Weight: 2). Target: 1 number | Achieved: 3,000 number (100% completed). Notes: 3000.', '{\"task_id\":\"1\",\"task_type\":\"monthly\",\"detail_id\":1,\"plan_name\":\"INCOME DETAILS\",\"plan_type\":\"income\",\"plan_weight\":2,\"plan_target\":1,\"actual_amount\":3000,\"unit\":\"number\",\"progress\":100,\"pusher_name\":\"Ezira Mantegaftot\",\"target_page\":\"supervisor_breakdown\"}', 0, 'high', '2026-08-12 17:26:24', NULL, NULL),
+(120, 73, NULL, '', '⚡ Progress Pushed: INCOME DETAILS 2', 'Million  Goraw pushed progress on \"INCOME DETAILS 2\" for Action Plan \"INCOME DETAILS\" (Weight: 2). Target: 1 number | Achieved: 13,000 number (100% completed). Notes: No notes provided.', '{\"task_id\":\"2\",\"task_type\":\"monthly\",\"detail_id\":1,\"plan_name\":\"INCOME DETAILS\",\"plan_type\":\"income\",\"plan_weight\":2,\"plan_target\":1,\"actual_amount\":13000,\"unit\":\"number\",\"progress\":100,\"pusher_name\":\"Million  Goraw\",\"target_page\":\"supervisor_breakdown\"}', 0, 'high', '2026-08-12 17:29:58', NULL, NULL),
+(122, 79, NULL, 'task', '📋 Breakdown Task Assigned', 'You have been assigned to monthly breakdown task \"INCOME DETAILS 2\"', NULL, 1, 'medium', '2026-08-12 17:31:02', '2026-08-15 16:09:16', NULL),
+(124, 79, NULL, 'task', '📋 Breakdown Task Assigned', 'You have been assigned to monthly breakdown task \"INCOME DETAILS 2\"', NULL, 0, 'medium', '2026-08-12 17:31:02', NULL, NULL),
+(125, 79, NULL, '', '⚠️ Task Progress Alert from Supervisor', 'Attention Million  Goraw: Your assigned breakdown task progress requires urgent update. Please push your progress and evidence as soon as possible.', NULL, 1, 'urgent', '2026-08-12 18:31:30', '2026-08-12 18:31:38', NULL),
+(126, 70, 2, '', 'New Plan Approval Request', 'A new plan has been submitted for approval at the Deputy CEO level.', NULL, 0, 'high', '2026-08-12 19:09:22', NULL, NULL),
+(127, 73, NULL, '', '⚡ Progress Pushed: INCOME DETAILS', 'Ezira Mantegaftot pushed progress on \"INCOME DETAILS\" for Action Plan \"INCOME DETAILS\" (Weight: 2). Target: 1 number | Achieved: 30,000 number (100% completed). Notes: 3000.', '{\"task_id\":\"1\",\"task_type\":\"monthly\",\"detail_id\":1,\"plan_name\":\"INCOME DETAILS\",\"plan_type\":\"income\",\"plan_weight\":2,\"plan_target\":1,\"actual_amount\":30000,\"unit\":\"number\",\"progress\":100,\"pusher_name\":\"Ezira Mantegaftot\",\"target_page\":\"supervisor_breakdown\"}', 0, 'high', '2026-08-14 06:59:27', NULL, NULL),
+(132, 79, NULL, 'task', 'New Task: ⚡ Create Breakdown for: PORT', '📋 *New Task Assigned to You*\n\n*Task:* ⚡ Create Breakdown for: PORT\n*Priority:* 🔴 HIGH\n*Due Date:* 📅 Sat, Oct 9, 2027\n*Category:* action_plan_breakdown:1\n*Assigned By:* tsuhayu directorate (IT Directorate)\n\n*Description:*\nYou are assigned to create the Work Breakdown Structure (monthly & weekly breakdown tasks) for Action Plan: PORT. Please log in and allocate weight & timeline.\n\n_Please open the ITPCR app to view and start this task._', '{\"assignment_id\":8,\"task_title\":\"⚡ Create Breakdown for: PORT\",\"priority\":\"high\",\"due_date\":\"2027-10-09\",\"category\":\"action_plan_breakdown:1\",\"assigned_by_name\":\"tsuhayu directorate\"}', 1, 'high', '2026-08-15 13:04:17', '2026-08-15 13:13:09', NULL),
+(133, 40, NULL, 'task', '📋 Breakdown Task Assigned', 'You have been assigned to monthly breakdown task \"ezira\"', NULL, 0, 'medium', '2026-08-15 15:49:43', NULL, NULL),
+(134, 40, NULL, 'task', '📋 Breakdown Task Assigned', 'You have been assigned to monthly breakdown task \"ezira\"', NULL, 1, 'medium', '2026-08-15 15:49:47', '2026-08-15 15:49:58', NULL),
+(135, 79, NULL, '', '⚡ Progress Pushed: ezira', 'Ezira Mantegaftot pushed progress on \"ezira\" for Action Plan \"PORT\" (Weight: 2). Target: 1 number | Achieved: 34,535 number (35% completed). Notes: test.', '{\"task_id\":\"1\",\"task_type\":\"monthly\",\"detail_id\":1,\"plan_name\":\"PORT\",\"plan_type\":\"income\",\"plan_weight\":2,\"plan_target\":1,\"actual_amount\":34535,\"unit\":\"number\",\"progress\":\"35\",\"pusher_name\":\"Ezira Mantegaftot\",\"target_page\":\"supervisor_breakdown\"}', 1, 'high', '2026-08-15 15:50:52', '2026-08-15 15:51:01', NULL),
+(136, 40, NULL, '', '⚠️ Task Progress Alert from Supervisor', 'Attention Ezira Mantegaftot: Your assigned breakdown task progress requires an urgent update. Please push your progress and evidence as soon as possible.', NULL, 1, 'urgent', '2026-08-15 16:03:42', '2026-08-15 16:16:20', NULL),
+(137, 48, NULL, 'task', '📋 Breakdown Task Assigned', 'You have been assigned to monthly breakdown task \"hayal\"', NULL, 0, 'medium', '2026-08-15 16:31:51', NULL, NULL),
+(138, 48, NULL, 'task', '📋 Breakdown Task Assigned', 'You have been assigned to monthly breakdown task \"hayal\"', NULL, 0, 'medium', '2026-08-15 16:31:53', NULL, NULL),
+(139, 79, NULL, 'task', '📋 Self-Assigned Breakdown Task', 'You self-assigned monthly task \"me \"', NULL, 1, 'medium', '2026-08-15 16:31:56', '2026-08-15 16:32:02', NULL),
+(140, 79, NULL, '', '⚡ Progress Pushed: ezira', 'Ezira Mantegaftot pushed progress on \"ezira\" for Action Plan \"PORT\" (Weight: 2). Target: 1 number | Achieved: 22,342 number (68% completed). Notes: test.', '{\"task_id\":\"1\",\"task_type\":\"monthly\",\"detail_id\":1,\"plan_name\":\"PORT\",\"plan_type\":\"income\",\"plan_weight\":2,\"plan_target\":1,\"actual_amount\":22342,\"unit\":\"number\",\"progress\":\"68\",\"pusher_name\":\"Ezira Mantegaftot\",\"target_page\":\"supervisor_breakdown\"}', 1, 'high', '2026-08-15 16:53:35', '2026-08-15 16:53:51', NULL),
+(141, 40, NULL, 'task', 'New Task: task for ezira', '📋 *New Task Assigned to You*\n\n*Task:* task for ezira\n*Priority:* 🟡 URGENT\n*Due Date:* 📅 Mon, Aug 17, 2026\n*Category:* general\n*Assigned By:* tsuhayu directorate (IT Directorate)\n\n*Description:*\ntest test \n\n_Please open the ITPCR app to view and start this task._', '{\"assignment_id\":9,\"task_title\":\"task for ezira\",\"priority\":\"urgent\",\"due_date\":\"2026-08-17\",\"category\":\"general\",\"assigned_by_name\":\"tsuhayu directorate\"}', 0, 'medium', '2026-08-17 06:55:42', NULL, NULL),
+(142, 26, NULL, 'meeting', 'New Meeting Invitation: test ', 'You\'ve been invited to a meeting \"test \" scheduled for 8/17/2026, 11:56:00 AM', NULL, 0, 'medium', '2026-08-17 06:58:44', NULL, NULL),
+(143, 69, NULL, 'meeting', 'New Meeting Invitation: test ', 'You\'ve been invited to a meeting \"test \" scheduled for 8/17/2026, 11:56:00 AM', NULL, 0, 'medium', '2026-08-17 06:58:44', NULL, NULL),
+(144, 24, NULL, 'meeting', 'New Meeting Invitation: test ', 'You\'ve been invited to a meeting \"test \" scheduled for 8/17/2026, 11:56:00 AM', NULL, 0, 'medium', '2026-08-17 06:58:44', NULL, NULL),
+(145, 70, 1, '', 'New Plan Approval Request', 'A new plan has been submitted for approval at the Deputy CEO level.', NULL, 0, 'high', '2026-08-17 13:39:11', NULL, NULL),
+(146, 40, NULL, 'task', '📋 Breakdown Task Assigned', 'You have been assigned to monthly breakdown task \"test for ato ezira\"', NULL, 1, 'medium', '2026-08-17 14:18:08', '2026-08-17 14:18:18', NULL),
+(147, 73, NULL, '', '⚡ Progress Pushed: test for ato ezira', 'Ezira Mantegaftot pushed progress on \"test for ato ezira\" for Action Plan \"KPI 3 የፓርኩን ተወዳዳሪነትና ገፅታን በማጠናከር ኢንቨስትመንትን መሳብ\" (Weight: 0.5). Target: 0.5 number | Achieved: 4,000 number (67% completed). Notes: test I have achived .', '{\"task_id\":\"4\",\"task_type\":\"monthly\",\"detail_id\":4,\"plan_name\":\"KPI 3 የፓርኩን ተወዳዳሪነትና ገፅታን በማጠናከር ኢንቨስትመንትን መሳብ\",\"plan_type\":\"income\",\"plan_weight\":0.5,\"plan_target\":0.5,\"actual_amount\":4000,\"unit\":\"number\",\"progress\":\"67\",\"pusher_name\":\"Ezira Mantegaftot\",\"target_page\":\"supervisor_breakdown\"}', 1, 'high', '2026-08-17 14:20:04', '2026-08-17 14:20:14', NULL),
+(148, 40, NULL, '', '⚠️ Task Progress Alert from Supervisor', 'Attention Ezira Mantegaftot: Your assigned breakdown task progress requires an urgent update. Please push your progress and evidence as soon as possible.', NULL, 1, 'urgent', '2026-08-17 14:21:03', '2026-08-17 14:21:20', NULL),
+(149, 70, 2, '', 'New Plan Approval Request', 'A new plan has been submitted for approval at the Deputy CEO level.', NULL, 0, 'high', '2026-08-17 15:41:13', NULL, NULL),
+(150, 40, NULL, 'task', '📋 Breakdown Task Assigned', 'You have been assigned to monthly breakdown task \"test cost \"', NULL, 1, 'medium', '2026-08-17 15:43:12', '2026-08-17 15:45:12', NULL),
+(151, 73, NULL, '', '⚡ Progress Pushed: test cost ', 'Ezira Mantegaftot pushed progress on \"test cost \" for Action Plan \"Action plan fron  Transport Allowance Budget\" (Weight: 0.5). Target: 0.5 number | Achieved: 30,000 number (75% completed). Notes: No notes provided.', '{\"task_id\":\"5\",\"task_type\":\"monthly\",\"detail_id\":5,\"plan_name\":\"Action plan fron  Transport Allowance Budget\",\"plan_type\":\"cost\",\"plan_weight\":0.5,\"plan_target\":0.5,\"actual_amount\":30000,\"unit\":\"number\",\"progress\":\"75\",\"pusher_name\":\"Ezira Mantegaftot\",\"target_page\":\"supervisor_breakdown\"}', 0, 'high', '2026-08-17 15:47:50', NULL, NULL),
+(152, 73, NULL, 'task', 'New Task (🤝 Contributor / Assistant): test one', '📋 *New Task Assigned to You*\n\n*Task:* test one\n*Your Role:* 🎖️ 🤝 Contributor / Assistant\n*Priority:* 🟡 MEDIUM\n*Due Date:* 📅 Mon, Aug 17, 2026\n*Category:* general\n*Assigned By:* Ezira Mantegaftot (Admin)\n\n*Your Specific Instructions:*\ntest for you \n\n_Please open the ITPCR app to view and start this task._', '{\"assignment_id\":10,\"task_title\":\"test one\",\"role\":\"🤝 Contributor / Assistant\",\"priority\":\"medium\",\"due_date\":\"2026-08-17\",\"category\":\"general\",\"assigned_by_name\":\"Ezira Mantegaftot\"}', 1, 'medium', '2026-08-17 16:54:22', '2026-08-17 16:58:32', NULL),
+(153, 67, NULL, 'task', 'New Task (Lead / Owner): test one', '📋 *New Task Assigned to You*\n\n*Task:* test one\n*Your Role:* 🎖️ Lead / Owner\n*Priority:* 🟡 MEDIUM\n*Due Date:* 📅 Mon, Aug 17, 2026\n*Category:* general\n*Assigned By:* Ezira Mantegaftot (Admin)\n\n*Your Specific Instructions:*\ndo somthing on this role \n\n_Please open the ITPCR app to view and start this task._', '{\"assignment_id\":11,\"task_title\":\"test one\",\"role\":\"Lead / Owner\",\"priority\":\"medium\",\"due_date\":\"2026-08-17\",\"category\":\"general\",\"assigned_by_name\":\"Ezira Mantegaftot\"}', 0, 'medium', '2026-08-17 16:54:22', NULL, NULL),
+(154, 40, NULL, 'task', 'New Task (Primary Executor): test 2', '📋 *New Task Assigned to You*\n\n*Task:* test 2\n*Your Role:* 🎖️ Primary Executor\n*Priority:* 🟡 MEDIUM\n*Due Date:* 📅 Tue, Aug 18, 2026\n*Category:* urgent\n*Assigned By:* tsuhayu directorate (IT Directorate)\n\n*Your Specific Instructions:*\ntest \n\n_Please open the ITPCR app to view and start this task._', '{\"assignment_id\":12,\"task_title\":\"test 2\",\"role\":\"Primary Executor\",\"priority\":\"medium\",\"due_date\":\"2026-08-18\",\"category\":\"urgent\",\"assigned_by_name\":\"tsuhayu directorate\"}', 1, 'medium', '2026-08-17 17:53:46', '2026-08-17 17:54:29', NULL),
+(155, 48, NULL, 'task', 'New Task (Lead / Owner): test 2', '📋 *New Task Assigned to You*\n\n*Task:* test 2\n*Your Role:* 🎖️ Lead / Owner\n*Priority:* 🟡 MEDIUM\n*Due Date:* 📅 Tue, Aug 18, 2026\n*Category:* urgent\n*Assigned By:* tsuhayu directorate (IT Directorate)\n\n*Your Specific Instructions:*\ntest \n\n_Please open the ITPCR app to view and start this task._', '{\"assignment_id\":13,\"task_title\":\"test 2\",\"role\":\"Lead / Owner\",\"priority\":\"medium\",\"due_date\":\"2026-08-18\",\"category\":\"urgent\",\"assigned_by_name\":\"tsuhayu directorate\"}', 0, 'medium', '2026-08-17 17:53:46', NULL, NULL),
+(156, 76, NULL, 'task', 'New Task (Primary Executor): test 2', '📋 *New Task Assigned to You*\n\n*Task:* test 2\n*Your Role:* 🎖️ Primary Executor\n*Priority:* 🟡 MEDIUM\n*Due Date:* 📅 Tue, Aug 18, 2026\n*Category:* urgent\n*Assigned By:* tsuhayu directorate (IT Directorate)\n\n*Your Specific Instructions:*\ntest \n\n_Please open the ITPCR app to view and start this task._', '{\"assignment_id\":14,\"task_title\":\"test 2\",\"role\":\"Primary Executor\",\"priority\":\"medium\",\"due_date\":\"2026-08-18\",\"category\":\"urgent\",\"assigned_by_name\":\"tsuhayu directorate\"}', 0, 'medium', '2026-08-17 17:53:46', NULL, NULL),
+(157, 73, NULL, '', 'Task Update: test 2', '🚀 Started *test 2*\n*By:* Ezira Mantegaftot\n*Priority:* 🟡 MEDIUM\n\n_View in Sent Tasks Tracker._', '{\"assignment_id\":12,\"task_title\":\"test 2\",\"new_status\":\"in_progress\",\"assignee_name\":\"Ezira Mantegaftot\",\"completion_note\":null,\"target_page\":\"sent_tasks_tracker\"}', 0, 'medium', '2026-08-17 17:54:53', NULL, NULL);
 
 -- --------------------------------------------------------
 
@@ -1225,43 +2556,46 @@ CREATE TABLE `objectives` (
   `year` int(11) DEFAULT NULL,
   `quarter` varchar(2) DEFAULT NULL,
   `employee_id` int(11) NOT NULL,
-  `goal_id` int(11) DEFAULT NULL
+  `goal_id` int(11) DEFAULT NULL,
+  `weight` float DEFAULT 100
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `objectives`
 --
 
-INSERT INTO `objectives` (`objective_id`, `user_id`, `name`, `description`, `created_at`, `updated_at`, `created_by`, `year`, `quarter`, `employee_id`, `goal_id`) VALUES
-(113, 26, 'ዓላማ 1.1 የIT ካምፓኒዎችን በመሳብ የተፈጠረ ቀጥተኛና ተጓዳኝ የሥራ ዕዴል ማሳደግ', 'የIT ካምፓኒዎችን በመሳብ የተፈጠረ ቀጥተኛና ተጓዳኝ የሥራ ዕዴል ማሳደግ', '2025-03-12 04:37:52', '2025-04-09 11:19:55', NULL, NULL, NULL, 0, 87),
-(114, 26, 'ዓላማ 1.2 የIT ካምፓኒዎችን በመሳብ የተፈጠረ የሀገር ውስጥ እና የውጭ ቀጥተኛ ኢንቨስትመንት (FDI) ማሳደግ ', 'የIT ካምፓኒዎችን በመሳብ የተፈጠረ የሀገር ውስጥ እና የውጭ ቀጥተኛ ኢንቨስትመንት (FDI) ማሳደግ ', '2025-03-12 04:42:33', '2025-04-09 11:20:37', NULL, NULL, NULL, 0, 87),
-(115, 26, 'ዓላማ 2.1 የተፈጠረ የቴከኖልጂ ሽግግር ', 'የተፈጠረ የቴከኖልጂ ሽግግር ', '2025-03-12 04:45:27', '2025-03-13 04:17:48', NULL, NULL, NULL, 0, 88),
-(116, 26, 'ዓላማ 2.2 ከኤክስፖርት የተገኘ የውጭ ምንዛሪ ማሳደግ', 'ከኤክስፖርት የተገኘ የውጭ ምንዛሪ ማሳደግ', '2025-03-12 04:48:25', '2025-04-09 11:21:02', NULL, NULL, NULL, 0, 88),
-(117, 26, 'ዓላማ 2.3 ከተተኪ ምርቶች/አገልግሎት የተገኘ ገቢ ማሳደግ ', 'ከተተኪ ምርቶች/አገልግሎት የተገኘ ገቢ ማሳደግ ', '2025-03-12 04:49:59', '2025-04-09 11:24:52', NULL, NULL, NULL, 0, 88),
-(118, 26, 'ዓላማ 3.1 የለማ መሬት በንዑስ ሊዝ የወሰደ ካምፓኒዎችን ብዛት፣ ለካምፓኒዎች አገልግልት የዋለን መሬት ስፋት እና አገሌግልት የተሰጠበትን አማካይ ጊዜ ማሻሻል ', 'የለማ መሬት በንዑስ ሉዝ የወሰደ ካምፓኒዎችን ብዛት፣ የካምፓኒዎች አገሌግልት የዋለን መሬት ስፋት እና አገሌግልት የተሰጠበትን አማካይ ጊዜ ማሻሻሌ የለማ መሬት በንዑስ ሊዝ የወሰደ ካምፓኒዎችን ብዛት፣ ለካምፓኒዎች አገልግልት የዋለን መሬት ስፋት እና አገሌግልት የተሰጠበትን አማካይ ጊዜ ማሻሻል', '2025-03-12 04:54:07', '2025-04-09 11:23:48', NULL, NULL, NULL, 0, 89),
-(119, 26, 'ዓላማ 3.2 የመገልገያ ህንጻ ኪራይ የወሰደ ካምፓኒዎችን ብዛት፣ የተከራዮች አገልግሎት የዋለን የቦታ ስፋትና አገሌግልት የተሰጠበትን አማካይ ጊዜ ማሻሻል ', 'የመገልገያ ህንጻ ኪራይ የወሰደ ካምፓኒዎችን ብዛት፣ የተከራዮች አገልግሎት የዋለን የቦታ ስፋትና አገሌግልት የተሰጠበትን አማካይ ጊዜ ማሻሻል ', '2025-03-12 04:59:38', '2025-04-09 11:25:27', NULL, NULL, NULL, 0, 89),
-(120, 26, 'ዓላማ 3.3 በስታርትአፕ አክሰለሬሽን እና በኢንኩቤሽን ፕሮግራሞች ተጠቃሚ የሆኑ ካምፓኒዎች ብዛት ማሳደግ ', 'በስታርትአፕ አክሰለሬሽን እና በኢንኩቤሽን ፕሮግራሞች ተጠቃሚ የሆኑ ካምፓኒዎች ብዛት ማሳደግ ', '2025-03-12 05:03:50', '2025-03-12 05:03:50', NULL, NULL, NULL, 0, 89),
-(121, 26, 'ዓላማ 3.4 የቢዝነስ ትስስር የማድረግ የተፈጠረ መድረክ (ኩነት)', 'የቢዝነስ ትስስር ሇማዴረግ የተፈጠረ መድረክ (ኩነት)', '2025-03-12 05:06:36', '2025-04-09 11:26:28', NULL, NULL, NULL, 0, 89),
-(122, 26, 'ዓላማ 4.1 የአዱስ መሠረተ -ሌማትና ፋሲሉቲ ግንባታ ዲዛይን ማዘጋጀት ', 'የአዱስ መሠረተ -ሌማትና ፋሲሉቲ ግንባታ ዲዛይን ማዘጋጀት ', '2025-03-13 04:35:58', '2025-04-09 11:27:02', NULL, NULL, NULL, 0, 90),
-(123, 26, 'ዓሊማ 3.5 ለነዋሪዎች ደረጃውን የጠበቀ አገልግሎት መስጠታቸው የተረጋገጠ የጋራ አገሌግልት መስጫ ፋሲሉቲዎች ', 'ለነዋሪዎች ደረጃውን የጠበቀ አገልግሎት መስጠታቸው የተረጋገጠ የጋራ አገሌግልት መስጫ ፋሲሉቲዎች ', '2025-03-13 04:42:29', '2025-04-09 11:27:36', NULL, NULL, NULL, 0, 89),
-(124, 26, 'ዓላማ 3.6 ለነዋሪዎች ብቃት ያለው የሰው ኃይል አቅርቦት (Talent Pool) እንዲኖር ማስቻል', 'ለነዋሪዎች ብቃት ያለው የሰው ኃይል አቅርቦት (Talent Pool) እንዲኖር ማስቻል', '2025-03-13 04:48:45', '2025-04-09 11:28:15', NULL, NULL, NULL, 0, 89),
-(125, 26, 'ዓላማ 4.2 ዓለም አቀፍ ደረጃን የጠበቀ አዲስ መሠረተ - ልማትና ፋሲሉቲ መገንባት/ማስፋፋት', 'ዓለም አቀፍ ደረጃን የጠበቀ አዲስ መሠረተ - ልማትና ፋሲሉቲ መገንባት/ማስፋፋት', '2025-03-13 04:58:40', '2025-04-09 11:28:45', NULL, NULL, NULL, 0, 90),
-(126, 26, 'ዓላማ 4.3 ቀድሞ የለማ መሠረተ-ልማትና ፋሲልቲ የማደስ ሥራ ማካሄድ', 'ቀድሞ የለማ መሠረተ-ልማትና ፋሲሊቲ የማደስ ሥራ ማካሄድ', '2025-03-13 05:11:16', '2025-04-09 11:37:13', NULL, NULL, NULL, 0, 90),
-(127, 26, 'ዓላማ 4.4 የኮርፖሬሽኑን ኢኮ-ቴክኖልጂ ዘሊቂነት ማረጋጋጥ ', 'የኮርፖሬሽኑን ኢኮ-ቴክኖልጂ ዘሊቂነት ማረጋጋጥ ', '2025-03-13 05:17:10', '2025-03-13 05:17:10', NULL, NULL, NULL, 0, 90),
-(128, 26, 'ዓላማ 5.1 የኢ.ቴ.ፓ.ኮ. ዓላማ ማሳኪያ አደረጃጀትና የአስተዲደር መመሪያዎችን ማሻሻል፣ የሰው ሀይል ማሟላትና አቅም ማጎሌበት', 'የኢ.ቴ.ፓ.ኮ. ዓላማ ማሳኪያ አደረጃጀትና የአስተዲደር መመሪያዎችን ማሻሻል፣ የሰው ሀይል ማሟላትና አቅም ማጎሌበት', '2025-03-13 05:19:37', '2025-04-09 11:30:46', NULL, NULL, NULL, 0, 91),
-(129, 26, 'ዓላማ 5.2 የኮርፖሬሽኑን ገቢ አሰባሰብ እና ፋይናንስ አጠቃቀም አጠናክሮ ማስቀጠል ', 'የኮርፖሬሽኑን ገቢ አሰባሰብ እና ፋይናንስ አጠቃቀም አጠናክሮ ማስቀጠል', '2025-03-13 05:23:48', '2025-04-09 11:31:11', NULL, NULL, NULL, 0, 91),
-(130, 26, 'ዓላማ 5.3 የኮርፖሬሽኑ በጀትና ንብረት በአግባቡ ጥቅም ሊይ ስለመዋሉ በውስጥ ኦዱት ማረጋገጥ ', 'የኮርፖሬሽኑ በጀትና ንብረት በአግባቡ ጥቅም ሊይ ስለመዋሉ በውስጥ ኦዱት ማረጋገጥ ', '2025-03-13 05:27:27', '2025-04-09 11:38:12', NULL, NULL, NULL, 0, 91),
-(131, 26, 'ዓላማ 5.4 ኮርፖሬሽኑን ንብረት አያያዝና አጠቃቀም ሥራ ማካሄድ ', ' ኮርፖሬሽኑን ንብረት አያያዝና አጠቃቀም ሥራ ማካሄድ', '2025-03-13 05:29:03', '2025-04-09 11:38:43', NULL, NULL, NULL, 0, 91),
-(132, 26, 'ዓላማ 5.5 የኮርፖሬሽኑን ሥራ በIT እንዲደገፍ የማዴረግ ሥራ አጠናክሮ ማስቀጠል', 'የኮርፖሬሽኑን ሥራ በIT እንዲደገፍ የማዴረግ ሥራ አጠናክሮ ማስቀጠል', '2025-03-13 05:31:19', '2025-04-09 11:39:19', NULL, NULL, NULL, 0, 91),
-(133, 26, 'ዓላማ 5.6 ቢዝነስ ካምፓኒዎችን የመሳብ የፕሮሞሽን ሥራ ማካሄድ', 'ቢዝነስ ካምፓኒዎችን የመሳብ የፕሮሞሽን ሥራ ማካሄድ ', '2025-03-13 05:33:15', '2025-04-09 11:40:15', NULL, NULL, NULL, 0, 91),
-(134, 26, 'ዓላማ 5.7 በህግ ጉዲዮች ሊይ የማማከርና የመፈጸም አገሌግልት መስጠት ', 'በህግ ጉዲዮች ሊይ የማማከርና የመፈጸም አገሌግልት መስጠት ', '2025-03-13 05:37:03', '2025-03-13 05:37:03', NULL, NULL, NULL, 0, 91),
-(135, 26, 'ዓሊማ 5.8 የኮርፖሬሽኑን ሥራዎች የሚያግዙና የሚያቀላጥፉ ማንዋልችን ማዘጋጀት', 'የኮርፖሬሽኑን ሥራዎች የሚያግዙና የሚያቀልጥፉ ማንዋልችን ማዘጋጀት', '2025-03-13 05:39:25', '2025-04-09 11:41:09', NULL, NULL, NULL, 0, 91),
-(136, 26, 'ዓላማ 5.9 ከባለ ድርሻዎች ጋር ስምምነት ማድረግ ', 'ከባለ ድርሻዎች ጋር ስምምነት ማድረግ ', '2025-03-13 05:42:09', '2025-04-09 11:41:37', NULL, NULL, NULL, 0, 91),
-(137, 26, 'ዓሊማ 5.10 ተጨማሪ የቢዝነስ እድሎችን ማጥናትና መተግበር ', 'ተጨማሪ የቢዝነስ እድሎችን ማጥናትና መተግበር ', '2025-03-13 05:45:27', '2025-04-09 11:42:41', NULL, NULL, NULL, 0, 91),
-(138, 26, 'ዓላማ 5.11 የገቢ ማስገኛ ስራዎችን ከተባባሪዎቸ/ሇጋሽ አካሊት ጋር መስራት ', 'የገቢ ማስገኛ ስራዎችን ከተባባሪዎቸ/ሇጋሽ አካሊት ጋር መስራት ', '2025-03-13 05:48:29', '2025-03-13 05:48:29', NULL, NULL, NULL, 0, 91),
-(139, 40, 'test objective', 'test onbjective', '2025-12-11 02:39:51', '2025-12-11 02:39:51', NULL, NULL, NULL, 109, 94),
-(140, 40, 'objective test 2', 'objective test 2', '2025-12-11 03:23:32', '2025-12-11 03:23:32', NULL, NULL, NULL, 109, 95),
-(141, 40, 'my test', 'my test', '2026-03-10 11:02:33', '2026-03-10 11:02:33', NULL, NULL, NULL, 109, 96);
+INSERT INTO `objectives` (`objective_id`, `user_id`, `name`, `description`, `created_at`, `updated_at`, `created_by`, `year`, `quarter`, `employee_id`, `goal_id`, `weight`) VALUES
+(270, 80, 'ዓላማ 1.1 	አስተማማኝ የፋሲሊቲ ኦፕሬሽንስ እና የአገልግሎት አቅርቦትን ማረጋገጥ', 'አስተማማኝ የፋሲሊቲ ኦፕሬሽንስ እና የአገልግሎት አቅርቦትን ማረጋገጥ', '2026-07-15 11:33:12', '2026-08-07 17:29:09', NULL, NULL, NULL, 153, 225, 5),
+(274, 40, 'ዓላማ 2.1	የዓለም አቀፍ ገበያ ተደራሽነትን ለማሻሻል በዲጂታል ቴክኖሎጂ ዘርፍ የውጭ ቀጥተኛ ኢንቨስትመንትን መሳብ።', 'የዓለም አቀፍ ገበያ ተደራሽነትን ለማሻሻል በዲጂታል ቴክኖሎጂ ዘርፍ የውጭ ቀጥተኛ ኢንቨስትመንትን መሳብ።', '2026-08-10 20:18:45', '2026-08-10 20:18:45', NULL, NULL, NULL, 109, 226, 5),
+(275, 40, 'ዓላማ 1.2 አስተማማኝ የፋሲሊቲ ኦፕሬሽንስ እና የአገልግሎት አቅርቦትን ማረጋገጥ', 'አስተማማኝ የፋሲሊቲ ኦፕሬሽንስ እና የአገልግሎት አቅርቦትን ማረጋገጥ', '2026-08-11 21:44:49', '2026-08-11 21:44:49', NULL, NULL, NULL, 109, 225, 4),
+(276, 40, 'objective 3 የፓርኩን ተወዳዳሪነትና ገፅታን በማጠናከር ኢንቨስትመንትን መሳብ', 'objective 3 የፓርኩን ተወዳዳሪነትና ገፅታን በማጠናከር ኢንቨስትመንትን መሳብ', '2026-08-17 16:28:09', '2026-08-17 16:28:09', NULL, NULL, NULL, 109, 226, 2);
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `objective_quarter_activations`
+--
+
+CREATE TABLE `objective_quarter_activations` (
+  `id` int(11) NOT NULL,
+  `objective_id` int(11) NOT NULL,
+  `year` int(11) NOT NULL,
+  `quarter` varchar(10) NOT NULL,
+  `is_active` tinyint(1) DEFAULT 1,
+  `created_at` datetime DEFAULT current_timestamp(),
+  `updated_at` datetime DEFAULT current_timestamp() ON UPDATE current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `objective_quarter_activations`
+--
+
+INSERT INTO `objective_quarter_activations` (`id`, `objective_id`, `year`, `quarter`, `is_active`, `created_at`, `updated_at`) VALUES
+(1, 270, 2018, '4', 1, '2026-08-11 16:36:34', '2026-08-17 16:23:07'),
+(4, 273, 2018, '4', 0, '2026-08-11 21:19:37', '2026-08-11 21:19:37'),
+(5, 272, 2018, '4', 0, '2026-08-11 21:19:40', '2026-08-11 21:19:40'),
+(6, 271, 2018, '4', 0, '2026-08-11 21:19:44', '2026-08-11 21:19:44'),
+(7, 274, 2018, '4', 1, '2026-08-11 21:20:29', '2026-08-17 16:25:11');
 
 -- --------------------------------------------------------
 
@@ -1287,10 +2621,11 @@ CREATE TABLE `organization_groups` (
 --
 
 INSERT INTO `organization_groups` (`group_id`, `conversation_id`, `organization_id`, `department_id`, `group_name`, `group_description`, `group_icon`, `created_by`, `created_at`, `updated_at`) VALUES
-(1, 3, NULL, NULL, 'test', 'something', NULL, 40, '2025-11-27 12:10:25', '2025-11-27 12:55:11'),
+(1, 3, NULL, NULL, 'test', 'something', NULL, 40, '2025-11-27 12:10:25', '2026-03-24 11:53:20'),
 (2, 4, NULL, NULL, 'test1', 'ets da', NULL, 25, '2025-11-27 12:18:05', '2025-11-27 12:18:05'),
 (3, 9, NULL, NULL, 'it goup', 'selamta', NULL, 25, '2025-11-27 12:40:02', '2025-11-27 12:40:02'),
-(4, 10, NULL, NULL, 'it staff', 'it group', NULL, 40, '2025-11-27 12:56:07', '2025-11-27 13:15:45');
+(4, 10, NULL, NULL, 'it staff', 'it group', NULL, 40, '2025-11-27 12:56:07', '2025-11-27 13:15:45'),
+(5, 22, NULL, NULL, 'demo ', 'demo group', NULL, 40, '2026-04-07 16:53:08', '2026-04-07 16:53:08');
 
 -- --------------------------------------------------------
 
@@ -1319,7 +2654,7 @@ CREATE TABLE `organization_structure` (
 INSERT INTO `organization_structure` (`id`, `name`, `name_amharic`, `type`, `parent_id`, `level`, `description`, `head_employee_id`, `status`, `created_at`, `updated_at`) VALUES
 (9, 'CEO', 'CEO', 'CEO', NULL, 1, 'CEO', NULL, 'active', '2025-12-16 07:33:36', '2025-12-16 07:33:36'),
 (10, 'Deputy CEO', 'Deputy CEO', 'Deputy CEO', 9, 2, 'Deputy CEO', NULL, 'active', '2025-12-16 07:34:14', '2025-12-16 07:34:14'),
-(11, 'IT Directorate', 'IT Directorate', 'Directorate', 10, 3, 'IT Directorate', NULL, 'active', '2025-12-16 07:35:17', '2025-12-16 07:35:17'),
+(11, 'IT Sector', 'አይቲ ዘርፍ', 'DIRECTORATE', 10, 3, 'IT Sector', NULL, 'active', '2025-12-16 07:35:17', '2026-08-30 11:28:30'),
 (12, 'Constraction  Directorate', 'Constraction  Directorate', 'Directorate', 10, 3, 'Constraction  Directorate', NULL, 'active', '2025-12-16 07:35:45', '2025-12-16 07:35:45'),
 (13, 'Inovation and Encubation Department', 'Inovation and Encubation Department', 'Department', 11, 4, 'Inovation and Encubation Department', NULL, 'active', '2025-12-16 07:39:08', '2025-12-16 07:39:08'),
 (14, 'Digital Service and Infrastructure Devevelopment', 'Digital Service and Infrastructure Devevelopment', 'Department', 11, 4, 'Digital Service and Infrastructure Devevelopment', NULL, 'active', '2025-12-16 07:40:31', '2025-12-16 07:40:31'),
@@ -1327,7 +2662,7 @@ INSERT INTO `organization_structure` (`id`, `name`, `name_amharic`, `type`, `par
 (16, 'Encubation Section ', 'Encubation Section ', 'Section', 13, 5, 'Encubation Section ', NULL, 'active', '2025-12-16 07:41:37', '2025-12-16 07:41:37'),
 (17, 'Network and Infrastructure ', 'Network and Infrastructure ', 'Section', 14, 5, 'Network and Infrastructure ', NULL, 'active', '2025-12-16 07:42:18', '2025-12-16 07:42:18'),
 (18, 'Software development', 'Software development', 'Section', 14, 5, 'Software development', NULL, 'active', '2025-12-16 07:43:06', '2025-12-16 07:43:06'),
-(19, 'Ciyber Security ', 'Ciyber Security ', 'Section', 14, 5, 'Ciyber Security ', NULL, 'active', '2025-12-16 07:43:29', '2025-12-16 07:43:29'),
+(19, 'Ciyber Security', 'Ciyber Security', 'SECTION', 11, 4, 'Ciyber Security ', NULL, 'active', '2025-12-16 07:43:29', '2026-08-30 11:15:03'),
 (20, 'Construction and Design ', 'Construction and Design ', 'Department', 12, 4, 'Construction and Design ', NULL, 'active', '2025-12-16 07:45:58', '2025-12-16 07:45:58'),
 (21, 'Construction ', 'Construction', 'Section', 20, 5, 'Construction', NULL, 'active', '2025-12-16 07:46:29', '2025-12-16 07:46:29'),
 (22, 'Design ', 'Design', 'Section', 20, 5, 'Design Section ', NULL, 'active', '2025-12-16 07:46:51', '2025-12-16 07:46:51'),
@@ -1357,7 +2692,13 @@ INSERT INTO `organization_structure` (`id`, `name`, `name_amharic`, `type`, `par
 (47, 'Complaice Section ', 'Complaice Section ', 'Section', 44, 3, NULL, NULL, 'active', '2025-12-16 08:58:47', '2025-12-16 08:58:47'),
 (48, 'Auditor', 'Auditor', 'Section', 9, 2, NULL, NULL, 'active', '2025-12-16 08:59:47', '2025-12-16 08:59:47'),
 (49, 'Corporation Communication Section ', 'Corporation Communication Section ', 'Section', 9, 2, NULL, NULL, 'active', '2025-12-16 09:00:36', '2025-12-16 09:00:36'),
-(50, 'Plan and followup ', 'Plan and followup ', 'Section', 9, 2, NULL, NULL, 'active', '2025-12-16 09:01:49', '2025-12-16 09:01:49');
+(50, 'Plan and followup ', 'Plan and followup ', 'Section', 9, 2, NULL, NULL, 'active', '2025-12-16 09:01:49', '2025-12-16 09:01:49'),
+(51, 'Senior', 'Senior', 'Senior Software Developer', 18, 6, NULL, NULL, 'active', '2026-03-19 11:18:02', '2026-03-19 11:18:02'),
+(52, 'Specialist', 'Specialist', ' Software Developer Specialist', 18, 6, NULL, NULL, 'active', '2026-03-19 11:18:31', '2026-03-19 11:18:31'),
+(53, 'Assistant', 'Assistant', ' Software Developer Assistant', 18, 6, NULL, NULL, 'active', '2026-03-19 11:18:52', '2026-03-19 11:18:52'),
+(54, 'Senior System admin', 'Senior System admin', 'Senior', 17, 6, NULL, NULL, 'active', '2026-03-20 05:29:38', '2026-03-20 05:29:38'),
+(55, ' System admin Specialist', ' System admin Specialist', 'Specialist', 17, 6, NULL, NULL, 'active', '2026-03-20 05:30:06', '2026-03-20 05:30:06'),
+(56, ' System admin Asistant', ' System admin Asistant', 'Assistant', 17, 6, NULL, NULL, 'active', '2026-03-20 05:30:31', '2026-03-20 05:30:31');
 
 -- --------------------------------------------------------
 
@@ -1382,9 +2723,15 @@ INSERT INTO `organization_types` (`id`, `name`, `description`, `color`, `level_o
 (1, 'CEO', 'Top level organization', 'from-purple-600 to-purple-700', 1, '2025-12-15 13:52:30'),
 (2, 'Department', 'Major functional area', 'from-blue-600 to-blue-700', 4, '2025-12-15 13:52:30'),
 (3, 'Directorate', 'Sub-division of department', 'from-teal-600 to-teal-700', 3, '2025-12-15 13:52:30'),
-(4, 'Section', 'Specific section', 'from-green-600 to-green-700', 5, '2025-12-15 13:52:30'),
+(4, 'Division', 'Specific Division', 'from-green-600 to-green-700', 5, '2025-12-15 13:52:30'),
 (7, 'Deputy CEO', 'Deputy CEO', 'from-orange-600 to-orange-700', 2, '2025-12-16 07:31:32'),
-(8, 'unit', 'unit', 'linear-gradient(to right, #7c3aed, #5b21b6)', 6, '2025-12-16 08:55:42');
+(8, 'unit', 'unit', 'linear-gradient(to right, #7c3aed, #5b21b6)', 6, '2025-12-16 08:55:42'),
+(9, 'Senior Software Developer', 'Senior Software Developer', 'linear-gradient(to right, #e11d48, #9f1239)', 7, '2026-03-19 11:15:29'),
+(10, ' Software Developer Specialist', 'Software Developer Specialist', 'from-gray-600 to-gray-700', 8, '2026-03-19 11:16:04'),
+(11, ' Software Developer Assistant', ' Software Developer Assistant', 'from-gray-600 to-gray-700', 9, '2026-03-19 11:16:52'),
+(12, 'Senior', 'Senior', 'linear-gradient(to right, #4f46e5, #3730a3)', 10, '2026-03-20 05:27:27'),
+(13, 'Specialist', 'Specialist', 'linear-gradient(to right, #059669, #065f46)', 11, '2026-03-20 05:27:54'),
+(14, 'Assistant', 'Assistant', 'linear-gradient(to right, #0284c7, #075985)', 12, '2026-03-20 05:28:22');
 
 -- --------------------------------------------------------
 
@@ -1444,33 +2791,157 @@ CREATE TABLE `plans` (
 --
 
 INSERT INTO `plans` (`plan_id`, `user_id`, `department_id`, `supervisor_id`, `employee_id`, `goal_id`, `objective_id`, `specific_objective_id`, `specific_objective_detail_id`, `status`, `year`, `created_at`, `updated_at`, `report_status`, `department_name`, `editing_status`, `reporting`, `report_progress`) VALUES
-(224, 40, 2, 72, 109, 90, 127, 548, 779, 'Pending', 2025, '2025-11-24 13:08:46', '2025-11-24 13:20:42', 'Approved', 'ኢንፎርሜሽን ቴክኖሎጂ ልማት', 'deactivate', 'active', NULL),
-(225, 40, 2, 72, 109, 88, 116, 475, 780, 'Pending', 2025, '2025-11-24 13:10:39', '2025-11-24 13:20:20', 'Approved', 'ኢንፎርሜሽን ቴክኖሎጂ ልማት', 'deactivate', 'active', NULL),
-(226, 40, 2, 72, 109, 88, 116, 475, 781, 'Pending', 2025, '2025-11-24 13:12:00', '2025-11-24 13:20:25', 'Approved', 'ኢንፎርሜሽን ቴክኖሎጂ ልማት', 'deactivate', 'active', NULL),
-(227, 40, 2, 72, 109, 89, 123, 505, 782, 'Pending', 2025, '2025-11-24 13:13:52', '2025-11-24 13:20:38', 'Approved', 'ኢንፎርሜሽን ቴክኖሎጂ ልማት', 'deactivate', 'active', NULL),
-(228, 40, 2, 72, 109, 91, 129, 562, 783, 'Pending', 2025, '2025-11-24 13:15:35', '2025-11-24 13:20:47', 'Approved', 'ኢንፎርሜሽን ቴክኖሎጂ ልማት', 'deactivate', 'active', NULL),
-(229, 40, 2, 72, 109, 91, 132, 573, 784, 'Pending', 2025, '2025-11-24 13:17:12', '2025-11-24 13:20:51', 'Approved', 'ኢንፎርሜሽን ቴክኖሎጂ ልማት', 'deactivate', 'active', NULL),
-(230, 40, 2, 72, 109, 88, 116, 475, 785, 'Pending', 2025, '2025-11-24 13:18:53', '2025-11-24 13:20:29', 'Approved', 'ኢንፎርሜሽን ቴክኖሎጂ ልማት', 'deactivate', 'active', NULL),
-(231, 40, 2, 72, 109, 88, 117, 479, 786, 'Pending', 2025, '2025-11-24 13:20:06', '2025-11-24 13:20:33', 'Approved', 'ኢንፎርሜሽን ቴክኖሎጂ ልማት', 'deactivate', 'active', NULL),
-(232, 40, 2, 72, 109, 88, 116, 475, 787, 'Pending', 2025, '2025-11-25 13:55:46', '2025-11-25 13:55:46', 'Approved', 'ኢንፎርሜሽን ቴክኖሎጂ ልማት', 'deactivate', 'deactivate', NULL),
-(234, 40, 2, 72, 109, 88, 116, 475, 788, 'Pending', 2025, '2025-11-25 14:03:13', '2025-11-25 14:03:13', 'Approved', 'ኢንፎርሜሽን ቴክኖሎጂ ልማት', 'deactivate', 'deactivate', NULL),
-(236, 40, 2, 72, 109, 87, 113, 461, 790, 'Pending', 2025, '2025-11-27 08:46:05', '2025-11-29 09:53:29', 'Approved', 'ኢንፎርሜሽን ቴክኖሎጂ ልማት', 'deactivate', 'active', NULL),
-(237, 40, 2, 72, 109, 88, 117, 478, 791, 'Pending', 2025, '2025-11-27 08:48:50', '2025-11-27 08:48:50', 'Approved', 'ኢንፎርሜሽን ቴክኖሎጂ ልማት', 'deactivate', 'deactivate', NULL),
-(238, 40, 2, 72, 109, 89, 120, 495, 792, 'Pending', 2025, '2025-11-27 13:57:07', '2025-11-27 13:57:07', 'Approved', 'ኢንፎርሜሽን ቴክኖሎጂ ልማት', 'deactivate', 'deactivate', NULL),
-(239, 40, 2, 72, 109, 95, 140, 603, 793, 'Pending', 2025, '2025-12-11 12:28:06', '2025-12-11 12:28:06', 'Approved', 'ኢንፎርሜሽን ቴክኖሎጂ ልማት', 'deactivate', 'deactivate', NULL),
-(240, 40, 2, 72, 109, 95, 140, 603, 794, 'Pending', 2025, '2025-12-11 12:34:19', '2025-12-11 12:34:19', 'Approved', 'ኢንፎርሜሽን ቴክኖሎጂ ልማት', 'deactivate', 'deactivate', NULL),
-(241, 25, 2, 72, 72, 95, 140, 603, 795, 'Pending', 2025, '2025-12-11 13:24:22', '2025-12-11 13:24:22', 'Approved', 'ኢንፎርሜሽን ቴክኖሎጂ ልማት', 'deactivate', 'deactivate', NULL),
-(242, 25, 2, 72, 72, 90, 125, 523, 796, 'Pending', 2025, '2025-12-11 16:30:28', '2025-12-11 16:30:28', 'Approved', 'ኢንፎርሜሽን ቴክኖሎጂ ልማት', 'deactivate', 'deactivate', NULL),
-(243, 40, 2, 72, 109, 94, 139, 602, 797, 'Pending', 2025, '2025-12-15 07:52:45', '2025-12-15 07:52:45', 'Approved', 'ኢንፎርሜሽን ቴክኖሎጂ ልማት', 'deactivate', 'deactivate', NULL),
-(244, 40, 2, 72, 109, 94, 139, 602, 798, 'Pending', 2025, '2025-12-15 09:21:12', '2025-12-15 09:21:12', 'Approved', 'ኢንፎርሜሽን ቴክኖሎጂ ልማት', 'deactivate', 'deactivate', NULL),
-(245, 40, 2, 72, 109, 94, 139, 602, 799, 'Pending', 2025, '2025-12-15 12:15:21', '2025-12-15 12:15:21', 'Approved', 'ኢንፎርሜሽን ቴክኖሎጂ ልማት', 'deactivate', 'deactivate', NULL),
-(246, 40, 2, 72, 109, 94, 139, 602, 800, 'Pending', 2025, '2025-12-15 12:28:13', '2025-12-15 12:28:13', 'Approved', 'ኢንፎርሜሽን ቴክኖሎጂ ልማት', 'deactivate', 'deactivate', NULL),
-(247, 76, 18, 148, 149, 94, 139, 602, 801, 'Pending', 2025, '2025-12-16 13:22:07', '2025-12-16 13:22:07', 'Approved', 'Expert', 'deactivate', 'deactivate', NULL),
-(248, 78, 15, 150, 151, 87, 113, 461, 802, 'Pending', 2025, '2025-12-16 18:36:52', '2025-12-16 18:36:52', 'Approved', 'Section Head', 'deactivate', 'deactivate', NULL),
-(249, 40, 2, 143, 109, 91, 129, 560, 803, 'Pending', 2026, '2026-03-09 07:08:12', '2026-03-09 07:08:12', 'Approved', 'Admin', 'deactivate', 'deactivate', NULL),
-(250, 40, 2, 72, 109, 91, 130, 567, 805, 'Pending', 2026, '2026-03-09 08:16:56', '2026-03-09 08:16:56', 'Approved', 'Admin', 'deactivate', 'deactivate', NULL),
-(251, 40, 2, 143, 109, 96, 141, 604, 806, 'Pending', 2026, '2026-03-10 08:06:01', '2026-03-10 08:06:01', 'Approved', 'Admin', 'deactivate', 'deactivate', NULL),
-(252, 40, 2, 72, 109, 96, 141, 604, 807, 'Pending', 2026, '2026-03-11 11:12:30', '2026-03-11 14:10:36', 'Approved', 'Admin', 'deactivate', 'active', NULL);
+(1, 73, 11, 143, 146, 226, 276, 745, 4, 'Pending', 2026, '2026-08-17 13:39:11', '2026-08-17 13:39:11', 'Approved', 'IT Directorate', 'deactivate', 'deactivate', NULL),
+(2, 73, 11, 143, 146, 226, 276, 746, 5, 'Pending', 2026, '2026-08-17 15:41:12', '2026-08-17 15:41:12', 'Approved', 'IT Directorate', 'deactivate', 'deactivate', NULL);
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `plan_approval_steps`
+--
+
+CREATE TABLE `plan_approval_steps` (
+  `id` int(11) NOT NULL,
+  `plan_id` int(11) NOT NULL,
+  `step_number` int(11) NOT NULL,
+  `org_node_id` int(11) NOT NULL,
+  `org_node_name` varchar(255) DEFAULT NULL,
+  `approver_employee_id` int(11) DEFAULT NULL,
+  `approver_name` varchar(255) DEFAULT NULL,
+  `status` enum('Pending','Approved','Declined','Skipped') DEFAULT 'Pending',
+  `comment` text DEFAULT NULL,
+  `approved_at` datetime DEFAULT NULL,
+  `created_at` datetime DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `plan_approval_steps`
+--
+
+INSERT INTO `plan_approval_steps` (`id`, `plan_id`, `step_number`, `org_node_id`, `org_node_name`, `approver_employee_id`, `approver_name`, `status`, `comment`, `approved_at`, `created_at`) VALUES
+(888, 469, 1, 10, 'Deputy CEO', 143, 'olana abebe', 'Pending', NULL, NULL, '2026-08-09 09:41:47'),
+(889, 469, 2, 9, 'CEO', 142, 'belete esubalew', 'Pending', NULL, NULL, '2026-08-09 09:41:47'),
+(896, 473, 1, 10, 'Deputy CEO', 143, 'olana abebe', 'Pending', NULL, NULL, '2026-08-10 20:26:00'),
+(897, 473, 2, 9, 'CEO', 142, 'belete esubalew', 'Pending', NULL, NULL, '2026-08-10 20:26:00'),
+(898, 474, 1, 10, 'Deputy CEO', 143, 'olana abebe', 'Pending', NULL, NULL, '2026-08-11 10:34:14'),
+(899, 474, 2, 9, 'CEO', 142, 'belete esubalew', 'Pending', NULL, NULL, '2026-08-11 10:34:14'),
+(900, 475, 1, 10, 'Deputy CEO', 143, 'olana abebe', 'Pending', NULL, NULL, '2026-08-11 21:47:09'),
+(901, 475, 2, 9, 'CEO', 142, 'belete esubalew', 'Pending', NULL, NULL, '2026-08-11 21:47:09'),
+(906, 1, 1, 10, 'Deputy CEO', 143, 'olana abebe', 'Pending', NULL, NULL, '2026-08-17 16:39:11'),
+(907, 1, 2, 9, 'CEO', 142, 'belete esubalew', 'Pending', NULL, NULL, '2026-08-17 16:39:11'),
+(908, 2, 1, 10, 'Deputy CEO', 143, 'olana abebe', 'Pending', NULL, NULL, '2026-08-17 18:41:13'),
+(909, 2, 2, 9, 'CEO', 142, 'belete esubalew', 'Pending', NULL, NULL, '2026-08-17 18:41:13');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `plan_breakdown_supervisors`
+--
+
+CREATE TABLE `plan_breakdown_supervisors` (
+  `id` int(11) NOT NULL,
+  `specific_objective_detail_id` int(11) NOT NULL,
+  `supervisor_user_id` int(11) NOT NULL,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `plan_breakdown_supervisors`
+--
+
+INSERT INTO `plan_breakdown_supervisors` (`id`, `specific_objective_detail_id`, `supervisor_user_id`, `created_at`) VALUES
+(4, 1034, 40, '2026-08-11 18:39:11'),
+(8, 1036, 79, '2026-08-12 07:58:43');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `plan_pillars`
+--
+
+CREATE TABLE `plan_pillars` (
+  `id` int(11) NOT NULL,
+  `name` varchar(255) NOT NULL,
+  `code` varchar(50) DEFAULT NULL,
+  `description` text DEFAULT NULL,
+  `is_active` tinyint(1) DEFAULT 1,
+  `sort_order` int(11) DEFAULT 10,
+  `created_at` datetime DEFAULT current_timestamp(),
+  `updated_at` datetime DEFAULT current_timestamp() ON UPDATE current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `plan_pillars`
+--
+
+INSERT INTO `plan_pillars` (`id`, `name`, `code`, `description`, `is_active`, `sort_order`, `created_at`, `updated_at`) VALUES
+(1, 'Smart Infrastructure & Digital Platform', 'SD1', 'World-class physical & digital infrastructure', 1, 1, '2026-08-11 15:26:37', '2026-08-11 15:26:37');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `plan_types`
+--
+
+CREATE TABLE `plan_types` (
+  `id` int(11) NOT NULL,
+  `value` varchar(100) NOT NULL,
+  `label` varchar(100) NOT NULL,
+  `label_en` varchar(100) NOT NULL,
+  `color` varchar(200) DEFAULT 'bg-gray-50 text-gray-700 border-gray-200',
+  `is_default` tinyint(1) DEFAULT 0,
+  `sort_order` int(11) DEFAULT 100,
+  `created_at` datetime DEFAULT current_timestamp(),
+  `updated_at` datetime DEFAULT current_timestamp() ON UPDATE current_timestamp(),
+  `field_config` longtext DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `plan_types`
+--
+
+INSERT INTO `plan_types` (`id`, `value`, `label`, `label_en`, `color`, `is_default`, `sort_order`, `created_at`, `updated_at`, `field_config`) VALUES
+(1, 'cost', 'ወጪ', 'Cost', 'bg-orange-50 text-orange-700 border-orange-200', 1, 1, '2026-08-07 15:59:19', '2026-08-10 15:06:43', '{\"sectionTitle\":\"COST DETAILS (የወጪ መረጃ)\",\"fields\":[{\"id\":\"f_group1\",\"type\":\"button_group\",\"label\":\"ወጪ አይነት\",\"options\":[\"መደበኛ ወጪ\",\"ካፒታል ወጪ\"]},{\"id\":\"f_dropdown\",\"type\":\"dropdown\",\"label\":\"ወጪ ስም\",\"options\":[\"Annual Leave Expense\",\"Basic Salary Expense\",\"Bonus\",\"Building Insurance\",\"Building Rent Expense\",\"Cash Indemnity Allowance\",\"Fuel and Lubricants\",\"Housing Allowance\",\"Medical and Hospitalization\",\"Other Allowances\",\"Pension Contribution 11%\",\"Stationery and Office Supplies\",\"Telephone, Fax, and Internet Expenses\",\"Transport Allowance\",\"Vehicle Rent Expense\",\"Plant, Machinery and Equipment\",\"Office Furnitures, Equipment and Fixtures\",\"ICT Equipments\",\"Vehicles and Vehicles Accessories\",\"Construction Equipment\",\"Other Fixed Assets\",\"Other\"],\"useIndependentOptions\":true,\"optionsByButton\":{\"መደበኛ ወጪ\":[\"Annual Leave Expense\",\"Basic Salary Expense\",\"Bonus\",\"Building Insurance\",\"Building Rent Expense\",\"Cash Indemnity Allowance\",\"Fuel and Lubricants\",\"Housing Allowance\",\"Medical and Hospitalization\",\"Other Allowances\",\"Pension Contribution 11%\",\"Stationery and Office Supplies\",\"Telephone\",\"Fax\",\"and Internet Expenses\",\"Transport Allowance\",\"Vehicle Rent Expense\",\"Plant\",\"Machinery and Equipment\",\"Office Furnitures\",\"Equipment and Fixtures\",\"ICT Equipments\",\"Vehicles and Vehicles Accessories\",\"Construction Equipment\",\"Other Fixed Assets\",\"Other\"],\"ካፒታል ወጪ\":[\"Technology and Core Infrastructure Upgrades\",\"data center expantion\",\"Public Infrastructure\",\"Replacement\",\"Modernization\",\"and Maintenance\",\"Business Expansion and Growth\"]}},{\"id\":\"f_baseline\",\"type\":\"number\",\"label\":\"Baseline Budget\",\"placeholder\":\"0\"},{\"id\":\"f_plan\",\"type\":\"number\",\"label\":\"Plan Budget\",\"placeholder\":\"0\"}]}'),
+(2, 'income', 'ገቢ', 'Income', 'bg-emerald-50 text-emerald-700 border-emerald-200', 1, 2, '2026-08-07 15:59:19', '2026-08-07 16:20:02', '{\"sectionTitle\":\"INCOME DETAILS (የገቢ መረጃ)\",\"group1Title\":\"ምንዛሬ\",\"group1Options\":[\"ETB\",\"USD\"],\"group2Title\":\"የገቢ እቅድ አይነት\",\"group2Options\":[\"Internal\",\"Tenant\"],\"dropdownTitle\":\"ገቢ ስም\",\"dropdownOptions\":[\"Lease Land\",\"Office Rent\",\"Consulting\",\"SW Products\",\"Import & Export Substitution\",\"Other\"],\"baselineLabel\":\"Baseline Income\",\"planLabel\":\"Plan Income\"}'),
+(3, 'hr', 'ሰራተኞች', 'HR', 'bg-purple-50 text-purple-700 border-purple-200', 1, 3, '2026-08-07 15:59:19', '2026-08-07 16:20:02', '{\"sectionTitle\":\"HR DETAILS (የሰራተኞች መረጃ)\",\"group1Title\":\"Employee Of\",\"group1Options\":[\"Internal\",\"Tenant\",\"Both\"],\"group2Title\":\"ሰራተኞች አይነት\",\"group2Options\":[\"Full Time\",\"Part Time\",\"Contract\",\"Internship\",\"Externship\",\"Freelancing\"],\"dropdownTitle\":\"\",\"dropdownOptions\":[],\"baselineLabel\":\"Baseline Count\",\"planLabel\":\"Plan Count\"}'),
+(4, 'project', 'ፕሮጀክት', 'Project', 'bg-blue-50 text-blue-700 border-blue-200', 1, 4, '2026-08-07 15:59:19', '2026-08-07 16:20:02', '{\"sectionTitle\":\"PROJECT DETAILS (የፕሮጀክት መረጃ)\",\"group1Title\":\"የፕሮጀክት አይነት\",\"group1Options\":[\"IT Project\",\"Construction\",\"Other\"],\"group2Title\":\"\",\"group2Options\":[],\"dropdownTitle\":\"ፕሮጀክት ስም\",\"dropdownOptions\":[\"IT Infrastructure Setup\",\"Software Development\",\"Building Construction\",\"Other\"],\"baselineLabel\":\"Baseline Target\",\"planLabel\":\"Plan Target\"}'),
+(5, 'general', 'ጠቅላላ', 'General', 'bg-gray-50 text-gray-700 border-gray-200', 1, 5, '2026-08-07 15:59:19', '2026-08-07 16:20:02', '{\"sectionTitle\":\"GENERAL DETAILS (ጠቅላላ መረጃ)\",\"group1Title\":\"ምድብ\",\"group1Options\":[\"Standard\",\"Special\"],\"group2Title\":\"\",\"group2Options\":[],\"dropdownTitle\":\"ዝርዝር ስም\",\"dropdownOptions\":[\"General Task\",\"Operational\",\"Other\"],\"baselineLabel\":\"Baseline Value\",\"planLabel\":\"Plan Value\"}'),
+(6, 'test', 'ሙከራ', 'test', 'bg-gray-50 text-gray-700 border-gray-200', 0, 100, '2026-08-07 16:23:56', '2026-08-07 16:23:56', '{\"sectionTitle\":\"TEST DETAILS (ሙከራ)\",\"fields\":[{\"id\":\"f_1786109036142_1\",\"type\":\"button_group\",\"label\":\"ምድብ (Category)\",\"options\":[\"Standard\",\"Special\"]},{\"id\":\"f_1786109036142_2\",\"type\":\"dropdown\",\"label\":\"ዝርዝር (Select Option)\",\"options\":[\"Option 1\",\"Option 2\",\"Other\"]},{\"id\":\"f_1786109036142_3\",\"type\":\"number\",\"label\":\"Baseline Value\",\"placeholder\":\"0\"},{\"id\":\"f_1786109036142_4\",\"type\":\"number\",\"label\":\"Plan Value\",\"placeholder\":\"0\"}]}'),
+(7, 'job_creation', 'ስራ እድል ፈጠራ', 'job creation', 'bg-slate-100 text-slate-700 border-slate-300', 0, 100, '2026-08-07 16:29:27', '2026-08-10 15:03:18', '{\"sectionTitle\":\"JOB CREATION DETAILS (ስራ እድል ፈጠራ)\",\"fields\":[{\"id\":\"f_1786109367674_1\",\"type\":\"button_group\",\"label\":\"ምድብ (Category)\",\"options\":[\"Internal\",\"Tenant\",\"Both\"]},{\"id\":\"f_1786109367674_2\",\"type\":\"dropdown\",\"label\":\"የቅጥሩ አይነት(Employment Type )\",\"options\":[\"Full time\",\"Parttime\",\"Contract\",\"Remote\",\"Other\"],\"useIndependentOptions\":true,\"optionsByButton\":{\"Internal\":[\"full time\",\"contrat\"],\"Tenant\":[\"full time\",\"remote\",\"parttime\"],\"Both\":[\"full time\",\"contrat\",\"remote\",\"parttime\"]}},{\"id\":\"f_1786109367674_3\",\"type\":\"number\",\"label\":\"Baseline Value\",\"placeholder\":\"0\"},{\"id\":\"f_1786109367674_4\",\"type\":\"number\",\"label\":\"Plan(target) Value\",\"placeholder\":\"0\"}]}'),
+(8, 'test_3', 'test 3', 'test 3', 'bg-slate-100 text-slate-700 border-slate-300', 0, 100, '2026-08-10 10:01:47', '2026-08-10 10:01:47', '{\"sectionTitle\":\"TEST 3 DETAILS (test 3)\",\"fields\":[{\"id\":\"f_1786345307776_1\",\"type\":\"button_group\",\"label\":\"ምድብ (Category)\",\"options\":[\"Standard\",\"Special\"]},{\"id\":\"f_1786345307776_2\",\"type\":\"dropdown\",\"label\":\"ዝርዝር (Select Option)\",\"options\":[\"Option 1\",\"Option 2\",\"Other\"]},{\"id\":\"f_1786345307776_3\",\"type\":\"number\",\"label\":\"Baseline Value\",\"placeholder\":\"0\"},{\"id\":\"f_1786345307776_4\",\"type\":\"number\",\"label\":\"Plan Value\",\"placeholder\":\"0\"}]}'),
+(9, 'purchase', 'ግዢ', 'Purchase', 'bg-blue-50 text-blue-700 border-blue-200', 0, 100, '2026-08-10 15:39:25', '2026-08-10 15:51:45', '{\"sectionTitle\":\"PURCHASE DETAILS (ግዢ)\",\"fields\":[{\"id\":\"f_1786366260659_vdg\",\"type\":\"text\",\"label\":\"የ እቅዱ ስም\",\"placeholder\":\"Enter text…\"},{\"id\":\"f_1786365565835_2\",\"type\":\"dropdown\",\"label\":\"የግዢ ስም\",\"options\":[\"vehicle\",\"table\",\"laptop\"],\"useIndependentOptions\":false},{\"id\":\"f_1786365565835_3\",\"type\":\"number\",\"label\":\"Baseline Value in real number\",\"placeholder\":\"0\"},{\"id\":\"f_1786365565835_4\",\"type\":\"number\",\"label\":\"Plan Value in number\",\"placeholder\":\"0\"}]}'),
+(10, '____', 'FDI', 'ፍድአይ', 'bg-purple-50 text-purple-700 border-purple-200', 0, 100, '2026-08-10 16:23:38', '2026-08-10 16:31:26', '{\"sectionTitle\":\"ፍድአይ DETAILS (FDI)\",\"fields\":[{\"id\":\"f_1786368597757_k1t\",\"type\":\"text\",\"label\":\"Action plan name \",\"placeholder\":\"Enter text…\"},{\"id\":\"f_1786368218388_1\",\"type\":\"button_group\",\"label\":\"Exchange\",\"options\":[\"USD\",\"ETB\"]},{\"id\":\"f_1786368218388_3\",\"type\":\"number\",\"label\":\"Baseline Value\",\"placeholder\":\"0\"},{\"id\":\"f_1786368218388_4\",\"type\":\"number\",\"label\":\"Plan Value\",\"placeholder\":\"0\"}]}'),
+(11, '_________________', 'Local Investment', 'የሃገር ውስጥ ኢንቨስትመንት', 'bg-gray-50 text-gray-700 border-gray-200', 0, 100, '2026-08-10 16:32:39', '2026-08-10 16:33:56', '{\"sectionTitle\":\"የሃገር ውስጥ ኢንቨስትመንት DETAILS (Local Investment)\",\"fields\":[{\"id\":\"f_1786368770501_joj\",\"type\":\"text\",\"label\":\"Action plan name \",\"placeholder\":\"Enter text…\"},{\"id\":\"f_1786368759642_1\",\"type\":\"button_group\",\"label\":\"Exchange\",\"options\":[\"USD\",\"ETB\"]},{\"id\":\"f_1786368759642_3\",\"type\":\"number\",\"label\":\"Baseline Value\",\"placeholder\":\"0\"},{\"id\":\"f_1786368759642_4\",\"type\":\"number\",\"label\":\"Plan Value\",\"placeholder\":\"0\"}]}'),
+(12, '___________', 'Technology Transfer', 'የ እውቀት ሽግግር', 'bg-lime-50 text-lime-700 border-lime-200', 0, 100, '2026-08-10 16:34:30', '2026-08-10 16:37:46', '{\"sectionTitle\":\"የ እውቀት ሽግግር DETAILS (Technology Transfer)\",\"fields\":[{\"id\":\"f_1786368883876_lbi\",\"type\":\"text\",\"label\":\"Action plan name \",\"placeholder\":\"Enter text…\"},{\"id\":\"f_1786368870304_2\",\"type\":\"dropdown\",\"label\":\"እቅዱ\",\"options\":[\"ፓቴንት መብት ያስመዘገቡ\",\"የ አጭር ጊዜ ስልጠና የተሰጣቸው\",\"የ እውቀት ሽግግር ያካሄዱ\"],\"useIndependentOptions\":false},{\"id\":\"f_1786368870304_3\",\"type\":\"number\",\"label\":\"Baseline Value\",\"placeholder\":\"0\"},{\"id\":\"f_1786368870304_4\",\"type\":\"number\",\"label\":\"Plan Value\",\"placeholder\":\"0\"}]}'),
+(13, '___', 'Innovation', 'ፈጠራ', 'bg-cyan-50 text-cyan-700 border-cyan-200', 0, 100, '2026-08-10 16:38:13', '2026-08-10 16:38:39', '{\"sectionTitle\":\"ፈጠራ DETAILS (Innovation)\",\"fields\":[{\"id\":\"f_1786369097379_dn6\",\"type\":\"text\",\"label\":\"Action plan name \",\"placeholder\":\"Enter text…\"},{\"id\":\"f_1786369093012_3\",\"type\":\"number\",\"label\":\"Baseline Value\",\"placeholder\":\"0\"},{\"id\":\"f_1786369093012_4\",\"type\":\"number\",\"label\":\"Plan Value\",\"placeholder\":\"0\"}]}'),
+(14, '_______', 'Startup', 'ስታርት አፕ', 'bg-purple-50 text-purple-700 border-purple-200', 0, 100, '2026-08-10 16:39:06', '2026-08-10 16:39:38', '{\"sectionTitle\":\"ስታርት አፕ DETAILS (Startup)\",\"fields\":[{\"id\":\"f_1786369155882_cny\",\"type\":\"text\",\"label\":\"Action plan name \",\"placeholder\":\"Enter text…\"},{\"id\":\"f_1786369146764_3\",\"type\":\"number\",\"label\":\"Baseline Value\",\"placeholder\":\"0\"},{\"id\":\"f_1786369146764_4\",\"type\":\"number\",\"label\":\"Plan Value\",\"placeholder\":\"0\"}]}'),
+(15, '_____________', 'Export', 'ለ ውጪ ገበያ የቀረበ', 'bg-lime-50 text-lime-700 border-lime-200', 0, 100, '2026-08-10 16:40:21', '2026-08-10 16:41:11', '{\"sectionTitle\":\"ለ ውጪ ገበያ የቀረበ DETAILS (Export)\",\"fields\":[{\"id\":\"f_1786369226337_1g0\",\"type\":\"text\",\"label\":\"Action plan name \",\"placeholder\":\"Enter text…\"},{\"id\":\"f_1786369221271_1\",\"type\":\"button_group\",\"label\":\"Exchange\",\"options\":[\"USD\",\"ETB\"]},{\"id\":\"f_1786369221271_3\",\"type\":\"number\",\"label\":\"Baseline Value\",\"placeholder\":\"0\"},{\"id\":\"f_1786369221271_4\",\"type\":\"number\",\"label\":\"Plan Value\",\"placeholder\":\"0\"}]}'),
+(16, 'import_substitution', 'የውጪ ምርት ምትክ', 'Import Substitution', 'bg-blue-50 text-blue-700 border-blue-200', 0, 100, '2026-08-10 16:42:22', '2026-08-10 16:43:44', '{\"sectionTitle\":\"IMPORT SUBSTITUTION  DETAILS (የውጪ ምርት ምትክ)\",\"fields\":[{\"id\":\"f_1786369358201_x60\",\"type\":\"text\",\"label\":\"Action plan name \",\"placeholder\":\"Enter text…\"},{\"id\":\"f_1786369342188_1\",\"type\":\"button_group\",\"label\":\"Exchange\",\"options\":[\"USD\",\"ETB\"]},{\"id\":\"f_1786369342188_3\",\"type\":\"number\",\"label\":\"Baseline Value\",\"placeholder\":\"0\"},{\"id\":\"f_1786369342188_4\",\"type\":\"number\",\"label\":\"Plan Value\",\"placeholder\":\"0\"}]}'),
+(17, 'physical_infrastructure', 'አካላዊ መሠረተ ልማት', 'Physical infrastructure', 'bg-teal-50 text-teal-700 border-teal-200', 0, 100, '2026-08-10 16:45:55', '2026-08-10 16:45:55', '{\"sectionTitle\":\"PHYSICAL INFRASTRUCTURE DETAILS (አካላዊ መሠረተ ልማት)\",\"fields\":[{\"id\":\"f_1786369555576_1\",\"type\":\"button_group\",\"label\":\"ምድብ (Category)\",\"options\":[\"Standard\",\"Special\"]},{\"id\":\"f_1786369555576_2\",\"type\":\"dropdown\",\"label\":\"ዝርዝር (Select Option)\",\"options\":[\"Option 1\",\"Option 2\",\"Other\"],\"useIndependentOptions\":true,\"optionsByButton\":{\"Standard\":[\"Standard Item 1\",\"Standard Item 2\",\"Standard Other\"],\"Special\":[\"Special Item A\",\"Special Item B\",\"Special Other\"]},\"optionsByButtonStr\":{\"Standard\":\"Standard Item 1, Standard Item 2, Standard Other\",\"Special\":\"Special Item A, Special Item B, Special Other\"}},{\"id\":\"f_1786369555576_3\",\"type\":\"number\",\"label\":\"Baseline Value\",\"placeholder\":\"0\"},{\"id\":\"f_1786369555576_4\",\"type\":\"number\",\"label\":\"Plan Value\",\"placeholder\":\"0\"}]}'),
+(18, 'digital_infrastructure_and_platforms', 'ዲጂታል መሠረተ ልማት እና መድረኮች', 'Digital Infrastructure and Platforms', 'bg-gray-50 text-gray-700 border-gray-200', 0, 100, '2026-08-10 16:46:09', '2026-08-10 16:46:09', '{\"sectionTitle\":\"DIGITAL INFRASTRUCTURE AND PLATFORMS DETAILS (ዲጂታል መሠረተ ልማት እና መድረኮች)\",\"fields\":[{\"id\":\"f_1786369569533_1\",\"type\":\"button_group\",\"label\":\"ምድብ (Category)\",\"options\":[\"Standard\",\"Special\"]},{\"id\":\"f_1786369569533_2\",\"type\":\"dropdown\",\"label\":\"ዝርዝር (Select Option)\",\"options\":[\"Option 1\",\"Option 2\",\"Other\"],\"useIndependentOptions\":true,\"optionsByButton\":{\"Standard\":[\"Standard Item 1\",\"Standard Item 2\",\"Standard Other\"],\"Special\":[\"Special Item A\",\"Special Item B\",\"Special Other\"]},\"optionsByButtonStr\":{\"Standard\":\"Standard Item 1, Standard Item 2, Standard Other\",\"Special\":\"Special Item A, Special Item B, Special Other\"}},{\"id\":\"f_1786369569533_3\",\"type\":\"number\",\"label\":\"Baseline Value\",\"placeholder\":\"0\"},{\"id\":\"f_1786369569533_4\",\"type\":\"number\",\"label\":\"Plan Value\",\"placeholder\":\"0\"}]}'),
+(19, 'ai_enabled_smart_manufacturing', 'በአርቴፊሻል ኢንተለጀንስ የታገዘ ዘመናዊ ማኑፋክቸሪንግ', 'AI enabled Smart Manufacturing', 'bg-slate-100 text-slate-700 border-slate-300', 0, 100, '2026-08-10 16:46:23', '2026-08-10 16:46:23', '{\"sectionTitle\":\"AI ENABLED SMART MANUFACTURING DETAILS (በአርቴፊሻል ኢንተለጀንስ የታገዘ ዘመናዊ ማኑፋክቸሪንግ)\",\"fields\":[{\"id\":\"f_1786369583655_1\",\"type\":\"button_group\",\"label\":\"ምድብ (Category)\",\"options\":[\"Standard\",\"Special\"]},{\"id\":\"f_1786369583655_2\",\"type\":\"dropdown\",\"label\":\"ዝርዝር (Select Option)\",\"options\":[\"Option 1\",\"Option 2\",\"Other\"],\"useIndependentOptions\":true,\"optionsByButton\":{\"Standard\":[\"Standard Item 1\",\"Standard Item 2\",\"Standard Other\"],\"Special\":[\"Special Item A\",\"Special Item B\",\"Special Other\"]},\"optionsByButtonStr\":{\"Standard\":\"Standard Item 1, Standard Item 2, Standard Other\",\"Special\":\"Special Item A, Special Item B, Special Other\"}},{\"id\":\"f_1786369583655_3\",\"type\":\"number\",\"label\":\"Baseline Value\",\"placeholder\":\"0\"},{\"id\":\"f_1786369583655_4\",\"type\":\"number\",\"label\":\"Plan Value\",\"placeholder\":\"0\"}]}'),
+(20, 'investment_attraction', 'የኢንቨስትመንት ሳቢነት / ኢንቨስትመንት መሳብ', 'Investment Attraction', 'bg-teal-50 text-teal-700 border-teal-200', 0, 100, '2026-08-10 16:46:39', '2026-08-10 16:46:39', '{\"sectionTitle\":\"INVESTMENT ATTRACTION DETAILS (የኢንቨስትመንት ሳቢነት / ኢንቨስትመንት መሳብ)\",\"fields\":[{\"id\":\"f_1786369599458_1\",\"type\":\"button_group\",\"label\":\"ምድብ (Category)\",\"options\":[\"Standard\",\"Special\"]},{\"id\":\"f_1786369599458_2\",\"type\":\"dropdown\",\"label\":\"ዝርዝር (Select Option)\",\"options\":[\"Option 1\",\"Option 2\",\"Other\"],\"useIndependentOptions\":true,\"optionsByButton\":{\"Standard\":[\"Standard Item 1\",\"Standard Item 2\",\"Standard Other\"],\"Special\":[\"Special Item A\",\"Special Item B\",\"Special Other\"]},\"optionsByButtonStr\":{\"Standard\":\"Standard Item 1, Standard Item 2, Standard Other\",\"Special\":\"Special Item A, Special Item B, Special Other\"}},{\"id\":\"f_1786369599458_3\",\"type\":\"number\",\"label\":\"Baseline Value\",\"placeholder\":\"0\"},{\"id\":\"f_1786369599458_4\",\"type\":\"number\",\"label\":\"Plan Value\",\"placeholder\":\"0\"}]}'),
+(21, 'research___innovation', 'ምርምር እና ፈጠራ', 'Research & Innovation', 'bg-teal-50 text-teal-700 border-teal-200', 0, 100, '2026-08-10 16:46:50', '2026-08-10 16:46:50', '{\"sectionTitle\":\"RESEARCH & INNOVATION DETAILS (ምርምር እና ፈጠራ)\",\"fields\":[{\"id\":\"f_1786369610938_1\",\"type\":\"button_group\",\"label\":\"ምድብ (Category)\",\"options\":[\"Standard\",\"Special\"]},{\"id\":\"f_1786369610938_2\",\"type\":\"dropdown\",\"label\":\"ዝርዝር (Select Option)\",\"options\":[\"Option 1\",\"Option 2\",\"Other\"],\"useIndependentOptions\":true,\"optionsByButton\":{\"Standard\":[\"Standard Item 1\",\"Standard Item 2\",\"Standard Other\"],\"Special\":[\"Special Item A\",\"Special Item B\",\"Special Other\"]},\"optionsByButtonStr\":{\"Standard\":\"Standard Item 1, Standard Item 2, Standard Other\",\"Special\":\"Special Item A, Special Item B, Special Other\"}},{\"id\":\"f_1786369610938_3\",\"type\":\"number\",\"label\":\"Baseline Value\",\"placeholder\":\"0\"},{\"id\":\"f_1786369610938_4\",\"type\":\"number\",\"label\":\"Plan Value\",\"placeholder\":\"0\"}]}'),
+(22, 'digital_talent___incubation', 'የዲጂታል ብቃት እና ኢንኩቤሽን', 'Digital talent & Incubation', 'bg-purple-50 text-purple-700 border-purple-200', 0, 100, '2026-08-10 16:47:40', '2026-08-10 16:47:40', '{\"sectionTitle\":\"DIGITAL TALENT & INCUBATION DETAILS (የዲጂታል ብቃት እና ኢንኩቤሽን)\",\"fields\":[{\"id\":\"f_1786369660919_1\",\"type\":\"button_group\",\"label\":\"ምድብ (Category)\",\"options\":[\"Standard\",\"Special\"]},{\"id\":\"f_1786369660919_2\",\"type\":\"dropdown\",\"label\":\"ዝርዝር (Select Option)\",\"options\":[\"Option 1\",\"Option 2\",\"Other\"],\"useIndependentOptions\":true,\"optionsByButton\":{\"Standard\":[\"Standard Item 1\",\"Standard Item 2\",\"Standard Other\"],\"Special\":[\"Special Item A\",\"Special Item B\",\"Special Other\"]},\"optionsByButtonStr\":{\"Standard\":\"Standard Item 1, Standard Item 2, Standard Other\",\"Special\":\"Special Item A, Special Item B, Special Other\"}},{\"id\":\"f_1786369660919_3\",\"type\":\"number\",\"label\":\"Baseline Value\",\"placeholder\":\"0\"},{\"id\":\"f_1786369660919_4\",\"type\":\"number\",\"label\":\"Plan Value\",\"placeholder\":\"0\"}]}'),
+(23, 'import_substitution_and_home_grown_technology', 'የገቢ ምርትን መተካት እና ሀገር በቀል ቴክኖሎጂ', 'Import Substitution and Home grown technology', 'bg-teal-50 text-teal-700 border-teal-200', 0, 100, '2026-08-10 16:47:58', '2026-08-10 16:47:58', '{\"sectionTitle\":\"IMPORT SUBSTITUTION AND HOME GROWN TECHNOLOGY DETAILS (የገቢ ምርትን መተካት እና ሀገር በቀል ቴክኖሎጂ)\",\"fields\":[{\"id\":\"f_1786369678479_1\",\"type\":\"button_group\",\"label\":\"ምድብ (Category)\",\"options\":[\"Standard\",\"Special\"]},{\"id\":\"f_1786369678479_2\",\"type\":\"dropdown\",\"label\":\"ዝርዝር (Select Option)\",\"options\":[\"Option 1\",\"Option 2\",\"Other\"],\"useIndependentOptions\":true,\"optionsByButton\":{\"Standard\":[\"Standard Item 1\",\"Standard Item 2\",\"Standard Other\"],\"Special\":[\"Special Item A\",\"Special Item B\",\"Special Other\"]},\"optionsByButtonStr\":{\"Standard\":\"Standard Item 1, Standard Item 2, Standard Other\",\"Special\":\"Special Item A, Special Item B, Special Other\"}},{\"id\":\"f_1786369678479_3\",\"type\":\"number\",\"label\":\"Baseline Value\",\"placeholder\":\"0\"},{\"id\":\"f_1786369678479_4\",\"type\":\"number\",\"label\":\"Plan Value\",\"placeholder\":\"0\"}]}'),
+(24, '__________', 'Smart Security', 'ዘመናዊ ደህንነት', 'bg-gray-50 text-gray-700 border-gray-200', 0, 100, '2026-08-10 16:48:18', '2026-08-10 16:48:18', '{\"sectionTitle\":\"ዘመናዊ ደህንነት DETAILS (Smart Security)\",\"fields\":[{\"id\":\"f_1786369698440_1\",\"type\":\"button_group\",\"label\":\"ምድብ (Category)\",\"options\":[\"Standard\",\"Special\"]},{\"id\":\"f_1786369698440_2\",\"type\":\"dropdown\",\"label\":\"ዝርዝር (Select Option)\",\"options\":[\"Option 1\",\"Option 2\",\"Other\"],\"useIndependentOptions\":true,\"optionsByButton\":{\"Standard\":[\"Standard Item 1\",\"Standard Item 2\",\"Standard Other\"],\"Special\":[\"Special Item A\",\"Special Item B\",\"Special Other\"]},\"optionsByButtonStr\":{\"Standard\":\"Standard Item 1, Standard Item 2, Standard Other\",\"Special\":\"Special Item A, Special Item B, Special Other\"}},{\"id\":\"f_1786369698440_3\",\"type\":\"number\",\"label\":\"Baseline Value\",\"placeholder\":\"0\"},{\"id\":\"f_1786369698440_4\",\"type\":\"number\",\"label\":\"Plan Value\",\"placeholder\":\"0\"}]}'),
+(25, 'digital_corporate_service_and_audit', 'ዲጂታል የኮርፖሬት አገልግሎት እና ኦዲት', 'Digital Corporate Service and Audit', 'bg-teal-50 text-teal-700 border-teal-200', 0, 100, '2026-08-10 16:48:39', '2026-08-10 16:48:39', '{\"sectionTitle\":\"DIGITAL CORPORATE SERVICE AND AUDIT DETAILS (ዲጂታል የኮርፖሬት አገልግሎት እና ኦዲት)\",\"fields\":[{\"id\":\"f_1786369719334_1\",\"type\":\"button_group\",\"label\":\"ምድብ (Category)\",\"options\":[\"Standard\",\"Special\"]},{\"id\":\"f_1786369719334_2\",\"type\":\"dropdown\",\"label\":\"ዝርዝር (Select Option)\",\"options\":[\"Option 1\",\"Option 2\",\"Other\"],\"useIndependentOptions\":true,\"optionsByButton\":{\"Standard\":[\"Standard Item 1\",\"Standard Item 2\",\"Standard Other\"],\"Special\":[\"Special Item A\",\"Special Item B\",\"Special Other\"]},\"optionsByButtonStr\":{\"Standard\":\"Standard Item 1, Standard Item 2, Standard Other\",\"Special\":\"Special Item A, Special Item B, Special Other\"}},{\"id\":\"f_1786369719334_3\",\"type\":\"number\",\"label\":\"Baseline Value\",\"placeholder\":\"0\"},{\"id\":\"f_1786369719334_4\",\"type\":\"number\",\"label\":\"Plan Value\",\"placeholder\":\"0\"}]}'),
+(26, 'legal___policy_framework', 'የህግ እና ፖሊሲ ማዕቀፍ', 'Legal & Policy Framework', 'bg-indigo-50 text-indigo-700 border-indigo-200', 0, 100, '2026-08-10 16:48:56', '2026-08-10 16:48:56', '{\"sectionTitle\":\"LEGAL & POLICY FRAMEWORK DETAILS (የህግ እና ፖሊሲ ማዕቀፍ)\",\"fields\":[{\"id\":\"f_1786369736904_1\",\"type\":\"button_group\",\"label\":\"ምድብ (Category)\",\"options\":[\"Standard\",\"Special\"]},{\"id\":\"f_1786369736904_2\",\"type\":\"dropdown\",\"label\":\"ዝርዝር (Select Option)\",\"options\":[\"Option 1\",\"Option 2\",\"Other\"],\"useIndependentOptions\":true,\"optionsByButton\":{\"Standard\":[\"Standard Item 1\",\"Standard Item 2\",\"Standard Other\"],\"Special\":[\"Special Item A\",\"Special Item B\",\"Special Other\"]},\"optionsByButtonStr\":{\"Standard\":\"Standard Item 1, Standard Item 2, Standard Other\",\"Special\":\"Special Item A, Special Item B, Special Other\"}},{\"id\":\"f_1786369736904_3\",\"type\":\"number\",\"label\":\"Baseline Value\",\"placeholder\":\"0\"},{\"id\":\"f_1786369736904_4\",\"type\":\"number\",\"label\":\"Plan Value\",\"placeholder\":\"0\"}]}'),
+(27, 'hr__procurement___general_service', 'የሰው ሀብት፣ ግዢ እና ጠቅላላ አገልግሎት', 'HR, Procurement & General Service', 'bg-blue-50 text-blue-700 border-blue-200', 0, 100, '2026-08-10 16:49:12', '2026-08-10 16:49:12', '{\"sectionTitle\":\"HR, PROCUREMENT & GENERAL SERVICE DETAILS (የሰው ሀብት፣ ግዢ እና ጠቅላላ አገልግሎት)\",\"fields\":[{\"id\":\"f_1786369752804_1\",\"type\":\"button_group\",\"label\":\"ምድብ (Category)\",\"options\":[\"Standard\",\"Special\"]},{\"id\":\"f_1786369752804_2\",\"type\":\"dropdown\",\"label\":\"ዝርዝር (Select Option)\",\"options\":[\"Option 1\",\"Option 2\",\"Other\"],\"useIndependentOptions\":true,\"optionsByButton\":{\"Standard\":[\"Standard Item 1\",\"Standard Item 2\",\"Standard Other\"],\"Special\":[\"Special Item A\",\"Special Item B\",\"Special Other\"]},\"optionsByButtonStr\":{\"Standard\":\"Standard Item 1, Standard Item 2, Standard Other\",\"Special\":\"Special Item A, Special Item B, Special Other\"}},{\"id\":\"f_1786369752804_3\",\"type\":\"number\",\"label\":\"Baseline Value\",\"placeholder\":\"0\"},{\"id\":\"f_1786369752804_4\",\"type\":\"number\",\"label\":\"Plan Value\",\"placeholder\":\"0\"}]}');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `positions`
+--
+
+CREATE TABLE `positions` (
+  `position_id` int(11) NOT NULL,
+  `name` varchar(255) DEFAULT NULL,
+  `title` varchar(255) DEFAULT NULL,
+  `description` text DEFAULT NULL,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
 
@@ -1502,15 +2973,6 @@ CREATE TABLE `reports` (
   `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
---
--- Dumping data for table `reports`
---
-
-INSERT INTO `reports` (`report_id`, `plan_id`, `user_id`, `report_content`, `status`, `created_at`, `updated_at`) VALUES
-(10, 212, 40, 'test adeta yusd ', 'Approved', '2025-11-24 08:15:59', '2025-11-24 08:24:01'),
-(11, 188, 40, 'asad', 'Approved', '2025-11-24 09:57:18', '2025-11-24 09:57:18'),
-(12, 225, 40, 'something', 'Approved', '2025-11-26 09:30:04', '2025-11-26 09:30:04');
-
 -- --------------------------------------------------------
 
 --
@@ -1526,17 +2988,25 @@ CREATE TABLE `report_attachments` (
   `created_at` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+-- --------------------------------------------------------
+
 --
--- Dumping data for table `report_attachments`
+-- Table structure for table `risk_flags`
 --
 
-INSERT INTO `report_attachments` (`attachment_id`, `report_id`, `file_name`, `file_path`, `file_size`, `created_at`) VALUES
-(14, 10, 'Screenshot From 2025-09-07 06-24-30.png', '/home/hayal/Desktop/EITPRV2/backend/uploads/1763972158993-474526997-Screenshot_From_2025-09-07_06-24-30.png', 339520, '2025-11-24 08:15:59'),
-(15, 10, 'Screenshot From 2025-09-07 06-26-16.png', '/home/hayal/Desktop/EITPRV2/backend/uploads/1763972159033-421744629-Screenshot_From_2025-09-07_06-26-16.png', 150378, '2025-11-24 08:15:59'),
-(16, 10, 'Screenshot From 2025-10-25 08-22-05.png', '/home/hayal/Desktop/EITPRV2/backend/uploads/1763972159035-377618366-Screenshot_From_2025-10-25_08-22-05.png', 213839, '2025-11-24 08:15:59'),
-(17, 11, 'Screenshot From 2025-09-07 06-26-16.png', '/home/hayal/Desktop/EITPRV2/backend/uploads/1763978238276-696413871-Screenshot_From_2025-09-07_06-26-16.png', 150378, '2025-11-24 09:57:19'),
-(18, 12, 'Screenshot From 2025-09-07 06-24-30.png', '/home/hayal/Desktop/EITPRV2/backend/uploads/1764149404214-126332371-Screenshot_From_2025-09-07_06-24-30.png', 339520, '2025-11-26 09:30:04'),
-(19, 12, 'Screenshot From 2025-09-07 06-26-16.png', '/home/hayal/Desktop/EITPRV2/backend/uploads/1764149404263-422820152-Screenshot_From_2025-09-07_06-26-16.png', 150378, '2025-11-26 09:30:04');
+CREATE TABLE `risk_flags` (
+  `risk_id` int(11) NOT NULL,
+  `action_plan_id` int(11) NOT NULL,
+  `risk_level` enum('critical','high','medium','low') NOT NULL DEFAULT 'medium',
+  `title` varchar(255) NOT NULL,
+  `description` text DEFAULT NULL,
+  `mitigation` text DEFAULT NULL,
+  `escalation_target` varchar(100) DEFAULT NULL,
+  `status` enum('open','monitoring','resolved') DEFAULT 'open',
+  `reported_by` int(11) DEFAULT NULL,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
+  `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
 
@@ -1595,89 +3065,306 @@ CREATE TABLE `role_permissions` (
 
 INSERT INTO `role_permissions` (`id`, `role_id`, `menu_item_id`, `can_view`, `can_create`, `can_edit`, `can_delete`, `created_at`, `updated_at`) VALUES
 (587, 28, 59, 1, 1, 1, 1, '2025-11-29 11:07:38', '2025-11-29 11:07:38'),
-(588, 28, 1, 1, 1, 1, 1, '2025-11-29 11:07:38', '2025-11-29 11:07:38'),
 (589, 28, 51, 1, 1, 1, 1, '2025-11-29 11:07:38', '2025-11-29 11:07:38'),
 (590, 28, 52, 1, 1, 1, 1, '2025-11-29 11:07:38', '2025-11-29 11:07:38'),
-(591, 28, 60, 1, 1, 1, 1, '2025-11-29 11:07:38', '2025-11-29 11:07:38'),
-(592, 28, 65, 1, 1, 1, 1, '2025-11-29 11:07:38', '2025-11-29 11:07:38'),
 (593, 28, 45, 1, 1, 1, 1, '2025-11-29 11:07:38', '2025-11-29 11:07:38'),
 (594, 28, 29, 1, 1, 1, 1, '2025-11-29 11:07:38', '2025-11-29 11:07:38'),
-(595, 2, 59, 1, 0, 0, 0, '2025-11-29 11:08:02', '2025-11-29 11:08:02'),
-(596, 2, 55, 1, 1, 1, 1, '2025-11-29 11:08:02', '2025-11-29 11:08:02'),
-(597, 2, 40, 1, 1, 1, 1, '2025-11-29 11:08:02', '2025-11-29 11:08:02'),
-(598, 2, 1, 1, 0, 0, 0, '2025-11-29 11:08:02', '2025-11-29 11:08:02'),
-(599, 2, 51, 1, 1, 1, 1, '2025-11-29 11:08:02', '2025-11-29 11:08:02'),
-(600, 2, 52, 1, 1, 1, 1, '2025-11-29 11:08:02', '2025-11-29 11:08:02'),
-(601, 2, 60, 1, 0, 0, 0, '2025-11-29 11:08:02', '2025-11-29 11:08:02'),
-(602, 2, 65, 1, 0, 0, 0, '2025-11-29 11:08:02', '2025-11-29 11:08:02'),
-(603, 2, 12, 1, 0, 0, 0, '2025-11-29 11:08:02', '2025-11-29 11:08:02'),
-(604, 2, 9, 1, 0, 0, 0, '2025-11-29 11:08:02', '2025-11-29 11:08:02'),
-(605, 2, 45, 1, 0, 0, 0, '2025-11-29 11:08:02', '2025-11-29 11:08:02'),
-(606, 2, 29, 1, 1, 1, 1, '2025-11-29 11:08:02', '2025-11-29 11:08:02'),
-(607, 29, 59, 1, 0, 0, 0, '2025-11-29 11:10:49', '2025-11-29 11:10:49'),
-(608, 29, 55, 1, 1, 1, 1, '2025-11-29 11:10:49', '2025-11-29 11:10:49'),
-(609, 29, 40, 1, 1, 1, 1, '2025-11-29 11:10:49', '2025-11-29 11:10:49'),
-(610, 29, 1, 1, 1, 1, 1, '2025-11-29 11:10:49', '2025-11-29 11:10:49'),
-(611, 29, 51, 1, 0, 0, 0, '2025-11-29 11:10:49', '2025-11-29 11:10:49'),
-(612, 29, 52, 1, 0, 0, 0, '2025-11-29 11:10:49', '2025-11-29 11:10:49'),
-(613, 29, 60, 1, 0, 0, 0, '2025-11-29 11:10:49', '2025-11-29 11:10:49'),
-(614, 29, 65, 1, 0, 0, 0, '2025-11-29 11:10:49', '2025-11-29 11:10:49'),
-(615, 29, 45, 1, 0, 0, 0, '2025-11-29 11:10:49', '2025-11-29 11:10:49'),
-(616, 29, 29, 1, 0, 0, 0, '2025-11-29 11:10:49', '2025-11-29 11:10:49'),
-(640, 1, 3, 1, 1, 1, 1, '2025-12-11 08:45:02', '2025-12-11 08:45:02'),
-(641, 1, 59, 1, 1, 1, 1, '2025-12-11 08:45:02', '2025-12-11 08:45:02'),
-(642, 1, 34, 1, 1, 1, 1, '2025-12-11 08:45:02', '2025-12-11 08:45:02'),
-(643, 1, 55, 1, 1, 1, 1, '2025-12-11 08:45:02', '2025-12-11 08:45:02'),
-(644, 1, 40, 1, 1, 1, 1, '2025-12-11 08:45:02', '2025-12-11 08:45:02'),
-(645, 1, 1, 1, 1, 1, 1, '2025-12-11 08:45:02', '2025-12-11 08:45:02'),
-(646, 1, 31, 1, 1, 1, 1, '2025-12-11 08:45:02', '2025-12-11 08:45:02'),
-(647, 1, 51, 1, 1, 1, 1, '2025-12-11 08:45:02', '2025-12-11 08:45:02'),
-(648, 1, 52, 1, 1, 1, 1, '2025-12-11 08:45:02', '2025-12-11 08:45:02'),
-(649, 1, 10, 1, 1, 1, 1, '2025-12-11 08:45:02', '2025-12-11 08:45:02'),
-(650, 1, 60, 1, 1, 1, 1, '2025-12-11 08:45:02', '2025-12-11 08:45:02'),
-(651, 1, 48, 1, 1, 1, 1, '2025-12-11 08:45:02', '2025-12-11 08:45:02'),
-(652, 1, 4, 1, 1, 1, 1, '2025-12-11 08:45:02', '2025-12-11 08:45:02'),
-(653, 1, 26, 1, 1, 1, 1, '2025-12-11 08:45:02', '2025-12-11 08:45:02'),
-(654, 1, 32, 1, 1, 1, 1, '2025-12-11 08:45:02', '2025-12-11 08:45:02'),
-(655, 1, 35, 1, 1, 1, 1, '2025-12-11 08:45:02', '2025-12-11 08:45:02'),
-(656, 1, 2, 1, 1, 1, 1, '2025-12-11 08:45:02', '2025-12-11 08:45:02'),
-(657, 1, 65, 1, 1, 1, 1, '2025-12-11 08:45:02', '2025-12-11 08:45:02'),
-(658, 1, 12, 1, 1, 1, 1, '2025-12-11 08:45:02', '2025-12-11 08:45:02'),
-(659, 1, 9, 1, 1, 1, 1, '2025-12-11 08:45:02', '2025-12-11 08:45:02'),
-(660, 1, 45, 1, 1, 1, 1, '2025-12-11 08:45:02', '2025-12-11 08:45:02'),
-(661, 1, 24, 1, 1, 1, 1, '2025-12-11 08:45:02', '2025-12-11 08:45:02'),
-(662, 1, 29, 1, 1, 1, 1, '2025-12-11 08:45:02', '2025-12-11 08:45:02'),
-(663, 1, 30, 1, 1, 1, 1, '2025-12-11 08:45:02', '2025-12-11 08:45:02'),
-(664, 1, 69, 1, 1, 1, 1, '2025-12-15 13:18:47', '2025-12-15 13:18:47'),
 (665, 8, 59, 1, 1, 1, 1, '2025-12-16 12:27:30', '2025-12-16 12:27:30'),
-(666, 8, 1, 1, 1, 1, 1, '2025-12-16 12:27:30', '2025-12-16 12:27:30'),
 (667, 8, 51, 1, 1, 1, 1, '2025-12-16 12:27:30', '2025-12-16 12:27:30'),
 (668, 8, 52, 1, 1, 1, 1, '2025-12-16 12:27:30', '2025-12-16 12:27:30'),
-(669, 8, 60, 1, 1, 1, 1, '2025-12-16 12:27:30', '2025-12-16 12:27:30'),
-(670, 8, 65, 1, 1, 1, 1, '2025-12-16 12:27:30', '2025-12-16 12:27:30'),
 (671, 8, 45, 1, 1, 1, 1, '2025-12-16 12:27:30', '2025-12-16 12:27:30'),
 (672, 8, 29, 1, 1, 1, 1, '2025-12-16 12:27:30', '2025-12-16 12:27:30'),
 (693, 7, 59, 1, 1, 1, 1, '2025-12-16 13:32:58', '2025-12-16 13:32:58'),
-(694, 7, 1, 1, 1, 1, 1, '2025-12-16 13:32:58', '2025-12-16 13:32:58'),
 (695, 7, 55, 1, 1, 1, 1, '2025-12-16 13:32:58', '2025-12-16 13:32:58'),
 (696, 7, 51, 1, 1, 1, 1, '2025-12-16 13:32:58', '2025-12-16 13:32:58'),
 (697, 7, 52, 1, 1, 1, 1, '2025-12-16 13:32:58', '2025-12-16 13:32:58'),
 (698, 7, 40, 1, 1, 1, 1, '2025-12-16 13:32:58', '2025-12-16 13:32:58'),
-(699, 7, 60, 1, 1, 1, 1, '2025-12-16 13:32:58', '2025-12-16 13:32:58'),
 (700, 7, 67, 1, 1, 1, 1, '2025-12-16 13:32:58', '2025-12-16 13:32:58'),
-(701, 7, 65, 1, 1, 1, 1, '2025-12-16 13:32:58', '2025-12-16 13:32:58'),
 (702, 7, 45, 1, 1, 1, 1, '2025-12-16 13:32:58', '2025-12-16 13:32:58'),
 (703, 7, 29, 1, 1, 1, 1, '2025-12-16 13:32:58', '2025-12-16 13:32:58'),
-(704, 5, 59, 1, 1, 1, 1, '2025-12-16 13:59:14', '2025-12-16 13:59:14'),
-(705, 5, 1, 1, 1, 1, 1, '2025-12-16 13:59:14', '2025-12-16 13:59:14'),
-(706, 5, 55, 1, 1, 1, 1, '2025-12-16 13:59:14', '2025-12-16 13:59:14'),
-(707, 5, 51, 1, 1, 1, 1, '2025-12-16 13:59:14', '2025-12-16 13:59:14'),
-(708, 5, 52, 1, 1, 1, 1, '2025-12-16 13:59:14', '2025-12-16 13:59:14'),
-(709, 5, 40, 1, 1, 1, 1, '2025-12-16 13:59:14', '2025-12-16 13:59:14'),
-(710, 5, 60, 1, 1, 1, 1, '2025-12-16 13:59:14', '2025-12-16 13:59:14'),
-(711, 5, 65, 1, 1, 1, 1, '2025-12-16 13:59:14', '2025-12-16 13:59:14'),
-(712, 5, 45, 1, 1, 1, 1, '2025-12-16 13:59:14', '2025-12-16 13:59:14'),
-(713, 5, 29, 1, 1, 1, 1, '2025-12-16 13:59:14', '2025-12-16 13:59:14');
+(716, 3, 70, 1, 1, 1, 1, '2026-03-18 12:31:28', '2026-03-18 12:31:28'),
+(719, 7, 70, 1, 1, 1, 1, '2026-03-18 12:31:28', '2026-03-18 12:31:28'),
+(720, 8, 70, 1, 1, 1, 1, '2026-03-18 12:31:28', '2026-03-18 12:31:28'),
+(722, 28, 70, 1, 1, 1, 1, '2026-03-18 12:31:28', '2026-03-18 12:31:28'),
+(724, 30, 70, 1, 1, 1, 1, '2026-03-18 12:31:28', '2026-03-18 12:31:28'),
+(725, 31, 70, 1, 1, 1, 1, '2026-03-18 12:31:28', '2026-03-18 12:31:28'),
+(726, 32, 70, 1, 1, 1, 1, '2026-03-18 12:31:28', '2026-03-18 12:31:28'),
+(731, 3, 71, 1, 1, 1, 1, '2026-03-18 12:31:28', '2026-03-18 12:31:28'),
+(734, 7, 71, 1, 1, 1, 1, '2026-03-18 12:31:28', '2026-03-18 12:31:28'),
+(735, 8, 71, 1, 1, 1, 1, '2026-03-18 12:31:28', '2026-03-18 12:31:28'),
+(737, 28, 71, 1, 1, 1, 1, '2026-03-18 12:31:28', '2026-03-18 12:31:28'),
+(739, 30, 71, 1, 1, 1, 1, '2026-03-18 12:31:28', '2026-03-18 12:31:28'),
+(740, 31, 71, 1, 1, 1, 1, '2026-03-18 12:31:28', '2026-03-18 12:31:28'),
+(741, 32, 71, 1, 1, 1, 1, '2026-03-18 12:31:28', '2026-03-18 12:31:28'),
+(746, 3, 72, 1, 1, 1, 1, '2026-03-18 12:31:28', '2026-03-18 12:31:28'),
+(749, 7, 72, 1, 1, 1, 1, '2026-03-18 12:31:28', '2026-03-18 12:31:28'),
+(750, 8, 72, 1, 1, 1, 1, '2026-03-18 12:31:28', '2026-03-18 12:31:28'),
+(752, 28, 72, 1, 1, 1, 1, '2026-03-18 12:31:28', '2026-03-18 12:31:28'),
+(754, 30, 72, 1, 1, 1, 1, '2026-03-18 12:31:28', '2026-03-18 12:31:28'),
+(755, 31, 72, 1, 1, 1, 1, '2026-03-18 12:31:28', '2026-03-18 12:31:28'),
+(756, 32, 72, 1, 1, 1, 1, '2026-03-18 12:31:28', '2026-03-18 12:31:28'),
+(761, 3, 73, 1, 1, 1, 1, '2026-03-18 12:31:28', '2026-03-18 12:31:28'),
+(764, 7, 73, 1, 1, 1, 1, '2026-03-18 12:31:28', '2026-03-18 12:31:28'),
+(765, 8, 73, 1, 1, 1, 1, '2026-03-18 12:31:28', '2026-03-18 12:31:28'),
+(767, 28, 73, 1, 1, 1, 1, '2026-03-18 12:31:28', '2026-03-18 12:31:28'),
+(769, 30, 73, 1, 1, 1, 1, '2026-03-18 12:31:28', '2026-03-18 12:31:28'),
+(770, 31, 73, 1, 1, 1, 1, '2026-03-18 12:31:28', '2026-03-18 12:31:28'),
+(771, 32, 73, 1, 1, 1, 1, '2026-03-18 12:31:28', '2026-03-18 12:31:28'),
+(802, 29, 59, 1, 0, 0, 0, '2026-03-19 10:18:46', '2026-03-19 10:18:46'),
+(804, 29, 55, 1, 1, 1, 1, '2026-03-19 10:18:46', '2026-03-19 10:18:46'),
+(805, 29, 51, 1, 0, 0, 0, '2026-03-19 10:18:46', '2026-03-19 10:18:46'),
+(806, 29, 52, 1, 0, 0, 0, '2026-03-19 10:18:46', '2026-03-19 10:18:46'),
+(807, 29, 40, 1, 1, 1, 1, '2026-03-19 10:18:46', '2026-03-19 10:18:46'),
+(808, 29, 71, 1, 1, 1, 1, '2026-03-19 10:18:46', '2026-03-19 10:18:46'),
+(810, 29, 72, 1, 1, 1, 1, '2026-03-19 10:18:46', '2026-03-19 10:18:46'),
+(811, 29, 73, 1, 1, 1, 1, '2026-03-19 10:18:46', '2026-03-19 10:18:46'),
+(813, 29, 45, 1, 0, 0, 0, '2026-03-19 10:18:46', '2026-03-19 10:18:46'),
+(814, 29, 74, 1, 1, 1, 1, '2026-03-19 10:18:46', '2026-03-19 10:18:46'),
+(815, 29, 29, 1, 0, 0, 0, '2026-03-19 10:18:46', '2026-03-19 10:18:46'),
+(816, 29, 70, 1, 1, 1, 1, '2026-03-19 10:18:46', '2026-03-19 10:18:46'),
+(817, 2, 59, 1, 0, 0, 0, '2026-03-19 10:19:23', '2026-03-19 10:19:23'),
+(819, 2, 55, 1, 1, 1, 1, '2026-03-19 10:19:23', '2026-03-19 10:19:23'),
+(820, 2, 51, 1, 1, 1, 1, '2026-03-19 10:19:23', '2026-03-19 10:19:23'),
+(821, 2, 52, 1, 1, 1, 1, '2026-03-19 10:19:23', '2026-03-19 10:19:23'),
+(822, 2, 40, 1, 1, 1, 1, '2026-03-19 10:19:23', '2026-03-19 10:19:23'),
+(823, 2, 71, 1, 1, 1, 1, '2026-03-19 10:19:23', '2026-03-19 10:19:23'),
+(825, 2, 72, 1, 1, 1, 1, '2026-03-19 10:19:23', '2026-03-19 10:19:23'),
+(826, 2, 73, 1, 1, 1, 1, '2026-03-19 10:19:23', '2026-03-19 10:19:23'),
+(828, 2, 12, 1, 0, 0, 0, '2026-03-19 10:19:23', '2026-03-19 10:19:23'),
+(829, 2, 45, 1, 0, 0, 0, '2026-03-19 10:19:23', '2026-03-19 10:19:23'),
+(830, 2, 9, 1, 0, 0, 0, '2026-03-19 10:19:23', '2026-03-19 10:19:23'),
+(831, 2, 74, 1, 1, 1, 1, '2026-03-19 10:19:23', '2026-03-19 10:19:23'),
+(832, 2, 29, 1, 1, 1, 1, '2026-03-19 10:19:23', '2026-03-19 10:19:23'),
+(833, 2, 70, 1, 1, 1, 1, '2026-03-19 10:19:23', '2026-03-19 10:19:23'),
+(835, 29, 75, 1, 1, 1, 1, '2026-03-19 11:03:00', '2026-03-19 11:03:00'),
+(870, 9, 59, 1, 1, 1, 1, '2026-07-15 08:11:20', '2026-07-15 08:11:20'),
+(876, 9, 10, 1, 1, 1, 1, '2026-07-15 08:11:20', '2026-07-15 08:11:20'),
+(877, 9, 71, 1, 1, 1, 1, '2026-07-15 08:11:20', '2026-07-15 08:11:20'),
+(881, 9, 72, 1, 1, 1, 1, '2026-07-15 08:11:20', '2026-07-15 08:11:20'),
+(882, 9, 73, 1, 1, 1, 1, '2026-07-15 08:11:20', '2026-07-15 08:11:20'),
+(884, 9, 12, 1, 1, 1, 1, '2026-07-15 08:11:20', '2026-07-15 08:11:20'),
+(885, 9, 45, 1, 1, 1, 1, '2026-07-15 08:11:20', '2026-07-15 08:11:20'),
+(886, 9, 9, 1, 1, 1, 1, '2026-07-15 08:11:20', '2026-07-15 08:11:20'),
+(887, 9, 70, 1, 1, 1, 1, '2026-07-15 08:11:20', '2026-07-15 08:11:20'),
+(888, 9, 56, 1, 1, 1, 1, '2026-07-15 08:11:24', '2026-07-15 08:11:24'),
+(889, 9, 40, 1, 1, 1, 1, '2026-07-15 08:11:26', '2026-07-15 08:11:26'),
+(890, 9, 52, 1, 1, 1, 1, '2026-07-15 08:11:26', '2026-07-15 08:11:26'),
+(894, 9, 51, 1, 1, 1, 1, '2026-07-15 08:11:30', '2026-07-15 08:11:30'),
+(895, 9, 74, 1, 1, 1, 1, '2026-07-15 08:11:46', '2026-07-15 08:11:46'),
+(898, 2, 77, 1, 1, 1, 1, '2026-08-08 05:12:15', '2026-08-08 05:12:15'),
+(899, 3, 77, 1, 1, 1, 1, '2026-08-08 05:12:15', '2026-08-08 05:12:15'),
+(900, 4, 77, 1, 1, 1, 1, '2026-08-08 05:12:15', '2026-08-08 05:12:15'),
+(901, 29, 77, 1, 1, 1, 1, '2026-08-08 05:12:15', '2026-08-08 05:12:15'),
+(904, 6, 59, 1, 1, 1, 1, '2026-08-08 05:29:01', '2026-08-08 05:29:01'),
+(907, 6, 55, 1, 1, 1, 1, '2026-08-08 05:29:01', '2026-08-08 05:29:01'),
+(908, 6, 57, 1, 1, 1, 1, '2026-08-08 05:29:01', '2026-08-08 05:29:01'),
+(909, 6, 51, 1, 1, 1, 1, '2026-08-08 05:29:01', '2026-08-08 05:29:01'),
+(910, 6, 14, 1, 1, 1, 1, '2026-08-08 05:29:01', '2026-08-08 05:29:01'),
+(911, 6, 52, 1, 1, 1, 1, '2026-08-08 05:29:01', '2026-08-08 05:29:01'),
+(912, 6, 40, 1, 1, 1, 1, '2026-08-08 05:29:01', '2026-08-08 05:29:01'),
+(913, 6, 43, 1, 1, 1, 1, '2026-08-08 05:29:01', '2026-08-08 05:29:01'),
+(914, 6, 71, 1, 1, 1, 1, '2026-08-08 05:29:01', '2026-08-08 05:29:01'),
+(915, 6, 56, 1, 1, 1, 1, '2026-08-08 05:29:01', '2026-08-08 05:29:01'),
+(919, 6, 48, 1, 1, 1, 1, '2026-08-08 05:29:01', '2026-08-08 05:29:01'),
+(920, 6, 67, 1, 1, 1, 1, '2026-08-08 05:29:01', '2026-08-08 05:29:01'),
+(921, 6, 72, 1, 1, 1, 1, '2026-08-08 05:29:01', '2026-08-08 05:29:01'),
+(922, 6, 32, 1, 1, 1, 1, '2026-08-08 05:29:01', '2026-08-08 05:29:01'),
+(923, 6, 15, 1, 1, 1, 1, '2026-08-08 05:29:01', '2026-08-08 05:29:01'),
+(924, 6, 73, 1, 1, 1, 1, '2026-08-08 05:29:01', '2026-08-08 05:29:01'),
+(926, 6, 6, 1, 1, 1, 1, '2026-08-08 05:29:01', '2026-08-08 05:29:01'),
+(927, 6, 45, 1, 1, 1, 1, '2026-08-08 05:29:01', '2026-08-08 05:29:01'),
+(928, 6, 13, 1, 1, 1, 1, '2026-08-08 05:29:01', '2026-08-08 05:29:01'),
+(929, 6, 74, 1, 1, 1, 1, '2026-08-08 05:29:01', '2026-08-08 05:29:01'),
+(930, 6, 29, 1, 1, 1, 1, '2026-08-08 05:29:01', '2026-08-08 05:29:01'),
+(931, 6, 70, 1, 1, 1, 1, '2026-08-08 05:29:01', '2026-08-08 05:29:01'),
+(932, 6, 77, 1, 1, 1, 1, '2026-08-08 05:29:01', '2026-08-08 05:29:01'),
+(950, 4, 78, 1, 1, 1, 1, '2026-08-09 16:40:45', '2026-08-09 16:40:45'),
+(951, 2, 78, 1, 1, 1, 1, '2026-08-09 16:40:45', '2026-08-09 16:40:45'),
+(952, 3, 78, 1, 1, 1, 1, '2026-08-09 16:40:45', '2026-08-09 16:40:45'),
+(953, 29, 78, 1, 1, 1, 1, '2026-08-09 16:40:45', '2026-08-09 16:40:45'),
+(956, 29, 79, 1, 1, 1, 1, '2026-08-09 20:02:54', '2026-08-09 20:02:54'),
+(957, 4, 79, 1, 1, 1, 1, '2026-08-09 20:02:54', '2026-08-09 20:02:54'),
+(958, 2, 79, 1, 1, 1, 1, '2026-08-09 20:02:54', '2026-08-09 20:02:54'),
+(959, 3, 79, 1, 1, 1, 1, '2026-08-09 20:02:54', '2026-08-09 20:02:54'),
+(961, 29, 80, 1, 1, 1, 1, '2026-08-11 12:20:42', '2026-08-11 12:20:42'),
+(962, 2, 80, 1, 1, 1, 1, '2026-08-11 12:20:42', '2026-08-11 12:20:42'),
+(963, 32, 80, 1, 1, 1, 1, '2026-08-11 12:20:42', '2026-08-11 12:20:42'),
+(965, 30, 80, 1, 1, 1, 1, '2026-08-11 12:20:42', '2026-08-11 12:20:42'),
+(966, 31, 80, 1, 1, 1, 1, '2026-08-11 12:20:42', '2026-08-11 12:20:42'),
+(967, 6, 80, 1, 1, 1, 1, '2026-08-11 12:20:42', '2026-08-11 12:20:42'),
+(968, 7, 80, 1, 1, 1, 1, '2026-08-11 12:20:42', '2026-08-11 12:20:42'),
+(969, 28, 80, 1, 1, 1, 1, '2026-08-11 12:20:42', '2026-08-11 12:20:42'),
+(970, 8, 80, 1, 1, 1, 1, '2026-08-11 12:20:42', '2026-08-11 12:20:42'),
+(971, 9, 80, 1, 1, 1, 1, '2026-08-11 12:20:42', '2026-08-11 12:20:42'),
+(972, 3, 80, 1, 1, 1, 1, '2026-08-11 12:20:42', '2026-08-11 12:20:42'),
+(974, 29, 81, 1, 1, 1, 1, '2026-08-11 12:20:42', '2026-08-11 12:20:42'),
+(975, 2, 81, 1, 1, 1, 1, '2026-08-11 12:20:42', '2026-08-11 12:20:42'),
+(976, 32, 81, 1, 1, 1, 1, '2026-08-11 12:20:42', '2026-08-11 12:20:42'),
+(978, 30, 81, 1, 1, 1, 1, '2026-08-11 12:20:42', '2026-08-11 12:20:42'),
+(979, 31, 81, 1, 1, 1, 1, '2026-08-11 12:20:42', '2026-08-11 12:20:42'),
+(980, 6, 81, 1, 1, 1, 1, '2026-08-11 12:20:42', '2026-08-11 12:20:42'),
+(981, 7, 81, 1, 1, 1, 1, '2026-08-11 12:20:42', '2026-08-11 12:20:42'),
+(982, 28, 81, 1, 1, 1, 1, '2026-08-11 12:20:42', '2026-08-11 12:20:42'),
+(983, 8, 81, 1, 1, 1, 1, '2026-08-11 12:20:42', '2026-08-11 12:20:42'),
+(984, 9, 81, 1, 1, 1, 1, '2026-08-11 12:20:42', '2026-08-11 12:20:42'),
+(985, 3, 81, 1, 1, 1, 1, '2026-08-11 12:20:42', '2026-08-11 12:20:42'),
+(3151, 1, 3, 1, 1, 1, 1, '2026-08-16 07:54:17', '2026-08-16 07:54:17'),
+(3152, 1, 59, 1, 1, 1, 1, '2026-08-16 07:54:17', '2026-08-16 07:54:17'),
+(3153, 1, 34, 1, 1, 1, 1, '2026-08-16 07:54:17', '2026-08-16 07:54:17'),
+(3155, 1, 55, 1, 1, 1, 1, '2026-08-16 07:54:17', '2026-08-16 07:54:17'),
+(3156, 1, 31, 1, 1, 1, 1, '2026-08-16 07:54:17', '2026-08-16 07:54:17'),
+(3157, 1, 51, 1, 1, 1, 1, '2026-08-16 07:54:17', '2026-08-16 07:54:17'),
+(3158, 1, 52, 1, 1, 1, 1, '2026-08-16 07:54:17', '2026-08-16 07:54:17'),
+(3159, 1, 40, 1, 1, 1, 1, '2026-08-16 07:54:17', '2026-08-16 07:54:17'),
+(3160, 1, 10, 1, 1, 1, 1, '2026-08-16 07:54:17', '2026-08-16 07:54:17'),
+(3161, 1, 71, 1, 1, 1, 1, '2026-08-16 07:54:17', '2026-08-16 07:54:17'),
+(3163, 1, 48, 1, 1, 1, 1, '2026-08-16 07:54:17', '2026-08-16 07:54:17'),
+(3164, 1, 4, 1, 1, 1, 1, '2026-08-16 07:54:17', '2026-08-16 07:54:17'),
+(3165, 1, 26, 1, 1, 1, 1, '2026-08-16 07:54:17', '2026-08-16 07:54:17'),
+(3166, 1, 72, 1, 1, 1, 1, '2026-08-16 07:54:17', '2026-08-16 07:54:17'),
+(3167, 1, 32, 1, 1, 1, 1, '2026-08-16 07:54:17', '2026-08-16 07:54:17'),
+(3168, 1, 35, 1, 1, 1, 1, '2026-08-16 07:54:17', '2026-08-16 07:54:17'),
+(3169, 1, 2, 1, 1, 1, 1, '2026-08-16 07:54:17', '2026-08-16 07:54:17'),
+(3170, 1, 73, 1, 1, 1, 1, '2026-08-16 07:54:17', '2026-08-16 07:54:17'),
+(3172, 1, 12, 1, 1, 1, 1, '2026-08-16 07:54:17', '2026-08-16 07:54:17'),
+(3173, 1, 27, 1, 1, 1, 1, '2026-08-16 07:54:17', '2026-08-16 07:54:17'),
+(3174, 1, 75, 1, 1, 1, 1, '2026-08-16 07:54:17', '2026-08-16 07:54:17'),
+(3175, 1, 45, 1, 1, 1, 1, '2026-08-16 07:54:17', '2026-08-16 07:54:17'),
+(3176, 1, 9, 1, 1, 1, 1, '2026-08-16 07:54:17', '2026-08-16 07:54:17'),
+(3177, 1, 74, 1, 1, 1, 1, '2026-08-16 07:54:17', '2026-08-16 07:54:17'),
+(3178, 1, 24, 1, 1, 1, 1, '2026-08-16 07:54:17', '2026-08-16 07:54:17'),
+(3179, 1, 29, 1, 1, 1, 1, '2026-08-16 07:54:17', '2026-08-16 07:54:17'),
+(3180, 1, 30, 1, 1, 1, 1, '2026-08-16 07:54:17', '2026-08-16 07:54:17'),
+(3182, 1, 80, 1, 1, 1, 1, '2026-08-16 07:54:17', '2026-08-16 07:54:17'),
+(3183, 1, 70, 1, 1, 1, 1, '2026-08-16 07:54:17', '2026-08-16 07:54:17'),
+(3184, 1, 81, 1, 1, 1, 1, '2026-08-16 07:54:17', '2026-08-16 07:54:17'),
+(3185, 1, 77, 1, 1, 1, 1, '2026-08-16 07:54:17', '2026-08-16 07:54:17'),
+(3186, 1, 78, 1, 1, 1, 1, '2026-08-16 07:54:17', '2026-08-16 07:54:17'),
+(3187, 1, 79, 1, 1, 1, 1, '2026-08-16 07:54:17', '2026-08-16 07:54:17'),
+(3188, 1, 76, 1, 1, 1, 1, '2026-08-16 07:54:17', '2026-08-16 07:54:17'),
+(3189, 1, 69, 1, 1, 1, 1, '2026-08-16 07:54:17', '2026-08-16 07:54:17'),
+(3190, 1, 83, 1, 0, 0, 0, '2026-08-16 07:58:18', '2026-08-16 07:58:18'),
+(3191, 2, 83, 1, 0, 0, 0, '2026-08-16 07:58:18', '2026-08-16 07:58:18'),
+(3192, 3, 83, 1, 0, 0, 0, '2026-08-16 07:58:18', '2026-08-16 07:58:18'),
+(3193, 4, 83, 1, 0, 0, 0, '2026-08-16 07:58:18', '2026-08-16 07:58:18'),
+(3221, 29, 83, 1, 0, 0, 0, '2026-08-16 07:58:18', '2026-08-16 07:58:18'),
+(3228, 1, 85, 1, 0, 0, 0, '2026-08-16 07:58:18', '2026-08-16 07:58:18'),
+(3229, 2, 85, 1, 0, 0, 0, '2026-08-16 07:58:18', '2026-08-16 07:58:18'),
+(3230, 3, 85, 1, 0, 0, 0, '2026-08-16 07:58:18', '2026-08-16 07:58:18'),
+(3231, 4, 85, 1, 0, 0, 0, '2026-08-16 07:58:18', '2026-08-16 07:58:18'),
+(3233, 29, 85, 1, 0, 0, 0, '2026-08-16 07:58:18', '2026-08-16 07:58:18'),
+(3234, 1, 86, 1, 0, 0, 0, '2026-08-16 07:58:18', '2026-08-16 07:58:18'),
+(3235, 2, 86, 1, 0, 0, 0, '2026-08-16 07:58:18', '2026-08-16 07:58:18'),
+(3236, 3, 86, 1, 0, 0, 0, '2026-08-16 07:58:18', '2026-08-16 07:58:18'),
+(3237, 4, 86, 1, 0, 0, 0, '2026-08-16 07:58:18', '2026-08-16 07:58:18'),
+(3239, 29, 86, 1, 0, 0, 0, '2026-08-16 07:58:18', '2026-08-16 07:58:18'),
+(3266, 1, 87, 1, 0, 0, 0, '2026-08-16 08:00:36', '2026-08-16 08:00:36'),
+(3267, 2, 87, 1, 0, 0, 0, '2026-08-16 08:00:36', '2026-08-16 08:00:36'),
+(3268, 3, 87, 1, 0, 0, 0, '2026-08-16 08:00:36', '2026-08-16 08:00:36'),
+(3269, 4, 87, 1, 0, 0, 0, '2026-08-16 08:00:36', '2026-08-16 08:00:36'),
+(3271, 29, 87, 1, 0, 0, 0, '2026-08-16 08:00:36', '2026-08-16 08:00:36'),
+(3818, 1, 88, 1, 1, 1, 1, '2026-08-17 04:03:48', '2026-08-17 04:03:48'),
+(3819, 2, 88, 1, 1, 1, 1, '2026-08-17 04:03:48', '2026-08-17 04:03:48'),
+(3820, 4, 88, 1, 1, 1, 1, '2026-08-17 04:03:48', '2026-08-17 04:03:48'),
+(3822, 3, 88, 1, 1, 1, 1, '2026-08-17 04:03:48', '2026-08-17 04:03:48'),
+(3823, 29, 88, 1, 1, 1, 1, '2026-08-17 04:03:48', '2026-08-17 04:03:48'),
+(3824, 1, 91, 1, 1, 1, 1, '2026-08-17 04:03:48', '2026-08-17 04:03:48'),
+(3825, 1, 89, 1, 1, 1, 1, '2026-08-17 04:03:48', '2026-08-17 04:03:48'),
+(3826, 2, 90, 1, 1, 1, 1, '2026-08-17 04:03:48', '2026-08-17 04:03:48'),
+(3827, 3, 90, 1, 1, 1, 1, '2026-08-17 04:03:48', '2026-08-17 04:03:48'),
+(3828, 4, 90, 1, 1, 1, 1, '2026-08-17 04:03:48', '2026-08-17 04:03:48'),
+(3830, 1, 90, 1, 1, 1, 1, '2026-08-17 04:03:48', '2026-08-17 04:03:48'),
+(3831, 29, 90, 1, 1, 1, 1, '2026-08-17 04:03:48', '2026-08-17 04:03:48'),
+(3832, 2, 91, 1, 1, 1, 1, '2026-08-17 04:03:48', '2026-08-17 04:03:48'),
+(3833, 4, 91, 1, 1, 1, 1, '2026-08-17 04:03:48', '2026-08-17 04:03:48'),
+(3834, 3, 91, 1, 1, 1, 1, '2026-08-17 04:03:48', '2026-08-17 04:03:48'),
+(3835, 29, 91, 1, 1, 1, 1, '2026-08-17 04:03:48', '2026-08-17 04:03:48'),
+(3836, 2, 89, 1, 1, 1, 1, '2026-08-17 04:03:48', '2026-08-17 04:03:48'),
+(3838, 3, 89, 1, 1, 1, 1, '2026-08-17 04:03:48', '2026-08-17 04:03:48'),
+(3839, 29, 89, 1, 1, 1, 1, '2026-08-17 04:03:48', '2026-08-17 04:03:48'),
+(3840, 4, 89, 1, 1, 1, 1, '2026-08-17 04:03:48', '2026-08-17 04:03:48'),
+(3842, 32, 88, 1, 1, 1, 1, '2026-08-17 04:06:20', '2026-08-17 04:06:20'),
+(3843, 30, 88, 1, 1, 1, 1, '2026-08-17 04:06:20', '2026-08-17 04:06:20'),
+(3844, 31, 88, 1, 1, 1, 1, '2026-08-17 04:06:20', '2026-08-17 04:06:20'),
+(3845, 6, 88, 1, 1, 1, 1, '2026-08-17 04:06:20', '2026-08-17 04:06:20'),
+(3846, 7, 88, 1, 1, 1, 1, '2026-08-17 04:06:20', '2026-08-17 04:06:20'),
+(3847, 28, 88, 1, 1, 1, 1, '2026-08-17 04:06:20', '2026-08-17 04:06:20'),
+(3848, 8, 88, 1, 1, 1, 1, '2026-08-17 04:06:20', '2026-08-17 04:06:20'),
+(3849, 9, 88, 1, 1, 1, 1, '2026-08-17 04:06:20', '2026-08-17 04:06:20'),
+(3850, 32, 90, 1, 1, 1, 1, '2026-08-17 04:06:20', '2026-08-17 04:06:20'),
+(3851, 30, 90, 1, 1, 1, 1, '2026-08-17 04:06:20', '2026-08-17 04:06:20'),
+(3852, 31, 90, 1, 1, 1, 1, '2026-08-17 04:06:20', '2026-08-17 04:06:20'),
+(3853, 6, 90, 1, 1, 1, 1, '2026-08-17 04:06:20', '2026-08-17 04:06:20'),
+(3854, 7, 90, 1, 1, 1, 1, '2026-08-17 04:06:20', '2026-08-17 04:06:20'),
+(3855, 28, 90, 1, 1, 1, 1, '2026-08-17 04:06:20', '2026-08-17 04:06:20'),
+(3856, 8, 90, 1, 1, 1, 1, '2026-08-17 04:06:20', '2026-08-17 04:06:20'),
+(3857, 9, 90, 1, 1, 1, 1, '2026-08-17 04:06:20', '2026-08-17 04:06:20'),
+(3858, 32, 89, 1, 1, 1, 1, '2026-08-17 04:06:20', '2026-08-17 04:06:20'),
+(3859, 30, 89, 1, 1, 1, 1, '2026-08-17 04:06:20', '2026-08-17 04:06:20'),
+(3860, 31, 89, 1, 1, 1, 1, '2026-08-17 04:06:20', '2026-08-17 04:06:20'),
+(3861, 6, 89, 1, 1, 1, 1, '2026-08-17 04:06:20', '2026-08-17 04:06:20'),
+(3862, 7, 89, 1, 1, 1, 1, '2026-08-17 04:06:20', '2026-08-17 04:06:20'),
+(3863, 28, 89, 1, 1, 1, 1, '2026-08-17 04:06:20', '2026-08-17 04:06:20'),
+(3864, 8, 89, 1, 1, 1, 1, '2026-08-17 04:06:20', '2026-08-17 04:06:20'),
+(3865, 9, 89, 1, 1, 1, 1, '2026-08-17 04:06:20', '2026-08-17 04:06:20'),
+(3866, 32, 91, 1, 1, 1, 1, '2026-08-17 04:06:20', '2026-08-17 04:06:20'),
+(3867, 30, 91, 1, 1, 1, 1, '2026-08-17 04:06:20', '2026-08-17 04:06:20'),
+(3868, 31, 91, 1, 1, 1, 1, '2026-08-17 04:06:20', '2026-08-17 04:06:20'),
+(3869, 6, 91, 1, 1, 1, 1, '2026-08-17 04:06:20', '2026-08-17 04:06:20'),
+(3870, 7, 91, 1, 1, 1, 1, '2026-08-17 04:06:20', '2026-08-17 04:06:20'),
+(3871, 28, 91, 1, 1, 1, 1, '2026-08-17 04:06:20', '2026-08-17 04:06:20'),
+(3872, 8, 91, 1, 1, 1, 1, '2026-08-17 04:06:20', '2026-08-17 04:06:20'),
+(3873, 9, 91, 1, 1, 1, 1, '2026-08-17 04:06:20', '2026-08-17 04:06:20'),
+(4056, 1, 92, 1, 1, 1, 1, '2026-08-17 07:39:18', '2026-08-17 07:39:18'),
+(4057, 2, 92, 1, 1, 1, 1, '2026-08-17 07:39:18', '2026-08-17 07:39:18'),
+(4058, 3, 92, 1, 1, 1, 1, '2026-08-17 07:39:18', '2026-08-17 07:39:18'),
+(4059, 4, 92, 1, 1, 1, 1, '2026-08-17 07:39:18', '2026-08-17 07:39:18'),
+(4061, 29, 92, 1, 1, 1, 1, '2026-08-17 07:39:18', '2026-08-17 07:39:18'),
+(4088, 32, 92, 1, 1, 1, 1, '2026-08-17 08:05:19', '2026-08-17 08:05:19'),
+(4089, 30, 92, 1, 1, 1, 1, '2026-08-17 08:05:19', '2026-08-17 08:05:19'),
+(4090, 31, 92, 1, 1, 1, 1, '2026-08-17 08:05:19', '2026-08-17 08:05:19'),
+(4091, 6, 92, 1, 1, 1, 1, '2026-08-17 08:05:19', '2026-08-17 08:05:19'),
+(4092, 7, 92, 1, 1, 1, 1, '2026-08-17 08:05:19', '2026-08-17 08:05:19'),
+(4093, 28, 92, 1, 1, 1, 1, '2026-08-17 08:05:19', '2026-08-17 08:05:19'),
+(4094, 8, 92, 1, 1, 1, 1, '2026-08-17 08:05:19', '2026-08-17 08:05:19'),
+(4095, 9, 92, 1, 1, 1, 1, '2026-08-17 08:05:19', '2026-08-17 08:05:19'),
+(4255, 1, 93, 1, 0, 0, 0, '2026-08-17 08:32:55', '2026-08-17 08:32:55'),
+(4256, 2, 93, 1, 0, 0, 0, '2026-08-17 08:32:55', '2026-08-17 08:32:55'),
+(4257, 3, 93, 1, 0, 0, 0, '2026-08-17 08:32:55', '2026-08-17 08:32:55'),
+(4258, 4, 93, 1, 0, 0, 0, '2026-08-17 08:32:55', '2026-08-17 08:32:55'),
+(4260, 29, 93, 1, 0, 0, 0, '2026-08-17 08:32:55', '2026-08-17 08:32:55'),
+(4417, 1, 94, 1, 1, 1, 1, '2026-08-17 08:54:56', '2026-08-17 08:54:56'),
+(4419, 5, 59, 1, 1, 1, 1, '2026-08-17 08:55:10', '2026-08-17 08:55:10'),
+(4420, 5, 88, 1, 1, 1, 1, '2026-08-17 08:55:10', '2026-08-17 08:55:10'),
+(4421, 5, 94, 1, 1, 1, 1, '2026-08-17 08:55:10', '2026-08-17 08:55:10'),
+(4422, 5, 55, 1, 1, 1, 1, '2026-08-17 08:55:10', '2026-08-17 08:55:10'),
+(4423, 5, 51, 1, 1, 1, 1, '2026-08-17 08:55:10', '2026-08-17 08:55:10'),
+(4424, 5, 52, 1, 1, 1, 1, '2026-08-17 08:55:10', '2026-08-17 08:55:10'),
+(4425, 5, 71, 1, 1, 1, 1, '2026-08-17 08:55:10', '2026-08-17 08:55:10'),
+(4426, 5, 72, 1, 1, 1, 1, '2026-08-17 08:55:10', '2026-08-17 08:55:10'),
+(4427, 5, 93, 1, 0, 0, 0, '2026-08-17 08:55:10', '2026-08-17 08:55:10'),
+(4428, 5, 90, 1, 1, 1, 1, '2026-08-17 08:55:10', '2026-08-17 08:55:10'),
+(4429, 5, 73, 1, 1, 1, 1, '2026-08-17 08:55:10', '2026-08-17 08:55:10'),
+(4430, 5, 89, 1, 1, 1, 1, '2026-08-17 08:55:10', '2026-08-17 08:55:10'),
+(4431, 5, 45, 1, 1, 1, 1, '2026-08-17 08:55:10', '2026-08-17 08:55:10'),
+(4432, 5, 9, 1, 1, 1, 1, '2026-08-17 08:55:10', '2026-08-17 08:55:10'),
+(4433, 5, 91, 1, 1, 1, 1, '2026-08-17 08:55:10', '2026-08-17 08:55:10'),
+(4434, 5, 83, 1, 0, 0, 0, '2026-08-17 08:55:10', '2026-08-17 08:55:10'),
+(4435, 5, 87, 1, 0, 0, 0, '2026-08-17 08:55:10', '2026-08-17 08:55:10'),
+(4436, 5, 85, 1, 0, 0, 0, '2026-08-17 08:55:10', '2026-08-17 08:55:10'),
+(4437, 5, 86, 1, 0, 0, 0, '2026-08-17 08:55:10', '2026-08-17 08:55:10'),
+(4438, 5, 80, 1, 1, 1, 1, '2026-08-17 08:55:10', '2026-08-17 08:55:10'),
+(4439, 5, 70, 1, 1, 1, 1, '2026-08-17 08:55:10', '2026-08-17 08:55:10'),
+(4440, 5, 81, 1, 1, 1, 1, '2026-08-17 08:55:10', '2026-08-17 08:55:10'),
+(4441, 5, 92, 1, 1, 1, 1, '2026-08-17 08:55:10', '2026-08-17 08:55:10'),
+(4442, 5, 77, 1, 1, 1, 1, '2026-08-17 08:55:10', '2026-08-17 08:55:10'),
+(4443, 5, 79, 1, 1, 1, 1, '2026-08-17 08:55:10', '2026-08-17 08:55:10'),
+(5354, 1, 95, 1, 0, 0, 0, '2026-08-21 08:40:29', '2026-08-21 08:40:29'),
+(5355, 2, 95, 1, 0, 0, 0, '2026-08-21 08:40:29', '2026-08-21 08:40:29'),
+(5356, 3, 95, 1, 0, 0, 0, '2026-08-21 08:40:29', '2026-08-21 08:40:29'),
+(5357, 4, 95, 1, 0, 0, 0, '2026-08-21 08:40:29', '2026-08-21 08:40:29'),
+(5358, 5, 95, 1, 0, 0, 0, '2026-08-21 08:40:29', '2026-08-21 08:40:29'),
+(5359, 29, 95, 1, 0, 0, 0, '2026-08-21 08:40:29', '2026-08-21 08:40:29');
 
 -- --------------------------------------------------------
 
@@ -1706,155 +3393,31 @@ CREATE TABLE `specific_objectives` (
   `progress` enum('started','on going','completed') NOT NULL DEFAULT 'started',
   `income_id` int(11) DEFAULT NULL,
   `cost_id` int(11) DEFAULT NULL,
-  `view` enum('የፋይናንስ ዕይታ','የተገልጋይ ዕይታ','የውስጥ አሰራር ዕይታ','የመማማርና ዕድገት ዕይታ') DEFAULT NULL
+  `view` enum('የፋይናንስ ዕይታ','የተገልጋይ ዕይታ','የውስጥ አሰራር ዕይታ','የመማማርና ዕድገት ዕይታ') DEFAULT NULL,
+  `org_node_ids` text DEFAULT NULL,
+  `supportive_org_node_ids` text DEFAULT NULL,
+  `weight` decimal(10,2) DEFAULT 100.00 COMMENT 'KPI weight (total budget for action plans)',
+  `plan_type` varchar(100) DEFAULT 'general'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `specific_objectives`
 --
 
-INSERT INTO `specific_objectives` (`specific_objective_id`, `user_id`, `objective_id`, `specific_objective_name`, `details`, `baseline`, `plan`, `measurement`, `execution_percentage`, `created_at`, `updated_at`, `deadline_quarter`, `deadline`, `priority`, `department_id`, `name`, `count`, `progress`, `income_id`, `cost_id`, `view`) VALUES
-(461, 26, 113, '1.1.1 በንዑስ ሊዝ መሬት በወሰደ ካምፓኒዎች በቀጥታ የተፈጠረ የሥራ ዕዴል በሰው ብዛት', NULL, NULL, NULL, NULL, 0.00, '2025-03-12 11:38:56', '2025-04-09 12:10:50', 'Q1', NULL, '', 0, '', 0, 'started', NULL, NULL, 'የተገልጋይ ዕይታ'),
-(462, 26, 113, '1.1.2 የህንጻ ኪራይ በወሰዱ ካምፓኒዎች በቀጥታ የተፈጠረ የሥራ ዕድል በሰው ብዛት ', NULL, NULL, NULL, NULL, 0.00, '2025-03-12 11:39:17', '2025-04-09 12:10:57', 'Q1', NULL, '', 0, '', 0, 'started', NULL, NULL, 'የተገልጋይ ዕይታ'),
-(463, 26, 113, '1.1.3 ከካምፓኒዎቹ ሥራ ጋር ተያይዞ በተጓዳኝ የተፈጠረ የሥራ ዕድል በሰው ብዛት', NULL, NULL, NULL, NULL, 0.00, '2025-03-12 11:39:36', '2025-04-09 12:11:01', 'Q1', NULL, '', 0, '', 0, 'started', NULL, NULL, 'የተገልጋይ ዕይታ'),
-(465, 26, 114, '1.2.1 በንዑስ ሊዝ መሬት በወሰደ እና ቢሮ በተከራየ አልሚ ካምፓኒዎች የተፈጠረ ቀጥተኛ የውጭ ኢንቨስትመንት (በሚሉዮን ዶሊር)', NULL, NULL, NULL, NULL, 0.00, '2025-03-12 11:42:58', '2025-04-09 12:11:07', 'Q1', NULL, '', 0, '', 0, 'started', NULL, NULL, 'የተገልጋይ ዕይታ'),
-(466, 26, 114, '1.2.2 በንዑስ ሉዝ መሬት በወሰደ እና ቢሮ በተከራዩ አሌሚ ካምፓኒዎች የተፈጠረ የሀገር ውስጥ ኢንቨስትመንት (በሚሉዮን ብር)', NULL, NULL, NULL, NULL, 0.00, '2025-03-12 11:43:14', '2025-04-09 12:11:13', 'Q1', NULL, '', 0, '', 0, 'started', NULL, NULL, 'የተገልጋይ ዕይታ'),
-(467, 26, 115, '2.1.1 የቴክኖልጂ ሽግግር ሇማዴረግ የሰሇጠኑ ሰሌጣኞች ብዛት ', NULL, NULL, NULL, NULL, 0.00, '2025-03-12 11:45:54', '2025-04-09 12:11:18', 'Q1', NULL, '', 0, '', 0, 'started', NULL, NULL, 'የተገልጋይ ዕይታ'),
-(468, 26, 115, '2.1.2 የቴክኖልጂ ሽግግር ሇማዴረግ የተፈጠረ ሥሌጠና ብዛት በዓይነት', NULL, NULL, NULL, NULL, 0.00, '2025-03-12 11:46:11', '2025-04-09 12:11:22', 'Q1', NULL, '', 0, '', 0, 'started', NULL, NULL, 'የተገልጋይ ዕይታ'),
-(469, 26, 115, '2.1.3 የተሇየ የቴክኖልጂ ብቃት ይዞ ከውጭ ሀገር የመጣ ባሇሙያን መተካት የቻሇ የሀገር ውስጥ ባሇሙያ ብዛት በቁጥር ', NULL, NULL, NULL, NULL, 0.00, '2025-03-12 11:46:26', '2025-04-09 12:11:26', 'Q1', NULL, '', 0, '', 0, 'started', NULL, NULL, 'የተገልጋይ ዕይታ'),
-(470, 26, 115, '2.1.4 በተሇየ የቴክኖልጂ ብቃት ሰርቲፋይዴ የሆነ (የብቃት ማረገጋገጫ ዕውቅና ያገኘ) ባሇሙያ ብዛት በቁጥር', NULL, NULL, NULL, NULL, 0.00, '2025-03-12 11:46:46', '2025-04-09 12:11:31', 'Q1', NULL, '', 0, '', 0, 'started', NULL, NULL, 'የተገልጋይ ዕይታ'),
-(471, 26, 115, '2.1.5 በኢንፎርሜሽን ቴክኖልጂ ዘርፍ የአዕምሯዊ ንብረት ጥበቃ ያገኘ ባሇሙያ ብዛት በቁጥር', NULL, NULL, NULL, NULL, 0.00, '2025-03-12 11:47:00', '2025-04-09 12:11:34', 'Q1', NULL, '', 0, '', 0, 'started', NULL, NULL, 'የተገልጋይ ዕይታ'),
-(472, 26, 115, '2.1.6 በኢንፎርሜሽን ቴክኖልጂ ዘርፍ የአዕምሯዊ ንብረት ምዝገባ ያገኘ ዴርጅት ብዛት በቁጥር', NULL, NULL, NULL, NULL, 0.00, '2025-03-12 11:47:24', '2025-04-09 12:11:39', 'Q1', NULL, '', 0, '', 0, 'started', NULL, NULL, 'የተገልጋይ ዕይታ'),
-(473, 26, 115, '2.1.7 በኢንፎርሜሽን ቴክኖልጂ ዘርፍ የአዕምሯዊ ንብረት ማመሌከቻ ያቀረበ ባሇሙያ/ዴርጅት ብዛት በቁጥር', NULL, NULL, NULL, NULL, 0.00, '2025-03-12 11:47:40', '2025-04-09 12:11:43', 'Q1', NULL, '', 0, '', 0, 'started', NULL, NULL, 'የተገልጋይ ዕይታ'),
-(474, 26, 116, '2.2.1 በንዑስ ሉዝ መሬት ከወሰደ ካምፓኒዎች ምርት/አገሌግልት ሽያጭ የተገኘ የወጪ ንግዴ ገቢ (በሚሉዮን ድሊር)', NULL, NULL, NULL, NULL, 0.00, '2025-03-12 11:48:56', '2025-04-09 12:11:47', 'Q1', NULL, '', 0, '', 0, 'started', NULL, NULL, 'የተገልጋይ ዕይታ'),
-(475, 26, 116, '2.2.2 የህንጻ ኪራይ ከወሰደ ካምፓኒዎች ምርት/አገሌግልት ሽያጭ የተገኘ የወጪ ንግዴ ገቢ (በሚሉዮን ድሊር)', NULL, NULL, NULL, NULL, 0.00, '2025-03-12 11:49:12', '2025-04-09 12:11:52', 'Q1', NULL, '', 0, '', 0, 'started', NULL, NULL, 'የተገልጋይ ዕይታ'),
-(477, 26, 117, '2.3.1. በሀገር ውስጥ የተመረተ ተተኪ ምርት/አገሌግልት ዓይነት ብዛት', NULL, NULL, NULL, NULL, 0.00, '2025-03-12 11:50:30', '2025-04-09 12:12:00', 'Q1', NULL, '', 0, '', 0, 'started', NULL, NULL, 'የተገልጋይ ዕይታ'),
-(478, 26, 117, '2.3.2. ተተኪ ምርት/አገሌግልት በሀገር ውስጥ ያመረቱ ካምፓኒዎች ብዛት በቁጥር', NULL, NULL, NULL, NULL, 0.00, '2025-03-12 11:50:49', '2025-04-09 12:12:03', 'Q1', NULL, '', 0, '', 0, 'started', NULL, NULL, 'የተገልጋይ ዕይታ'),
-(479, 26, 117, '2.3.3. በሀገር ውስጥ ከተሸጠ ተተኪ ምርት ሽያጭ የተገኘ ጠቅሊሊ ገቢ (በቢሉዮን ብር)', NULL, NULL, NULL, NULL, 0.00, '2025-03-12 11:51:10', '2025-04-09 12:12:06', 'Q1', NULL, '', 0, '', 0, 'started', NULL, NULL, 'የተገልጋይ ዕይታ'),
-(480, 26, 118, '3.1.1 የሇማ መሬት በንዑስ ሉዝ ከሚተሊሇፍሊቸው ካምፓኒዎች ጋር የተፈጸመ ውሌ ስምምነት ብዛት በቁጥር', NULL, NULL, NULL, NULL, 0.00, '2025-03-12 11:54:30', '2025-04-09 12:12:10', 'Q1', NULL, '', 0, '', 0, 'started', NULL, NULL, 'የተገልጋይ ዕይታ'),
-(481, 26, 118, '3.1.2 የሇማ መሬት በንዑስ ሉዝ ሇመውሰዴ ርክክብ የተፈጸመሊቸው ካምፓኒዎች ብዛት በቁጥር', NULL, NULL, NULL, NULL, 0.00, '2025-03-12 11:54:50', '2025-04-09 12:12:14', 'Q1', NULL, '', 0, '', 0, 'started', NULL, NULL, 'የተገልጋይ ዕይታ'),
-(482, 26, 118, '3 3.1.3 የካምፓኒዎች በንዑስ ሉዝ የተሰጠ የመሬት ስፋት በካሬ ሜትር ', NULL, NULL, NULL, NULL, 0.00, '2025-03-12 11:55:37', '2025-04-09 12:12:18', 'Q1', NULL, '', 0, '', 0, 'started', NULL, NULL, 'የተገልጋይ ዕይታ'),
-(483, 26, 118, '3.1.4. የለማ መሬት በንዑስ ሉዝ ሇወሰደ ካምፓኒዎች የተሰጠ የባለቤትነት ማረጋገጫ ካርታ ብዛት በቁጥር', NULL, NULL, NULL, NULL, 0.00, '2025-03-12 11:56:15', '2025-04-09 12:12:23', 'Q1', NULL, '', 0, '', 0, 'started', NULL, NULL, 'የተገልጋይ ዕይታ'),
-(484, 26, 118, '3.1.5 የለማ መሬት በንዑስ ሉዝ  የወሰዱ ካምፓኒዎች የጸደቀ የግንባታ ዱዛይን ብዛት በቁጥር', NULL, NULL, NULL, NULL, 0.00, '2025-03-12 11:56:54', '2025-04-09 12:12:28', 'Q1', NULL, '', 0, '', 0, 'started', NULL, NULL, 'የተገልጋይ ዕይታ'),
-(485, 26, 118, '3.1.6 የለማ መሬት በንዑስ ሉዝ የወሰደ ካምፓኒዎች የተሰጠ የግንባታ ፈቃዴ ሰርቲፊኬት ብዛት በቁጥር', NULL, NULL, NULL, NULL, 0.00, '2025-03-12 11:57:23', '2025-04-09 12:12:32', 'Q1', NULL, '', 0, '', 0, 'started', NULL, NULL, 'የተገልጋይ ዕይታ'),
-(486, 26, 118, '3.1.7 የለማ መሬት በንዑስ ሊዝ የማስተላለፍ ለእያንዲንዱ ካምፓኒ አገሌግልት የተሰጠበት አማካይ ጊዜ በቀን', NULL, NULL, NULL, NULL, 0.00, '2025-03-12 11:58:44', '2025-04-09 12:12:36', 'Q1', NULL, '', 0, '', 0, 'started', NULL, NULL, 'የተገልጋይ ዕይታ'),
-(487, 26, 119, '3.2.1 የመገሌገያ ህንጻ ኪራይ ለመውሰዴ ውሌ የፈጸሙ ካምፓኒዎች ብዛት በቁጥር', NULL, NULL, NULL, NULL, 0.00, '2025-03-12 12:00:21', '2025-04-09 12:12:40', 'Q1', NULL, '', 0, '', 0, 'started', NULL, NULL, 'የተገልጋይ ዕይታ'),
-(488, 26, 119, '3.2.2 የመገሌገያ ህንጻ ኪራይ የተረከቡ ካምፓኒዎች (ብዛት በቁጥር)', NULL, NULL, NULL, NULL, 0.00, '2025-03-12 12:00:39', '2025-04-09 12:12:45', 'Q1', NULL, '', 0, '', 0, 'started', NULL, NULL, 'የተገልጋይ ዕይታ'),
-(489, 26, 119, '3.2.3 የካምፓኒዎች በኪራይ የተሰጠ የሥራ ቦታ (ህንጻ/ክፍሌ) ስፋት በካሬ ሜትር ', NULL, NULL, NULL, NULL, 0.00, '2025-03-12 12:01:09', '2025-04-09 12:12:50', 'Q1', NULL, '', 0, '', 0, 'started', NULL, NULL, 'የተገልጋይ ዕይታ'),
-(490, 26, 119, '3.2.4 በበጀት ዓመቱ ውስጥ የመስሪያ ቦታ በኪራይ ለወሰደ ካምፓኒዎች አገሌግልት የተሰጠበት አማካይ ጊዜ በቀን', NULL, NULL, NULL, NULL, 0.00, '2025-03-12 12:01:41', '2025-04-09 12:12:57', 'Q1', NULL, '', 0, '', 0, 'started', NULL, NULL, 'የተገልጋይ ዕይታ'),
-(491, 26, 119, '3.2.5 የመገሌገያ ህንጻ ሇተከራዩ ካምፓኒዎች የጸዯቀ ዱዛይን ብዛት በቁጥር', NULL, NULL, NULL, NULL, 0.00, '2025-03-12 12:02:00', '2025-04-09 12:13:01', 'Q1', NULL, '', 0, '', 0, 'started', NULL, NULL, 'የተገልጋይ ዕይታ'),
-(492, 26, 119, '3.2.6 የመገሌገያ ህንጻ ኪራይ የወሰደ ካምፓኒዎች አፈጻጸም ሊይ የተካሄዯ ዴጋፍ፣ ክትትሌና ቁጥጥር በካምፓኔ ብዛት ', NULL, NULL, NULL, NULL, 0.00, '2025-03-12 12:02:20', '2025-04-09 12:13:07', 'Q1', NULL, '', 0, '', 0, 'started', NULL, NULL, 'የተገልጋይ ዕይታ'),
-(493, 26, 120, '3.3.1 ሇኢንኩቤሽን ፕሮግራም ሰነዴ ማዘጋጀት', NULL, NULL, NULL, NULL, 0.00, '2025-03-12 12:04:09', '2025-04-09 12:13:12', 'Q1', NULL, '', 0, '', 0, 'started', NULL, NULL, 'የተገልጋይ ዕይታ'),
-(494, 26, 120, '3.3.2 በአክሰሇሬሽን ፕሮግራሞች ተጠቃሚ የሆኑ ካምፓኒዎች ብዛት በቁጥር', NULL, NULL, NULL, NULL, 0.00, '2025-03-12 12:04:32', '2025-04-09 12:13:17', 'Q1', NULL, '', 0, '', 0, 'started', NULL, NULL, 'የተገልጋይ ዕይታ'),
-(495, 26, 120, '3.3.3 በኢንኩቤሽን ፕሮግራሞች ተጠቃሚ የሆኑ ካምፓኒዎች ብዛት በቁጥር', NULL, NULL, NULL, NULL, 0.00, '2025-03-12 12:04:47', '2025-04-09 12:13:23', 'Q1', NULL, '', 0, '', 0, 'started', NULL, NULL, 'የተገልጋይ ዕይታ'),
-(496, 26, 120, '3.3.4 በኢንኩቤሽን ፕሮግራሞች ተጠቃሚ የሆኑ ወጣት ብዛት በቁጥር', NULL, NULL, NULL, NULL, 0.00, '2025-03-12 12:05:02', '2025-04-09 12:13:27', 'Q1', NULL, '', 0, '', 0, 'started', NULL, NULL, 'የተገልጋይ ዕይታ'),
-(497, 26, 120, '3.3.5 በኢንኩቤሽን ፕሮግራሞች ተጠቃሚ ከሆኑት መካከሌ ውጤታማ የሆኑ ወጣቶች ብዛት', NULL, NULL, NULL, NULL, 0.00, '2025-03-12 12:05:27', '2025-04-09 12:13:31', 'Q1', NULL, '', 0, '', 0, 'started', NULL, NULL, 'የተገልጋይ ዕይታ'),
-(498, 26, 120, '3.3.6 የኢንኩቤተሮች ዴጋፍና ክትትሌ ጊዜ ብዛት', NULL, NULL, NULL, NULL, 0.00, '2025-03-12 12:05:52', '2025-04-09 12:13:35', 'Q1', NULL, '', 0, '', 0, 'started', NULL, NULL, 'የተገልጋይ ዕይታ'),
-(499, 26, 121, '3.4.1 ለኗሪዎች የተፈጠሩ የገበያ ትስስር መዴረኮች ብዛት ', NULL, NULL, NULL, NULL, 0.00, '2025-03-13 11:40:08', '2025-04-09 12:13:40', 'Q1', NULL, '', 0, '', 0, 'started', NULL, NULL, 'የተገልጋይ ዕይታ'),
-(500, 26, 121, ' 3.4.2 ከኗሪዎች ጋር የተዯረጉ የመግባቢያ ስምምነቶች ብዛት ', NULL, NULL, NULL, NULL, 0.00, '2025-03-13 11:40:28', '2025-04-09 12:13:43', 'Q1', NULL, '', 0, '', 0, 'started', NULL, NULL, 'የተገልጋይ ዕይታ'),
-(501, 26, 121, '3.4.3 ከኗሪዎች ጋር የተዯረጉ የፓርትነርሺፕ ስምምነቶች በዛት ', NULL, NULL, NULL, NULL, 0.00, '2025-03-13 11:40:42', '2025-04-09 12:13:47', 'Q1', NULL, '', 0, '', 0, 'started', NULL, NULL, 'የተገልጋይ ዕይታ'),
-(502, 26, 121, '3.4.4 ኗሪዎችን ከሥራ ፈሊጊዎች ጋር ለማገናኘት የተፈጠረ ሁነት ብዛት (ሇሥራ ዕዴሌ ፈጠራ)', NULL, NULL, NULL, NULL, 0.00, '2025-03-13 11:41:59', '2025-04-09 12:13:52', 'Q1', NULL, '', 0, '', 0, 'started', NULL, NULL, 'የተገልጋይ ዕይታ'),
-(503, 26, 123, '3.5.1 ከዓመቱ 365 ቀናት ውስጥ ለፓርኩ ነዋሪዎች የኢንተርኔት አገሌግልት የተሰጠበት ቀን ብዛት', NULL, NULL, NULL, NULL, 0.00, '2025-03-13 11:43:04', '2025-04-09 12:13:57', 'Q1', NULL, '', 0, '', 0, 'started', NULL, NULL, 'የተገልጋይ ዕይታ'),
-(504, 26, 123, '3.5.2 ከዓመቱ 365 ቀናት ውስጥ በፓርኩ ተግባራዊ የተዯረገ የዯህንነት ካሜራ አገሌግልት በቀን ብዛት', NULL, NULL, NULL, NULL, 0.00, '2025-03-13 11:43:26', '2025-04-09 12:14:02', 'Q1', NULL, '', 0, '', 0, 'started', NULL, NULL, 'የተገልጋይ ዕይታ'),
-(505, 26, 123, '3.5.3 ከዓመቱ 250 የሥራ ቀናት ውስጥ ሇፓርኩ ነዋሪዎች የውሃ አገሌግልት የተሰጠበት ቀን ብዛት', NULL, NULL, NULL, NULL, 0.00, '2025-03-13 11:46:01', '2025-04-09 12:14:06', 'Q1', NULL, '', 0, '', 0, 'started', NULL, NULL, 'የተገልጋይ ዕይታ'),
-(506, 26, 123, '3.5.4 ከዓመቱ 250 የሥራ ቀናት ውስጥ ለፓርኩ ነዋሪዎች የኤላክትሪክ አገሌግልት የተሰጠበት ቀን ብዛት', NULL, NULL, NULL, NULL, 0.00, '2025-03-13 11:46:25', '2025-03-13 11:46:25', 'Q1', NULL, '', 0, '', 0, 'started', NULL, NULL, 'የውስጥ አሰራር ዕይታ'),
-(507, 26, 123, '3.5.5 ከዓመቱ 250 የሥራ ቀናት ውስጥ በፓርኩ ነዋሪዎች ዘንዴ በዋጋና በጥራት ተቀባይነት ያሇው የካፊቴሪያ አገሌግልት የተሰጠበት ቀን ብዛት', NULL, NULL, NULL, NULL, 0.00, '2025-03-13 11:46:48', '2025-04-09 12:14:13', 'Q1', NULL, '', 0, '', 0, 'started', NULL, NULL, 'የተገልጋይ ዕይታ'),
-(508, 26, 123, '3.5.6 ከዓመቱ 250 የሥራ ቀናት ውስጥ ከፓርኩ ነዋሪዎች የተሟሊ የስብሰባ አዲራሽ (30 ሰው የሚይዝ አዲራሽ) አገሌግልት የተሰጠበት ቀን ብዛት', NULL, NULL, NULL, NULL, 0.00, '2025-03-13 11:47:13', '2025-04-09 12:14:18', 'Q1', NULL, '', 0, '', 0, 'started', NULL, NULL, 'የተገልጋይ ዕይታ'),
-(509, 26, 123, '3.5.7 ከዓመቱ 250 የሥራ ቀናት ውስጥ ሇ300 የፓርኩ ነዋሪዎች የትራንስፖርት ሰርቪስ አገሌግልት የተሰጠበት ቀን', NULL, NULL, NULL, NULL, 0.00, '2025-03-13 11:47:30', '2025-04-09 12:14:22', 'Q1', NULL, '', 0, '', 0, 'started', NULL, NULL, 'የተገልጋይ ዕይታ'),
-(510, 26, 123, '3.5.8 ከዓመቱ 250 የሥራ ቀናት ውስጥ ለደንበኞች የአንዴ መስኮት አገሌግልት የተሰጠበት ቀን ብዛት', NULL, NULL, NULL, NULL, 0.00, '2025-03-13 11:47:50', '2025-04-09 12:14:28', 'Q1', NULL, '', 0, '', 0, 'started', NULL, NULL, 'የተገልጋይ ዕይታ'),
-(511, 26, 123, '3.5.9 ከዓመቱ 365 ቀናት ውስጥ ለደንበኞች የአንዴ መስኮት ፖርታሌ አገሌግልት የተሰጠበት ቀን ብዛት', NULL, NULL, NULL, NULL, 0.00, '2025-03-13 11:48:16', '2025-04-09 12:14:32', 'Q1', NULL, '', 0, '', 0, 'started', NULL, NULL, 'የተገልጋይ ዕይታ'),
-(512, 26, 124, '3.6.1 ለፓርኩ የሰው ኃይሌ አቅርቦት (Talent Pool) በመፍጠር ሇነዋሪዎች የቀረበ ብቃት ያሇው የሰው ኃይሌ ብዛት', NULL, NULL, NULL, NULL, 0.00, '2025-03-13 11:49:29', '2025-04-09 12:14:36', 'Q1', NULL, '', 0, '', 0, 'started', NULL, NULL, 'የተገልጋይ ዕይታ'),
-(513, 26, 124, '3.6.2 በተፈጠረው ታለንት ፑሌ ሊይ በመመስረት የተቀጠሩ ሰሌጣኞች ብዛት', NULL, NULL, NULL, NULL, 0.00, '2025-03-13 11:49:53', '2025-04-09 12:14:41', 'Q1', NULL, '', 0, '', 0, 'started', NULL, NULL, 'የተገልጋይ ዕይታ'),
-(514, 26, 122, '4.1.1 የተዘጋጀ መዋቅራዊ ማስተር ፕሊን ጥናት\nሰነዴ\n', NULL, NULL, NULL, NULL, 0.00, '2025-03-13 11:52:37', '2025-04-09 12:16:38', 'Q1', NULL, '', 0, '', 0, 'started', NULL, NULL, 'የውስጥ አሰራር ዕይታ'),
-(515, 26, 122, '4.1.2 የተቀናጀ የመሰረተ ሌማት የዱዛይን እና ተያያዥ ሰነዴ ብዛት በመቶኛ (የዉሃ፣ የፍሳሽ፣ የኤላክትሪክ፣ የመንገዴ እና የቴላኮም) ', NULL, NULL, NULL, NULL, 0.00, '2025-03-13 11:53:03', '2025-04-09 12:16:43', 'Q1', NULL, '', 0, '', 0, 'started', NULL, NULL, 'የውስጥ አሰራር ዕይታ'),
-(516, 26, 122, '4.1.3 የተጠናቀቀ የከርሰ ምዴር ዉሃ ቁፋሮ የዱዛይን እና ተያያዥ ሰነዴ ብዛት በቁጥር', NULL, NULL, NULL, NULL, 0.00, '2025-03-13 11:53:18', '2025-04-09 12:16:48', 'Q1', NULL, '', 0, '', 0, 'started', NULL, NULL, 'የውስጥ አሰራር ዕይታ'),
-(517, 26, 122, '4.1.4 የተጠናቀቀ የዕቃ ማከማቻ መጋዘን እና ወርክ ሾፕ የዱዛይን እና ተያያዥ ሰነዴ ብዛት በቁጥር', NULL, NULL, NULL, NULL, 0.00, '2025-03-13 11:53:29', '2025-04-09 12:16:52', 'Q1', NULL, '', 0, '', 0, 'started', NULL, NULL, 'የውስጥ አሰራር ዕይታ'),
-(518, 26, 122, '4.1.5 የተጠናቀቀ B+G+12 ቅይጥ ህንፃ የዱዛይን እና ተያያዥ ሰነዴ ብዛት በቁጥር', NULL, NULL, NULL, NULL, 0.00, '2025-03-13 11:55:56', '2025-04-09 12:17:55', 'Q1', NULL, '', 0, '', 0, 'started', NULL, NULL, 'የውስጥ አሰራር ዕይታ'),
-(519, 26, 122, '4.1.6 በፓርኩ የፋይበር መስመር ዱዛይን ሊይ የተከነወነ ማሻሻያ በሰነዴ ብዛት', NULL, NULL, NULL, NULL, 0.00, '2025-03-13 11:56:05', '2025-04-09 12:18:01', 'Q1', NULL, '', 0, '', 0, 'started', NULL, NULL, 'የውስጥ አሰራር ዕይታ'),
-(520, 26, 122, '4.1.7 የተጠናቀቀ የኤላክትሪከ ሰብስቴሽን ዱዛይንና ተያያዥ ሰነዴ ብዛት በቁጥር', NULL, NULL, NULL, NULL, 0.00, '2025-03-13 11:56:37', '2025-04-09 12:18:06', 'Q1', NULL, '', 0, '', 0, 'started', NULL, NULL, 'የውስጥ አሰራር ዕይታ'),
-(521, 26, 122, '4.1.8 የተጠናቀቀ የውስጥ ሇውስጥ አገናኝ መንገዴ ዱዛይንና ተያያዥ ሰነዴ ብዛት', NULL, NULL, NULL, NULL, 0.00, '2025-03-13 11:56:48', '2025-03-13 11:56:48', 'Q1', NULL, '', 0, '', 0, 'started', NULL, NULL, 'የውስጥ አሰራር ዕይታ'),
-(522, 26, 125, '4.2.1 የተገነቡ 2 የግቢ መግቢያ እና መዉጫ ዋና በሮች እና ላልች 3 ተጨማሪ በሮች ብዛት', NULL, NULL, NULL, NULL, 0.00, '2025-03-13 12:01:32', '2025-04-09 12:18:13', 'Q1', NULL, '', 0, '', 0, 'started', NULL, NULL, 'የውስጥ አሰራር ዕይታ'),
-(523, 26, 125, '4.2.2 በተመረጡ ቦታዎች የተገነቡ የመኪና ማቆሚያዎች ብዛት (ሇ2 አዲዱስ ቦታዎች እና ሇነባር ህንፃዎች አገሌግልት የሚውለ)', NULL, NULL, NULL, NULL, 0.00, '2025-03-13 12:02:14', '2025-03-13 12:02:14', 'Q1', NULL, '', 0, '', 0, 'started', NULL, NULL, 'የውስጥ አሰራር ዕይታ'),
-(524, 26, 125, '4.2.3 የፓርኩን ዯህንነትና ጥበቃ ሇማጠናከር እና ገጽታ ሇመጨመር የተገነባ አጥር (በኪ. ሜትር)', NULL, NULL, NULL, NULL, 0.00, '2025-03-13 12:02:23', '2025-03-13 12:02:23', 'Q1', NULL, '', 0, '', 0, 'started', NULL, NULL, 'የውስጥ አሰራር ዕይታ'),
-(525, 26, 125, '4.2.4 ግንባታው የተጠናቀቀ የከርሰ ምዴር ዉሃ ጉዴጓዴ ቁፋሮ (የጉዴጓዴ ብዛት በቁጥር)', NULL, NULL, NULL, NULL, 0.00, '2025-03-13 12:02:30', '2025-04-09 12:18:19', 'Q1', NULL, '', 0, '', 0, 'started', NULL, NULL, 'የውስጥ አሰራር ዕይታ'),
-(526, 26, 125, '4.2.5 በ2000 ካሬ ሜትር ቦታ ሊይ የተገነባ የዕቃ ማከማቻ መጋዘን እና ዎርክሾፕ (ብዛት በቁጥር) ', NULL, NULL, NULL, NULL, 0.00, '2025-03-13 12:02:47', '2025-04-09 12:18:25', 'Q1', NULL, '', 0, '', 0, 'started', NULL, NULL, 'የውስጥ አሰራር ዕይታ'),
-(527, 26, 125, '4.2.6 የተገነባ የኤላክትሪክ ሀይሌ ሰብስቴሽን (በሜ.ጋ ዋት) ', NULL, NULL, NULL, NULL, 0.00, '2025-03-13 12:03:02', '2025-04-09 12:18:29', 'Q1', NULL, '', 0, '', 0, 'started', NULL, NULL, 'የውስጥ አሰራር ዕይታ'),
-(528, 26, 125, '4.2.7 ለፌዴራል ፖሉስ መገሌገያ የተገነባ ካምፕ (በቁጥር)', NULL, NULL, NULL, NULL, 0.00, '2025-03-13 12:03:36', '2025-04-09 12:18:34', 'Q1', NULL, '', 0, '', 0, 'started', NULL, NULL, 'የውስጥ አሰራር ዕይታ'),
-(529, 26, 125, '4.2.8 የተገነባ ላንዴ ስኬፕ (ብዛት በቁጥር)', NULL, NULL, NULL, NULL, 0.00, '2025-03-13 12:03:59', '2025-04-09 12:18:38', 'Q1', NULL, '', 0, '', 0, 'started', NULL, NULL, 'የውስጥ አሰራር ዕይታ'),
-(530, 26, 125, '4.2.9 የተገነባ የውስጥ የውስጥ አገናኝ መንገዴ በኪ.ሜ. ', NULL, NULL, NULL, NULL, 0.00, '2025-03-13 12:04:19', '2025-04-09 12:18:43', 'Q1', NULL, '', 0, '', 0, 'started', NULL, NULL, 'የውስጥ አሰራር ዕይታ'),
-(531, 26, 125, '4.2.10 ለጥበቃ መገሌገያ የተገነባ የጥበቃ ማማ ብዛት በቁጥር', NULL, NULL, NULL, NULL, 0.00, '2025-03-13 12:05:02', '2025-03-13 12:05:02', 'Q1', NULL, '', 0, '', 0, 'started', NULL, NULL, 'የውስጥ አሰራር ዕይታ'),
-(532, 26, 125, '4.2.11 በፓርኩ የተገነባ የቪሳት ሲስተም ብዛት', NULL, NULL, NULL, NULL, 0.00, '2025-03-13 12:05:15', '2025-04-09 12:18:48', 'Q1', NULL, '', 0, '', 0, 'started', NULL, NULL, 'የውስጥ አሰራር ዕይታ'),
-(533, 26, 125, '4.2.12 በፓርኩ የተዘረጉ የዯህንነት ካሜራዎች ብዛት ', NULL, NULL, NULL, NULL, 0.00, '2025-03-13 12:05:31', '2025-04-09 12:18:51', 'Q1', NULL, '', 0, '', 0, 'started', NULL, NULL, 'የውስጥ አሰራር ዕይታ'),
-(534, 26, 125, '4.2.13 አዱስ የኤላክትሪክ ሀይሌ ያገኘ ህንጻ ብዛት ', NULL, NULL, NULL, NULL, 0.00, '2025-03-13 12:05:46', '2025-04-09 12:18:55', 'Q1', NULL, '', 0, '', 0, 'started', NULL, NULL, 'የውስጥ አሰራር ዕይታ'),
-(535, 26, 125, '4.2.14 አዱስ የውሀ መስመር ያገኘ ህንጻ ብዛት', NULL, NULL, NULL, NULL, 0.00, '2025-03-13 12:05:59', '2025-04-09 12:18:59', 'Q1', NULL, '', 0, '', 0, 'started', NULL, NULL, 'የውስጥ አሰራር ዕይታ'),
-(536, 26, 126, '4.3.1 የታዯሰ ህንጻ ብዛት', NULL, NULL, NULL, NULL, 0.00, '2025-03-13 12:12:21', '2025-04-09 12:19:05', 'Q1', NULL, '', 0, '', 0, 'started', NULL, NULL, 'የውስጥ አሰራር ዕይታ'),
-(537, 26, 126, '4.3.2 የህንጻ አገሌግልት መሰረተ-ሌማትና መሰረታዊ ስትራክቸር እዴሳትና ጥገና የተዯረገሇት ህንጻ ብዛት', NULL, NULL, NULL, NULL, 0.00, '2025-03-13 12:12:37', '2025-04-09 12:19:08', 'Q1', NULL, '', 0, '', 0, 'started', NULL, NULL, 'የውስጥ አሰራር ዕይታ'),
-(538, 26, 126, '4.3.3 ከ15/.4 ወደ 33/.4 ኪሎ ቮልት የተለወጠ ትራንስፎርመር ብዛት ', NULL, NULL, NULL, NULL, 0.00, '2025-03-13 12:13:30', '2025-04-09 12:19:13', 'Q1', NULL, '', 0, '', 0, 'started', NULL, NULL, 'የውስጥ አሰራር ዕይታ'),
-(539, 26, 126, '4.3.4 ዕዴሳት የተደረገለት ካፊቴሪያ ስፋት በካሬ ሜትር ', NULL, NULL, NULL, NULL, 0.00, '2025-03-13 12:13:58', '2025-03-13 12:13:58', 'Q1', NULL, '', 0, '', 0, 'started', NULL, NULL, 'የውስጥ አሰራር ዕይታ'),
-(540, 26, 126, '4.3.5 ዕዴሳት የተደረገለት ፓምፕ ቤት ስፋት በካሬ ሜትር', NULL, NULL, NULL, NULL, 0.00, '2025-03-13 12:14:25', '2025-03-13 12:14:25', 'Q1', NULL, '', 0, '', 0, 'started', NULL, NULL, 'የውስጥ አሰራር ዕይታ'),
-(541, 26, 126, '4.3.6 እዴሳት የተደረገለት ሊንዴስኬፕ ብዛት', NULL, NULL, NULL, NULL, 0.00, '2025-03-13 12:14:43', '2025-04-09 12:19:19', 'Q1', NULL, '', 0, '', 0, 'started', NULL, NULL, 'የውስጥ አሰራር ዕይታ'),
-(542, 26, 126, '4.3.7 ጥገና የተደረገለት የመንገዴ መብራት ብዛት', NULL, NULL, NULL, NULL, 0.00, '2025-03-13 12:15:12', '2025-04-09 12:19:24', 'Q1', NULL, '', 0, '', 0, 'started', NULL, NULL, 'የውስጥ አሰራር ዕይታ'),
-(543, 26, 126, '4.3.8 በፓርኩ ህንፃዎች በሚኝ Public WiFi ሊይ የተከናወነ ጥገና', NULL, NULL, NULL, NULL, 0.00, '2025-03-13 12:15:23', '2025-04-09 12:19:28', 'Q1', NULL, '', 0, '', 0, 'started', NULL, NULL, 'የውስጥ አሰራር ዕይታ'),
-(544, 26, 126, '4.3.9 እዴሳት የተደረገለት የዯህንነት ካሜራ ብዛት ', NULL, NULL, NULL, NULL, 0.00, '2025-03-13 12:15:41', '2025-04-09 12:19:32', 'Q1', NULL, '', 0, '', 0, 'started', NULL, NULL, 'የውስጥ አሰራር ዕይታ'),
-(545, 26, 126, '4.3.10 እዴሳት የተደረገለት የአንዴ መስኮት አገሌግልት ዱጂታሌ ሲስተም ብዛት ', NULL, NULL, NULL, NULL, 0.00, '2025-03-13 12:16:08', '2025-03-13 12:16:08', 'Q1', NULL, '', 0, '', 0, 'started', NULL, NULL, 'የውስጥ አሰራር ዕይታ'),
-(546, 26, 126, '4.3.11 እዴሳት የተደረገለት የጋራ መገሌገያ አዲራሽ ስፋት በካሬ ሜትር', NULL, NULL, NULL, NULL, 0.00, '2025-03-13 12:16:33', '2025-04-09 12:19:37', 'Q1', NULL, '', 0, '', 0, 'started', NULL, NULL, 'የውስጥ አሰራር ዕይታ'),
-(547, 26, 127, '4.4.1 የተከናወነ የአረንጓዳ ሌማት ሽፋን በሺህ ካ/ሜ', NULL, NULL, NULL, NULL, 0.00, '2025-03-13 12:18:05', '2025-03-13 12:18:05', 'Q1', NULL, '', 0, '', 0, 'started', NULL, NULL, 'የውስጥ አሰራር ዕይታ'),
-(548, 26, 127, '4.4.2 እንክብካቤ የተዯረገሇት የአረንጓዳ ሌማት ሽፋን በሺህ ካ/ሜ', NULL, NULL, NULL, NULL, 0.00, '2025-03-13 12:18:20', '2025-04-09 12:19:42', 'Q1', NULL, '', 0, '', 0, 'started', NULL, NULL, 'የውስጥ አሰራር ዕይታ'),
-(549, 26, 127, '4.4.3 በዓመት አራት ጊዜ በፓርኩ በሚገኙ ዴርጅቶች ሊይ የተካሄዯ የአከባቢ ብክሇት ቁጥጥርና ክትትሌ ', NULL, NULL, NULL, NULL, 0.00, '2025-03-13 12:18:30', '2025-04-09 12:19:45', 'Q1', NULL, '', 0, '', 0, 'started', NULL, NULL, 'የውስጥ አሰራር ዕይታ'),
-(550, 26, 128, '5.1.1 የፓርኩ አደረጃጀት ጥልቀት ባለው ጥናት እስከሚዘጋጅ ዴረስ ስራውን መሸከም በሚችሌ ሁኔታ ተዘጋጅቶ የጸዯቀ ጊዜያዊ አዯረጃጀት ሰነዴ', NULL, NULL, NULL, NULL, 0.00, '2025-03-13 12:20:50', '2025-03-13 12:20:50', 'Q1', NULL, '', 0, '', 0, 'started', NULL, NULL, 'የውስጥ አሰራር ዕይታ'),
-(551, 26, 128, '5.1.2 ጊዜያዊ አደረጃጀትን በመከተሌ በሌዩ ሌዩ ዘዳ የተሟሊ ጠቅሊሊ የሰራተኛ ብዛት ', NULL, NULL, NULL, NULL, 0.00, '2025-03-13 12:21:11', '2025-04-09 12:20:12', 'Q1', NULL, '', 0, '', 0, 'started', NULL, NULL, 'የውስጥ አሰራር ዕይታ'),
-(552, 26, 128, '5.1.3 በኮርፖሬሽኑ እና በሠራተኞች ስራ አፈጻጸም ውጤት መካከሌ ያሇውን ክፍተት በዲሰሳ ጥናት በመሇየት የተሰጠ የአቅም ግንባታ ስሌጠና ብዛት ', NULL, NULL, NULL, NULL, 0.00, '2025-03-13 12:21:27', '2025-04-09 12:23:23', 'Q1', NULL, '', 0, '', 0, 'started', NULL, NULL, 'የመማማርና ዕድገት ዕይታ'),
-(553, 26, 128, '5.1.4 የመካከልለኛና የረጅም ጊዜ ስሌጠና የተሰጣቸው የኮርፖሬሽኑ ሠራተኞች ብዛት (ሇ3 ሠራተኞች የመካከሇኛ ጊዜ፣ ሇ5 ሠራተኞች የአጭር ጊዜ እና ሇ2 ሠራተኞች የረጅም ጊዜ)', NULL, NULL, NULL, NULL, 0.00, '2025-03-13 12:21:50', '2025-04-09 12:23:29', 'Q1', NULL, '', 0, '', 0, 'started', NULL, NULL, 'የመማማርና ዕድገት ዕይታ'),
-(554, 26, 128, '5.1.5 በተመሳሳይ የስራ ባህሪያቸው በተመረጡ ዓሇም አቀፍ ተወዲዲሪ ፓርኮች ጋር በ2 ዙር የሌምዴ ሌውውጥ (ምርጥ ተሞክሮ) የወሰደ የኮርፖሬሽኑ ሠራተኞች ብዛት', NULL, NULL, NULL, NULL, 0.00, '2025-03-13 12:22:06', '2025-03-13 12:22:06', 'Q1', NULL, '', 0, '', 0, 'started', NULL, NULL, ''),
-(555, 26, 128, '5.1.6 ከተለያዩ የሌማት አጋሮች ጋር በመተባር የሥራ ሊይ ሌምምዴ በማዴረግ አቅማቸውን አጎሌብተው እየሰሩ በሚገኙባቸው ዴርጅቶች ውስጥ ባለበት እንዱቆዩ የተዯረጉ ወይም ሥራ ፈጣሪ የሆኑ ሰዎች ብዛት', NULL, NULL, NULL, NULL, 0.00, '2025-03-13 12:22:22', '2025-04-09 12:23:54', 'Q1', NULL, '', 0, '', 0, 'started', NULL, NULL, 'የመማማርና ዕድገት ዕይታ'),
-(556, 26, 128, '5.1.7 የISO ስታንዲርዴ በፓርኩ ሊይ ተግባራዊ ሇማዴረግ የተዘጋጀ የቅዴመ ዝግጅት ሰነዴ', NULL, NULL, NULL, NULL, 0.00, '2025-03-13 12:22:38', '2025-04-09 12:23:58', 'Q1', NULL, '', 0, '', 0, 'started', NULL, NULL, 'የመማማርና ዕድገት ዕይታ'),
-(557, 26, 128, '5.1.8 ለፓርኩ የተሰጠ ISO ስታንዲርዴ የምስክር ወረቀት ብዛት በቁጥር', NULL, NULL, NULL, NULL, 0.00, '2025-03-13 12:23:00', '2025-04-09 12:24:07', 'Q1', NULL, '', 0, '', 0, 'started', NULL, NULL, 'የመማማርና ዕድገት ዕይታ'),
-(558, 26, 129, '5.2.1 በንዑስ ሉዝ መሬት ከወሰደ ካምፓኒዎች የተሰበሰበ ገቢ (የተፈጸመ የሉዝ ክፍያ) በሺህ ብር', NULL, NULL, NULL, NULL, 0.00, '2025-03-13 12:25:06', '2025-04-09 12:27:41', 'Q1', NULL, '', 0, '', 0, 'started', NULL, NULL, 'የፋይናንስ ዕይታ'),
-(559, 26, 129, '5.2.2 በንዑስ ሉዝ መሬት ከወሰደ ካምፓኒዎች በድሊር የተሰበሰበ ገቢ (የተፈጸመ የሉዝ ክፍያ) በሺህ ድሊር', NULL, NULL, NULL, NULL, 0.00, '2025-03-13 12:25:21', '2025-04-09 12:27:45', 'Q1', NULL, '', 0, '', 0, 'started', NULL, NULL, 'የፋይናንስ ዕይታ'),
-(560, 26, 129, '5.2.3 የህንጻ ኪራይ ከወሰደ ካምፓኒዎች በብር የተሰበሰበ ገቢ (የተፈጸመ የኪራይ ክፍያ) በሺህ ብር', NULL, NULL, NULL, NULL, 0.00, '2025-03-13 12:25:28', '2025-03-13 12:25:28', 'Q1', NULL, '', 0, '', 0, 'started', NULL, NULL, 'የፋይናንስ ዕይታ'),
-(561, 26, 129, '5.2.4 የህንጻ ኪራይ ከወሰደ ካምፓኒዎች በድሊር የተሰበሰበ ገቢ (የተፈጸመ የኪራይ ክፍያ) በሺህ ድሊር', NULL, NULL, NULL, NULL, 0.00, '2025-03-13 12:25:37', '2025-04-09 12:27:53', 'Q1', NULL, '', 0, '', 0, 'started', NULL, NULL, 'የፋይናንስ ዕይታ'),
-(562, 26, 129, '5.2.5 በዕቅድ እየተመራ ሥራ ሊይ የዋለ መበኛ በጀት በሚ ብር ', NULL, NULL, NULL, NULL, 0.00, '2025-03-13 12:25:45', '2025-04-09 14:03:07', 'Q1', NULL, '', 0, '', 0, 'started', NULL, NULL, 'የፋይናንስ ዕይታ'),
-(563, 26, 129, '5.2.6 በዕቅድ እየተመራ ሥራ ሊይ የዋለ ካፒታሌ በጀት በሚ ብር', NULL, NULL, NULL, NULL, 0.00, '2025-03-13 12:25:59', '2025-04-09 14:02:03', 'Q1', NULL, '', 0, '', 0, 'started', NULL, NULL, 'የፋይናንስ ዕይታ'),
-(564, 26, 129, '5.2.7 ከሌሎች የገቢ ምንጮች የተሰበሰበ ገቢ በሺህ ብር ', NULL, NULL, NULL, NULL, 0.00, '2025-03-13 12:26:07', '2025-04-09 14:01:43', 'Q1', NULL, '', 0, '', 0, 'started', NULL, NULL, 'የፋይናንስ ዕይታ'),
-(565, 26, 129, '5.2.8 በግዥ ፍላጎት ላይ በመመስረተ የተዘጋጀ ዕቅድን ተከትል የተፈጸመ የጨረታ ግዥ በጊዜ ድግግሞሽ ብዛት', NULL, NULL, NULL, NULL, 0.00, '2025-03-13 12:26:16', '2025-04-09 14:01:14', 'Q1', NULL, '', 0, '', 0, 'started', NULL, NULL, 'የፋይናንስ ዕይታ'),
-(566, 26, 130, '5.3.1 የኮርፖሬሽኑ በጀት በአግባቡ ጥቅም ሊይ ስለመዋሉ የተረጋገጠበት የውስጥ ኦዱት ሰነድ', NULL, NULL, NULL, NULL, 0.00, '2025-03-13 12:28:05', '2025-04-09 14:00:13', 'Q1', NULL, '', 0, '', 0, 'started', NULL, NULL, 'የውስጥ አሰራር ዕይታ'),
-(567, 26, 130, '5.3.2 የኮርፖሬሽኑ ዕቃ/አገሌግልት ግዥ በአግባቡ ሰለመካሄዱ የተረጋገጠበት የውስጥ ኦዱት ሰነድ', NULL, NULL, NULL, NULL, 0.00, '2025-03-13 12:28:14', '2025-04-09 13:59:44', 'Q1', NULL, '', 0, '', 0, 'started', NULL, NULL, 'የውስጥ አሰራር ዕይታ'),
-(568, 26, 130, '5.3.3 የኮርፖሬሽኑ ንብረትና የተሸከርካሪ አያያዝና አጠቃቀም በአግባቡ ስአለመፈጸሙ የተረጋገጠበት የውስጥ ኦዱት ሰነድ', NULL, NULL, NULL, NULL, 0.00, '2025-03-13 12:28:24', '2025-04-09 13:59:05', 'Q1', NULL, '', 0, '', 0, 'started', NULL, NULL, 'የውስጥ አሰራር ዕይታ'),
-(569, 26, 131, '5.4.1 የተከናወነ የንብረት ቆጠራና ምዝገባ የተከናወነበት የጊዜ ድግግሞሽ ብዛት', NULL, NULL, NULL, NULL, 0.00, '2025-03-13 12:29:49', '2025-04-09 13:55:44', 'Q1', NULL, '', 0, '', 0, 'started', NULL, NULL, 'የውስጥ አሰራር ዕይታ'),
-(570, 26, 131, '5.4.2 የሚወገዱ ንብረቶች ተለይተው ለውሳኔ የቀረቡበት ሰነድ', NULL, NULL, NULL, NULL, 0.00, '2025-03-13 12:30:02', '2025-04-09 13:53:06', 'Q1', NULL, '', 0, '', 0, 'started', NULL, NULL, 'የውስጥ አሰራር ዕይታ'),
-(571, 26, 131, '5.4.3 የኮርፖሬሽኑ ሥራ የዋለ የትራንስፖርት አገልግሎት በተሸከርካሪ ብዛት', NULL, NULL, NULL, NULL, 0.00, '2025-03-13 12:30:40', '2025-04-09 13:51:19', 'Q1', NULL, '', 0, '', 0, 'started', NULL, NULL, 'የውስጥ አሰራር ዕይታ'),
-(572, 26, 132, '5.5.1 በኮርፖሬሽኑ የተዘረጋ የኮርፖሬት ኢንተርፕራይዝ ሪሶርስ ፕሊኒንግ (ERP) ሥርዓት', NULL, NULL, NULL, NULL, 0.00, '2025-03-13 12:32:02', '2025-04-09 13:30:14', 'Q1', NULL, '', 0, '', 0, 'started', NULL, NULL, 'የውስጥ አሰራር ዕይታ'),
-(573, 26, 132, '5.5.2 የተተገበረ የኢንተርፕራይዝ ኢሜይሌ ሥርዓት ብዛት', NULL, NULL, NULL, NULL, 0.00, '2025-03-13 12:32:10', '2025-04-09 13:32:02', 'Q1', NULL, '', 0, '', 0, 'started', NULL, NULL, 'የውስጥ አሰራር ዕይታ'),
-(574, 26, 132, '5.5.3 የIT ዘርፉን ታሳቢ በማድረግ ከሚመለከተው አካል ጋር በመተባበር የተከፈተ አንድ ዲጂታል ሊይብረሪ', NULL, NULL, NULL, NULL, 0.00, '2025-03-13 12:32:19', '2025-04-09 13:49:41', 'Q1', NULL, '', 0, '', 0, 'started', NULL, NULL, 'የውስጥ አሰራር ዕይታ'),
-(575, 26, 133, ' 5.6.1 የተከናወነ ሀገር አቀፍ የኢኖቬሽን ውድድር (Innovation challenge) ብዛት', NULL, NULL, NULL, NULL, 0.00, '2025-03-13 12:33:48', '2025-04-09 13:48:45', 'Q1', NULL, '', 0, '', 0, 'started', NULL, NULL, 'የውስጥ አሰራር ዕይታ'),
-(576, 26, 133, '5.6.2 ፓርኩን ለማስተዋወቅ ሥራ ሊይ የዋለ የማስታወቂያ ዘዳዎች ብዛት', NULL, NULL, NULL, NULL, 0.00, '2025-03-13 12:34:13', '2025-03-13 12:34:13', 'Q1', NULL, '', 0, '', 0, 'started', NULL, NULL, 'የውስጥ አሰራር ዕይታ'),
-(577, 26, 134, '5.7.1 በህግ ጉዲዮች ሊይ የተሰጠ የማማከር አገሌግልት ብዛት ', NULL, NULL, NULL, NULL, 0.00, '2025-03-13 12:37:51', '2025-04-09 13:32:15', 'Q1', NULL, '', 0, '', 0, 'started', NULL, NULL, 'የውስጥ አሰራር ዕይታ'),
-(578, 26, 134, '5.7.2 የተተገበሩ የኮርፖሬሽኑ ጥቅም ማስጠበቂያ ኬዞች ብዛት ', NULL, NULL, NULL, NULL, 0.00, '2025-03-13 12:37:56', '2025-03-13 12:37:56', 'Q1', NULL, '', 0, '', 0, 'started', NULL, NULL, 'የውስጥ አሰራር ዕይታ'),
-(579, 26, 134, '5.7.3 አዲስ የተፈጸመ የመሬት ንዑስ ሊዝ ውል በሰነድ ብዛት ', NULL, NULL, NULL, NULL, 0.00, '2025-03-13 12:38:03', '2025-04-09 13:47:09', 'Q1', NULL, '', 0, '', 0, 'started', NULL, NULL, 'የውስጥ አሰራር ዕይታ'),
-(580, 26, 134, '5.7.4 የመሬት ንዑስ ሊዝ ከወሰደ ድርጅቶች ጋር በጥበቃና መሰል ጉዳዮች ላይ የተፈጸመ አዲስ ውል በሰነዴ ብዛት', NULL, NULL, NULL, NULL, 0.00, '2025-03-13 12:38:15', '2025-04-09 13:46:44', 'Q1', NULL, '', 0, '', 0, 'started', NULL, NULL, 'የውስጥ አሰራር ዕይታ'),
-(581, 26, 134, '5.7.5 አዲስ የተዘጋጁ የህንጻ ኪራይ ውል በውሌ ሰነድ ብዛት ', NULL, NULL, NULL, NULL, 0.00, '2025-03-13 12:38:23', '2025-04-09 13:47:23', 'Q1', NULL, '', 0, '', 0, 'started', NULL, NULL, 'የውስጥ አሰራር ዕይታ'),
-(582, 26, 134, '5.7.6 የአፈጻጸም ክትትል የተደረገባቸው ሌዩ ሌዩ ውልች በውል ሰነድ ብዛት', NULL, NULL, NULL, NULL, 0.00, '2025-03-13 12:38:36', '2025-04-09 13:47:16', 'Q1', NULL, '', 0, '', 0, 'started', NULL, NULL, 'የውስጥ አሰራር ዕይታ'),
-(583, 26, 134, '5.7.8 የፓርኩን ጸጥታና ደህንነት የማጠናከር የተዘጋጁ መድረኮች/ስምምነቶች ብዛት', NULL, NULL, NULL, NULL, 0.00, '2025-03-13 12:38:45', '2025-04-09 13:45:27', 'Q1', NULL, '', 0, '', 0, 'started', NULL, NULL, 'የውስጥ አሰራር ዕይታ'),
-(584, 26, 135, ' 5.8.1 የተዘጋጁ ሌዩ ሌዩ ማንዋልች ብዛት (ከዲዛይንና ግንባታ ፈቃዴ፣ ከባለሀብቶች ህንጻ አጠቃቀም እና ከኪራይ ቢሮ አጠቃቀም ጋር የተያያዘ)', NULL, NULL, NULL, NULL, 0.00, '2025-03-13 12:40:38', '2025-04-09 13:45:01', 'Q1', NULL, '', 0, '', 0, 'started', NULL, NULL, 'የውስጥ አሰራር ዕይታ'),
-(585, 26, 135, '5.8.2 ተሻሽለው የጸደቁ ሰራተኛና አሰሪን የሚመሇከቱ የተሇያዩ መመሪያዎች ብዛት (የሥራ መሪዎች መተዲደሪያ ደንብ፤ የሰራተኞች አስተዲደር፤ የጤናና ጥቅማ ጥቅሞች እንዱሁም የትምህርትና ስሌጠና መመሪያ)', NULL, NULL, NULL, NULL, 0.00, '2025-03-13 12:40:45', '2025-04-09 13:44:29', 'Q1', NULL, '', 0, '', 0, 'started', NULL, NULL, 'የውስጥ አሰራር ዕይታ'),
-(586, 26, 136, '5.9.1 ከትምህርት ተቋማት ጋር የተደረገ ስምምነት ብዛት', NULL, NULL, NULL, NULL, 0.00, '2025-03-13 12:43:44', '2025-04-09 13:43:16', 'Q1', NULL, '', 0, '', 0, 'started', NULL, NULL, 'የተገልጋይ ዕይታ'),
-(587, 26, 136, '5.9.2 በአይሲቲ ዘርፍ ከተደራጁ ማህበራት ጋር የተደረገ ስምምነት ብዛት', NULL, NULL, NULL, NULL, 0.00, '2025-03-13 12:43:51', '2025-04-09 13:42:55', 'Q1', NULL, '', 0, '', 0, 'started', NULL, NULL, 'የተገልጋይ ዕይታ'),
-(588, 26, 136, '5.9.3 ከልማት አጋሮች ጋር የተደረገ ስምምነት ብዛት', NULL, NULL, NULL, NULL, 0.00, '2025-03-13 12:43:57', '2025-04-09 13:42:37', 'Q1', NULL, '', 0, '', 0, 'started', NULL, NULL, 'የተገልጋይ ዕይታ'),
-(589, 26, 136, '5.9.4 ከአገልግሎት ሰጪ ድርጅቶች ጋር የተዯረገ ስምምነት ብዛት ', NULL, NULL, NULL, NULL, 0.00, '2025-03-13 12:44:04', '2025-04-09 13:42:22', 'Q1', NULL, '', 0, '', 0, 'started', NULL, NULL, 'የተገልጋይ ዕይታ'),
-(590, 26, 136, '5.9.5 ከአለም አቀፍ ድርጅቶችና ማህበራት ጋር የተፈጠረ ትብብር ብዛት ', NULL, NULL, NULL, NULL, 0.00, '2025-03-13 12:44:35', '2025-04-09 13:41:58', 'Q1', NULL, '', 0, '', 0, 'started', NULL, NULL, 'የተገልጋይ ዕይታ'),
-(591, 26, 136, '5.9.6 የተፈጠረ ስትራተጂያዊ ሽርክና/ ፓርትነርሽፕ ብዛት ', NULL, NULL, NULL, NULL, 0.00, '2025-03-13 12:44:51', '2025-04-09 13:33:58', 'Q1', NULL, '', 0, '', 0, 'started', NULL, NULL, 'የተገልጋይ ዕይታ'),
-(592, 26, 137, '5.10.1 በጥናት የተለዩ የቢዝነስ እድሎች ብዛት', NULL, NULL, NULL, NULL, 0.00, '2025-03-13 12:46:24', '2025-04-09 13:41:38', 'Q1', NULL, '', 0, '', 0, 'started', NULL, NULL, 'የፋይናንስ ዕይታ'),
-(593, 26, 137, '5.10.2 ከተባባሪዎች ጋር የሇሙ የቢዝነስ እዴሎች ብዛት', NULL, NULL, NULL, NULL, 0.00, '2025-03-13 12:46:32', '2025-04-09 13:39:47', 'Q1', NULL, '', 0, '', 0, 'started', NULL, NULL, 'የፋይናንስ ዕይታ'),
-(594, 26, 137, '5.10.3 ከፓርኩ ንዋሪዎች ጋር የተተገበሩ የገቢ ስራዎቸ ብዛት', NULL, NULL, NULL, NULL, 0.00, '2025-03-13 12:46:41', '2025-03-13 12:46:41', 'Q1', NULL, '', 0, '', 0, 'started', NULL, NULL, 'የፋይናንስ ዕይታ'),
-(595, 26, 137, '5.10.4 ከፓርኩ ንዋሪዎች ጋር በትብብር በመስራት የተገኘ ገቢ በሺህ ብር', NULL, NULL, NULL, NULL, 0.00, '2025-03-13 12:46:49', '2025-04-09 13:35:21', 'Q1', NULL, '', 0, '', 0, 'started', NULL, NULL, 'የፋይናንስ ዕይታ'),
-(596, 26, 137, '5.10.5 ለነዋሪዎች የሚቀርቡ አገልግሎቶችን ዋጋ ለመተመን የተደረገ ጥናት ብዛት', NULL, NULL, NULL, NULL, 0.00, '2025-03-13 12:47:14', '2025-04-09 13:39:21', 'Q1', NULL, '', 0, '', 0, 'started', NULL, NULL, 'የፋይናንስ ዕይታ'),
-(597, 26, 137, '5.10.6 ለነዋሪዎች በክፍያ ከሚቀርቡ አገሌግልቶች የተገኘ ገቢ በሺህ ብር', NULL, NULL, NULL, NULL, 0.00, '2025-03-13 12:47:33', '2025-04-09 13:35:29', 'Q1', NULL, '', 0, '', 0, 'started', NULL, NULL, 'የፋይናንስ ዕይታ'),
-(598, 26, 138, '5.11.1 የተዘጋጁ የገንዘብ ማፈላለጊያ \nፕሮፖዛልች ብዛት ', NULL, NULL, NULL, NULL, 0.00, '2025-03-13 12:49:21', '2025-04-09 13:38:57', 'Q1', NULL, '', 0, '', 0, 'started', NULL, NULL, 'የፋይናንስ ዕይታ'),
-(599, 26, 138, '5.11.2 የተተገበሩ የገቢ ማስገኛ ፕሮጅክቶች ብዛት', NULL, NULL, NULL, NULL, 0.00, '2025-03-13 12:49:28', '2025-04-09 13:35:38', 'Q1', NULL, '', 0, '', 0, 'started', NULL, NULL, 'የፋይናንስ ዕይታ'),
-(600, 26, 138, '5.11.3 ከለጋሽ/ተባባሪ አካሊት የተገኘ ዴጋፍ \nበሺህ ብር ', NULL, NULL, NULL, NULL, 0.00, '2025-03-13 12:49:38', '2025-04-09 13:37:41', 'Q1', NULL, '', 0, '', 0, 'started', NULL, NULL, 'የፋይናንስ ዕይታ'),
-(602, 40, 139, 'test spesific detail ', NULL, NULL, NULL, NULL, 0.00, '2025-12-11 07:42:44', '2025-12-11 07:42:44', 'Q1', NULL, 'አስፈላጊ', 2, 'test spesific detail ', 1, 'started', NULL, NULL, 'የፋይናንስ ዕይታ'),
-(603, 40, 140, 'specific objective detail test 2', NULL, NULL, NULL, NULL, 0.00, '2025-12-11 08:31:01', '2025-12-11 08:31:01', 'Q1', NULL, 'አስፈላጊ', 2, 'specific objective detail test 2', 1, 'started', NULL, NULL, 'የተገልጋይ ዕይታ'),
-(604, 40, 141, 'my test', NULL, NULL, NULL, NULL, 0.00, '2026-03-10 08:03:20', '2026-03-10 08:03:20', 'Q1', NULL, 'አስፈላጊ', 2, 'my test', 1, 'started', NULL, NULL, 'የመማማርና ዕድገት ዕይታ');
+INSERT INTO `specific_objectives` (`specific_objective_id`, `user_id`, `objective_id`, `specific_objective_name`, `details`, `baseline`, `plan`, `measurement`, `execution_percentage`, `created_at`, `updated_at`, `deadline_quarter`, `deadline`, `priority`, `department_id`, `name`, `count`, `progress`, `income_id`, `cost_id`, `view`, `org_node_ids`, `supportive_org_node_ids`, `weight`, `plan_type`) VALUES
+(734, 40, 270, 'test kepi 4', NULL, NULL, NULL, NULL, 0.00, '2026-08-07 17:18:43', '2026-08-07 17:18:43', 'Q1', NULL, 'አስፈላጊ', 32, 'test kepi 4', 1, 'started', NULL, NULL, 'የውስጥ አሰራር ዕይታ', '[\"32\",\"11\",\"14\",\"17\",\"56\",\"55\",\"54\"]', NULL, 3.00, 'job_creation'),
+(735, 40, 271, 'ERP', NULL, NULL, NULL, NULL, 0.00, '2026-08-08 07:29:04', '2026-08-08 07:29:04', 'Q1', NULL, 'አስፈላጊ', 14, 'ERP', 1, 'started', NULL, NULL, 'የውስጥ አሰራር ዕይታ', '[\"14\"]', NULL, 4.00, 'project'),
+(736, 40, 270, 'Income plan KPI', NULL, NULL, NULL, NULL, 0.00, '2026-08-09 06:21:27', '2026-08-11 07:28:35', 'Q1', NULL, 'አስፈላጊ', 11, 'Income plan KPI', 1, 'started', NULL, NULL, 'የፋይናንስ ዕይታ', '[\"11\"]', NULL, 1.00, 'income'),
+(737, 40, 272, 'income KPI', NULL, NULL, NULL, NULL, 100.00, '2026-08-09 19:07:12', '2026-08-09 19:20:54', 'Q1', NULL, 'አስፈላጊ', 11, 'income KPI', 1, 'started', NULL, NULL, 'የፋይናንስ ዕይታ', '[\"11\"]', NULL, 1.00, 'income'),
+(738, 40, 273, 'test kpi 4', NULL, NULL, NULL, NULL, 49.98, '2026-08-10 07:14:05', '2026-08-10 07:27:02', 'Q1', NULL, 'አስፈላጊ', 11, 'test kpi 4', 1, 'started', NULL, NULL, 'የፋይናንስ ዕይታ', '[\"11\",\"32\"]', NULL, 1.00, 'cost'),
+(739, 40, 273, 'የግዢ እቅድ', NULL, NULL, NULL, NULL, 70.00, '2026-08-10 12:47:16', '2026-08-10 13:21:40', 'Q1', NULL, 'አስፈላጊ', 11, 'የግዢ እቅድ', 1, 'started', NULL, NULL, 'የፋይናንስ ዕይታ', '[\"11\"]', NULL, 0.50, 'purchase'),
+(740, 40, 274, 'Local Investment', NULL, NULL, NULL, NULL, 20.00, '2026-08-10 17:21:26', '2026-08-10 18:21:43', 'Q1', NULL, 'አስፈላጊ', 11, 'Local Investment', 1, 'started', NULL, NULL, 'የፋይናንስ ዕይታ', '[\"11\"]', NULL, 2.00, '_________________'),
+(741, 40, 270, 'FDI', NULL, NULL, NULL, NULL, 50.00, '2026-08-11 07:30:07', '2026-08-12 07:42:01', 'Q1', NULL, 'አስፈላጊ', 11, 'FDI', 1, 'started', NULL, NULL, 'የፋይናንስ ዕይታ', '[\"11\"]', '[\"32\"]', 0.50, '____'),
+(742, 40, 275, 'KPI አስተማማኝ የፋሲሊቲ ኦፕሬሽንስ እና የአገልግሎት አቅርቦትን ማረጋገጥ', NULL, NULL, NULL, NULL, 25.84, '2026-08-11 18:45:33', '2026-08-15 16:53:35', 'Q1', NULL, 'አስፈላጊ', 11, 'KPI አስተማማኝ የፋሲሊቲ ኦፕሬሽንስ እና የአገልግሎት አቅርቦትን ማረጋገጥ', 1, 'started', NULL, NULL, 'የፋይናንስ ዕይታ', '[\"11\"]', NULL, 2.00, 'income'),
+(743, 40, 274, 'action plan test kpi', NULL, NULL, NULL, NULL, 0.00, '2026-08-17 11:41:55', '2026-08-17 11:41:55', 'Q1', NULL, 'አስፈላጊ', 11, 'action plan test kpi', 1, 'started', NULL, NULL, 'የፋይናንስ ዕይታ', '[\"11\"]', NULL, 2.00, 'cost'),
+(744, 40, 274, ' Create KPI INCOME', NULL, NULL, NULL, NULL, 0.00, '2026-08-17 12:09:18', '2026-08-17 12:09:18', 'Q1', NULL, 'አስፈላጊ', 11, ' Create KPI INCOME', 1, 'started', NULL, NULL, 'የፋይናንስ ዕይታ', '[\"11\"]', NULL, 1.00, 'income'),
+(745, 40, 276, 'KPI 3 የፓርኩን ተወዳዳሪነትና ገፅታን በማጠናከር ኢንቨስትመንትን መሳብ', NULL, NULL, NULL, NULL, 67.00, '2026-08-17 13:28:40', '2026-08-17 14:20:04', 'Q1', NULL, 'አስፈላጊ', 11, 'KPI 3 የፓርኩን ተወዳዳሪነትና ገፅታን በማጠናከር ኢንቨስትመንትን መሳብ', 1, 'started', NULL, NULL, 'የፋይናንስ ዕይታ', '[\"11\"]', NULL, 1.00, 'income'),
+(746, 40, 276, 'cost 1', NULL, NULL, NULL, NULL, 75.00, '2026-08-17 15:38:56', '2026-08-17 15:47:50', 'Q1', NULL, 'አስፈላጊ', 11, 'cost 1', 1, 'started', NULL, NULL, 'የፋይናንስ ዕይታ', '[\"11\"]', NULL, 1.00, 'cost');
 
 -- --------------------------------------------------------
 
@@ -1893,7 +3456,6 @@ CREATE TABLE `specific_objective_details` (
   `employment_type` varchar(255) DEFAULT NULL,
   `incomeName` varchar(255) DEFAULT NULL,
   `costName` varchar(255) DEFAULT NULL,
-  `attribute` text DEFAULT NULL,
   `CIbaseline` decimal(15,2) DEFAULT NULL,
   `CIplan` decimal(15,2) DEFAULT NULL,
   `CIoutcome` decimal(15,2) DEFAULT NULL,
@@ -1903,43 +3465,21 @@ CREATE TABLE `specific_objective_details` (
   `goal_id` int(11) DEFAULT NULL,
   `project_type` varchar(255) DEFAULT NULL,
   `income_plan_type` varchar(255) DEFAULT NULL,
-  `employee_of` varchar(255) DEFAULT NULL
+  `employee_of` varchar(255) DEFAULT NULL,
+  `weight` decimal(10,2) DEFAULT 0.00 COMMENT 'Action plan weight contribution',
+  `starting_date` date DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `specific_objective_details`
 --
 
-INSERT INTO `specific_objective_details` (`specific_objective_detail_id`, `user_id`, `specific_objective_detailname`, `details`, `baseline`, `plan`, `measurement`, `execution_percentage`, `created_at`, `updated_at`, `year`, `month`, `day`, `deadline`, `status`, `priority`, `department_id`, `name`, `description`, `count`, `outcome`, `progress`, `created_by`, `specific_objective_id`, `plan_type`, `income_exchange`, `cost_type`, `employment_type`, `incomeName`, `costName`, `attribute`, `CIbaseline`, `CIplan`, `CIoutcome`, `CIexecution_percentage`, `editing_status`, `reporting`, `goal_id`, `project_type`, `income_plan_type`, `employee_of`) VALUES
-(779, 40, 'cost 1', 'cost 1', '0', '100', 'present', 100.00, '2025-11-24 13:08:36', '2025-11-24 13:52:23', 2020, 8, 2, '2025-11-25', 'Pending', 'መደበኛ', 2, 'cost 1', 'cost 1', 1, 99.98, 'started', 'Ezira', 548, 'cost', NULL, 'regular_budget', NULL, NULL, 'Fuel Allowance', NULL, 0.00, 1000.00, 1000.00, 100.00, 'active', 'active', 90, NULL, NULL, NULL),
-(780, 40, 'capital cost', 'capital cost', '0', '100', 'present', 100.00, '2025-11-24 13:10:30', '2025-11-24 13:44:38', 2020, 2, 2, '2025-12-05', 'Pending', 'በጣም አስፈላጊ', 2, 'capital cost', 'capital cost', 1, 100.00, 'started', 'Ezira', 475, 'cost', NULL, 'capital_project_budget', NULL, NULL, 'Infrstructure Consultancy', NULL, 0.00, 100.00, 100.00, 100.00, 'active', 'active', 88, NULL, NULL, NULL),
-(781, 40, 'income ETB', 'income ETB', '0', '100', 'present', 100.00, '2025-11-24 13:11:48', '2025-11-24 13:45:08', 2020, 6, 2, '2025-12-13', 'Pending', 'በጣም አስፈላጊ', 2, 'income ETB', 'income ETB', 1, 100.00, 'started', 'Ezira', 475, 'income', 'etb', NULL, NULL, NULL, NULL, NULL, 0.00, 1000.00, 1000.00, 100.00, 'active', 'active', 88, NULL, NULL, NULL),
-(782, 40, 'income USD', 'income USD', '0', '100', 'present', 100.00, '2025-11-24 13:13:39', '2025-11-24 13:46:48', 2020, 4, 2, '2025-11-29', 'Pending', 'አስፈላጊ', 2, 'income USD', 'income USD', 1, 100.00, 'started', 'Ezira', 505, 'income', 'usd', NULL, NULL, NULL, NULL, NULL, 1.00, 1000.00, 1000.01, 100.00, 'active', 'active', 89, NULL, NULL, NULL),
-(783, 40, 'imployee fulltime', 'imployee fulltime', '0', '100', 'present', 100.00, '2025-11-24 13:15:27', '2025-11-24 13:47:14', 2020, 12, 2, '2025-11-29', 'Pending', 'በጣም አስፈላጊ', 2, 'imployee fulltime', 'imployee fulltime', 1, 100.00, 'started', 'Ezira', 562, 'hr', NULL, NULL, 'full_time', NULL, NULL, NULL, 0.00, 6.00, 6.00, 100.00, 'active', 'active', 91, NULL, NULL, NULL),
-(784, 40, 'employees-contrat', 'employees-contrat', '0', '100', 'present', 100.00, '2025-11-24 13:17:03', '2025-11-24 13:48:06', 2020, 11, 2, '2025-12-06', 'Pending', 'በጣም አስፈላጊ', 2, 'employees-contrat', 'employees-contrat', 1, 100.00, 'started', 'Ezira', 573, 'hr', NULL, NULL, 'contract', NULL, NULL, NULL, 0.00, 4.00, 4.00, 100.00, 'active', 'active', 91, NULL, NULL, NULL),
-(785, 40, 'erp system', 'erp system', '0', '100', 'present', 100.00, '2025-11-24 13:18:43', '2025-11-27 11:27:45', 2020, 3, 9, '2025-12-06', 'Pending', 'በጣም አስፈላጊ', 2, 'erp system', 'erp system', 1, 100.00, 'started', 'Ezira', 475, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 0.00, 0.00, NULL, NULL, 'active', 'active', 88, NULL, NULL, NULL),
-(786, 40, 'building project', 'building project', '0', '100', 'present', NULL, '2025-11-24 13:19:54', '2025-11-24 13:19:54', 2020, 10, 7, '2025-12-06', 'Pending', 'በጣም አስፈላጊ', 2, 'building project', 'building project', 1, NULL, 'started', 'Ezira', 479, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 0.00, 0.00, NULL, NULL, 'active', 'active', 88, NULL, NULL, NULL),
-(787, 40, 'house rent ', 'house rent ', '0', '100', 'present', NULL, '2025-11-25 13:55:36', '2025-11-25 13:55:36', 2020, 3, 12, '2025-12-06', 'Pending', 'በጣም አስፈላጊ', 2, 'house rent ', 'house rent ', 1, NULL, 'started', 'Ezira', 475, 'income', 'etb', NULL, NULL, NULL, NULL, NULL, 0.00, 50000.00, NULL, NULL, 'active', 'active', 88, NULL, NULL, NULL),
-(788, 40, 'my-attendances', 'ወጪ ስም', '0', '100', 'present', NULL, '2025-11-25 14:03:02', '2025-11-25 14:03:02', 2020, 9, 22, '2025-11-29', 'Pending', 'አስፈላጊ', 2, 'my-attendances', 'ወጪ ስም', 1, NULL, 'started', 'Ezira', 475, 'income', 'etb', NULL, NULL, 'ከመሬት ንኡስ ሊዝ', NULL, NULL, 0.00, 100.00, NULL, NULL, 'active', 'active', 88, NULL, NULL, NULL),
-(789, 40, 'service assignment', 'wewe', '0', '100', 'present', NULL, '2025-11-26 08:59:33', '2025-11-26 08:59:33', 2000, 11, 12, '2025-11-28', 'Pending', 'በጣም አስፈላጊ', 2, 'service assignment', 'wewe', 1, NULL, 'started', 'Ezira', 475, 'cost', NULL, 'regular_budget', NULL, NULL, 'Bonus', NULL, 0.00, 100.00, NULL, NULL, 'active', 'active', 88, NULL, NULL, NULL),
-(790, 40, 'የኢንቨስትመንት ማሳደጊያ ፕሮግራም', 'የውጭ ኢንቨስትመንት ለመሳብ የሚደረግ ጥረት', '100', '500', 'በሚሊዮን ብር', NULL, '2025-11-27 08:46:05', '2025-11-27 08:46:05', 2025, 6, 27, '2026-02-25', 'Pending', 'አስፈላጊ', 2, 'የኢንቨስትመንት ማሳደጊያ ፕሮግራም', 'የውጭ ኢንቨስትመንት ለመሳብ የሚደረግ ጥረት', 1, NULL, 'started', 'Ezira', 461, 'cost', NULL, 'capital', NULL, NULL, 'infrastructure', NULL, 1000000.00, 5000000.00, NULL, NULL, 'active', 'active', 87, NULL, NULL, NULL),
-(791, 40, 'service assignment', 'fasfas', '0', '100', 'present', NULL, '2025-11-27 08:48:35', '2025-11-27 08:48:35', 2000, 6, 12, '2025-12-06', 'Pending', 'አስፈላጊ', 2, 'service assignment', 'fasfas', 1, NULL, 'started', 'Ezira', 478, 'income', 'usd', NULL, NULL, 'ከህንጻ ኪራይ', NULL, NULL, 0.00, 100.00, NULL, NULL, 'active', 'active', 88, NULL, NULL, NULL),
-(792, 40, 'my-attendances', 'taeawa', '0', '100', 'present', NULL, '2025-11-27 13:56:41', '2025-11-27 13:56:41', 2020, 4, 1, '2025-12-06', 'Pending', 'መደበኛ', 2, 'my-attendances', 'taeawa', 1, NULL, 'started', 'Ezira', 495, 'cost', NULL, 'regular_budget', NULL, NULL, 'Cash Indemnity Allowance', NULL, 0.00, 100.00, NULL, NULL, 'active', 'active', 89, NULL, NULL, NULL),
-(793, 40, 'transport', 'test', '0', '100', 'present', NULL, '2025-12-11 12:27:37', '2025-12-11 12:27:37', 2024, 2, 10, '2026-01-03', 'Pending', 'በጣም አስፈላጊ', 2, 'transport', 'test', 1, NULL, 'started', 'Ezira', 603, 'cost', NULL, 'regular_budget', NULL, NULL, 'Building Insurance', NULL, 0.00, 1000.00, NULL, NULL, 'active', 'active', 95, NULL, NULL, NULL),
-(794, 40, 'my-attendances', 'test', '0', '100', 'present', NULL, '2025-12-11 12:33:55', '2025-12-11 12:33:55', 1221, 2, 1, '2026-01-03', 'Pending', 'በጣም አስፈላጊ', 2, 'my-attendances', 'test', 1, NULL, 'started', 'Ezira', 603, 'hr', NULL, NULL, 'full_time', NULL, NULL, NULL, 0.00, 100.00, NULL, NULL, 'active', 'active', 95, NULL, NULL, NULL),
-(795, 25, 'test0', 'test0', '0', '12', 'present', NULL, '2025-12-11 13:24:05', '2025-12-11 13:38:43', 2025, 11, 29, '2026-03-14', 'Pending', 'አስፈላጊ', 2, 'test0', 'test0', 1, NULL, 'started', 'olana', 603, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 0.00, 0.00, NULL, NULL, 'active', 'active', 95, NULL, NULL, NULL),
-(796, 25, 'service assignment', 'yest', '0', '100', 'present', NULL, '2025-12-11 16:30:12', '2025-12-11 16:30:12', 2025, 11, 30, '2026-01-02', 'Pending', 'አስፈላጊ', 2, 'service assignment', 'yest', 1, NULL, 'started', 'olana', 523, 'cost', NULL, 'regular_budget', NULL, NULL, 'Basic Salary Expense', NULL, 0.00, 100.00, NULL, NULL, 'active', 'active', 90, NULL, NULL, NULL),
-(797, 40, 'service assignment', 'service assignment', '0', '12', 'present', NULL, '2025-12-15 07:52:34', '2025-12-15 07:52:34', 2025, 11, 12, '2027-05-15', 'Pending', 'አስፈላጊ', 2, 'service assignment', 'service assignment', 1, NULL, 'started', 'Ezira', 602, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 0.00, 0.00, NULL, NULL, 'active', 'active', 94, NULL, NULL, NULL),
-(798, 40, 'pharmacy', 'pharmacy', '0', '24', 'present', NULL, '2025-12-15 09:21:02', '2025-12-15 09:21:02', 2025, 11, 30, '2026-01-03', 'Pending', 'አስፈላጊ', 2, 'pharmacy', 'pharmacy', 1, NULL, 'started', 'Ezira', 602, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 0.00, 0.00, NULL, NULL, 'active', 'active', 94, NULL, NULL, NULL),
-(799, 40, 'enterprice', 'enterprice', '0', '100', 'present', NULL, '2025-12-15 12:15:11', '2025-12-15 12:15:11', 2025, 12, 7, '2025-12-17', 'Pending', 'አስፈላጊ', 2, 'enterprice', 'enterprice', 1, NULL, 'started', 'Ezira', 602, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 0.00, 0.00, NULL, NULL, 'active', 'active', 94, NULL, NULL, NULL),
-(800, 40, 'enterprice', 'enterprice', '0', '6', 'present', NULL, '2025-12-15 12:27:58', '2025-12-15 12:27:58', 2025, 12, 17, '2025-12-26', 'Pending', 'አስፈላጊ', 2, 'enterprice', 'enterprice', 1, NULL, 'started', 'Ezira', 602, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 0.00, 0.00, NULL, NULL, 'active', 'active', 94, NULL, NULL, NULL),
-(801, 76, 'gatehring System Requerment', 'gatehring System Requerment', '0', '20', 'present', NULL, '2025-12-16 13:21:32', '2025-12-16 13:21:32', 2025, 11, 29, '2026-01-24', 'Pending', 'በጣም አስፈላጊ', 18, 'gatehring System Requerment', 'gatehring System Requerment', 1, NULL, 'started', 'Hayal', 602, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 0.00, 0.00, NULL, NULL, 'active', 'active', 94, NULL, NULL, NULL),
-(802, 78, 'የኢንቨስትመንት ማሳደጊያ ፕሮግራም', 'የውጭ ኢንቨስትመንት ለመሳብ የሚደረግ ጥረት', '100', '500', 'በሚሊዮን ብር', NULL, '2025-12-16 18:36:52', '2025-12-16 18:36:52', 2025, 6, 16, '2026-03-16', 'Pending', 'አስፈላጊ', 15, 'የኢንቨስትመንት ማሳደጊያ ፕሮግራም', 'የውጭ ኢንቨስትመንት ለመሳብ የሚደረግ ጥረት', 1, NULL, 'started', 'simegnew', 461, 'cost', NULL, 'capital', NULL, NULL, 'infrastructure', NULL, 1000000.00, 5000000.00, NULL, NULL, 'active', 'active', 87, NULL, NULL, NULL),
-(803, 40, 'test', '000', '0', '12', 'present', NULL, '2026-03-09 07:07:53', '2026-03-09 07:07:53', 2026, 3, 9, '2026-03-10', 'Pending', 'አስፈላጊ', 2, 'test', '000', 1, NULL, 'started', 'Ezira', 560, 'income', 'usd', NULL, NULL, 'import_export_substitution', NULL, NULL, 0.00, 100000.00, NULL, NULL, 'active', 'active', 91, NULL, NULL, NULL),
-(804, 40, 'my-resignations', '0000', '0', '89', 'present', NULL, '2026-03-09 07:17:41', '2026-03-09 07:17:41', 2032, 6, 9, '2032-06-17', 'Pending', 'በጣም አስፈላጊ', 2, 'my-resignations', '0000', 1, NULL, 'started', 'Ezira', 568, 'general', NULL, NULL, NULL, NULL, NULL, NULL, 0.00, 0.00, NULL, NULL, 'active', 'active', 91, NULL, NULL, NULL),
-(805, 40, 'my-resignations', 'test', '0', '12', 'present', NULL, '2026-03-09 08:16:34', '2026-03-09 08:16:34', 2024, 1, 9, '2026-03-11', 'Pending', 'በጣም አስፈላጊ', 2, 'my-resignations', 'test', 1, NULL, 'started', 'Ezira', 567, 'general', NULL, NULL, NULL, NULL, NULL, NULL, 0.00, 0.00, NULL, NULL, 'active', 'active', 91, NULL, NULL, NULL),
-(806, 40, 'my-resignations', 'my test', '0', '100', 'present', NULL, '2026-03-10 08:05:45', '2026-03-10 08:05:45', 2018, 7, 28, '2026-05-29', 'Pending', 'አስፈላጊ', 2, 'my-resignations', 'my test', 1, NULL, 'started', 'Ezira', 604, 'general', NULL, NULL, NULL, NULL, NULL, NULL, 0.00, 0.00, NULL, NULL, 'active', 'active', 96, NULL, NULL, NULL),
-(807, 40, 'doing some thing ', 'doing some thing ', '0', '100', 'present', NULL, '2026-03-11 11:12:08', '2026-03-11 11:12:08', 2018, 7, 1, '2026-05-29', 'Pending', 'በጣም አስፈላጊ', 2, 'doing some thing ', 'doing some thing ', 1, NULL, 'started', 'Ezira', 604, 'income', 'usd', NULL, NULL, 'lease_land', NULL, NULL, 0.00, 1000000.00, NULL, NULL, 'active', 'active', 96, NULL, 'internal', NULL);
+INSERT INTO `specific_objective_details` (`specific_objective_detail_id`, `user_id`, `specific_objective_detailname`, `details`, `baseline`, `plan`, `measurement`, `execution_percentage`, `created_at`, `updated_at`, `year`, `month`, `day`, `deadline`, `status`, `priority`, `department_id`, `name`, `description`, `count`, `outcome`, `progress`, `created_by`, `specific_objective_id`, `plan_type`, `income_exchange`, `cost_type`, `employment_type`, `incomeName`, `costName`, `CIbaseline`, `CIplan`, `CIoutcome`, `CIexecution_percentage`, `editing_status`, `reporting`, `goal_id`, `project_type`, `income_plan_type`, `employee_of`, `weight`, `starting_date`) VALUES
+(1, 73, 'PORT', 'test', '0', '1', 'number', 25.84, '2026-08-15 10:16:28', '2026-08-15 16:53:35', 2019, 11, 2, '2027-10-10', 'confirmed', 'አስፈላጊ', 11, 'PORT', 'test', 1, 22342.00, 'started', 'tsuhayu', 742, 'income', NULL, NULL, NULL, NULL, NULL, 0.00, 100000.00, NULL, 25.84, 'active', 'active', 225, NULL, NULL, NULL, 2.00, NULL),
+(2, 73, 'test cost action plan ', 'test cost action plan ', '10000', '100000', 'Number', NULL, '2026-08-17 11:44:06', '2026-08-17 11:44:06', 2026, 1, 1, '2026-08-17', 'On Hold', 'አስፈላጊ', 11, 'test cost action plan ', 'test cost action plan ', 1, NULL, 'started', 'tsuhayu', 743, 'Quantitative', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'active', 'active', 226, NULL, NULL, NULL, 1.00, NULL),
+(3, 73, 'test one ', 'test one ', '0', '1', 'number', NULL, '2026-08-17 12:31:43', '2026-08-17 12:50:56', 2017, 1, 2, '2026-10-01', 'pending', 'መደበኛ', 11, 'test one ', 'test one ', 1, NULL, 'started', 'tsuhayu', 744, 'income', NULL, NULL, NULL, NULL, NULL, 200000.00, 2000.00, NULL, NULL, 'active', 'active', 226, NULL, NULL, NULL, 1.00, '2026-08-29'),
+(4, 73, 'KPI 3 የፓርኩን ተወዳዳሪነትና ገፅታን በማጠናከር ኢንቨስትመንትን መሳብ', 'KPI 3 የፓርኩን ተወዳዳሪነትና ገፅታን በማጠናከር ኢንቨስትመንትን መሳብ', '0', '0.5', 'number', 67.00, '2026-08-17 13:39:09', '2026-08-17 14:20:04', 2018, 11, 1, '2026-10-07', 'pending', 'መደበኛ', 11, 'KPI 3 የፓርኩን ተወዳዳሪነትና ገፅታን በማጠናከር ኢንቨስትመንትን መሳብ', 'KPI 3 የፓርኩን ተወዳዳሪነትና ገፅታን በማጠናከር ኢንቨስትመንትን መሳብ', 1, 4000.00, 'started', 'tsuhayu', 745, 'income', NULL, NULL, NULL, NULL, NULL, 100.00, 10000.00, NULL, 67.00, 'active', 'active', 226, NULL, NULL, NULL, 0.50, '2026-08-15'),
+(5, 73, 'Action plan fron  Transport Allowance Budget', 'Action plan fron  Transport Allowance Budget', '0', '0.5', 'number', 75.00, '2026-08-17 15:41:09', '2026-08-17 15:47:50', 2018, 11, 1, '2026-10-09', 'Pending', 'በጣም አስፈላጊ', 11, 'Action plan fron  Transport Allowance Budget', 'Action plan fron  Transport Allowance Budget', 1, 30000.00, 'started', 'tsuhayu', 746, 'cost', NULL, NULL, NULL, NULL, NULL, 2000.00, 100000.00, NULL, 75.00, 'active', 'active', 226, NULL, NULL, NULL, 0.50, '2026-08-17');
 
 -- --------------------------------------------------------
 
@@ -1964,7 +3504,26 @@ CREATE TABLE `supervisor_comments` (
 --
 
 INSERT INTO `supervisor_comments` (`comment_id`, `plan_id`, `user_id`, `parent_comment_id`, `comment_text`, `comment_type`, `is_edited`, `created_at`, `updated_at`) VALUES
-(18, 237, 25, NULL, 'do some thin g here', 'comment', 0, '2025-11-27 08:52:23', '2025-11-27 08:52:23');
+(19, 371, 79, NULL, 'what the hell is this', 'comment', 0, '2026-03-24 09:08:19', '2026-03-24 09:08:19'),
+(20, 372, 79, NULL, 'I dont think the excution is fair so you need to cheek it again', 'comment', 0, '2026-04-07 17:08:12', '2026-04-07 17:08:12');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `system_settings`
+--
+
+CREATE TABLE `system_settings` (
+  `setting_key` varchar(255) NOT NULL,
+  `setting_value` text DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `system_settings`
+--
+
+INSERT INTO `system_settings` (`setting_key`, `setting_value`) VALUES
+('GROQ_API_KEY', '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');
 
 -- --------------------------------------------------------
 
@@ -1989,15 +3548,43 @@ CREATE TABLE `tasks` (
   `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+-- --------------------------------------------------------
+
 --
--- Dumping data for table `tasks`
+-- Table structure for table `task_assignments`
 --
 
-INSERT INTO `tasks` (`task_id`, `user_id`, `title`, `description`, `priority`, `due_date`, `category`, `tags`, `status`, `completed_subtasks`, `total_subtasks`, `assigned_by`, `created_at`, `updated_at`) VALUES
-(1, 40, 'some issue', 'do some thing for me ', 'high', '2025-11-28', 'work', NULL, 'completed', 0, 0, 40, '2025-11-28 08:00:51', '2025-11-28 08:08:13'),
-(2, 40, 'task 2 ', 'hayal ... some ', 'medium', '2025-11-26', 'urgent', NULL, 'pending', 0, 0, 40, '2025-11-28 08:02:18', '2025-11-28 08:02:18'),
-(3, 25, 'some thing to do ', 'somethim\n', 'high', '2025-11-27', 'urgent', NULL, 'pending', 0, 0, 25, '2025-11-28 08:12:17', '2025-11-28 08:12:17'),
-(4, 25, 'wwww', 'weqeqw', 'medium', '2025-11-27', 'general', NULL, 'completed', 0, 0, 25, '2025-11-28 08:12:55', '2025-11-28 08:28:22');
+CREATE TABLE `task_assignments` (
+  `assignment_id` int(11) NOT NULL,
+  `title` varchar(255) NOT NULL,
+  `description` text DEFAULT NULL,
+  `assigned_by` int(11) NOT NULL COMMENT 'User who assigned the task',
+  `assigned_to` int(11) NOT NULL COMMENT 'User who is assigned the task',
+  `priority` enum('low','medium','high','urgent') NOT NULL DEFAULT 'medium',
+  `status` enum('pending','in_progress','completed','confirmed','rejected') NOT NULL DEFAULT 'pending',
+  `due_date` datetime DEFAULT NULL,
+  `category` varchar(100) DEFAULT 'general',
+  `attachment` varchar(255) DEFAULT NULL,
+  `completion_note` text DEFAULT NULL,
+  `rejection_reason` text DEFAULT NULL,
+  `confirmed_at` datetime DEFAULT NULL,
+  `completed_at` datetime DEFAULT NULL,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
+  `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `task_assignments`
+--
+
+INSERT INTO `task_assignments` (`assignment_id`, `title`, `description`, `assigned_by`, `assigned_to`, `priority`, `status`, `due_date`, `category`, `attachment`, `completion_note`, `rejection_reason`, `confirmed_at`, `completed_at`, `created_at`, `updated_at`) VALUES
+(8, '⚡ Create Breakdown for: PORT', 'You are assigned to create the Work Breakdown Structure (monthly & weekly breakdown tasks) for Action Plan: PORT. Please log in and allocate weight & timeline.', 73, 79, 'high', 'pending', '2027-10-09 00:00:00', 'action_plan_breakdown:1', NULL, NULL, NULL, NULL, NULL, '2026-08-15 13:04:17', '2026-08-15 13:04:17'),
+(9, 'task for ezira', 'test test ', 73, 40, 'urgent', 'in_progress', '2026-08-17 00:00:00', 'general', '1786949742603-697452630-people-are-building-business-internet-laptop-screen-with-website-teamworkpromotion-business-online-takeoff-rating-work-ideas-vector_72509875.htm', NULL, NULL, NULL, NULL, '2026-08-17 06:55:42', '2026-08-17 08:06:43'),
+(10, 'test one', '[Role: 🤝 Contributor / Assistant] \n\n*Specific Instructions:* test for you', 40, 73, 'medium', 'completed', '2026-08-17 00:00:00', 'general', '1786985662323-342390569-TEST_FOR_EZRA_-_____________-002-1231-2018.pdf', 'something regarding', NULL, NULL, '2026-08-17 20:11:01', '2026-08-17 16:54:22', '2026-08-17 17:11:01'),
+(11, 'test one', '[Role: Lead / Owner] \n\n*Specific Instructions:* do somthing on this role', 40, 67, 'medium', 'pending', '2026-08-17 00:00:00', 'general', '1786985662323-342390569-TEST_FOR_EZRA_-_____________-002-1231-2018.pdf', NULL, NULL, NULL, NULL, '2026-08-17 16:54:22', '2026-08-17 16:54:22'),
+(12, 'test 2', '[Role: Primary Executor] test \n\n*Specific Instructions:* test', 73, 40, 'medium', 'in_progress', '2026-08-18 00:00:00', 'urgent', '1786989226774-866028394-plan_and_report_bg.jpg', NULL, NULL, NULL, NULL, '2026-08-17 17:53:46', '2026-08-17 17:54:53'),
+(13, 'test 2', '[Role: Lead / Owner] test \n\n*Specific Instructions:* test', 73, 48, 'medium', 'pending', '2026-08-18 00:00:00', 'urgent', '1786989226774-866028394-plan_and_report_bg.jpg', NULL, NULL, NULL, NULL, '2026-08-17 17:53:46', '2026-08-17 17:53:46'),
+(14, 'test 2', '[Role: Primary Executor] test \n\n*Specific Instructions:* test', 73, 76, 'medium', 'pending', '2026-08-18 00:00:00', 'urgent', '1786989226774-866028394-plan_and_report_bg.jpg', NULL, NULL, NULL, NULL, '2026-08-17 17:53:46', '2026-08-17 17:53:46');
 
 -- --------------------------------------------------------
 
@@ -2043,7 +3630,7 @@ INSERT INTO `users` (`user_id`, `employee_id`, `user_name`, `password`, `created
 (7, 50, 'simegn@itpark.et', '$2b$10$6SbuHMtP7XMbwVdakqMr1eTCY9QIhHxabIBHgI.CZpN9wqROs8rr6', '2024-11-11 23:44:17', '1', 0, '2025-06-29 23:56:38', 5, '/uploads/1743578325155-photo_2025-04-02_00-17-31.jpg', NULL, NULL),
 (13, 58, 'nebyat@itpark.et', '$2b$10$5X.XMQQMRay/6zJDdEReI.MLzAcq.ed9xBk5OO4UELVvaG2fckm5K', '2024-11-14 01:06:52', '1', 0, '2025-12-16 08:20:56', 7, '/uploads/1743579067141-photo_2025-04-02_00-29-51.jpg', NULL, NULL),
 (24, 71, 'adminadmin@itp.et', '$2b$10$b5EbPdhsv7X8E9Aekdzv/eHngE6qS/57Irctvr/4xXVfYzY6Dp2ae', '2025-03-09 07:25:00', '1', 0, '2025-11-24 01:07:58', 1, '/uploads/1744027060876-hayal.jpg', NULL, NULL),
-(25, 72, 'olana@itp.et', '$2b$10$zIyhU/Zh7zj33VZA.m8NsOC5sdIN95EBB7SejpM10VZUjk2Kk/oVu', '2025-03-09 07:31:21', '1', 1, '2026-03-11 14:17:41', 2, '/uploads/1758533033860-photo_2025-09-22_05-21-45.jpg', NULL, NULL),
+(25, 72, 'olana@itp.et', '$2b$10$zIyhU/Zh7zj33VZA.m8NsOC5sdIN95EBB7SejpM10VZUjk2Kk/oVu', '2025-03-09 07:31:21', '1', 0, '2026-08-10 10:43:19', 2, '/uploads/1758533033860-photo_2025-09-22_05-21-45.jpg', NULL, NULL),
 (26, 73, 'getachew@itp.et', '$2b$10$RRnJrr5To6jpJYjhCQZtUOI2Lq58h.ZXwDZknfVfSdJ0RdjPysqZq', '2025-03-09 07:32:30', '1', 0, '2025-08-12 15:33:50', 9, '/uploads/1743579384865-photo_2025-04-02_00-30-25.jpg', NULL, NULL),
 (27, 74, 'habtamua@itp.et', '$2b$10$XQS7x6DJBK0WDrManmY15u4WX07d5QJ.StT.JjnLom86FKXhbUHL6', '2025-03-13 04:26:03', '1', 0, '2025-04-08 11:28:30', 6, NULL, NULL, NULL),
 (30, 77, 'walelign@itp.et', '$2b$10$y4f7LsF5rsigVqFj.yTmMOO162DWm0Og7UKPwMZQ5mvD1nKfI/eya', '2025-03-28 04:42:16', '1', 0, '2025-03-28 05:20:13', 6, NULL, NULL, NULL),
@@ -2051,7 +3638,7 @@ INSERT INTO `users` (`user_id`, `employee_id`, `user_name`, `password`, `created
 (37, 106, 'eskedar@itpark.et', '$2b$10$RFIb4x3.YaOAMKLfdcc.f.Fx0.sWIM53Wd/yJnnxkFtZWYH9apFVK', '2025-04-08 11:10:59', '1', 0, '2025-06-29 23:55:34', 6, '/uploads/1744374354484-photo_2025-04-02_00-29-51.jpg', NULL, NULL),
 (38, 107, 'samuel@itpark.et', '$2b$10$NAJiyQBLPjs3I4mLihlcre0YQr6jvEPD7xVqqDUWwu4VU2gCrS.li', '2025-04-08 11:12:41', '1', 0, '2025-11-14 01:03:28', 8, '/uploads/1744370443189-photo_2025-04-11_03-52-50.jpg', NULL, NULL),
 (39, 108, 'yesuf@itpark.et', '$2b$10$oJA4cwtDhG9U0P7qAuF0ju8iRuXmiKZIVWQV1FKkr4XgrqFqwzAs2', '2025-04-08 11:13:55', '1', 0, '2025-04-08 11:13:55', 8, NULL, NULL, NULL),
-(40, 109, 'ezira@itpark.et', '$2b$10$Aewol/o0/lNUINI0oa18ueWl0BNcTCE5E36e6RjDW2AKEJ0c1gw5W', '2025-04-08 11:14:19', '1', 0, '2026-03-16 10:35:27', 1, '/uploads/1772693434219-404A0276.JPG', NULL, NULL),
+(40, 109, 'ezira@itpark.et', '$2b$10$Aewol/o0/lNUINI0oa18ueWl0BNcTCE5E36e6RjDW2AKEJ0c1gw5W', '2025-04-08 11:14:19', '1', 1, '2026-08-17 18:45:02', 1, '/uploads/1772693434219-404A0276.JPG', NULL, NULL),
 (41, 110, 'yosef@itpark.et', '$2b$10$2SSKh6sgwhBG5g3zf2J1Heb9RO./BOH99gUdpBs7BSwe7ze.kxCy6', '2025-04-08 11:25:58', '1', 0, '2025-04-08 11:25:58', 8, NULL, NULL, NULL),
 (42, 111, 'sintayew@itpark.et', '$2b$10$sodAFnSejmX/2YYA1xvvX.mrqrEj/.NXyyQP9Skmk3uVcElDIM5AS', '2025-04-08 11:28:45', '1', 0, '2025-04-08 11:28:45', 8, NULL, NULL, NULL),
 (43, 112, 'arega@itpark.et', '$2b$10$3urSF/9HQVwO/LAbIvqrZOjqgt8QTp0LQYDbvZf1J5R728BmXPrX2', '2025-04-08 11:30:32', '1', 0, '2025-04-08 11:30:32', 8, NULL, NULL, NULL),
@@ -2078,18 +3665,20 @@ INSERT INTO `users` (`user_id`, `employee_id`, `user_name`, `password`, `created
 (64, 136, 'walelign@itpark.et', '$2b$10$h6T1aGfli.4J81Rs8HD2FeEgebEiOSIvUU9gAhOR.SpNA0bk6UOgG', '2025-04-08 14:15:49', '1', 0, '2025-04-08 14:15:49', 8, NULL, NULL, NULL),
 (65, 137, 'fetane@itpark.et', '$2b$10$hFVSW71vOYvYZV.T7.YLgum32E83vV58USL5bBEycOxTC8EFdzqsu', '2025-04-08 14:18:37', '1', 0, '2025-04-08 14:18:37', 8, NULL, NULL, NULL),
 (66, 138, 'petros@itpark.et', '$2b$10$CL6oomef/SmALzPCWPyW2eyAcRkLXnnNRYpSX4oGbtJ0h5FD7dCRG', '2025-04-08 16:04:45', '1', 0, '2025-04-08 16:04:45', 8, NULL, NULL, NULL),
-(67, 139, 'hayaltamrat@gmail.com', '$2b$10$cOsHat9hyhpEU8/P0UEAmO79h8epVcCBow9KLc76WCKairb5j64ei', '2025-09-11 03:37:37', '1', 0, '2025-09-15 08:31:23', 8, NULL, NULL, NULL),
-(68, 141, 'Hayaltamrat1@gmail.com', '$2b$10$MSzFOJh5.ONo0LuNTbEmneOULXAzSASIJ2PJCibtN5rv0w62h/GIK', '2025-11-12 04:42:39', '1', 0, '2025-11-22 14:06:09', 7, NULL, NULL, NULL),
-(69, 142, 'belete@itp.et', '$2b$10$eWJnHs3.DqxaUg2KjV2yEeWLDGw.02WSUntvuJma1Bw5vQXvr/ZjO', '2025-12-16 06:20:28', '1', 1, '2026-03-11 14:28:57', 29, NULL, NULL, NULL),
+(67, 139, 'hayaltamrat@gmail.com', '$2b$10$cOsHat9hyhpEU8/P0UEAmO79h8epVcCBow9KLc76WCKairb5j64ei', '2025-09-11 03:37:37', '1', 0, '2026-08-11 21:56:11', 8, NULL, NULL, NULL),
+(68, 141, 'Hayaltamrat1@gmail.com', '$2b$10$MSzFOJh5.ONo0LuNTbEmneOULXAzSASIJ2PJCibtN5rv0w62h/GIK', '2025-11-12 04:42:39', '', 0, '2026-08-08 21:09:56', 7, NULL, NULL, NULL),
+(69, 142, 'belete@itp.et', '$2b$10$eWJnHs3.DqxaUg2KjV2yEeWLDGw.02WSUntvuJma1Bw5vQXvr/ZjO', '2025-12-16 06:20:28', '1', 0, '2026-03-24 15:34:13', 29, '/uploads/1774354918770-3X2A0265.JPG', NULL, NULL),
 (70, 143, 'olanaabebe@itp.et', '$2b$10$uoaYznfbIaTENcmKRMOwpOKp59HLc9dViAvM9aTdfxKg4gXE/vqbK', '2025-12-16 06:24:23', '1', 0, '2025-12-17 03:46:29', 2, NULL, NULL, NULL),
 (71, 144, 'walelgnabera@itp.et', '$2b$10$LZM2AAjHccID2/j0SCtNCeKm4pUdMgI1qBTVNbaeJP0Yv/qzqZWw6', '2025-12-16 07:08:28', '1', 0, '2025-12-16 07:08:28', 30, NULL, NULL, NULL),
 (72, 145, 'coporateadmin@itp.et', '$2b$10$xJu0MtRguEdi2MYGI6FS2uepxQyaGTr4wH9xaQf2MQiD9cx/iZ57e', '2025-12-16 07:10:18', '1', 0, '2025-12-16 07:10:18', 31, NULL, NULL, NULL),
-(73, 146, 'tsehayu@itp.et', '$2b$10$iDqYRmpdwMqaZtdDmiN/C.VqKlKET8S7CksiDCK1BbxWRViz4MvUW', '2025-12-16 07:11:54', '1', 0, '2025-12-16 09:00:49', 5, NULL, NULL, NULL),
+(73, 146, 'tsehayu@itp.et', '$2b$10$iDqYRmpdwMqaZtdDmiN/C.VqKlKET8S7CksiDCK1BbxWRViz4MvUW', '2025-12-16 07:11:54', '1', 1, '2026-08-17 20:30:15', 5, '/uploads/1774354805110-3X2A0276.JPG', NULL, NULL),
 (74, 147, 'itdepartment@itp.et', '$2b$10$Hu1n2Jgemq4WeVEbD4gOi.Wl0kYxc1s45kKk3gJyK82CfTXfce8Gm', '2025-12-16 07:15:06', '1', 0, '2025-12-16 07:15:06', 6, NULL, NULL, NULL),
 (75, 148, 'softwaresection@itp.et', '$2b$10$re2aU67JJ.4Tz9DUOCKcUOyMqhgCIiF60Ukzq5c2AfnpOOywBncP2', '2025-12-16 07:16:23', '1', 0, '2025-12-16 08:59:36', 7, NULL, NULL, NULL),
-(76, 149, 'hayaltamrat@itp.et', '$2b$10$JxidUyzA1q8173mK3eGjje6vvt0..2E3binD00RJ4vYV8PFhK7aY6', '2025-12-16 07:18:36', '1', 0, '2026-03-05 09:49:18', 8, '/uploads/1765888095841-1743514222367-hayal.jpg', NULL, NULL),
+(76, 149, 'hayaltamrat@itp.et', '$2b$10$JxidUyzA1q8173mK3eGjje6vvt0..2E3binD00RJ4vYV8PFhK7aY6', '2025-12-16 07:18:36', '1', 0, '2026-03-24 15:19:35', 8, '/uploads/1765888095841-1743514222367-hayal.jpg', NULL, NULL),
 (77, 150, 'encubationdepartment@itp.et', '$2b$10$P78YK8xTzvyJSBByNFYCxePaaHnP8ZXRqhsZHvWCNjZYcSrunQDnW', '2025-12-16 08:51:40', '1', 0, '2025-12-16 08:51:40', 6, NULL, NULL, NULL),
-(78, 151, 'simegnewasme@itp.et', '$2b$10$HP4FWLs.2/x6ol21JlwW7eHFlc81Nix8oK2G84vw9oluOyEXvKz5y', '2025-12-16 08:52:48', '1', 1, '2025-12-17 07:17:15', 7, NULL, NULL, NULL);
+(78, 151, 'simegnewasme@itp.et', '$2b$10$HP4FWLs.2/x6ol21JlwW7eHFlc81Nix8oK2G84vw9oluOyEXvKz5y', '2025-12-16 08:52:48', '1', 1, '2025-12-17 07:17:15', 7, NULL, NULL, NULL),
+(79, 152, 'Milliongoraw@gmail.com', '$2b$10$HtfbyhrbZz1XlS.X/Z8SK.kEvlWhipxagJRy5m/xM21gwZOxZNgyu', '2026-03-20 08:37:18', '1', 0, '2026-08-17 09:47:13', 6, '/uploads/1774354652794-million.JPG', NULL, NULL),
+(80, 153, 'feruzkorichoyimer@gmail.com', '$2b$10$.QmWscPrD7MXEmqS0ffZOOJXAPmk4S53qf.h2OJ/MElQq8426Pcsa', '2026-07-15 11:07:17', '1', 1, '2026-08-02 21:25:49', 9, NULL, NULL, NULL);
 
 -- --------------------------------------------------------
 
@@ -2116,69 +3705,43 @@ CREATE TABLE `weekly_tasks` (
   `monthly_task_id` int(11) NOT NULL,
   `name` varchar(255) NOT NULL,
   `weight` decimal(5,2) NOT NULL DEFAULT 0.00,
+  `plan_amount` decimal(15,2) DEFAULT 0.00,
   `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
   `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
   `progress` decimal(5,2) NOT NULL DEFAULT 0.00,
+  `plan_progress` decimal(5,2) DEFAULT 0.00,
   `status` enum('Pending','In Progress','Completed') NOT NULL DEFAULT 'Pending',
   `description` text DEFAULT NULL,
-  `attachment` varchar(255) DEFAULT NULL
+  `attachment` varchar(255) DEFAULT NULL,
+  `actual_amount` decimal(15,4) DEFAULT NULL,
+  `start_date` date DEFAULT NULL,
+  `deadline` date DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+-- --------------------------------------------------------
+
 --
--- Dumping data for table `weekly_tasks`
+-- Table structure for table `weekly_task_assignees`
 --
 
-INSERT INTO `weekly_tasks` (`weekly_task_id`, `monthly_task_id`, `name`, `weight`, `created_at`, `updated_at`, `progress`, `status`, `description`, `attachment`) VALUES
-(1, 1, 'week 1 test', 1.00, '2025-12-11 13:24:05', '2025-12-11 13:24:05', 0.00, 'Pending', NULL, NULL),
-(2, 1, 'week 2 test', 1.00, '2025-12-11 13:24:05', '2025-12-11 13:24:05', 0.00, 'Pending', NULL, NULL),
-(3, 1, 'week 3 test', 1.00, '2025-12-11 13:24:05', '2025-12-11 13:24:05', 0.00, 'Pending', NULL, NULL),
-(4, 1, 'week 4 test', 1.00, '2025-12-11 13:24:05', '2025-12-11 13:24:05', 0.00, 'Pending', NULL, NULL),
-(5, 2, 'week 1 test', 1.00, '2025-12-11 13:24:05', '2025-12-11 13:24:05', 0.00, 'Pending', NULL, NULL),
-(6, 2, 'week 1 test', 1.00, '2025-12-11 13:24:05', '2025-12-11 13:24:05', 0.00, 'Pending', NULL, NULL),
-(7, 2, 'week 1 test', 1.00, '2025-12-11 13:24:05', '2025-12-11 13:24:05', 0.00, 'Pending', NULL, NULL),
-(8, 2, 'week 1 test', 1.00, '2025-12-11 13:24:05', '2025-12-11 13:24:05', 0.00, 'Pending', NULL, NULL),
-(9, 3, 'week 1 test', 1.00, '2025-12-11 13:24:05', '2025-12-11 13:24:05', 0.00, 'Pending', NULL, NULL),
-(10, 3, 'week 1 test', 1.00, '2025-12-11 13:24:05', '2025-12-11 13:24:05', 0.00, 'Pending', NULL, NULL),
-(11, 3, 'week 1 test', 1.00, '2025-12-11 13:24:05', '2025-12-11 13:24:05', 0.00, 'Pending', NULL, NULL),
-(12, 3, 'week 1 test', 1.00, '2025-12-11 13:24:05', '2025-12-11 13:24:05', 0.00, 'Pending', NULL, NULL),
-(13, 8, '1', 1.00, '2025-12-15 08:00:25', '2025-12-15 08:55:38', 100.00, 'Pending', NULL, '1765788923968-862286874-Screenshot_From_2025-10-25_08-22-05.png'),
-(14, 8, '2', 1.00, '2025-12-15 08:00:25', '2025-12-15 08:59:49', 100.00, 'Pending', NULL, NULL),
-(15, 9, 'dwada', 5.00, '2025-12-15 09:08:23', '2025-12-15 09:08:23', 0.00, 'Pending', NULL, NULL),
-(16, 9, 'dawd', 5.00, '2025-12-15 09:08:23', '2025-12-15 09:08:23', 0.00, 'Pending', NULL, NULL),
-(17, 10, '1', 1.00, '2025-12-15 09:08:23', '2025-12-15 09:08:23', 0.00, 'Pending', NULL, NULL),
-(18, 10, '2', 1.00, '2025-12-15 09:08:23', '2025-12-15 09:08:23', 0.00, 'Pending', NULL, NULL),
-(19, 11, 'wee1', 6.00, '2025-12-15 11:47:52', '2025-12-15 11:55:34', 100.00, 'Pending', 'something', '1765799361881-518666216-Screenshot_From_2025-09-07_06-24-30.png'),
-(20, 11, 'wee2', 6.00, '2025-12-15 11:47:52', '2025-12-15 11:55:40', 100.00, 'Pending', 'something ', NULL),
-(21, 12, 'wee3', 6.00, '2025-12-15 11:47:52', '2025-12-15 11:50:38', 100.00, 'Pending', 'something', NULL),
-(22, 12, 'week4', 6.00, '2025-12-15 11:47:52', '2025-12-15 11:50:29', 100.00, 'Pending', 'soemthing ', NULL),
-(34, 22, 'dsad', 50.00, '2025-12-15 12:45:02', '2025-12-15 12:45:24', 100.00, 'Pending', 'gdfgdf', NULL),
-(35, 22, '50', 50.00, '2025-12-15 12:45:02', '2025-12-15 12:45:40', 100.00, 'Pending', NULL, NULL),
-(36, 23, 'fsdsdf', 50.00, '2025-12-15 12:45:02', '2025-12-15 12:46:22', 60.00, 'Pending', 'gddsg', NULL),
-(37, 23, 'fdsfsd', 50.00, '2025-12-15 12:45:02', '2025-12-15 12:47:21', 50.00, 'Pending', 'gsgf', '1765802841943-546633877-Screenshot_From_2025-09-07_06-24-30.png'),
-(38, 24, 'week 1', 5.00, '2026-03-06 08:25:30', '2026-03-06 08:26:22', 100.00, 'Pending', NULL, NULL),
-(39, 24, 'week 2', 5.00, '2026-03-06 08:25:30', '2026-03-06 08:26:32', 100.00, 'Pending', NULL, NULL),
-(40, 24, 'week 3', 10.00, '2026-03-06 08:25:30', '2026-03-06 08:26:49', 100.00, 'Pending', NULL, NULL),
-(41, 24, 'week 4', 10.00, '2026-03-06 08:25:30', '2026-03-06 08:26:55', 100.00, 'Pending', NULL, NULL),
-(42, 25, 'week 1', 5.00, '2026-03-06 08:29:28', '2026-03-06 08:29:28', 0.00, 'Pending', NULL, NULL),
-(43, 25, 'week 2', 5.00, '2026-03-06 08:29:28', '2026-03-06 08:29:28', 0.00, 'Pending', NULL, NULL),
-(44, 25, 'week 3', 10.00, '2026-03-06 08:29:28', '2026-03-06 08:29:28', 0.00, 'Pending', NULL, NULL),
-(45, 25, 'week 4', 10.00, '2026-03-06 08:29:28', '2026-03-06 08:29:28', 0.00, 'Pending', NULL, NULL),
-(46, 26, 'm2w1', 70.00, '2026-03-06 08:29:28', '2026-03-06 08:29:28', 0.00, 'Pending', NULL, NULL),
-(47, 27, 'week 1', 5.00, '2026-03-06 08:29:36', '2026-03-06 08:29:36', 0.00, 'Pending', NULL, NULL),
-(48, 27, 'week 2', 5.00, '2026-03-06 08:29:36', '2026-03-06 08:29:36', 0.00, 'Pending', NULL, NULL),
-(49, 27, 'week 3', 10.00, '2026-03-06 08:29:36', '2026-03-06 08:29:36', 0.00, 'Pending', NULL, NULL),
-(50, 27, 'week 4', 10.00, '2026-03-06 08:29:36', '2026-03-06 08:29:36', 0.00, 'Pending', NULL, NULL),
-(51, 28, 'week 1', 5.00, '2026-03-06 08:29:36', '2026-03-06 08:29:36', 0.00, 'Pending', NULL, NULL),
-(52, 28, 'week 2', 5.00, '2026-03-06 08:29:36', '2026-03-06 08:29:36', 0.00, 'Pending', NULL, NULL),
-(53, 28, 'week 3', 10.00, '2026-03-06 08:29:36', '2026-03-06 08:29:36', 0.00, 'Pending', NULL, NULL),
-(54, 28, 'week 4', 10.00, '2026-03-06 08:29:36', '2026-03-06 08:29:36', 0.00, 'Pending', NULL, NULL),
-(55, 29, 'm2w1', 70.00, '2026-03-06 08:29:36', '2026-03-06 08:30:38', 100.00, 'Pending', 'somthing done', NULL),
-(56, 30, 'w1', 50.00, '2026-03-06 08:32:52', '2026-03-06 08:33:31', 100.00, 'Pending', '', NULL),
-(57, 30, 'w2', 50.00, '2026-03-06 08:32:52', '2026-03-06 08:33:47', 100.00, 'Pending', 'test', '1772786027475-686369000-qr-code__3_.png');
+CREATE TABLE `weekly_task_assignees` (
+  `id` int(11) NOT NULL,
+  `weekly_task_id` int(11) NOT NULL,
+  `user_id` int(11) NOT NULL,
+  `assigned_by` int(11) NOT NULL,
+  `assigned_at` timestamp NOT NULL DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Indexes for dumped tables
 --
+
+--
+-- Indexes for table `action_plan_quarter_activations`
+--
+ALTER TABLE `action_plan_quarter_activations`
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `unique_ap_year_quarter` (`specific_objective_detail_id`,`year`,`quarter`);
 
 --
 -- Indexes for table `approvalhierarchy`
@@ -2245,6 +3808,22 @@ ALTER TABLE `cost`
   ADD PRIMARY KEY (`cost_id`);
 
 --
+-- Indexes for table `daily_tasks`
+--
+ALTER TABLE `daily_tasks`
+  ADD PRIMARY KEY (`daily_task_id`),
+  ADD KEY `idx_user_id` (`user_id`),
+  ADD KEY `idx_task_date` (`task_date`),
+  ADD KEY `idx_status` (`status`);
+
+--
+-- Indexes for table `data_quality_checks`
+--
+ALTER TABLE `data_quality_checks`
+  ADD PRIMARY KEY (`check_id`),
+  ADD UNIQUE KEY `unique_plan_period` (`action_plan_id`,`reporting_period`);
+
+--
 -- Indexes for table `departments`
 --
 ALTER TABLE `departments`
@@ -2262,6 +3841,20 @@ ALTER TABLE `employees`
   ADD KEY `idx_employee_id` (`employee_id`);
 
 --
+-- Indexes for table `employee_positions`
+--
+ALTER TABLE `employee_positions`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `employee_id` (`employee_id`),
+  ADD KEY `org_node_id` (`org_node_id`);
+
+--
+-- Indexes for table `evaluations`
+--
+ALTER TABLE `evaluations`
+  ADD PRIMARY KEY (`evaluation_id`);
+
+--
 -- Indexes for table `forwarded_messages`
 --
 ALTER TABLE `forwarded_messages`
@@ -2277,10 +3870,24 @@ ALTER TABLE `goals`
   ADD PRIMARY KEY (`goal_id`);
 
 --
+-- Indexes for table `goal_quarter_activations`
+--
+ALTER TABLE `goal_quarter_activations`
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `unique_goal_year_quarter` (`goal_id`,`year`,`quarter`);
+
+--
 -- Indexes for table `income`
 --
 ALTER TABLE `income`
   ADD PRIMARY KEY (`income_id`);
+
+--
+-- Indexes for table `kpi_quarter_activations`
+--
+ALTER TABLE `kpi_quarter_activations`
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `unique_kpi_year_quarter` (`specific_objective_id`,`year`,`quarter`);
 
 --
 -- Indexes for table `meetings`
@@ -2392,6 +3999,13 @@ ALTER TABLE `monthly_tasks`
   ADD KEY `idx_monthly_task_weight` (`weight`);
 
 --
+-- Indexes for table `monthly_task_assignees`
+--
+ALTER TABLE `monthly_task_assignees`
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `unique_monthly_assignee` (`monthly_task_id`,`user_id`);
+
+--
 -- Indexes for table `notifications`
 --
 ALTER TABLE `notifications`
@@ -2412,6 +4026,13 @@ ALTER TABLE `notifications`
 ALTER TABLE `objectives`
   ADD PRIMARY KEY (`objective_id`),
   ADD KEY `fk_goals` (`goal_id`);
+
+--
+-- Indexes for table `objective_quarter_activations`
+--
+ALTER TABLE `objective_quarter_activations`
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `unique_obj_year_quarter` (`objective_id`,`year`,`quarter`);
 
 --
 -- Indexes for table `organization_groups`
@@ -2462,6 +4083,41 @@ ALTER TABLE `plans`
   ADD KEY `fk_specific_objective_detail` (`specific_objective_detail_id`);
 
 --
+-- Indexes for table `plan_approval_steps`
+--
+ALTER TABLE `plan_approval_steps`
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `uq_plan_step` (`plan_id`,`step_number`),
+  ADD KEY `org_node_id` (`org_node_id`),
+  ADD KEY `approver_employee_id` (`approver_employee_id`);
+
+--
+-- Indexes for table `plan_breakdown_supervisors`
+--
+ALTER TABLE `plan_breakdown_supervisors`
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `idx_unique_supervisor` (`specific_objective_detail_id`,`supervisor_user_id`);
+
+--
+-- Indexes for table `plan_pillars`
+--
+ALTER TABLE `plan_pillars`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Indexes for table `plan_types`
+--
+ALTER TABLE `plan_types`
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `value` (`value`);
+
+--
+-- Indexes for table `positions`
+--
+ALTER TABLE `positions`
+  ADD PRIMARY KEY (`position_id`);
+
+--
 -- Indexes for table `reportfile`
 --
 ALTER TABLE `reportfile`
@@ -2482,6 +4138,12 @@ ALTER TABLE `reports`
 ALTER TABLE `report_attachments`
   ADD PRIMARY KEY (`attachment_id`),
   ADD KEY `report_id` (`report_id`);
+
+--
+-- Indexes for table `risk_flags`
+--
+ALTER TABLE `risk_flags`
+  ADD PRIMARY KEY (`risk_id`);
 
 --
 -- Indexes for table `roles`
@@ -2531,12 +4193,28 @@ ALTER TABLE `supervisor_comments`
   ADD KEY `idx_comment_type` (`comment_type`);
 
 --
+-- Indexes for table `system_settings`
+--
+ALTER TABLE `system_settings`
+  ADD PRIMARY KEY (`setting_key`);
+
+--
 -- Indexes for table `tasks`
 --
 ALTER TABLE `tasks`
   ADD PRIMARY KEY (`task_id`),
   ADD KEY `user_id` (`user_id`),
   ADD KEY `assigned_by` (`assigned_by`);
+
+--
+-- Indexes for table `task_assignments`
+--
+ALTER TABLE `task_assignments`
+  ADD PRIMARY KEY (`assignment_id`),
+  ADD KEY `idx_assigned_by` (`assigned_by`),
+  ADD KEY `idx_assigned_to` (`assigned_to`),
+  ADD KEY `idx_status` (`status`),
+  ADD KEY `idx_due_date` (`due_date`);
 
 --
 -- Indexes for table `task_reminders`
@@ -2572,8 +4250,21 @@ ALTER TABLE `weekly_tasks`
   ADD KEY `idx_weekly_task_weight` (`weight`);
 
 --
+-- Indexes for table `weekly_task_assignees`
+--
+ALTER TABLE `weekly_task_assignees`
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `unique_weekly_assignee` (`weekly_task_id`,`user_id`);
+
+--
 -- AUTO_INCREMENT for dumped tables
 --
+
+--
+-- AUTO_INCREMENT for table `action_plan_quarter_activations`
+--
+ALTER TABLE `action_plan_quarter_activations`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT for table `approvalhierarchy`
@@ -2585,25 +4276,25 @@ ALTER TABLE `approvalhierarchy`
 -- AUTO_INCREMENT for table `approvalworkflow`
 --
 ALTER TABLE `approvalworkflow`
-  MODIFY `approvalworkflow_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=458;
+  MODIFY `approvalworkflow_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT for table `approval_workflow_history`
 --
 ALTER TABLE `approval_workflow_history`
-  MODIFY `history_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=134;
+  MODIFY `history_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=186;
 
 --
 -- AUTO_INCREMENT for table `audit_logs`
 --
 ALTER TABLE `audit_logs`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=128;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=1351;
 
 --
 -- AUTO_INCREMENT for table `chat_participants`
 --
 ALTER TABLE `chat_participants`
-  MODIFY `participant_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=31;
+  MODIFY `participant_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=49;
 
 --
 -- AUTO_INCREMENT for table `chat_settings`
@@ -2615,7 +4306,7 @@ ALTER TABLE `chat_settings`
 -- AUTO_INCREMENT for table `conversations`
 --
 ALTER TABLE `conversations`
-  MODIFY `conversation_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=16;
+  MODIFY `conversation_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=23;
 
 --
 -- AUTO_INCREMENT for table `cost`
@@ -2624,22 +4315,52 @@ ALTER TABLE `cost`
   MODIFY `cost_id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT;
 
 --
+-- AUTO_INCREMENT for table `daily_tasks`
+--
+ALTER TABLE `daily_tasks`
+  MODIFY `daily_task_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+
+--
+-- AUTO_INCREMENT for table `data_quality_checks`
+--
+ALTER TABLE `data_quality_checks`
+  MODIFY `check_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+
+--
 -- AUTO_INCREMENT for table `employees`
 --
 ALTER TABLE `employees`
-  MODIFY `employee_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=152;
+  MODIFY `employee_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=154;
+
+--
+-- AUTO_INCREMENT for table `employee_positions`
+--
+ALTER TABLE `employee_positions`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=20;
+
+--
+-- AUTO_INCREMENT for table `evaluations`
+--
+ALTER TABLE `evaluations`
+  MODIFY `evaluation_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- AUTO_INCREMENT for table `forwarded_messages`
 --
 ALTER TABLE `forwarded_messages`
-  MODIFY `forward_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
+  MODIFY `forward_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
 
 --
 -- AUTO_INCREMENT for table `goals`
 --
 ALTER TABLE `goals`
-  MODIFY `goal_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=97;
+  MODIFY `goal_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=227;
+
+--
+-- AUTO_INCREMENT for table `goal_quarter_activations`
+--
+ALTER TABLE `goal_quarter_activations`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=80;
 
 --
 -- AUTO_INCREMENT for table `income`
@@ -2648,16 +4369,22 @@ ALTER TABLE `income`
   MODIFY `income_id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT;
 
 --
+-- AUTO_INCREMENT for table `kpi_quarter_activations`
+--
+ALTER TABLE `kpi_quarter_activations`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+
+--
 -- AUTO_INCREMENT for table `meetings`
 --
 ALTER TABLE `meetings`
-  MODIFY `meeting_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
+  MODIFY `meeting_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=14;
 
 --
 -- AUTO_INCREMENT for table `meeting_attachments`
 --
 ALTER TABLE `meeting_attachments`
-  MODIFY `attachment_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `attachment_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
 -- AUTO_INCREMENT for table `meeting_minutes`
@@ -2669,25 +4396,25 @@ ALTER TABLE `meeting_minutes`
 -- AUTO_INCREMENT for table `meeting_participants`
 --
 ALTER TABLE `meeting_participants`
-  MODIFY `participant_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=43;
+  MODIFY `participant_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=62;
 
 --
 -- AUTO_INCREMENT for table `meeting_reminders`
 --
 ALTER TABLE `meeting_reminders`
-  MODIFY `reminder_id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `reminder_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT for table `menu_items`
 --
 ALTER TABLE `menu_items`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=70;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=96;
 
 --
 -- AUTO_INCREMENT for table `messages`
 --
 ALTER TABLE `messages`
-  MODIFY `message_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=86;
+  MODIFY `message_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=110;
 
 --
 -- AUTO_INCREMENT for table `message_attachments`
@@ -2705,49 +4432,61 @@ ALTER TABLE `message_mentions`
 -- AUTO_INCREMENT for table `message_reactions`
 --
 ALTER TABLE `message_reactions`
-  MODIFY `reaction_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `reaction_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
 
 --
 -- AUTO_INCREMENT for table `message_read_receipts`
 --
 ALTER TABLE `message_read_receipts`
-  MODIFY `receipt_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=99;
+  MODIFY `receipt_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=126;
 
 --
 -- AUTO_INCREMENT for table `monthly_tasks`
 --
 ALTER TABLE `monthly_tasks`
-  MODIFY `monthly_task_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=31;
+  MODIFY `monthly_task_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+
+--
+-- AUTO_INCREMENT for table `monthly_task_assignees`
+--
+ALTER TABLE `monthly_task_assignees`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
 
 --
 -- AUTO_INCREMENT for table `notifications`
 --
 ALTER TABLE `notifications`
-  MODIFY `notification_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=40;
+  MODIFY `notification_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=158;
 
 --
 -- AUTO_INCREMENT for table `objectives`
 --
 ALTER TABLE `objectives`
-  MODIFY `objective_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=142;
+  MODIFY `objective_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=277;
+
+--
+-- AUTO_INCREMENT for table `objective_quarter_activations`
+--
+ALTER TABLE `objective_quarter_activations`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
 
 --
 -- AUTO_INCREMENT for table `organization_groups`
 --
 ALTER TABLE `organization_groups`
-  MODIFY `group_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `group_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
 -- AUTO_INCREMENT for table `organization_structure`
 --
 ALTER TABLE `organization_structure`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=51;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=57;
 
 --
 -- AUTO_INCREMENT for table `organization_types`
 --
 ALTER TABLE `organization_types`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=15;
 
 --
 -- AUTO_INCREMENT for table `password_reset_otp`
@@ -2759,7 +4498,37 @@ ALTER TABLE `password_reset_otp`
 -- AUTO_INCREMENT for table `plans`
 --
 ALTER TABLE `plans`
-  MODIFY `plan_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=253;
+  MODIFY `plan_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+
+--
+-- AUTO_INCREMENT for table `plan_approval_steps`
+--
+ALTER TABLE `plan_approval_steps`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=910;
+
+--
+-- AUTO_INCREMENT for table `plan_breakdown_supervisors`
+--
+ALTER TABLE `plan_breakdown_supervisors`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
+
+--
+-- AUTO_INCREMENT for table `plan_pillars`
+--
+ALTER TABLE `plan_pillars`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+
+--
+-- AUTO_INCREMENT for table `plan_types`
+--
+ALTER TABLE `plan_types`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=28;
+
+--
+-- AUTO_INCREMENT for table `positions`
+--
+ALTER TABLE `positions`
+  MODIFY `position_id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT for table `reportfile`
@@ -2771,13 +4540,19 @@ ALTER TABLE `reportfile`
 -- AUTO_INCREMENT for table `reports`
 --
 ALTER TABLE `reports`
-  MODIFY `report_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
+  MODIFY `report_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=119;
 
 --
 -- AUTO_INCREMENT for table `report_attachments`
 --
 ALTER TABLE `report_attachments`
   MODIFY `attachment_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=20;
+
+--
+-- AUTO_INCREMENT for table `risk_flags`
+--
+ALTER TABLE `risk_flags`
+  MODIFY `risk_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- AUTO_INCREMENT for table `roles`
@@ -2789,31 +4564,37 @@ ALTER TABLE `roles`
 -- AUTO_INCREMENT for table `role_permissions`
 --
 ALTER TABLE `role_permissions`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=714;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7960;
 
 --
 -- AUTO_INCREMENT for table `specific_objectives`
 --
 ALTER TABLE `specific_objectives`
-  MODIFY `specific_objective_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=605;
+  MODIFY `specific_objective_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=747;
 
 --
 -- AUTO_INCREMENT for table `specific_objective_details`
 --
 ALTER TABLE `specific_objective_details`
-  MODIFY `specific_objective_detail_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=808;
+  MODIFY `specific_objective_detail_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
 -- AUTO_INCREMENT for table `supervisor_comments`
 --
 ALTER TABLE `supervisor_comments`
-  MODIFY `comment_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=19;
+  MODIFY `comment_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=21;
 
 --
 -- AUTO_INCREMENT for table `tasks`
 --
 ALTER TABLE `tasks`
   MODIFY `task_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+
+--
+-- AUTO_INCREMENT for table `task_assignments`
+--
+ALTER TABLE `task_assignments`
+  MODIFY `assignment_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=15;
 
 --
 -- AUTO_INCREMENT for table `task_reminders`
@@ -2825,7 +4606,7 @@ ALTER TABLE `task_reminders`
 -- AUTO_INCREMENT for table `users`
 --
 ALTER TABLE `users`
-  MODIFY `user_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=79;
+  MODIFY `user_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=81;
 
 --
 -- AUTO_INCREMENT for table `user_presence`
@@ -2837,7 +4618,13 @@ ALTER TABLE `user_presence`
 -- AUTO_INCREMENT for table `weekly_tasks`
 --
 ALTER TABLE `weekly_tasks`
-  MODIFY `weekly_task_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=58;
+  MODIFY `weekly_task_id` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `weekly_task_assignees`
+--
+ALTER TABLE `weekly_task_assignees`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- Constraints for dumped tables
@@ -2885,11 +4672,24 @@ ALTER TABLE `chat_settings`
   ADD CONSTRAINT `chat_settings_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`user_id`) ON DELETE CASCADE;
 
 --
+-- Constraints for table `daily_tasks`
+--
+ALTER TABLE `daily_tasks`
+  ADD CONSTRAINT `fk_daily_task_user` FOREIGN KEY (`user_id`) REFERENCES `users` (`user_id`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+--
 -- Constraints for table `employees`
 --
 ALTER TABLE `employees`
   ADD CONSTRAINT `employees_ibfk_1` FOREIGN KEY (`role_id`) REFERENCES `roles` (`role_id`),
   ADD CONSTRAINT `employees_ibfk_2` FOREIGN KEY (`department_id`) REFERENCES `departments` (`department_id`);
+
+--
+-- Constraints for table `employee_positions`
+--
+ALTER TABLE `employee_positions`
+  ADD CONSTRAINT `employee_positions_ibfk_1` FOREIGN KEY (`employee_id`) REFERENCES `employees` (`employee_id`) ON DELETE CASCADE,
+  ADD CONSTRAINT `employee_positions_ibfk_2` FOREIGN KEY (`org_node_id`) REFERENCES `organization_structure` (`id`) ON DELETE CASCADE;
 
 --
 -- Constraints for table `forwarded_messages`
@@ -2976,6 +4776,12 @@ ALTER TABLE `monthly_tasks`
   ADD CONSTRAINT `fk_monthly_task_detail` FOREIGN KEY (`specific_objective_detail_id`) REFERENCES `specific_objective_details` (`specific_objective_detail_id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
+-- Constraints for table `monthly_task_assignees`
+--
+ALTER TABLE `monthly_task_assignees`
+  ADD CONSTRAINT `monthly_task_assignees_ibfk_1` FOREIGN KEY (`monthly_task_id`) REFERENCES `monthly_tasks` (`monthly_task_id`) ON DELETE CASCADE;
+
+--
 -- Constraints for table `notifications`
 --
 ALTER TABLE `notifications`
@@ -3020,6 +4826,14 @@ ALTER TABLE `plans`
   ADD CONSTRAINT `fk_user` FOREIGN KEY (`user_id`) REFERENCES `users` (`user_id`) ON DELETE CASCADE;
 
 --
+-- Constraints for table `plan_approval_steps`
+--
+ALTER TABLE `plan_approval_steps`
+  ADD CONSTRAINT `plan_approval_steps_ibfk_1` FOREIGN KEY (`plan_id`) REFERENCES `plans` (`plan_id`) ON DELETE CASCADE,
+  ADD CONSTRAINT `plan_approval_steps_ibfk_2` FOREIGN KEY (`org_node_id`) REFERENCES `organization_structure` (`id`),
+  ADD CONSTRAINT `plan_approval_steps_ibfk_3` FOREIGN KEY (`approver_employee_id`) REFERENCES `employees` (`employee_id`);
+
+--
 -- Constraints for table `reportfile`
 --
 ALTER TABLE `reportfile`
@@ -3039,6 +4853,13 @@ ALTER TABLE `tasks`
   ADD CONSTRAINT `tasks_ibfk_2` FOREIGN KEY (`assigned_by`) REFERENCES `users` (`user_id`) ON DELETE SET NULL;
 
 --
+-- Constraints for table `task_assignments`
+--
+ALTER TABLE `task_assignments`
+  ADD CONSTRAINT `fk_assignment_assigned_by` FOREIGN KEY (`assigned_by`) REFERENCES `users` (`user_id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `fk_assignment_assigned_to` FOREIGN KEY (`assigned_to`) REFERENCES `users` (`user_id`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+--
 -- Constraints for table `task_reminders`
 --
 ALTER TABLE `task_reminders`
@@ -3055,6 +4876,12 @@ ALTER TABLE `user_presence`
 --
 ALTER TABLE `weekly_tasks`
   ADD CONSTRAINT `fk_weekly_task_monthly` FOREIGN KEY (`monthly_task_id`) REFERENCES `monthly_tasks` (`monthly_task_id`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+--
+-- Constraints for table `weekly_task_assignees`
+--
+ALTER TABLE `weekly_task_assignees`
+  ADD CONSTRAINT `weekly_task_assignees_ibfk_1` FOREIGN KEY (`weekly_task_id`) REFERENCES `weekly_tasks` (`weekly_task_id`) ON DELETE CASCADE;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

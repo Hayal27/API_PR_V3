@@ -31,9 +31,11 @@ const dataQualityRoutes = require("./routes/dataQualityRoutes.js");
 const evaluationRoutes = require("./routes/evaluationRoutes.js");
 const executiveReportRoutes = require("./routes/executiveReportRoutes.js");
 const reportModuleRoutes = require("./routes/reportModuleRoutes.js");
+const kpiAssignmentRoutes = require("./routes/kpiAssignmentRoutes.js");
 const DeadlineScheduler = require("./services/deadlineScheduler.js");
 const telegramBot = require("./services/telegramBot.js");
 const ReminderScheduler = require("./services/reminderScheduler.js");
+const BackupScheduler = require("./services/backupScheduler.js");
 const authMiddleware = require("./middleware/authMiddleware.js");
 const loggingMiddleware = require("./middleware/loggingMiddleware.js");
 
@@ -65,6 +67,7 @@ app.use(loggingMiddleware); // Logs every request
 // Using Routes
 app.use("/api", userRoutes);
 app.use("/api", employeeRoutes);
+app.use("/api/kpis", kpiAssignmentRoutes); // MUST be before planRoutes (which has wildcard /kpis/:id)
 app.use("/api", planRoutes);
 app.use("/api/plan", planRoutes);   // also expose plan routes under /api/plan prefix
 app.use("/api/dashboard", dashboardRoutes);
@@ -173,10 +176,11 @@ app.listen(PORT, "0.0.0.0", () => {
   console.log(`Environment: ${process.env.NODE_ENV || "production"}`);
   console.log(`Database: ${process.env.DB_HOST}:${process.env.DB_PORT}/${process.env.DB_NAME}`);
 
-  // Initialize deadline scheduler
+  // Initialize deadline, reminder, and backup schedulers
   DeadlineScheduler.init();
   ReminderScheduler.init();
-  console.log('Deadline and Reminder schedulers initialized');
+  BackupScheduler.init();
+  console.log('Deadline, Reminder, and Automated Backup schedulers initialized');
 
   // ── Auto-register menu items that may not yet exist ──────────────────────
   setTimeout(() => autoRegisterMenuItems(), 2000); // wait 2 s for DB to settle
@@ -215,6 +219,15 @@ function autoRegisterMenuItems() {
       fileName: 'ExecutiveReportPage.jsx',
       sortOrder: 65,
       parentPath: null,
+      roles: [1, 2, 3, 4, 5, 29],
+    },
+    {
+      name: 'KPI Position Assignment',
+      path: '/kpi/my-assigned',
+      icon: 'bi bi-award-fill',
+      fileName: 'KPIAssignmentPage.jsx',
+      sortOrder: 4,
+      parentPath: '#',
       roles: [1, 2, 3, 4, 5, 29],
     },
     {
@@ -313,6 +326,14 @@ function autoRegisterMenuItems() {
     autoMigrateTaskAssignmentMenus();
   } catch (err) {
     console.error('Failed to run Task Assignment auto-migration:', err);
+  }
+
+  // Run KPI Position Assignment migration
+  try {
+    const addKpiPositionAssignmentMenu = require('./migrations/add_kpi_position_assignment_menu');
+    addKpiPositionAssignmentMenu();
+  } catch (err) {
+    console.error('Failed to run KPI Position Assignment migration:', err);
   }
 }
 

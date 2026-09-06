@@ -3,6 +3,7 @@ const con = require("../models/db");
 const approvalWorkflowModel = require("../models/approvalWorkflowModel");
 const NotificationService = require("../services/notificationService");
 const util = require('util');
+const { logAudit, AUDIT_ACTIONS } = require('../middleware/auditLogger');
 
 // Helper function to verify JWT token and extract user_id
 const verifyToken = (token) => {
@@ -313,6 +314,10 @@ const updateReportStatus = async (req, res) => {
                       });
                     }
 
+                    logAudit(user_id, AUDIT_ACTIONS.REPORT_APPROVE || 'REPORT_APPROVE', `Approved report ID ${plan_id} — forwarded to next supervisor`, {
+                      report_id: plan_id, approver_id: supervisor_id, status: 'Approved', comment
+                    }, req).catch(() => {});
+
                     return res.status(200).json({
                       success: true,
                       message: "approved",
@@ -335,6 +340,10 @@ const updateReportStatus = async (req, res) => {
                       error_code: "DB_ERROR",
                     });
                   }
+
+                  logAudit(user_id, AUDIT_ACTIONS.REPORT_APPROVE || 'REPORT_APPROVE', `Fully approved report ID ${plan_id}`, {
+                    report_id: plan_id, approver_id: supervisor_id, status: 'Approved', final: true, comment
+                  }, req).catch(() => {});
 
                   return res.status(200).json({
                     success: true,
@@ -359,6 +368,10 @@ const updateReportStatus = async (req, res) => {
                   error_code: "DB_ERROR",
                 });
               }
+
+              logAudit(user_id, AUDIT_ACTIONS.REPORT_DECLINE || 'REPORT_DECLINE', `Declined report ID ${plan_id}`, {
+                report_id: plan_id, approver_id: supervisor_id, status: 'Declined', comment
+              }, req).catch(() => {});
 
               return res.status(200).json({
                 success: true,
