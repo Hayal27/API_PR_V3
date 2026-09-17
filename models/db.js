@@ -24,7 +24,9 @@ const con = mysql.createPool({
     multipleStatements: true,
     connectTimeout: 10000,
     waitForConnections: true,
-    queueLimit: 0
+    queueLimit: 0,
+    dateStrings: true,
+    timezone: '+03:00'
 });
 
 // Handle errors on pooled connections to avoid crashing the server
@@ -170,7 +172,7 @@ const ensureColumnExists = (tableName, columnName, columnDef) => {
 };
 
 // 1. specific_objective_details (Action Plans) columns
-ensureColumnExists('specific_objective_details', 'weight', 'DECIMAL(10,2) DEFAULT 0.00');
+ensureColumnExists('specific_objective_details', 'weight', 'DECIMAL(12,4) DEFAULT 0.0000');
 ensureColumnExists('specific_objective_details', 'outcome', 'DECIMAL(15,4) DEFAULT NULL');
 ensureColumnExists('specific_objective_details', 'CIbaseline', 'DECIMAL(15,2) DEFAULT NULL');
 ensureColumnExists('specific_objective_details', 'CIplan', 'DECIMAL(15,2) DEFAULT NULL');
@@ -190,7 +192,7 @@ ensureColumnExists('specific_objective_details', 'editing_status', "ENUM('active
 ensureColumnExists('specific_objective_details', 'reporting', "ENUM('active','deactivate') NOT NULL DEFAULT 'active'");
 
 // 2. specific_objectives (KPIs) columns
-ensureColumnExists('specific_objectives', 'weight', 'DECIMAL(10,2) DEFAULT 100.00');
+ensureColumnExists('specific_objectives', 'weight', 'DECIMAL(12,4) DEFAULT 100.0000');
 ensureColumnExists('specific_objectives', 'plan_type', "VARCHAR(100) DEFAULT 'general'");
 ensureColumnExists('specific_objectives', 'org_node_ids', 'TEXT DEFAULT NULL');
 ensureColumnExists('specific_objectives', 'supportive_org_node_ids', 'TEXT DEFAULT NULL');
@@ -200,14 +202,14 @@ ensureColumnExists('specific_objectives', 'cost_id', 'INT DEFAULT NULL');
 
 // 3. objectives columns
 ensureColumnExists('objectives', 'goal_id', 'INT DEFAULT NULL');
-ensureColumnExists('objectives', 'weight', 'FLOAT DEFAULT 100');
+ensureColumnExists('objectives', 'weight', 'DECIMAL(12,4) DEFAULT 100.0000');
 ensureColumnExists('objectives', 'created_by', 'INT DEFAULT NULL');
 ensureColumnExists('objectives', 'year', 'INT DEFAULT NULL');
 ensureColumnExists('objectives', 'quarter', 'VARCHAR(2) DEFAULT NULL');
 ensureColumnExists('objectives', 'employee_id', 'INT DEFAULT NULL');
 
 // 4. goals columns
-ensureColumnExists('goals', 'weight', 'FLOAT DEFAULT 100');
+ensureColumnExists('goals', 'weight', 'DECIMAL(12,4) DEFAULT 100.0000');
 ensureColumnExists('goals', 'created_by', 'INT DEFAULT NULL');
 ensureColumnExists('goals', 'year', 'INT DEFAULT NULL');
 ensureColumnExists('goals', 'quarter', 'VARCHAR(2) DEFAULT NULL');
@@ -216,6 +218,10 @@ ensureColumnExists('goals', 'employee_id', 'INT DEFAULT NULL');
 // 5. monthly_tasks & weekly_tasks columns
 ensureColumnExists('monthly_tasks', 'actual_amount', 'DECIMAL(15,4) DEFAULT NULL');
 ensureColumnExists('weekly_tasks', 'actual_amount', 'DECIMAL(15,4) DEFAULT NULL');
+
+const { sequelize, Sequelize } = require('../config/database');
+con.sequelize = sequelize;
+con.Sequelize = Sequelize;
 
 module.exports = con;
 

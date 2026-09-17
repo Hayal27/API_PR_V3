@@ -17,11 +17,18 @@ class ReminderScheduler {
             this.checkUpcomingMeetings();
         });
 
+        // 3. Hourly Overdue Task Alerts - Every 1 hour interval
+        cron.schedule('0 * * * *', () => {
+            console.log('⚠️ Running hourly overdue task alert check...');
+            this.checkHourlyOverdueAlerts();
+        });
+
         // Initial run on startup (after 10s)
         setTimeout(() => {
-            console.log('🚀 Running initial reminder checks...');
+            console.log('🚀 Running initial reminder and overdue checks...');
             this.sendDailySummaries();
             this.checkUpcomingMeetings();
+            this.checkHourlyOverdueAlerts();
         }, 10000);
     }
 
@@ -119,6 +126,77 @@ class ReminderScheduler {
             }
         } catch (error) {
             console.error('Error in checkUpcomingMeetings:', error);
+        }
+    }
+
+    static async checkHourlyOverdueAlerts() {
+        try {
+            const query = util.promisify(db.query).bind(db);
+
+            // Find all active task assignments that are overdue (due_date < NOW() and not completed/confirmed)
+            const overdueAssignments = await query(`
+                SELECT 
+                    ta.assignment_id, ta.title, ta.priority, ta.due_date, ta.assigned_to, ta.assigned_by,
+                    DATEDIFF(NOW(), ta.due_date) as days_overdue,
+                    CONCAT(COALESCE(e.fname,''), ' ', COALESCE(e.lname,'')) as assignee_name
+                FROM task_assignments ta
+                JOIN users u ON ta.assigned_to = u.user_id
+                JOIN employees e ON u.employee_id = e.employee_id
+                WHERE ta.due_date IS NOT NULL
+                  AND ta.due_date < NOW()
+                  AND ta.status NOT IN ('completed', 'confirmed', 'cancelled')
+            `);
+
+            if (!overdueAssignments || overdueAssignments.length === 0) {
+                console.log('✅ Hourly overdue check: No overdue task assignments found.');
+                return;
+            }
+
+            // Group overdue tasks by assigned_to
+            const userOverdueMap = {};
+            for (const task of overdueAssignments) {
+                if (!userOverdueMap[task.assigned_to]) {
+                    userOverdueMap[task.assigned_to] = [];
+                }
+                userOverdueMap[task.assigned_to].push(task);
+            }
+
+            // Dispatch alert for each user (max 1 alert per 55 minutes to avoid spam)
+            for (const [userId, tasks] of Object.entries(userOverdueMap)) {
+                const recentAlerts = await query(`
+                    SELECT COUNT(*) as count 
+                    FROM notifications 
+                    WHERE user_id = ? 
+                      AND type = 'overdue_alert' 
+                      AND created_at >= DATE_SUB(NOW(), INTERVAL 55 MINUTE)
+                `, [userId]);
+
+                if (recentAlerts[0]?.count > 0) {
+                    continue; // Already alerted within this 1-hour interval
+                }
+
+                const taskCount = tasks.length;
+                const topTasks = tasks.slice(0, 3).map(t => `• [${(t.priority || 'medium').toUpperCase()}] ${t.title} (${t.days_overdue}d overdue)`).join('\n');
+                const title = `⚠️ Overdue Task Alert (${taskCount} pending)`;
+                const message = `You have ${taskCount} task(s) past deadline requiring immediate completion:\n${topTasks}${taskCount > 3 ? `\n...and ${taskCount - 3} more` : ''}`;
+
+                await NotificationService.createNotification({
+                    user_id: Number(userId),
+                    type: 'overdue_alert',
+                    title: title,
+                    message: message,
+                    data: {
+                        task_count: taskCount,
+                        overdue_ids: tasks.map(t => t.assignment_id),
+                        timestamp: new Date().toISOString()
+                    },
+                    priority: 'urgent'
+                });
+
+                console.log(`📢 Dispatched hourly overdue alert for user ${userId} (${taskCount} overdue tasks)`);
+            }
+        } catch (error) {
+            console.error('Error in checkHourlyOverdueAlerts:', error);
         }
     }
 }

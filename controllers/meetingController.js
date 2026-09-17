@@ -283,18 +283,23 @@ const getMeetingDetails = (req, res) => {
         console.log(`📅 Getting meeting details: ${meetingId} `);
 
         const meetingQuery = `
-SELECT
-m.*,
-    COALESCE(e.name, u.user_name) as organizer_name,
-    e.email as organizer_email,
-    u.avatar_url as organizer_avatar
-      FROM meetings m
-      LEFT JOIN users u ON m.created_by = u.user_id
-      LEFT JOIN employees e ON u.employee_id = e.employee_id
-      WHERE m.meeting_id = ?
-    `;
+            SELECT
+                m.*,
+                COALESCE(e.name, u.user_name) as organizer_name,
+                e.email as organizer_email,
+                u.avatar_url as organizer_avatar,
+                (SELECT role FROM meeting_participants WHERE meeting_id = m.meeting_id AND user_id = ?) as my_role,
+                (SELECT response_status FROM meeting_participants WHERE meeting_id = m.meeting_id AND user_id = ?) as my_response_status,
+                CASE WHEN m.created_by = ? THEN 1 ELSE 0 END as is_creator
+            FROM meetings m
+            LEFT JOIN users u ON m.created_by = u.user_id
+            LEFT JOIN employees e ON u.employee_id = e.employee_id
+            WHERE m.meeting_id = ?
+        `;
 
-        con.query(meetingQuery, [meetingId], (err, meetings) => {
+        const meetingParams = [user_id || 0, user_id || 0, user_id || 0, meetingId];
+
+        con.query(meetingQuery, meetingParams, (err, meetings) => {
             if (err || meetings.length === 0) {
                 return res.status(404).json({
                     success: false,
@@ -575,13 +580,13 @@ const getMeetingStats = (req, res) => {
         console.log(`📊 Getting meeting stats for user: ${user_id} `);
 
         const statsQuery = `
-SELECT
-COUNT(*) as total_meetings,
-    SUM(CASE WHEN m.status = 'scheduled' AND m.start_time > NOW() THEN 1 ELSE 0 END) as upcoming_meetings,
-    SUM(CASE WHEN m.status = 'scheduled' AND DATE(m.start_time) = CURDATE() THEN 1 ELSE 0 END) as today_meetings,
-    SUM(CASE WHEN m.status = 'completed' THEN 1 ELSE 0 END) as completed_meetings,
-    SUM(CASE WHEN mp.response_status = 'pending' AND m.start_time > NOW() THEN 1 ELSE 0 END) as pending_responses,
-    SUM(CASE WHEN m.priority = 'urgent' AND m.start_time > NOW() THEN 1 ELSE 0 END) as urgent_meetings
+      SELECT
+        CAST(COUNT(*) AS UNSIGNED) as total_meetings,
+        CAST(COALESCE(SUM(CASE WHEN m.status = 'scheduled' THEN 1 ELSE 0 END), 0) AS UNSIGNED) as upcoming_meetings,
+        CAST(COALESCE(SUM(CASE WHEN m.status = 'scheduled' AND DATE(m.start_time) = CURDATE() THEN 1 ELSE 0 END), 0) AS UNSIGNED) as today_meetings,
+        CAST(COALESCE(SUM(CASE WHEN m.status = 'completed' THEN 1 ELSE 0 END), 0) AS UNSIGNED) as completed_meetings,
+        CAST(COALESCE(SUM(CASE WHEN mp.response_status = 'pending' AND m.status NOT IN ('cancelled', 'completed') THEN 1 ELSE 0 END), 0) AS UNSIGNED) as pending_responses,
+        CAST(COALESCE(SUM(CASE WHEN (m.priority = 'urgent' OR m.priority = 'high') AND m.status NOT IN ('cancelled', 'completed') THEN 1 ELSE 0 END), 0) AS UNSIGNED) as urgent_meetings
       FROM meetings m
       INNER JOIN meeting_participants mp ON m.meeting_id = mp.meeting_id
       WHERE mp.user_id = ?
@@ -597,8 +602,16 @@ COUNT(*) as total_meetings,
                 });
             }
 
-            const stats = results[0] || {};
-            console.log(`✅ Stats retrieved`);
+            const raw = results[0] || {};
+            const stats = {
+                total_meetings: Number(raw.total_meetings || 0),
+                upcoming_meetings: Number(raw.upcoming_meetings || 0),
+                today_meetings: Number(raw.today_meetings || 0),
+                completed_meetings: Number(raw.completed_meetings || 0),
+                pending_responses: Number(raw.pending_responses || 0),
+                urgent_meetings: Number(raw.urgent_meetings || 0)
+            };
+            console.log(`✅ Stats retrieved for user ${user_id}:`, stats);
             return res.status(200).json({
                 success: true,
                 stats

@@ -78,6 +78,88 @@ router.get('/volume', (req, res) => {
 });
 
 /**
+ * @route   GET /api/audit-logs/login-sessions
+ * @desc    Detailed daily login sessions, unique users, failed logins and online status for line charts
+ * @query   days (default 14, supports 7, 14, 30)
+ */
+router.get('/login-sessions', (req, res) => {
+    const days = Math.min(Math.max(parseInt(req.query.days) || 14, 3), 90);
+
+    const trendQuery = `
+        SELECT 
+            DATE(created_at) AS date_val,
+            DATE_FORMAT(created_at, '%b %d') AS label,
+            SUM(CASE WHEN action = 'LOGIN' THEN 1 ELSE 0 END) AS logins,
+            SUM(CASE WHEN action = 'LOGIN_FAILED' THEN 1 ELSE 0 END) AS failed,
+            SUM(CASE WHEN action = 'LOGOUT' THEN 1 ELSE 0 END) AS logouts,
+            COUNT(DISTINCT CASE WHEN action = 'LOGIN' THEN user_id ELSE NULL END) AS active_users
+        FROM audit_logs
+        WHERE created_at >= DATE_SUB(CURDATE(), INTERVAL ? DAY)
+        GROUP BY DATE(created_at), DATE_FORMAT(created_at, '%b %d')
+        ORDER BY date_val ASC
+    `;
+
+    const summaryQuery = `
+        SELECT 
+            COUNT(CASE WHEN action = 'LOGIN' THEN 1 END) AS total_logins,
+            COUNT(CASE WHEN action = 'LOGOUT' THEN 1 END) AS total_logouts,
+            COUNT(CASE WHEN action = 'LOGIN_FAILED' THEN 1 END) AS total_failed,
+            COUNT(DISTINCT CASE WHEN action = 'LOGIN' THEN user_id END) AS unique_users,
+            ROUND((COUNT(CASE WHEN action = 'LOGIN' THEN 1 END) / 
+                  NULLIF(COUNT(CASE WHEN action IN ('LOGIN', 'LOGIN_FAILED') THEN 1 END), 0)) * 100, 1) AS success_rate
+        FROM audit_logs
+        WHERE created_at >= DATE_SUB(CURDATE(), INTERVAL ? DAY)
+    `;
+
+    const onlineQuery = `SELECT COUNT(*) AS online_count FROM users WHERE online_flag = 1`;
+
+    con.query(trendQuery, [days], (err1, trendRows) => {
+        if (err1) return res.status(500).json({ success: false, error: err1.message });
+
+        con.query(summaryQuery, [days], (err2, summaryRows) => {
+            if (err2) return res.status(500).json({ success: false, error: err2.message });
+
+            con.query(onlineQuery, (err3, onlineRows) => {
+                const onlineCount = (!err3 && onlineRows && onlineRows.length > 0) ? onlineRows[0].online_count : 0;
+                const summary = summaryRows[0] || {};
+
+                // Find peak activity day
+                let peakDay = { label: 'None', count: 0 };
+                (trendRows || []).forEach(r => {
+                    const l = Number(r.logins || 0);
+                    if (l > peakDay.count) {
+                        peakDay = { label: r.label, count: l, date: r.date_val };
+                    }
+                });
+
+                res.json({
+                    success: true,
+                    days,
+                    timeline: (trendRows || []).map(r => ({
+                        date: r.date_val,
+                        label: r.label,
+                        logins: Number(r.logins || 0),
+                        failed: Number(r.failed || 0),
+                        logouts: Number(r.logouts || 0),
+                        activeUsers: Number(r.active_users || 0)
+                    })),
+                    summary: {
+                        totalLogins: Number(summary.total_logins || 0),
+                        totalLogouts: Number(summary.total_logouts || 0),
+                        totalFailed: Number(summary.total_failed || 0),
+                        uniqueUsers: Number(summary.unique_users || 0),
+                        successRate: summary.success_rate !== null ? Number(summary.success_rate) : 100,
+                        onlineUsers: onlineCount,
+                        peakDay
+                    }
+                });
+            });
+        });
+    });
+});
+
+
+/**
  * @route   GET /api/audit-logs/summary
  * @desc    Quick summary counts by category for dashboard cards
  */

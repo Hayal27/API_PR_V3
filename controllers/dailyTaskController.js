@@ -51,7 +51,21 @@ exports.getDailyTasks = (req, res) => {
     const refDate = date || new Date().toISOString().split('T')[0];
 
     let query = `
-      SELECT * FROM daily_tasks
+      SELECT 
+        daily_task_id,
+        user_id,
+        title,
+        description,
+        priority,
+        status,
+        DATE_FORMAT(task_date, '%Y-%m-%d') as task_date,
+        start_time,
+        end_time,
+        category,
+        notes,
+        created_at,
+        updated_at
+      FROM daily_tasks
       WHERE user_id = ?
     `;
     const params = [userId];

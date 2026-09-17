@@ -189,16 +189,119 @@ const getEmployeeStatistics = async (req, res) => {
         `);
         const activeUsers = activeUsersResult[0].active;
 
-        // Get employees by department
-        const departmentStatsResult = await query(`
-            SELECT
-                d.name as department_name,
-                COUNT(e.employee_id) as employee_count
-            FROM departments d
-            LEFT JOIN employees e ON d.department_id = e.department_id
-            GROUP BY d.department_id, d.name
-            ORDER BY employee_count DESC
+        // 1. Fetch organization structure nodes for hierarchical rollup
+        const orgNodes = await query(`
+            SELECT id, name, name_amharic, type, parent_id, level
+            FROM organization_structure
         `);
+        const orgMap = {};
+        (orgNodes || []).forEach(n => { orgMap[n.id] = n; });
+
+        // Map legacy departments table IDs to canonical org_structure IDs
+        const legacyMap = {
+            1: 32, // 'አካውንቲንግ እና ፋይናንስ' -> Finance Dept
+            2: 11, // 'ኢንፎርሜሽን ቴክኖሎጂ ልማት' -> IT Directorate
+            3: 12, // 'ኮንስትራክሽን' -> Construction Sector
+            4: 43, // 'ኦዲት' -> Internal Audit Service
+            5: 27, // 'ቢዝነስ ዴቨሎፕመንት' -> Marketing & Business Dev
+            6: 44, // 'ህግ' -> Law Department
+            10: 10, // Deputy CEO
+            11: 11, // IT Sector
+            12: 12, // Construction Sector
+            14: 14, // Digital Service
+            15: 15, // Research Section
+            16: 16, // Incubation Section
+            17: 17, // Network & Infra
+            18: 18, // Software development
+            27: 27, // Marketing
+            37: 37, // Procurement
+            45: 45, // Strategic Advisor
+            50: 50, // Plan and followup
+            52: 52  // Specialist
+        };
+
+        // Helper to resolve an employee's org position up to their parent Directorate / Department
+        const resolveOrgUnit = (nodeId) => {
+            if (!nodeId || !orgMap[nodeId]) return null;
+            let curr = orgMap[nodeId];
+            let path = [curr];
+            while (curr.parent_id && orgMap[curr.parent_id]) {
+                curr = orgMap[curr.parent_id];
+                path.unshift(curr);
+            }
+
+            // Find Directorate / Sector level
+            let directorate = path.find(n =>
+                n.type === 'Directorate' ||
+                n.type === 'Sector' ||
+                (n.name || '').toLowerCase().includes('directorate') ||
+                (n.name || '').toLowerCase().includes('sector')
+            );
+            if (!directorate) {
+                directorate = path.find(n => n.id !== 9 && n.id !== 10 && (n.level === 2 || n.level === 3));
+            }
+            if (!directorate && path.some(n => n.id === 9 || n.id === 10 || n.id === 45)) {
+                directorate = {
+                    id: 9,
+                    name: 'Executive Office (ዋና ሥራ አስፈፃሚ ጽ/ቤት)',
+                    name_amharic: 'ዋና ሥራ አስፈፃሚ ጽ/ቤት',
+                    type: 'Executive'
+                };
+            }
+
+            // Find Department level
+            let department = path.find(n => n.type === 'Department' || (n.name || '').toLowerCase().includes('department'));
+            if (!department) {
+                department = directorate || path[path.length - 1];
+            }
+
+            return {
+                directorate: directorate || path[path.length - 1],
+                department
+            };
+        };
+
+        // Fetch all employees with their employee_positions and fallback department_id
+        const empOrgRows = await query(`
+            SELECT
+                e.employee_id,
+                e.department_id,
+                ep.org_node_id
+            FROM employees e
+            LEFT JOIN employee_positions ep ON e.employee_id = ep.employee_id AND ep.is_primary = 1
+        `);
+
+        const dirCounts = {};
+        const deptCounts = {};
+
+        empOrgRows.forEach(emp => {
+            const targetNodeId = emp.org_node_id || legacyMap[emp.department_id] || emp.department_id;
+            const resolved = resolveOrgUnit(targetNodeId);
+
+            if (resolved) {
+                const dirName = (resolved.directorate.name_amharic || resolved.directorate.name || 'General Operations').trim();
+                dirCounts[dirName] = (dirCounts[dirName] || 0) + 1;
+
+                const deptName = (resolved.department.name_amharic || resolved.department.name || dirName).trim();
+                deptCounts[deptName] = (deptCounts[deptName] || 0) + 1;
+            } else {
+                dirCounts['ያልተመደበ (Unassigned)'] = (dirCounts['ያልተመደበ (Unassigned)'] || 0) + 1;
+                deptCounts['ያልተመደበ (Unassigned)'] = (deptCounts['ያልተመደበ (Unassigned)'] || 0) + 1;
+            }
+        });
+
+        // Sorted arrays for directorates and sub-departments
+        const directorateStatsResult = Object.entries(dirCounts).map(([name, count]) => ({
+            department_name: name,
+            employee_count: count,
+            unit_type: 'Directorate'
+        })).sort((a, b) => b.employee_count - a.employee_count);
+
+        const subDeptStatsResult = Object.entries(deptCounts).map(([name, count]) => ({
+            department_name: name,
+            employee_count: count,
+            unit_type: 'Department'
+        })).sort((a, b) => b.employee_count - a.employee_count);
 
         // Get employees by role
         const roleStatsResult = await query(`
@@ -234,7 +337,8 @@ const getEmployeeStatistics = async (req, res) => {
             activeUsers,
             inactiveUsers: totalEmployees - activeUsers,
             recentRegistrations,
-            departmentStats: departmentStatsResult,
+            departmentStats: directorateStatsResult,
+            subDepartmentStats: subDeptStatsResult,
             roleStats: roleStatsResult,
             genderStats: genderStatsResult
         });

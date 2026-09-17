@@ -1,23 +1,26 @@
-const dbconnection = require("../models/db");
-const {StatusCodes} = require("http-status-codes");
+const { sequelize } = require('../models/index');
+const { QueryTypes } = require('sequelize');
 
-const getAllLetters = (req, res) => {
-    const sql = "SELECT * FROM letter";
-    dbconnection.query(sql, (err, data) => {
-      if (err) return res.json("error1 " + err);
-      return res.json(data);
-    });
-  };
- const planWithLetter =  (req, res) => {
-    try {
-      const plan =  dbconnection.query(`
-        SELECT i.*, l.*
-        FROM plan i
-        LEFT JOIN letter l ON i.plan_id = l.plan_id
-      `);
-      res.json(plan);
-    } catch (error) {
-      res.status(500).send('Server error');
-    }
+const getAllLetters = async (req, res) => {
+  try {
+    const data = await sequelize.query('SELECT * FROM letter', { type: QueryTypes.SELECT });
+    return res.json(data);
+  } catch (err) {
+    return res.json('error1 ' + err);
   }
-  module.exports = {getAllLetters, planWithLetter};
+};
+
+const planWithLetter = async (req, res) => {
+  try {
+    const plan = await sequelize.query(`
+      SELECT i.*, l.*
+      FROM plan i
+      LEFT JOIN letter l ON i.plan_id = l.plan_id
+    `, { type: QueryTypes.SELECT });
+    res.json(plan);
+  } catch (error) {
+    res.status(500).send('Server error');
+  }
+};
+
+module.exports = { getAllLetters, planWithLetter };

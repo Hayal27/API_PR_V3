@@ -1,8 +1,12 @@
 const express = require("express");
 const router = express.Router();
 const taskController = require("../controllers/taskController");
+const taskAssignmentController = require("../controllers/taskAssignmentController");
 const taskBreakdownController = require("../controllers/taskBreakdownController");
 const verifyToken = require("../middleware/verifyToken");
+
+// Unified Task Hub Alerts (aggregating received + daily + supervisor approvals)
+router.get("/tasks/hub-alerts", verifyToken, taskAssignmentController.getTaskHubAlerts);
 
 // Get all tasks for user
 router.get("/tasks", verifyToken, taskController.getUserTasks);

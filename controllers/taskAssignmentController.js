@@ -319,7 +319,13 @@ exports.getSupervisedUsers = (req, res) => {
         e.supervisor_id,
         (SELECT CONCAT(e2.fname, ' ', e2.lname) FROM employees e2 WHERE e2.employee_id = e.supervisor_id) as supervisor_name,
         (SELECT COUNT(*) FROM task_assignments WHERE assigned_to = u.user_id AND status = 'pending') as pending_tasks,
-        (SELECT COUNT(*) FROM task_assignments WHERE assigned_to = u.user_id AND status = 'completed') as completed_tasks
+        (SELECT COUNT(*) FROM task_assignments WHERE assigned_to = u.user_id AND status = 'completed') as completed_tasks,
+        (SELECT COUNT(*) FROM daily_tasks dt WHERE dt.user_id = u.user_id) as daily_total,
+        (SELECT COUNT(*) FROM daily_tasks dt WHERE dt.user_id = u.user_id AND dt.status IN ('done', 'completed')) as daily_completed,
+        (SELECT COUNT(*) FROM task_assignments ta_cr WHERE ta_cr.assigned_by = u.user_id) as delegated_total,
+        (SELECT COUNT(*) FROM task_assignments ta_cr WHERE ta_cr.assigned_by = u.user_id AND ta_cr.status IN ('completed', 'confirmed')) as delegated_completed,
+        (SELECT COUNT(*) FROM task_assignments ta_rc WHERE ta_rc.assigned_to = u.user_id) as received_total,
+        (SELECT COUNT(*) FROM task_assignments ta_rc WHERE ta_rc.assigned_to = u.user_id AND ta_rc.due_date IS NOT NULL AND ta_rc.due_date < NOW() AND ta_rc.status NOT IN ('completed', 'confirmed')) as received_overdue
       FROM users u
       LEFT JOIN employees e ON u.employee_id = e.employee_id
       LEFT JOIN roles r ON u.role_id = r.role_id
@@ -523,6 +529,32 @@ exports.getSupervisedUsers = (req, res) => {
             u.start_date = earliestStart;
             u.deadline = latestDeadline;
             u.breakdown_tasks = tasks;
+
+            // Subordinate performance score calculation
+            const dTotal = Number(u.daily_total) || 0;
+            const dComp = Number(u.daily_completed) || 0;
+            const dRate = dTotal > 0 ? Math.round((dComp / dTotal) * 100) : 0;
+
+            const delTotal = Number(u.delegated_total) || 0;
+            const delComp = Number(u.delegated_completed) || 0;
+            const delRate = delTotal > 0 ? Math.round((delComp / delTotal) * 100) : 0;
+
+            const recTotal = Number(u.received_total) || 0;
+            const recOverdue = Number(u.received_overdue) || 0;
+            const recComp = Number(u.completed_tasks) || 0;
+            const recRate = recTotal > 0 ? Math.round((recComp / recTotal) * 100) : 0;
+
+            let sumW = 0, sumScores = 0;
+            if (dTotal > 0) { sumScores += dRate * 0.35; sumW += 0.35; }
+            if (recTotal > 0) { sumScores += recRate * 0.35; sumW += 0.35; }
+            if (delTotal > 0) { sumScores += delRate * 0.15; sumW += 0.15; }
+            if (totalBTasks > 0) { sumScores += avgProg * 0.15; sumW += 0.15; }
+
+            const perfScore = sumW > 0 ? Math.round(sumScores / sumW) : 100;
+            u.performance_score = perfScore;
+            u.daily_rate = dRate;
+            u.delegated_rate = delRate;
+            u.received_rate = recRate;
           });
 
           res.json({ success: true, users: filteredList });
@@ -535,6 +567,265 @@ exports.getSupervisedUsers = (req, res) => {
     res.status(500).json({ success: false, message: "Server error", error: error.message });
   }
 };
+
+// Get comprehensive operational dossier & performance for a subordinate user
+exports.getSubordinateDetails = async (req, res) => {
+  try {
+    const supervisorUserId = req.user_id;
+    const subordinateUserId = Number(req.params.id);
+
+    if (!supervisorUserId) {
+      return res.status(401).json({ success: false, message: "Unauthorized" });
+    }
+
+    if (!subordinateUserId) {
+      return res.status(400).json({ success: false, message: "Subordinate ID is required" });
+    }
+
+    // 1. Get subordinate user & employee details
+    const userQuery = `
+      SELECT 
+        u.user_id,
+        u.user_name,
+        e.employee_id,
+        CONCAT(COALESCE(e.fname, u.user_name), ' ', COALESCE(e.lname, '')) as name,
+        COALESCE(os_main.name, pos.title, pos.name, r.role_name, 'Staff') as position,
+        e.email,
+        COALESCE(d.name, os_main.name, 'General Directorate') as department_name,
+        u.avatar_url,
+        e.supervisor_id,
+        (SELECT CONCAT(e2.fname, ' ', e2.lname) FROM employees e2 WHERE e2.employee_id = e.supervisor_id) as supervisor_name
+      FROM users u
+      LEFT JOIN employees e ON u.employee_id = e.employee_id
+      LEFT JOIN roles r ON u.role_id = r.role_id
+      LEFT JOIN departments d ON e.department_id = d.department_id
+      LEFT JOIN employee_positions ep_main ON e.employee_id = ep_main.employee_id AND ep_main.is_primary = 1
+      LEFT JOIN organization_structure os_main ON ep_main.org_node_id = os_main.id
+      LEFT JOIN positions pos ON ep_main.position_id = pos.position_id
+      WHERE u.user_id = ?
+    `;
+
+    // 2. Query Daily Tasks logged by this subordinate
+    const dailyTasksQuery = `
+      SELECT 
+        daily_task_id,
+        title,
+        description,
+        priority,
+        status,
+        task_date,
+        start_time,
+        end_time,
+        category,
+        notes,
+        created_at
+      FROM daily_tasks
+      WHERE user_id = ?
+      ORDER BY COALESCE(task_date, created_at) DESC, created_at DESC
+      LIMIT 100
+    `;
+
+    // 3. Query Tasks Created by this subordinate and assigned to their team members (Delegated Tasks)
+    const delegatedTasksQuery = `
+      SELECT 
+        ta.assignment_id,
+        ta.title,
+        ta.description,
+        ta.priority,
+        ta.category,
+        ta.status,
+        ta.due_date,
+        ta.created_at,
+        ta.completed_at,
+        ta.confirmed_at,
+        ta.completion_note,
+        ta.assigned_to,
+        CONCAT(COALESCE(e.fname, u.user_name), ' ', COALESCE(e.lname, '')) as assignee_name,
+        COALESCE(os_main.name, pos.title, pos.name, 'Staff') as assignee_position,
+        COALESCE(d.name, 'General Directorate') as assignee_department,
+        CASE 
+          WHEN ta.due_date IS NOT NULL AND ta.due_date < NOW() AND ta.status NOT IN ('completed', 'confirmed') THEN 1 
+          ELSE 0 
+        END as is_overdue,
+        CASE 
+          WHEN ta.due_date IS NOT NULL AND ta.due_date < NOW() AND ta.status NOT IN ('completed', 'confirmed') THEN DATEDIFF(NOW(), ta.due_date)
+          ELSE 0 
+        END as days_overdue
+      FROM task_assignments ta
+      JOIN users u ON ta.assigned_to = u.user_id
+      LEFT JOIN employees e ON u.employee_id = e.employee_id
+      LEFT JOIN departments d ON e.department_id = d.department_id
+      LEFT JOIN employee_positions ep_main ON e.employee_id = ep_main.employee_id AND ep_main.is_primary = 1
+      LEFT JOIN organization_structure os_main ON ep_main.org_node_id = os_main.id
+      LEFT JOIN positions pos ON ep_main.position_id = pos.position_id
+      WHERE ta.assigned_by = ?
+      ORDER BY ta.created_at DESC
+      LIMIT 100
+    `;
+
+    // 4. Query Tasks Assigned to this subordinate (Received Tasks)
+    const receivedTasksQuery = `
+      SELECT 
+        ta.assignment_id,
+        ta.title,
+        ta.description,
+        ta.priority,
+        ta.category,
+        ta.status,
+        ta.due_date,
+        ta.created_at,
+        ta.completed_at,
+        ta.confirmed_at,
+        ta.completion_note,
+        ta.assigned_by,
+        CONCAT(COALESCE(e.fname, u.user_name), ' ', COALESCE(e.lname, '')) as assigner_name,
+        COALESCE(os_main.name, pos.title, pos.name, 'Supervisor') as assigner_position,
+        CASE 
+          WHEN ta.due_date IS NOT NULL AND ta.due_date < NOW() AND ta.status NOT IN ('completed', 'confirmed') THEN 1 
+          ELSE 0 
+        END as is_overdue,
+        CASE 
+          WHEN ta.due_date IS NOT NULL AND ta.due_date < NOW() AND ta.status NOT IN ('completed', 'confirmed') THEN DATEDIFF(NOW(), ta.due_date)
+          ELSE 0 
+        END as days_overdue
+      FROM task_assignments ta
+      LEFT JOIN users u ON ta.assigned_by = u.user_id
+      LEFT JOIN employees e ON u.employee_id = e.employee_id
+      LEFT JOIN employee_positions ep_main ON e.employee_id = ep_main.employee_id AND ep_main.is_primary = 1
+      LEFT JOIN organization_structure os_main ON ep_main.org_node_id = os_main.id
+      LEFT JOIN positions pos ON ep_main.position_id = pos.position_id
+      WHERE ta.assigned_to = ?
+      ORDER BY ta.created_at DESC
+      LIMIT 100
+    `;
+
+    // 5. Query Work Breakdowns (Monthly and Weekly Tasks)
+    const breakdownQuery = `
+      SELECT 
+        mt.monthly_task_id AS task_id, 
+        mt.name, 
+        COALESCE(mt.progress, 0) AS progress, 
+        mt.weight, 
+        mt.created_at AS start_date,
+        sod.deadline AS deadline,
+        'monthly' AS type
+      FROM monthly_task_assignees mta
+      JOIN monthly_tasks mt ON mta.monthly_task_id = mt.monthly_task_id
+      LEFT JOIN specific_objective_details sod ON mt.specific_objective_detail_id = sod.specific_objective_detail_id
+      WHERE mta.user_id = ?
+      UNION ALL
+      SELECT 
+        wt.weekly_task_id AS task_id, 
+        wt.name, 
+        COALESCE(wt.progress, 0) AS progress, 
+        wt.weight, 
+        wt.created_at AS start_date,
+        sod.deadline AS deadline,
+        'weekly' AS type
+      FROM weekly_task_assignees wta
+      JOIN weekly_tasks wt ON wta.weekly_task_id = wt.weekly_task_id
+      LEFT JOIN monthly_tasks mt ON wt.monthly_task_id = mt.monthly_task_id
+      LEFT JOIN specific_objective_details sod ON mt.specific_objective_detail_id = sod.specific_objective_detail_id
+      WHERE wta.user_id = ?
+    `;
+
+    const [userRows, dailyTasks, delegatedTasks, receivedTasks, breakdownTasks] = await Promise.all([
+      new Promise((resolve, reject) => db.query(userQuery, [subordinateUserId], (err, res) => err ? reject(err) : resolve(res || []))),
+      new Promise((resolve, reject) => db.query(dailyTasksQuery, [subordinateUserId], (err, res) => err ? reject(err) : resolve(res || []))),
+      new Promise((resolve, reject) => db.query(delegatedTasksQuery, [subordinateUserId], (err, res) => err ? reject(err) : resolve(res || []))),
+      new Promise((resolve, reject) => db.query(receivedTasksQuery, [subordinateUserId], (err, res) => err ? reject(err) : resolve(res || []))),
+      new Promise((resolve, reject) => db.query(breakdownQuery, [subordinateUserId, subordinateUserId], (err, res) => err ? reject(err) : resolve(res || [])))
+    ]);
+
+    if (!userRows || userRows.length === 0) {
+      return res.status(404).json({ success: false, message: "Subordinate not found" });
+    }
+
+    const subordinateUser = userRows[0];
+
+    // Compute Metrics & Performance KPIs
+    // 1. Daily Metrics
+    const dailyTotal = dailyTasks.length;
+    const dailyDone = dailyTasks.filter(t => t.status === 'done' || t.status === 'completed').length;
+    const dailyInProgress = dailyTasks.filter(t => t.status === 'in_progress').length;
+    const dailyTodo = dailyTasks.filter(t => t.status === 'todo').length;
+    const dailyRate = dailyTotal > 0 ? Math.round((dailyDone / dailyTotal) * 100) : 0;
+
+    // 2. Delegated Tasks Metrics (Created by subordinate)
+    const delegatedTotal = delegatedTasks.length;
+    const delegatedCompleted = delegatedTasks.filter(t => ['completed', 'confirmed'].includes(t.status)).length;
+    const delegatedInProgress = delegatedTasks.filter(t => t.status === 'in_progress').length;
+    const delegatedPending = delegatedTasks.filter(t => t.status === 'pending').length;
+    const delegatedOverdue = delegatedTasks.filter(t => t.is_overdue === 1).length;
+    const delegatedRate = delegatedTotal > 0 ? Math.round((delegatedCompleted / delegatedTotal) * 100) : 0;
+
+    // 3. Received Tasks Metrics (Assigned to subordinate)
+    const receivedTotal = receivedTasks.length;
+    const receivedCompleted = receivedTasks.filter(t => ['completed', 'confirmed'].includes(t.status)).length;
+    const receivedInProgress = receivedTasks.filter(t => t.status === 'in_progress').length;
+    const receivedPending = receivedTasks.filter(t => t.status === 'pending').length;
+    const receivedOverdue = receivedTasks.filter(t => t.is_overdue === 1).length;
+    const receivedRate = receivedTotal > 0 ? Math.round((receivedCompleted / receivedTotal) * 100) : 0;
+
+    // 4. Breakdown Metrics
+    const breakdownTotal = breakdownTasks.length;
+    let sumProgress = 0;
+    breakdownTasks.forEach(bt => { sumProgress += parseFloat(bt.progress) || 0; });
+    const breakdownAvg = breakdownTotal > 0 ? Math.round(sumProgress / breakdownTotal) : 0;
+
+    // 5. Composite Performance Score (0-100)
+    let weights = [];
+    if (dailyTotal > 0) weights.push({ val: dailyRate, weight: 0.35 });
+    if (receivedTotal > 0) weights.push({ val: receivedRate, weight: 0.35 });
+    if (delegatedTotal > 0) weights.push({ val: delegatedRate, weight: 0.15 });
+    if (breakdownTotal > 0) weights.push({ val: breakdownAvg, weight: 0.15 });
+
+    let compositeScore = 0;
+    if (weights.length > 0) {
+      const totalW = weights.reduce((acc, w) => acc + w.weight, 0);
+      const weightedSum = weights.reduce((acc, w) => acc + (w.val * w.weight), 0);
+      compositeScore = Math.round(weightedSum / totalW);
+    } else {
+      compositeScore = 100;
+    }
+
+    let performanceGrade = 'Outstanding (A+)';
+    let performanceColor = 'emerald';
+    if (compositeScore < 50 || receivedOverdue > 1) {
+      performanceGrade = 'Critical / Needs Attention (D)';
+      performanceColor = 'rose';
+    } else if (compositeScore < 70) {
+      performanceGrade = 'Fair / Moderate (C)';
+      performanceColor = 'amber';
+    } else if (compositeScore < 85) {
+      performanceGrade = 'Good Performance (B)';
+      performanceColor = 'blue';
+    }
+
+    res.json({
+      success: true,
+      user: subordinateUser,
+      daily_tasks: dailyTasks,
+      delegated_tasks: delegatedTasks,
+      received_tasks: receivedTasks,
+      breakdown_tasks: breakdownTasks,
+      metrics: {
+        daily: { total: dailyTotal, completed: dailyDone, in_progress: dailyInProgress, todo: dailyTodo, rate: dailyRate },
+        delegated: { total: delegatedTotal, completed: delegatedCompleted, in_progress: delegatedInProgress, pending: delegatedPending, overdue: delegatedOverdue, rate: delegatedRate },
+        received: { total: receivedTotal, completed: receivedCompleted, in_progress: receivedInProgress, pending: receivedPending, overdue: receivedOverdue, rate: receivedRate },
+        breakdown: { total: breakdownTotal, avg_progress: breakdownAvg },
+        composite_score: compositeScore,
+        grade: performanceGrade,
+        color: performanceColor
+      }
+    });
+
+  } catch (error) {
+    console.error("Error in getSubordinateDetails:", error);
+    res.status(500).json({ success: false, message: "Server error", error: error.message });
+  }
+};
+
 
 
 // Update task assignment status (by assignee)
@@ -1075,5 +1366,131 @@ exports.getPerformanceRanking = (req, res) => {
   } catch (error) {
     console.error('Error in getPerformanceRanking:', error);
     res.status(500).json({ success: false, message: 'Server error', error: error.message });
+  }
+};
+
+// =========================================================================
+// UNIFIED TASK MANAGEMENT HUB ALERTS (Received + Daily + Supervisor Confirm)
+// GET /api/task-assignments/hub-alerts
+// =========================================================================
+exports.getTaskHubAlerts = async (req, res) => {
+  try {
+    const userId = req.user_id || req.user?.id || req.user?.user_id || req.userId;
+    if (!userId) {
+      return res.status(401).json({ success: false, message: "Unauthorized" });
+    }
+
+    // 1. Query actionable received tasks assigned to current user
+    const receivedTasksQuery = `
+      SELECT 
+        ta.assignment_id,
+        ta.title,
+        ta.description,
+        ta.priority,
+        ta.status,
+        ta.due_date,
+        ta.created_at,
+        COALESCE(e.name, u.user_name, 'Supervisor') AS assigned_by_name,
+        CASE 
+          WHEN ta.due_date IS NOT NULL AND ta.due_date < NOW() THEN 1 
+          ELSE 0 
+        END AS is_overdue
+      FROM task_assignments ta
+      LEFT JOIN users u ON ta.assigned_by = u.user_id
+      LEFT JOIN employees e ON u.employee_id = e.employee_id
+      WHERE ta.assigned_to = ? 
+        AND ta.status IN ('pending', 'in_progress')
+      ORDER BY 
+        CASE WHEN ta.due_date IS NOT NULL AND ta.due_date < NOW() THEN 0 ELSE 1 END,
+        CASE WHEN ta.priority = 'urgent' THEN 0 WHEN ta.priority = 'high' THEN 1 ELSE 2 END,
+        ta.due_date ASC,
+        ta.created_at DESC
+      LIMIT 8
+    `;
+
+    // 2. Query today's daily tasks for current user
+    const dailyTasksQuery = `
+      SELECT 
+        daily_task_id,
+        title,
+        priority,
+        status,
+        start_time,
+        end_time,
+        task_date
+      FROM daily_tasks
+      WHERE user_id = ? 
+        AND (DATE(task_date) = CURDATE() OR (status NOT IN ('done', 'completed') AND task_date <= CURDATE()))
+      ORDER BY 
+        CASE WHEN status IN ('done', 'completed') THEN 1 ELSE 0 END,
+        start_time ASC,
+        created_at DESC
+      LIMIT 8
+    `;
+
+    // 3. Query supervisor confirmations: tasks assigned by current user where subordinate completed work
+    const supervisorQuery = `
+      SELECT 
+        ta.assignment_id,
+        ta.title,
+        ta.priority,
+        ta.status,
+        ta.completed_at,
+        ta.completion_note,
+        COALESCE(e.name, u.user_name, 'Team Member') AS assigned_to_name
+      FROM task_assignments ta
+      LEFT JOIN users u ON ta.assigned_to = u.user_id
+      LEFT JOIN employees e ON u.employee_id = e.employee_id
+      WHERE ta.assigned_by = ? 
+        AND ta.status = 'completed'
+      ORDER BY ta.completed_at DESC, ta.updated_at DESC
+      LIMIT 8
+    `;
+
+    // 4. Overall counts
+    const countsQuery = `
+      SELECT
+        (SELECT COUNT(*) FROM task_assignments WHERE assigned_to = ? AND status IN ('pending', 'in_progress')) AS received_pending,
+        (SELECT COUNT(*) FROM task_assignments WHERE assigned_to = ? AND status IN ('pending', 'in_progress') AND due_date IS NOT NULL AND due_date < NOW()) AS received_overdue,
+        (SELECT COUNT(*) FROM task_assignments WHERE assigned_by = ? AND status = 'completed') AS supervisor_pending_confirm,
+        (SELECT COUNT(*) FROM daily_tasks WHERE user_id = ? AND DATE(task_date) = CURDATE()) AS daily_today_total,
+        (SELECT COUNT(*) FROM daily_tasks WHERE user_id = ? AND DATE(task_date) = CURDATE() AND status IN ('done', 'completed')) AS daily_today_completed,
+        (SELECT COUNT(*) FROM daily_tasks WHERE user_id = ? AND (DATE(task_date) = CURDATE() OR (status NOT IN ('done', 'completed') AND task_date <= CURDATE())) AND status NOT IN ('done', 'completed')) AS daily_pending
+    `;
+
+    const [receivedRows, dailyRows, supervisorRows, countRows] = await Promise.all([
+      new Promise((resolve) => db.query(receivedTasksQuery, [userId], (e, r) => resolve(r || []))),
+      new Promise((resolve) => db.query(dailyTasksQuery, [userId], (e, r) => resolve(r || []))),
+      new Promise((resolve) => db.query(supervisorQuery, [userId], (e, r) => resolve(r || []))),
+      new Promise((resolve) => db.query(countsQuery, [userId, userId, userId, userId, userId, userId], (e, r) => resolve(r && r[0] ? r[0] : {})))
+    ]);
+
+    const received_pending = Number(countRows.received_pending || 0);
+    const received_overdue = Number(countRows.received_overdue || 0);
+    const supervisor_pending_confirm = Number(countRows.supervisor_pending_confirm || 0);
+    const daily_today_total = Number(countRows.daily_today_total || 0);
+    const daily_today_completed = Number(countRows.daily_today_completed || 0);
+    const daily_pending = Number(countRows.daily_pending || 0);
+
+    const total_alerts = received_pending + supervisor_pending_confirm + daily_pending;
+
+    res.json({
+      success: true,
+      summary: {
+        total_alerts,
+        received_count: received_pending,
+        received_overdue,
+        supervisor_count: supervisor_pending_confirm,
+        daily_total: daily_today_total,
+        daily_completed: daily_today_completed,
+        daily_pending
+      },
+      received_tasks: receivedRows,
+      daily_tasks: dailyRows,
+      supervisor_confirmations: supervisorRows
+    });
+  } catch (error) {
+    console.error("Error in getTaskHubAlerts:", error);
+    res.status(500).json({ success: false, message: "Server error", error: error.message });
   }
 };

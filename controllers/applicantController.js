@@ -1,16 +1,14 @@
-const dbconnection = require("../models/db");
-const {StatusCodes} = require("http-status-codes");
-//const get plan status
-const getApplicants =(req, res) =>{
-      const sql = "SELECT * FROM applicants";
-      dbconnection.query(sql, (err, data) => {
-      if (err) {
-          console.error('Error executing query:', err);
-          res.status(500).json({ error: 'Database query error' });
-          return;
-      }
-  
-      res.json(data);
-    });
+const { sequelize } = require('../models/index');
+const { QueryTypes } = require('sequelize');
+
+const getApplicants = async (req, res) => {
+  try {
+    const data = await sequelize.query('SELECT * FROM applicants', { type: QueryTypes.SELECT });
+    res.json(data);
+  } catch (err) {
+    console.error('Error executing query:', err);
+    res.status(500).json({ error: 'Database query error' });
   }
+};
+
 module.exports = getApplicants;

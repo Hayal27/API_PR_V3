@@ -1,19 +1,15 @@
 // controllers/userController.js
 
-const con = require("../models/db"); // Assumes you have a db.js file that exports the database connection
+const { Users, Employees, Departments, OrganizationStructure, Roles, sequelize } = require('../models/index');
+const { QueryTypes } = require('sequelize');
 const bcrypt = require('bcryptjs');
-const util = require('util');
 const { logAudit, AUDIT_ACTIONS } = require('../middleware/auditLogger');
-
-
 
 const updateUser = async (req, res) => {
   const { user_id } = req.params;
-  // Expecting role_id from the req.body as a number (or numeric string)
-  // Also accepting supervisor_id for optionally updating the supervisor field
-  const { fname, lname, user_name, phone, department_id, role_id, supervisor_id } = req.body;
+  const { fname, lname, user_name, phone, department_id, role_id, supervisor_id, telegram_username } = req.body;
 
-  // Convert role_id to an integer and check validity (if needed)
+  // Convert role_id to an integer and check validity
   const parsedRoleID = parseInt(role_id, 10);
   if (isNaN(parsedRoleID)) {
     console.error("Invalid role_id provided:", role_id);
@@ -21,57 +17,60 @@ const updateUser = async (req, res) => {
   }
 
   try {
-    // Promisify the query function for async/await usage
-    const query = util.promisify(con.query).bind(con);
-
     // Sync organization structure to departments if needed
     if (department_id) {
       try {
-        const deptExists = await query('SELECT 1 FROM departments WHERE department_id = ?', [department_id]);
-        if (!deptExists || deptExists.length === 0) {
-          const orgUnit = await query('SELECT name FROM organization_structure WHERE id = ?', [department_id]);
-          if (orgUnit && orgUnit.length > 0) {
-            await query('INSERT INTO departments (department_id, name) VALUES (?, ?)', [department_id, orgUnit[0].name]);
-            console.log(`Synced organization unit ${department_id} (${orgUnit[0].name}) to departments table`);
+        const deptExists = await Departments.findByPk(department_id, { raw: true });
+        if (!deptExists) {
+          const orgUnit = await OrganizationStructure.findByPk(department_id, { raw: true });
+          if (orgUnit) {
+            await Departments.create({ department_id, name: orgUnit.name });
+            console.log(`Synced organization unit ${department_id} (${orgUnit.name}) to departments table`);
           }
         }
       } catch (syncError) {
         console.error("Error syncing department:", syncError);
-        // Continue, let the FK constraint fail if it must
       }
     }
 
-    // Retrieve the employee_id from the users table
-    const usersData = await query("SELECT employee_id FROM users WHERE user_id = ?", [user_id]);
-    if (!usersData || usersData.length === 0) {
+    // Retrieve employee_id from the users table
+    const user = await Users.findByPk(user_id, { raw: true });
+    if (!user) {
       console.error("User not found for update, user_id:", user_id);
       return res.status(404).json({ message: "User not found" });
     }
-    const employee_id = usersData[0].employee_id;
-
-    // Log for debugging to verify the parsed role id
-    const { fname, lname, user_name, phone, supervisor_id, telegram_username } = req.body; // Destructure remaining body fields here
+    const employee_id = user.employee_id;
 
     console.log(`Updating user_id ${user_id} with role_id ${parsedRoleID}`);
 
-    // Update the employees table for personal details, including optional supervisor_id
+    // Update the employees table for personal details
     if (employee_id) {
-      const empResult = await query(
-        "UPDATE employees SET fname = ?, lname = ?, phone = ?, department_id = ?, supervisor_id = ?, telegram_username = ? WHERE employee_id = ?",
-        [fname, lname, phone, department_id, supervisor_id || null, telegram_username || null, employee_id]
-      );
+      const empUpdateData = {};
+      if (fname !== undefined) empUpdateData.fname = fname;
+      if (lname !== undefined) empUpdateData.lname = lname;
+      if (phone !== undefined) empUpdateData.phone = phone;
+      if (department_id !== undefined) empUpdateData.department_id = department_id;
+      if (supervisor_id !== undefined) empUpdateData.supervisor_id = supervisor_id || null;
+      if (telegram_username !== undefined) empUpdateData.telegram_username = telegram_username || null;
+
+      const [empResult] = await Employees.update(empUpdateData, {
+        where: { employee_id }
+      });
       console.log("Employee update result for employee_id:", employee_id, empResult);
     }
 
-    // Update the users table with account details - updating the role_id.
-    const userResult = await query(
-      "UPDATE users SET user_name = ?, role_id = ? WHERE user_id = ?",
-      [user_name, parsedRoleID, user_id]
-    );
+    // Update the users table with account details - role_id and user_name
+    const userUpdateData = { role_id: parsedRoleID };
+    if (user_name !== undefined) userUpdateData.user_name = user_name;
+
+    const [userResult] = await Users.update(userUpdateData, {
+      where: { user_id }
+    });
     console.log("User update result:", userResult);
 
-    // Check if the role update affected any rows. If not, log and return error message.
-    if (userResult.affectedRows === 0) {
+    if (userResult === 0 && user.role_id === parsedRoleID && user.user_name === user_name) {
+      // Nothing changed, which is fine, or check if row exists
+    } else if (userResult === 0 && !user) {
       const errorMsg = `No rows were updated for the user_id ${user_id}. This might mean the provided role_id ${parsedRoleID} is invalid or unchanged.`;
       console.error(errorMsg);
       return res.status(400).json({ message: errorMsg });
@@ -82,75 +81,64 @@ const updateUser = async (req, res) => {
       target_user_id: user_id, role_id: parsedRoleID, fname, lname, user_name, department_id, supervisor_id
     }, req).catch(() => {});
 
-    res.status(200).json({ message: "User updated successfully" });
+    return res.status(200).json({ message: "User updated successfully" });
   } catch (error) {
     console.error("Error updating user:", error);
-    res.status(500).json({ message: "Error updating user", error: error.message });
+    return res.status(500).json({ message: "Error updating user", error: error.message });
   }
 };
 
-
-
 // Get all roles
-const getAllRoles = (req, res) => {
-  con.query("SELECT * FROM role", (err, results) => {
-    if (err) {
-      console.error("Error retrieving roles:", err);
-      return res.status(500).json({ message: "Error retrieving roles", error: err });
-    }
-    console.log("Fetched roles:", results);
-    res.json(results);
-  });
+const getAllRoles = async (req, res) => {
+  try {
+    const results = await Roles.findAll({ raw: true });
+    return res.json(results);
+  } catch (err) {
+    console.error("Error retrieving roles:", err);
+    return res.status(500).json({ message: "Error retrieving roles", error: err.message });
+  }
 };
 
 // Get all departments
-const getDepartment = (req, res) => {
-  con.query("SELECT * FROM department", (err, results) => {
-    if (err) {
-      console.error("Error retrieving department:", err);
-      return res.status(500).json({ message: "Error retrieving department", error: err });
-    }
-    console.log("Fetched departments:", results);
-    res.json(results);
-  });
+const getDepartment = async (req, res) => {
+  try {
+    const results = await Departments.findAll({ raw: true });
+    return res.json(results);
+  } catch (err) {
+    console.error("Error retrieving department:", err);
+    return res.status(500).json({ message: "Error retrieving department", error: err.message });
+  }
 };
 
 // Get all users (including employee details if available)
-// We use LEFT JOIN with employees table so that employee fields (fname, lname, phone) override users fields
+const getAllUsers = async (req, res) => {
+  try {
+    const query = `
+      SELECT
+        u.*,
+        e.*,
+        u.status AS status
+      FROM users u
+      LEFT JOIN employees e ON u.employee_id = e.employee_id
+    `;
 
-const getAllUsers = (req, res) => {
-  // Use original u.*, e.* join so department_id and supervisor_id from employees table
-  // are included (they contain real position/supervisor data for each user).
-  // u.status is added explicitly LAST so it always overrides any e.status column.
-  const query = `
-    SELECT
-      u.*,
-      e.*,
-      u.status AS status
-    FROM users u
-    LEFT JOIN employees e ON u.employee_id = e.employee_id
-  `;
-
-  con.query(query, (err, results) => {
-    if (err) {
-      console.error("Error retrieving users:", err);
-      return res.status(500).json({ message: "Error retrieving users", error: err });
-    }
+    const results = await sequelize.query(query, { type: QueryTypes.SELECT });
 
     // Ensure status is always a proper integer (0 or 1) from users table
-    // mysql2 returns the last alias value for duplicate column names
     const normalized = results.map(r => ({
       ...r,
       status: r.status !== undefined && r.status !== null ? Number(r.status) : 0
     }));
 
-    res.json(normalized);
-  });
+    return res.json(normalized);
+  } catch (err) {
+    console.error("Error retrieving users:", err);
+    return res.status(500).json({ message: "Error retrieving users", error: err.message });
+  }
 };
 
-
 // Change user status active (1) or inactive (0)
-const changeUserStatus = (req, res) => {
+const changeUserStatus = async (req, res) => {
   const { user_id } = req.params;
   const { status } = req.body;
 
@@ -159,13 +147,13 @@ const changeUserStatus = (req, res) => {
     return res.status(400).json({ message: "Invalid status. Use 0 for inactive and 1 for active." });
   }
 
-  con.query("UPDATE users SET status = ? WHERE user_id = ?", [status, user_id], (err, result) => {
-    if (err) {
-      console.error("Error updating user status:", err);
-      return res.status(500).json({ message: "Error updating user status", error: err });
-    }
+  try {
+    const [affectedRows] = await Users.update(
+      { status: String(status) },
+      { where: { user_id } }
+    );
 
-    if (result.affectedRows === 0) {
+    if (affectedRows === 0) {
       console.error("User not found for update, user_id:", user_id);
       return res.status(404).json({ message: "User not found" });
     }
@@ -175,23 +163,23 @@ const changeUserStatus = (req, res) => {
       target_user_id: user_id, status, status_label: status === 1 ? 'Active' : 'Inactive'
     }, req).catch(() => {});
 
-    res.json({ message: "User status updated successfully" });
-  });
+    return res.json({ message: "User status updated successfully" });
+  } catch (err) {
+    console.error("Error updating user status:", err);
+    return res.status(500).json({ message: "Error updating user status", error: err.message });
+  }
 };
 
-
-
-// Delete user - using correct table name (users)
-const deleteUser = (req, res) => {
+// Delete user
+const deleteUser = async (req, res) => {
   const { user_id } = req.params;
 
-  con.query("DELETE FROM users WHERE user_id = ?", [user_id], (err, result) => {
-    if (err) {
-      console.error("Error deleting user:", err);
-      return res.status(500).json({ message: "Error deleting user", error: err });
-    }
+  try {
+    const affectedRows = await Users.destroy({
+      where: { user_id }
+    });
 
-    if (result.affectedRows === 0) {
+    if (affectedRows === 0) {
       console.error("User not found for deletion, user_id:", user_id);
       return res.status(404).json({ message: "User not found" });
     }
@@ -201,36 +189,10 @@ const deleteUser = (req, res) => {
       target_user_id: user_id
     }, req).catch(() => {});
 
-    res.json({ message: "User deleted successfully" });
-  });
-
-};
-
-
-const changeStatus = async (status, user_id) => {
-  try {
-    const response = await fetch(`https://prms.ethiopianitpark.com/api/users/${user_id}/status`, {
-      method: "PUT",
-      headers: { "Content-type": "application/json" },
-      body: JSON.stringify({ status }),
-    });
-
-    const data = await response.json(); // Parse the response
-    console.log('API Response:', data); // Log the API response for debugging
-
-    if (response.ok) {
-      const action = status === 1 ? 'activated' : 'deactivated';
-      setModalMessage(`User has been successfully ${action}.`);
-      setShowModal(true);
-      fetchUsers(); // Refresh users after status change
-    } else {
-      setModalMessage(data.message || 'Error changing user status. Please try again.');
-      setShowModal(true);
-    }
-  } catch (error) {
-    console.log("Error changing status:", error);
-    setModalMessage('Error changing user status. Please try again.');
-    setShowModal(true);
+    return res.json({ message: "User deleted successfully" });
+  } catch (err) {
+    console.error("Error deleting user:", err);
+    return res.status(500).json({ message: "Error deleting user", error: err.message });
   }
 };
 
@@ -241,43 +203,38 @@ const getUserRoles = async (req, res) => {
       console.error("User ID not provided in request.");
       return res.status(400).json({ error: "User ID not provided" });
     }
+
     const sql = `
       SELECT r.role_name
       FROM roles r
       INNER JOIN users u ON u.role_id = r.role_id
-      WHERE u.user_id = ?
+      WHERE u.user_id = :user_id
     `;
-    con.query(sql, [user_id], (err, results) => {
-      if (err) {
-        console.error("Database query error for user roles:", err);
-        return res.status(500).json({ error: "Internal server error" });
-      }
-      if (results.length === 0) {
-        console.error("User role not found for user_id:", user_id);
-        return res.status(404).json({ error: "User role not found" });
-      }
-      console.log("Fetched user role for user_id:", user_id, results[0]);
-      res.json(results[0]);
+
+    const results = await sequelize.query(sql, {
+      replacements: { user_id },
+      type: QueryTypes.SELECT
     });
+
+    if (results.length === 0) {
+      console.error("User role not found for user_id:", user_id);
+      return res.status(404).json({ error: "User role not found" });
+    }
+
+    console.log("Fetched user role for user_id:", user_id, results[0]);
+    return res.json(results[0]);
   } catch (error) {
     console.error("Error in getUserRoles:", error.message);
-    res.status(500).json({ error: "Internal server error" });
+    return res.status(500).json({ error: "Internal server error" });
   }
 };
 
-
-
-
 module.exports = {
-
   getUserRoles,
-
   getAllRoles,
   getDepartment,
-  getAllUsers, // Updated function name here
+  getAllUsers,
   changeUserStatus,
   updateUser,
-  deleteUser,
-  changeUserStatus,
-  updateUser
+  deleteUser
 };

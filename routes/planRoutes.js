@@ -10,7 +10,7 @@ const { getAllPlansDeclined, getApprovedOrgPlans, getPlanDetail, getAllOrgPlans,
 // const {getSubmittedPlans, updatePlanStatus, getDetailedPlanForSupervisor,getSubmittedPlanssp,updatePlanApprovalStatus} = require("../controllers/planAproveController");
 const { getGoals, getGoalById, getObjectiveById, getObjectivesByGoals, getspesificObjectivesByGoals, getGoal, getPlansBySpecificGoal, getAllObjectives, getAllSpecificObjectives, getSpecificObjectiveDetailsByKpi } = require("../controllers/planDetailFetchController");
 const { getProfilePic, getSpecificGoal, getSpesificObjectives, getdepartment, getUserRoles } = require("../controllers/planget");
-const { addGoals, addObjectives, addSpecificObjectives, addspecificObjectiveDetails, updateGoal, deleteGoal, updateObjective, deleteObjective, updateSpecificObjective, deleteSpecificObjective, getKPIsBySpecificObjective, getKPIWeight, updateKPI, deleteKPI } = require("../controllers/planDtailedController")
+const { addGoals, addObjectives, addSpecificObjectives, addspecificObjectiveDetails, updateGoal, deleteGoal, updateObjective, deleteObjective, updateSpecificObjective, deleteSpecificObjective, getKPIsBySpecificObjective, getKPIWeight, updateKPI, deleteKPI, distributeEqualKpiWeights, distributeEqualObjectiveWeights, distributeEqualGoalWeights } = require("../controllers/planDtailedController")
 const { upload } = require("../middleware/upload");
 
 const { buildAndSavePlanApprovalChain, getApprovalSteps, approveStep, declineStep, getPendingPlansForApprover } = require('../controllers/hierarchyApprovalController');
@@ -438,6 +438,11 @@ router.get("/kpis/:specific_objective_id", verifyToken, getKPIsBySpecificObjecti
 router.put("/kpis/:detail_id", verifyToken, updateKPI);                              // PUT update an Action Plan
 router.delete("/kpis/:detail_id", verifyToken, deleteKPI);                          // DELETE an Action Plan and its tasks
 router.get("/kpi-weight/:specific_objective_id", verifyToken, getKPIWeight);         // GET KPI weight info
+
+// Equal weight distribution routes
+router.post("/kpis/distribute-equal-weight", verifyToken, distributeEqualKpiWeights);
+router.post("/objectives/distribute-equal-weight", verifyToken, distributeEqualObjectiveWeights);
+router.post("/goals/distribute-equal-weight", verifyToken, distributeEqualGoalWeights);
 
 
 

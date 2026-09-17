@@ -1,21 +1,18 @@
-const db = require('../models/db');
+const { Roles, Employees, Departments, sequelize } = require('../models/index');
+const { Op, QueryTypes } = require('sequelize');
 const { logAudit } = require('../middleware/auditLogger');
-
-// Helper to promisify db.query
-const query = (sql, params) => {
-    return new Promise((resolve, reject) => {
-        db.query(sql, params, (err, result) => {
-            if (err) reject(err);
-            else resolve(result);
-        });
-    });
-};
 
 // Get all roles
 const getRoles = async (req, res) => {
     try {
-        const sql = 'SELECT * FROM roles WHERE status = 1 ORDER BY hierarchy_level ASC, role_name ASC';
-        const roles = await query(sql);
+        const roles = await Roles.findAll({
+            where: { status: 1 },
+            order: [
+                ['hierarchy_level', 'ASC'],
+                ['role_name', 'ASC']
+            ],
+            raw: true
+        });
         res.json(roles);
     } catch (error) {
         console.error('Error fetching roles:', error);
@@ -27,8 +24,12 @@ const getRoles = async (req, res) => {
 // Returns an object with role_id as key and hierarchy_level as value
 const getRoleHierarchy = async (req, res) => {
     try {
-        const sql = 'SELECT role_id, role_name, hierarchy_level, description FROM roles WHERE status = 1 ORDER BY hierarchy_level ASC';
-        const roles = await query(sql);
+        const roles = await Roles.findAll({
+            where: { status: 1 },
+            attributes: ['role_id', 'role_name', 'hierarchy_level', 'description'],
+            order: [['hierarchy_level', 'ASC']],
+            raw: true
+        });
 
         // Create hierarchy mapping object
         const hierarchyMap = {};
@@ -62,48 +63,51 @@ const getAvailableSupervisors = async (req, res) => {
         }
 
         // Get the hierarchy level of the selected role
-        const roleData = await query(
-            'SELECT hierarchy_level FROM roles WHERE role_id = ? AND status = 1',
-            [roleId]
-        );
+        const roleData = await Roles.findOne({
+            where: { role_id: roleId, status: 1 },
+            attributes: ['hierarchy_level'],
+            raw: true
+        });
 
-        if (roleData.length === 0) {
+        if (!roleData) {
             return res.status(404).json({ message: 'Role not found' });
         }
 
-        const selectedRoleLevel = roleData[0].hierarchy_level;
+        const selectedRoleLevel = roleData.hierarchy_level;
 
         // Get all employees with roles that have higher authority (lower hierarchy level)
         // Exclude the current employee if updating
         let sql = `
-      SELECT 
-        e.employee_id,
-        e.name,
-        e.fname,
-        e.lname,
-        e.role_id,
-        e.department_id,
-        r.role_name,
-        r.hierarchy_level,
-        d.name as department_name
-      FROM employees e
-      INNER JOIN roles r ON e.role_id = r.role_id
-      LEFT JOIN departments d ON e.department_id = d.department_id
-      WHERE r.hierarchy_level < ? 
-        AND r.status = 1
-    `;
+            SELECT 
+                e.employee_id,
+                e.name,
+                e.fname,
+                e.lname,
+                e.role_id,
+                e.department_id,
+                r.role_name,
+                r.hierarchy_level,
+                d.name as department_name
+            FROM employees e
+            INNER JOIN roles r ON e.role_id = r.role_id
+            LEFT JOIN departments d ON e.department_id = d.department_id
+            WHERE r.hierarchy_level < :selectedRoleLevel 
+                AND r.status = 1
+        `;
 
-        const params = [selectedRoleLevel];
+        const replacements = { selectedRoleLevel };
 
-        // Exclude current employee if updating
         if (employeeId) {
-            sql += ' AND e.employee_id != ?';
-            params.push(employeeId);
+            sql += ' AND e.employee_id != :employeeId';
+            replacements.employeeId = employeeId;
         }
 
         sql += ' ORDER BY r.hierarchy_level ASC, e.name ASC';
 
-        const supervisors = await query(sql, params);
+        const supervisors = await sequelize.query(sql, {
+            replacements,
+            type: QueryTypes.SELECT
+        });
 
         res.json(supervisors);
     } catch (error) {
@@ -121,12 +125,16 @@ const createRole = async (req, res) => {
             return res.status(400).json({ message: 'Role name and hierarchy level are required' });
         }
 
-        const sql = 'INSERT INTO roles (role_name, hierarchy_level, description, status) VALUES (?, ?, ?, 1)';
-        const result = await query(sql, [role_name, hierarchy_level, description || null]);
+        const newRole = await Roles.create({
+            role_name,
+            hierarchy_level,
+            description: description || null,
+            status: 1
+        });
 
         // Log audit action
         await logAudit(req.user_id, 'CREATE_ROLE', `Created role: ${role_name}`, {
-            role_id: result.insertId,
+            role_id: newRole.role_id,
             role_name,
             hierarchy_level,
             description
@@ -134,7 +142,7 @@ const createRole = async (req, res) => {
 
         res.status(201).json({
             message: 'Role created successfully',
-            role_id: result.insertId
+            role_id: newRole.role_id
         });
     } catch (error) {
         console.error('Error creating role:', error);
@@ -148,16 +156,15 @@ const updateRole = async (req, res) => {
         const { role_id } = req.params;
         const { role_name, hierarchy_level, description, status } = req.body;
 
-        const sql = `
-      UPDATE roles 
-      SET role_name = COALESCE(?, role_name),
-          hierarchy_level = COALESCE(?, hierarchy_level),
-          description = COALESCE(?, description),
-          status = COALESCE(?, status)
-      WHERE role_id = ?
-    `;
+        const updateData = {};
+        if (role_name !== undefined) updateData.role_name = role_name;
+        if (hierarchy_level !== undefined) updateData.hierarchy_level = hierarchy_level;
+        if (description !== undefined) updateData.description = description;
+        if (status !== undefined) updateData.status = status;
 
-        await query(sql, [role_name, hierarchy_level, description, status, role_id]);
+        await Roles.update(updateData, {
+            where: { role_id }
+        });
 
         // Log audit action
         await logAudit(req.user_id, 'UPDATE_ROLE', `Updated role: ${role_name || role_id}`, {
@@ -181,17 +188,21 @@ const deleteRole = async (req, res) => {
         const { role_id } = req.params;
 
         // Check if role is in use
-        const employees = await query('SELECT COUNT(*) as count FROM employees WHERE role_id = ?', [role_id]);
+        const employeeCount = await Employees.count({
+            where: { role_id }
+        });
 
-        if (employees[0].count > 0) {
+        if (employeeCount > 0) {
             return res.status(400).json({
                 message: 'Cannot delete role that is assigned to employees',
-                employeeCount: employees[0].count
+                employeeCount
             });
         }
 
         // Soft delete
-        await query('UPDATE roles SET status = 0 WHERE role_id = ?', [role_id]);
+        await Roles.update({ status: 0 }, {
+            where: { role_id }
+        });
 
         // Log audit action
         await logAudit(req.user_id, 'DELETE_ROLE', `Deleted role: ${role_id}`, { role_id });

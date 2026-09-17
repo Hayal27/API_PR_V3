@@ -323,10 +323,10 @@ const addSpecificObjectives = (req, res) => {
       const query = `
         INSERT INTO specific_objectives (
           user_id, objective_id, specific_objective_name, view, 
-          deadline_quarter, priority, department_id, name, count, plan_type,
+          deadline_quarter, priority, department_id, name, count, plan_type, weight,
           created_at, updated_at
         )
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
       `;
 
       // Provide default values for required fields
@@ -340,7 +340,8 @@ const addSpecificObjectives = (req, res) => {
         department_id,
         specific_objective_name,  // Use specific_objective_name as name
         1,  // Default count
-        resolvedPlanType
+        resolvedPlanType,
+        kpiWeight
       ];
 
       con.query(query, values, (err, result) => {
@@ -469,7 +470,7 @@ const addspecificObjectiveDetails = async (req, res) => {
           const usedWeight = parseFloat(usedRow.total_used || 0);
           if (usedWeight + actionPlanWeight > kpiWeight + 0.001) {
             return res.status(400).json({
-              message: `Weight exceeds KPI budget. Total allocated (${(usedWeight + actionPlanWeight).toFixed(2)}) cannot exceed KPI weight (${kpiWeight}). Remaining: ${(kpiWeight - usedWeight).toFixed(2)}`,
+              message: `Weight exceeds KPI budget. Total allocated (${parseFloat((usedWeight + actionPlanWeight).toFixed(4))}) cannot exceed KPI weight (${kpiWeight}). Remaining: ${parseFloat((kpiWeight - usedWeight).toFixed(4))}`,
               kpi_weight: kpiWeight,
               used_weight: usedWeight,
               remaining_weight: kpiWeight - usedWeight,
@@ -982,6 +983,145 @@ const deleteKPI = async (req, res) => {
   }
 };
 
+// ─── EQUAL WEIGHT ALLOCATION & BATCH WEIGHT CONTROLLERS ───────────────────────
+
+// Allocate equal weight across all KPIs under an objective
+const distributeEqualKpiWeights = async (req, res) => {
+  const { objective_id } = req.body;
+  if (!objective_id) {
+    return res.status(400).json({ message: "objective_id is required" });
+  }
+
+  try {
+    const [objRows] = await query("SELECT weight FROM objectives WHERE objective_id = ?", [objective_id]);
+    const parentWeight = objRows && objRows.weight != null ? parseFloat(objRows.weight) : 100;
+
+    const kpis = await query(
+      "SELECT specific_objective_id, weight FROM specific_objectives WHERE objective_id = ? ORDER BY specific_objective_id ASC",
+      [objective_id]
+    );
+
+    if (!kpis || kpis.length === 0) {
+      return res.status(404).json({ message: "No KPIs found under this objective" });
+    }
+
+    const count = kpis.length;
+    const equalWeight = parseFloat((parentWeight / count).toFixed(4));
+
+    for (let i = 0; i < count; i++) {
+      const weightToSet = (i === count - 1)
+        ? parseFloat((parentWeight - (equalWeight * (count - 1))).toFixed(4))
+        : equalWeight;
+
+      await query(
+        "UPDATE specific_objectives SET weight = ?, updated_at = CURRENT_TIMESTAMP WHERE specific_objective_id = ?",
+        [weightToSet, kpis[i].specific_objective_id]
+      );
+    }
+
+    res.status(200).json({
+      success: true,
+      message: `Equally allocated ${parentWeight} weight across ${count} KPIs (${equalWeight} each).`,
+      count,
+      parentWeight,
+      equalWeight
+    });
+  } catch (err) {
+    console.error("Error distributing equal KPI weights:", err);
+    res.status(500).json({ message: "Error distributing equal KPI weights", error: err.message });
+  }
+};
+
+// Allocate equal weight across all Objectives under a goal
+const distributeEqualObjectiveWeights = async (req, res) => {
+  const { goal_id } = req.body;
+  if (!goal_id) {
+    return res.status(400).json({ message: "goal_id is required" });
+  }
+
+  try {
+    const [goalRows] = await query("SELECT weight FROM goals WHERE goal_id = ?", [goal_id]);
+    const parentWeight = goalRows && goalRows.weight != null ? parseFloat(goalRows.weight) : 100;
+
+    const objs = await query(
+      "SELECT objective_id, weight FROM objectives WHERE goal_id = ? ORDER BY objective_id ASC",
+      [goal_id]
+    );
+
+    if (!objs || objs.length === 0) {
+      return res.status(404).json({ message: "No objectives found under this goal" });
+    }
+
+    const count = objs.length;
+    const equalWeight = parseFloat((parentWeight / count).toFixed(4));
+
+    for (let i = 0; i < count; i++) {
+      const weightToSet = (i === count - 1)
+        ? parseFloat((parentWeight - (equalWeight * (count - 1))).toFixed(4))
+        : equalWeight;
+
+      await query(
+        "UPDATE objectives SET weight = ?, updated_at = CURRENT_TIMESTAMP WHERE objective_id = ?",
+        [weightToSet, objs[i].objective_id]
+      );
+    }
+
+    res.status(200).json({
+      success: true,
+      message: `Equally allocated ${parentWeight} weight across ${count} objectives (${equalWeight} each).`,
+      count,
+      parentWeight,
+      equalWeight
+    });
+  } catch (err) {
+    console.error("Error distributing equal objective weights:", err);
+    res.status(500).json({ message: "Error distributing equal objective weights", error: err.message });
+  }
+};
+
+// Allocate equal weight across all Goals (or within a pillar)
+const distributeEqualGoalWeights = async (req, res) => {
+  const { pillar_id, total_weight } = req.body;
+  const targetTotal = total_weight != null && !isNaN(total_weight) ? parseFloat(total_weight) : 100;
+
+  try {
+    const sql = pillar_id
+      ? "SELECT goal_id, weight FROM goals WHERE pillar_id = ? AND (is_active = 1 OR is_active IS NULL) ORDER BY goal_id ASC"
+      : "SELECT goal_id, weight FROM goals WHERE is_active = 1 OR is_active IS NULL ORDER BY goal_id ASC";
+    const params = pillar_id ? [pillar_id] : [];
+    const goals = await query(sql, params);
+
+    if (!goals || goals.length === 0) {
+      return res.status(404).json({ message: "No goals found to allocate weight" });
+    }
+
+    const count = goals.length;
+    const equalWeight = parseFloat((targetTotal / count).toFixed(4));
+
+    for (let i = 0; i < count; i++) {
+      const weightToSet = (i === count - 1)
+        ? parseFloat((targetTotal - (equalWeight * (count - 1))).toFixed(4))
+        : equalWeight;
+
+      await query(
+        "UPDATE goals SET weight = ?, updated_at = CURRENT_TIMESTAMP WHERE goal_id = ?",
+        [weightToSet, goals[i].goal_id]
+      );
+    }
+
+    res.status(200).json({
+      success: true,
+      message: `Equally allocated ${targetTotal} weight across ${count} goals (${equalWeight} each).`,
+      count,
+      targetTotal,
+      equalWeight
+    });
+  } catch (err) {
+    console.error("Error distributing equal goal weights:", err);
+    res.status(500).json({ message: "Error distributing equal goal weights", error: err.message });
+  }
+};
+
 module.exports = {
   addGoals,
   addObjectives,
@@ -997,6 +1137,9 @@ module.exports = {
   getKPIWeight,
   updateKPI,
   deleteKPI,
+  distributeEqualKpiWeights,
+  distributeEqualObjectiveWeights,
+  distributeEqualGoalWeights,
 };
 
 
