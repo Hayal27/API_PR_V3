@@ -3,6 +3,75 @@ const router = express.Router();
 const { verifyToken } = require('../middleware/authMiddleware');
 const con = require('../models/db');
 
+// Helper to resolve unit, icon, and color for any plan type dynamically
+const getPlanTypeMeta = (val, labelEn = '', labelAm = '') => {
+    const v = String(val || '').toLowerCase().trim();
+    const en = String(labelEn || '').toLowerCase().trim();
+    const am = String(labelAm || '').toLowerCase().trim();
+
+    if (v.includes('income') || v.includes('revenue') || en.includes('income') || en.includes('revenue') || am.includes('ገቢ')) {
+        return { icon: '💰', unit: 'ETB', color: 'emerald' };
+    }
+    if (v.includes('cost') || v.includes('expense') || en.includes('cost') || am.includes('ወጪ')) {
+        return { icon: '💸', unit: 'ETB', color: 'rose' };
+    }
+    if (v.includes('fdi') || en.includes('fdi') || v.includes('foreign') || v === '____') {
+        return { icon: '🌐', unit: 'USD', color: 'blue' };
+    }
+    if (v.includes('export') || en.includes('export') || am.includes('ወደ ውጭ')) {
+        return { icon: '📦', unit: 'USD', color: 'orange' };
+    }
+    if (v.includes('import') || en.includes('import') || am.includes('የገቢ ምርት')) {
+        return { icon: '🔄', unit: 'ETB', color: 'green' };
+    }
+    if (v.includes('job') || v.includes('employ') || en.includes('job') || am.includes('ስራ እድል') || am.includes('ሥራ')) {
+        return { icon: '👷', unit: 'Jobs', color: 'purple' };
+    }
+    if (v.includes('hr') || en.includes('hr') || v.includes('staff') || am.includes('ሰራተኞች')) {
+        return { icon: '👔', unit: 'Staff', color: 'purple' };
+    }
+    if (v.includes('tech') || v.includes('transfer') || en.includes('tech') || am.includes('ቴክኖሎጂ')) {
+        return { icon: '🔬', unit: 'Techs', color: 'sky' };
+    }
+    if (v.includes('innovat') || en.includes('innovat') || am.includes('ፈጠራ')) {
+        return { icon: '💡', unit: 'Projects', color: 'amber' };
+    }
+    if (v.includes('startup') || en.includes('startup') || am.includes('ስታርትአፕ')) {
+        return { icon: '🚀', unit: 'Startups', color: 'indigo' };
+    }
+    if (v.includes('local') || v.includes('invest') || en.includes('invest') || am.includes('ኢንቨስትመንት')) {
+        return { icon: '🏢', unit: 'ETB', color: 'teal' };
+    }
+    if (v.includes('project') || en.includes('project') || am.includes('ፕሮጀክት')) {
+        return { icon: '🏗️', unit: 'Projects', color: 'blue' };
+    }
+    if (v.includes('purchase') || v.includes('procure') || en.includes('procure') || am.includes('ግዢ')) {
+        return { icon: '🛒', unit: 'Items', color: 'amber' };
+    }
+    if (v.includes('talent') || v.includes('incub') || en.includes('talent') || am.includes('ኢንኩቤሽን')) {
+        return { icon: '🎓', unit: 'Talents', color: 'indigo' };
+    }
+    if (v.includes('audit') || v.includes('service') || en.includes('audit') || am.includes('ኦዲት')) {
+        return { icon: '📋', unit: 'Reports', color: 'teal' };
+    }
+    if (v.includes('legal') || v.includes('policy') || en.includes('policy') || am.includes('ህግ')) {
+        return { icon: '⚖️', unit: 'Policies', color: 'slate' };
+    }
+    if (v.includes('secur') || en.includes('secur') || am.includes('ደህንነት')) {
+        return { icon: '🛡️', unit: 'Systems', color: 'cyan' };
+    }
+    return { icon: '📌', unit: 'Qty', color: 'teal' };
+};
+
+const formatPlanTypeLabel = (val, labelEn = '', labelAm = '') => {
+    if (labelEn && labelEn.trim() && labelEn !== '____') return labelEn.trim();
+    if (labelAm && labelAm.trim() && labelAm !== '____') return labelAm.trim();
+    return String(val || '')
+        .replace(/[_-]+/g, ' ')
+        .replace(/\b\w/g, l => l.toUpperCase())
+        .trim() || 'General';
+};
+
 /**
  * GET /api/executive-report
  * Full hierarchical execution report with advanced filtering
@@ -18,40 +87,96 @@ router.get('/', verifyToken, (req, res) => {
         year, quarter, month,
         plan_type,
         org_node_id,
+        include_subordinates,
+        descendant_org_ids,
         user_id: filterUser,
         goal_id, objective_id, kpi_id,
         min_weight, max_weight,
-        scope_user_ids  // comma-separated user_ids from /scope endpoint
+        scope_user_ids,  // comma-separated user_ids from /scope endpoint
+        branch_id        // branch filter
     } = req.query;
 
     const currentUserId = req.user_id || req.user?.user_id || req.user?.id;
 
-    // Resolve user role name and id from database for accurate permission checking
+    // Resolve user role name, permissions, and branch from database
     con.query(
-        `SELECT u.role_id, LOWER(COALESCE(r.role_name, '')) AS role_name, u.employee_id 
+        `SELECT u.role_id, LOWER(COALESCE(r.role_name, '')) AS role_name, u.employee_id,
+                COALESCE(u.branch_id, e.branch_id, 1) AS branch_id,
+                ep.org_node_id, os.level AS org_level, os.branch_id AS org_branch,
+                LOWER(COALESCE(os.type, '')) AS org_type, LOWER(COALESCE(os.name, '')) AS org_name,
+                COALESCE(b.name, 'Federal Head Office') AS branch_name
          FROM users u 
          LEFT JOIN roles r ON u.role_id = r.role_id 
+         LEFT JOIN employees e ON u.employee_id = e.employee_id
+         LEFT JOIN employee_positions ep ON e.employee_id = ep.employee_id AND ep.is_primary = 1
+         LEFT JOIN organization_structure os ON ep.org_node_id = os.id
+         LEFT JOIN branches b ON COALESCE(u.branch_id, e.branch_id, 1) = b.branch_id
          WHERE u.user_id = ?`,
         [currentUserId],
         (userErr, userRows) => {
-            const roleId = userRows && userRows.length > 0 ? Number(userRows[0].role_id) : Number(req.role_id || req.user?.role_id || req.user?.role || 0);
-            const roleName = userRows && userRows.length > 0 ? userRows[0].role_name : '';
-            
-            // Privileged roles see all plans: Admin, CEO, Deputy, Director, Manager, Executive, Planning
-            const isPrivileged = [1, 2, 3, 4, 5, 6, 7, 8, 9, 29].includes(roleId) ||
+            const uRow = userRows && userRows.length > 0 ? userRows[0] : {};
+            const roleId = Number(uRow.role_id || req.role_id || req.user?.role_id || 0);
+            const roleName = String(uRow.role_name || req.role_name || '').toLowerCase();
+            const userBranchId = Number(uRow.branch_id || req.branch_id || 1);
+            const userBranchName = uRow.branch_name || 'Federal Head Office';
+            const orgLevel = Number(uRow.org_level || 0);
+            const orgBranch = Number(uRow.org_branch || userBranchId);
+
+            // 1. Super Admin: full access across all branches
+            const isSuperAdmin = Boolean(req.is_super_admin) ||
+                roleId === 34 ||
+                roleId === 1 ||
+                roleName.includes('super admin') ||
+                roleName === 'admin' ||
+                roleName === 'system admin';
+
+            // 2. High Top Position (CEO, Deputy CEO, or Central HQ Top Executive level <= 2)
+            const isCentralTop2Positions = (
+                [29, 2].includes(roleId) ||
+                roleName === 'ceo' ||
+                roleName === 'deputy ceo' ||
                 roleName.includes('ceo') ||
                 roleName.includes('deputy') ||
-                roleName.includes('admin') ||
+                [9, 10].includes(Number(uRow.org_node_id)) ||
+                (orgBranch === 1 && orgLevel > 0 && orgLevel <= 2)
+            );
+
+            // canSeeAllBranches: ONLY Super Admins and High Top Positions!
+            const canSeeAllBranches = isSuperAdmin ||
+                isCentralTop2Positions ||
+                Boolean(req.can_see_all_branches) ||
+                Boolean(req.user?.can_view_all_branches);
+
+            // Privileged roles within allowed scope: CEO, Deputy, Admin, Executive, Director, Manager, Planning
+            const isPrivileged = canSeeAllBranches ||
+                [3, 4, 5, 6, 7, 8, 9, 35].includes(roleId) ||
                 roleName.includes('executive') ||
                 roleName.includes('director') ||
                 roleName.includes('manager') ||
+                roleName.includes('branch admin') ||
                 roleName.includes('plan');
+
+            // Branch filtering logic:
+            // If NOT Super Admin and NOT High Top Position: STRICTLY restricted to user's assigned branch!
+            // If Super Admin / High Top Position: can view "all" branches consolidated or filter by specific branch.
+            let effectiveBranch = null;
+            if (!canSeeAllBranches) {
+                effectiveBranch = userBranchId;
+            } else if (branch_id && branch_id !== 'all') {
+                effectiveBranch = Number(branch_id);
+            }
 
             let whereClauses = [];
             let params = [];
 
             // Only include confirmed action plans in executive reports
             whereClauses.push("(LOWER(TRIM(sod.status)) = 'confirmed' OR LOWER(TRIM(sod.status)) LIKE '%confirm%')");
+
+            // Branch filter condition
+            if (effectiveBranch) {
+                whereClauses.push('(COALESCE(sod.branch_id, so.branch_id, g.branch_id, u.branch_id, e.branch_id, 1) = ?)');
+                params.push(effectiveBranch);
+            }
 
             // Org-scoped filtering: frontend passes scope_user_ids (self + all subordinates)
             if (!isPrivileged && scope_user_ids && scope_user_ids !== 'all') {
@@ -88,7 +213,16 @@ router.get('/', verifyToken, (req, res) => {
         whereClauses.push('sod.plan_type = ?');
         params.push(plan_type);
     }
-    if (org_node_id && org_node_id !== 'all') {
+    if (descendant_org_ids && (include_subordinates === 'true' || include_subordinates === true)) {
+        const dIds = String(descendant_org_ids).split(',').map(n => Number(n.trim())).filter(Boolean);
+        if (dIds.length > 0) {
+            whereClauses.push('(ep.org_node_id IN (?) OR e.department_id IN (?))');
+            params.push(dIds, dIds);
+        } else if (org_node_id && org_node_id !== 'all') {
+            whereClauses.push('(ep.org_node_id = ? OR e.department_id = ?)');
+            params.push(org_node_id, org_node_id);
+        }
+    } else if (org_node_id && org_node_id !== 'all') {
         whereClauses.push('(ep.org_node_id = ? OR e.department_id = ?)');
         params.push(org_node_id, org_node_id);
     }
@@ -119,7 +253,7 @@ router.get('/', verifyToken, (req, res) => {
         SELECT
             -- Goal level
             g.goal_id,
-            COALESCE(g.name, 'Goal') AS goal_name,
+            COALESCE(g.name, 'General Strategic Pillar') AS goal_name,
             g.year AS goal_year,
             g.quarter AS goal_quarter,
             COALESCE(g.weight, 0) AS goal_weight,
@@ -147,7 +281,7 @@ router.get('/', verifyToken, (req, res) => {
             sod.employment_type,
             sod.employee_of,
             sod.project_type,
-            COALESCE(sod.weight, sod.plan, 0) AS action_plan_weight,
+            COALESCE(NULLIF(sod.weight, 0), (CASE WHEN sod.plan <= 1 AND sod.plan > 0 THEN sod.plan ELSE NULL END), 1.0) AS action_plan_weight,
             sod.baseline,
             sod.plan AS plan_weight_fraction,
             sod.CIbaseline,
@@ -205,6 +339,15 @@ router.get('/', verifyToken, (req, res) => {
             CONCAT(COALESCE(e.fname, ''), ' ', COALESCE(e.lname, '')) AS owner_name,
             COALESCE(os.name_amharic, os.name, 'N/A') AS department_name,
             COALESCE(pos.title, pos.name, 'Staff') AS owner_position,
+            COALESCE(ep.org_node_id, e.department_id) AS org_node_id,
+            os.type AS org_type,
+            os.level AS org_level,
+
+            -- Branch info
+            COALESCE(b.name, 'Federal Head Office') AS branch_name,
+            COALESCE(b.name_amharic, 'ማዕከላዊ ዋና መስሪያ ቤት') AS branch_name_amharic,
+            b.code AS branch_code,
+            COALESCE(sod.branch_id, so.branch_id, g.branch_id, u.branch_id, e.branch_id, 1) AS branch_id,
 
             -- Task breakdown summary
             (SELECT COUNT(*) FROM monthly_tasks mt WHERE mt.specific_objective_detail_id = sod.specific_objective_detail_id) AS monthly_task_count,
@@ -220,6 +363,7 @@ router.get('/', verifyToken, (req, res) => {
         LEFT JOIN employee_positions ep ON e.employee_id = ep.employee_id AND ep.is_primary = 1
         LEFT JOIN positions pos ON ep.position_id = pos.position_id
         LEFT JOIN organization_structure os ON COALESCE(ep.org_node_id, e.department_id) = os.id
+        LEFT JOIN branches b ON COALESCE(sod.branch_id, so.branch_id, g.branch_id, u.branch_id, e.branch_id, 1) = b.branch_id
         ${whereStr}
         GROUP BY sod.specific_objective_detail_id
         ORDER BY g.goal_id, o.objective_id, so.specific_objective_id, sod.specific_objective_detail_id
@@ -237,46 +381,134 @@ router.get('/', verifyToken, (req, res) => {
         (rows || []).forEach(r => {
             if (r.action_plan_id && !seenPlanIds.has(r.action_plan_id)) {
                 seenPlanIds.add(r.action_plan_id);
+                const pWeight = Number(r.action_plan_weight) || 1.0;
+                const pExec = Number(r.execution_pct) || 0;
+                const pAchieved = Number(r.weight_achieved) != null ? Number(r.weight_achieved) : ((pExec / 100) * pWeight);
+                r.action_plan_weight = pWeight;
+                r.weight_achieved = pAchieved;
+                if (!r.goal_name || r.goal_name === 'Goal') {
+                    r.goal_name = 'General Strategic Pillar';
+                }
                 uniqueRows.push(r);
             }
         });
 
-        // Build hierarchical structure
-        const goalsMap = {};
-        let totalPlannedWeight = 0;
-        let totalAchievedWeight = 0;
-        let totalIncomeTarget = 0;
-        let totalIncomeAchieved = 0;
-        let totalCostTarget = 0;
-        let totalCostAchieved = 0;
-        let totalJobsTarget = 0;
-        let totalJobsAchieved = 0;
+        const planTypesSql = `SELECT * FROM plan_types ORDER BY is_default DESC, sort_order ASC, id ASC`;
+        const settingsSql = `SELECT setting_value FROM app_settings WHERE setting_key = 'executive_report_visible_plan_types' LIMIT 1`;
 
-        const byPlanTypeMap = {
-            cost: { key: 'cost', label: 'Cost', target: 0, achieved: 0, plans: 0, unit: 'ETB', icon: '💸', color: 'rose' },
-            income: { key: 'income', label: 'Income (Revenue)', target: 0, achieved: 0, plans: 0, unit: 'ETB', icon: '💰', color: 'emerald' },
-            fdi: { key: 'fdi', label: 'FDI', target: 0, achieved: 0, plans: 0, unit: 'USD', icon: '🌐', color: 'blue' },
-            local_investment: { key: 'local_investment', label: 'Local Investment', target: 0, achieved: 0, plans: 0, unit: 'ETB', icon: '🏢', color: 'teal' },
-            job_creation: { key: 'job_creation', label: 'Job Creation', target: 0, achieved: 0, plans: 0, unit: 'Jobs', icon: '👷', color: 'purple' },
-            technology_transfer: { key: 'technology_transfer', label: 'Technology Transfer', target: 0, achieved: 0, plans: 0, unit: 'Techs', icon: '🔬', color: 'sky' },
-            innovation: { key: 'innovation', label: 'Innovation', target: 0, achieved: 0, plans: 0, unit: 'Projects', icon: '💡', color: 'amber' },
-            startup: { key: 'startup', label: 'Startup', target: 0, achieved: 0, plans: 0, unit: 'Startups', icon: '🚀', color: 'indigo' },
-            export: { key: 'export', label: 'Export', target: 0, achieved: 0, plans: 0, unit: 'USD', icon: '📦', color: 'orange' },
-            import_substitution: { key: 'import_substitution', label: 'Import Substitution', target: 0, achieved: 0, plans: 0, unit: 'ETB', icon: '🔄', color: 'green' }
-        };
+        Promise.all([
+            new Promise((resolve) => con.query(planTypesSql, [], (err, rows) => resolve(err ? [] : rows))),
+            new Promise((resolve) => con.query(settingsSql, [], (err, rows) => resolve(err ? [] : rows)))
+        ]).then(([dbPlanTypes, settingRows]) => {
+            // Build hierarchical structure
+            const goalsMap = {};
+            let totalPlannedWeight = 0;
+            let totalAchievedWeight = 0;
+            let totalIncomeTarget = 0;
+            let totalIncomeAchieved = 0;
+            let totalCostTarget = 0;
+            let totalCostAchieved = 0;
+            let totalJobsTarget = 0;
+            let totalJobsAchieved = 0;
 
-        const employeeMap = {};
-        const departmentMap = {};
+            // Visible plan types setting
+            let visiblePlanTypes = null;
+            if (settingRows && settingRows.length > 0 && settingRows[0].setting_value) {
+                try {
+                    const parsed = JSON.parse(settingRows[0].setting_value);
+                    if (Array.isArray(parsed) && parsed.length > 0) {
+                        visiblePlanTypes = parsed;
+                    }
+                } catch (e) {
+                    console.warn('Error parsing visible_plan_types setting:', e.message);
+                }
+            }
 
-        uniqueRows.forEach(row => {
+            // Dynamically seed byPlanTypeMap from plan_types table + canonical fallbacks
+            const byPlanTypeMap = {};
+
+            const resolveBilingual = (r) => {
+                const hasLatin = (s) => /[a-zA-Z]/.test(String(s || ''));
+                const hasEthiopic = (s) => /[\u1200-\u137F]/.test(String(s || ''));
+                let enLabel = '';
+                let amLabel = '';
+                if (hasLatin(r.label_en)) enLabel = String(r.label_en).trim();
+                else if (hasLatin(r.label)) enLabel = String(r.label).trim();
+
+                if (hasEthiopic(r.label)) amLabel = String(r.label).trim();
+                else if (hasEthiopic(r.label_en)) amLabel = String(r.label_en).trim();
+
+                if (!enLabel) {
+                    enLabel = String(r.value || '').replace(/^[_\s]+|[_\s]+$/g, '').replace(/[_-]+/g, ' ').replace(/\b\w/g, l => l.toUpperCase()).trim();
+                }
+                return { enLabel, amLabel };
+            };
+
+            (dbPlanTypes || []).forEach(pt => {
+                const { enLabel, amLabel } = resolveBilingual(pt);
+                const meta = getPlanTypeMeta(pt.value, enLabel, amLabel);
+                byPlanTypeMap[pt.value] = {
+                    key: pt.value,
+                    label: enLabel || pt.value,
+                    label_am: amLabel || '',
+                    target: 0,
+                    achieved: 0,
+                    plans: 0,
+                    totalExecPct: 0,
+                    unit: meta.unit,
+                    icon: meta.icon,
+                    color: meta.color,
+                    is_default: Boolean(pt.is_default)
+                };
+            });
+
+            // Canonical defaults to guarantee core cards exist
+            const canonicalDefaults = [
+                { key: 'cost', label: 'Cost', label_am: 'ወጪ', unit: 'ETB', icon: '💸', color: 'rose' },
+                { key: 'income', label: 'Income (Revenue)', label_am: 'ገቢ', unit: 'ETB', icon: '💰', color: 'emerald' },
+                { key: 'fdi', label: 'FDI', label_am: 'ፍድአይ', unit: 'USD', icon: '🌐', color: 'blue' },
+                { key: 'local_investment', label: 'Local Investment', label_am: 'የሃገር ውስጥ ኢንቨስትመንት', unit: 'ETB', icon: '🏢', color: 'teal' },
+                { key: 'job_creation', label: 'Job Creation', label_am: 'ስራ እድል ፈጠራ', unit: 'Jobs', icon: '👷', color: 'purple' },
+                { key: 'technology_transfer', label: 'Technology Transfer', label_am: 'የ እውቀት ሽግግር', unit: 'Techs', icon: '🔬', color: 'sky' },
+                { key: 'innovation', label: 'Innovation', label_am: 'ፈጠራ', unit: 'Projects', icon: '💡', color: 'amber' },
+                { key: 'startup', label: 'Startup', label_am: 'ስታርት አፕ', unit: 'Startups', icon: '🚀', color: 'indigo' },
+                { key: 'export', label: 'Export', label_am: 'ለ ውጪ ገበያ የቀረበ', unit: 'USD', icon: '📦', color: 'orange' },
+                { key: 'import_substitution', label: 'Import Substitution', label_am: 'የውጪ ምርት ምትክ', unit: 'ETB', icon: '🔄', color: 'green' },
+                { key: 'hr', label: 'HR', label_am: 'ሰራተኞች', unit: 'Staff', icon: '👔', color: 'purple' },
+                { key: 'project', label: 'Project', label_am: 'ፕሮጀክት', unit: 'Projects', icon: '🏗️', color: 'blue' },
+                { key: 'general', label: 'General', label_am: 'ጠቅላላ', unit: 'Qty', icon: '📌', color: 'teal' }
+            ];
+
+            canonicalDefaults.forEach(def => {
+                if (!byPlanTypeMap[def.key]) {
+                    byPlanTypeMap[def.key] = {
+                        key: def.key,
+                        label: def.label,
+                        label_am: def.label_am,
+                        target: 0,
+                        achieved: 0,
+                        plans: 0,
+                        totalExecPct: 0,
+                        unit: def.unit,
+                        icon: def.icon,
+                        color: def.color,
+                        is_default: true
+                    };
+                }
+            });
+
+            const employeeMap = {};
+            const departmentMap = {};
+
+            uniqueRows.forEach(row => {
             const gid = row.goal_id || 'ungrouped';
             if (!goalsMap[gid]) {
                 goalsMap[gid] = {
-                    goal_id: row.goal_id,
-                    goal_name: row.goal_name,
+                    goal_id: row.goal_id || 'ungrouped',
+                    goal_name: (row.goal_name && row.goal_name !== 'Goal') ? row.goal_name : 'General Strategic Pillar',
                     goal_year: row.goal_year,
                     goal_quarter: row.goal_quarter,
-                    goal_weight: row.goal_weight,
+                    goal_weight: Number(row.goal_weight) || 0,
                     objectives: {}
                 };
             }
@@ -319,23 +551,84 @@ router.get('/', verifyToken, (req, res) => {
             const numTarget = Number(row.numeric_target) || Number(row.CIplan) || 0;
             const numAchieved = Number(row.numeric_achieved) || Number(row.outcome) || Number(row.CIoutcome) || 0;
 
+            // Match to plan type card
             let cat = null;
-            if (pType.includes('cost') || costType || nameStr.includes('cost')) cat = 'cost';
-            else if (pType.includes('fdi') || incType.includes('fdi') || nameStr.includes('fdi') || nameStr.includes('foreign direct')) cat = 'fdi';
-            else if (pType.includes('export') || incType.includes('export') || nameStr.includes('export')) cat = 'export';
-            else if (pType.includes('import') || nameStr.includes('import')) cat = 'import_substitution';
-            else if (pType.includes('income') || pType.includes('revenue') || incType || nameStr.includes('income') || nameStr.includes('revenue')) cat = 'income';
-            else if (pType.includes('local') || pType.includes('invest') || nameStr.includes('local invest')) cat = 'local_investment';
-            else if (pType.includes('job') || pType.includes('employment') || empType || nameStr.includes('job')) cat = 'job_creation';
-            else if (pType.includes('tech') || nameStr.includes('tech') || nameStr.includes('transfer')) cat = 'technology_transfer';
-            else if (pType.includes('innovat') || nameStr.includes('innovat')) cat = 'innovation';
-            else if (pType.includes('startup') || nameStr.includes('startup')) cat = 'startup';
-            else if (byPlanTypeMap[pType]) cat = pType;
+            if (row.plan_type && byPlanTypeMap[row.plan_type]) {
+                cat = row.plan_type;
+            } else if (pType.includes('cost') || costType || nameStr.includes('cost')) {
+                cat = 'cost';
+            } else if (pType.includes('fdi') || incType.includes('fdi') || nameStr.includes('fdi') || pType === '____') {
+                cat = byPlanTypeMap['fdi'] ? 'fdi' : (byPlanTypeMap['____'] ? '____' : 'fdi');
+            } else if (pType.includes('export') || incType.includes('export') || nameStr.includes('export') || pType === '_____________') {
+                cat = byPlanTypeMap['export'] ? 'export' : (byPlanTypeMap['_____________'] ? '_____________' : 'export');
+            } else if (pType.includes('import_substitution_and_home_grown') || pType === 'import_substitution_and_home_grown_technology') {
+                cat = 'import_substitution_and_home_grown_technology';
+            } else if (pType.includes('import') || nameStr.includes('import')) {
+                cat = byPlanTypeMap['import_substitution'] ? 'import_substitution' : pType;
+            } else if (pType.includes('income') || pType.includes('revenue') || incType || nameStr.includes('income') || nameStr.includes('revenue')) {
+                cat = 'income';
+            } else if (pType.includes('local') || pType.includes('invest') || nameStr.includes('local invest') || pType === '_________________') {
+                cat = byPlanTypeMap['local_investment'] ? 'local_investment' : (byPlanTypeMap['_________________'] ? '_________________' : 'local_investment');
+            } else if (pType.includes('job') || pType.includes('employment') || empType || nameStr.includes('job')) {
+                cat = 'job_creation';
+            } else if (pType.includes('tech') || nameStr.includes('tech') || nameStr.includes('transfer') || pType === '___________') {
+                cat = byPlanTypeMap['technology_transfer'] ? 'technology_transfer' : (byPlanTypeMap['___________'] ? '___________' : 'technology_transfer');
+            } else if (pType.includes('innovat') || nameStr.includes('innovat') || pType === '___') {
+                cat = byPlanTypeMap['innovation'] ? 'innovation' : (byPlanTypeMap['___'] ? '___' : 'innovation');
+            } else if (pType.includes('startup') || nameStr.includes('startup') || pType === '_______') {
+                cat = byPlanTypeMap['startup'] ? 'startup' : (byPlanTypeMap['_______'] ? '_______' : 'startup');
+            } else if (pType.includes('secur') || pType === '__________') {
+                cat = byPlanTypeMap['__________'] ? '__________' : pType;
+            } else if (pType.includes('talent') || pType.includes('incub')) {
+                cat = 'digital_talent___incubation';
+            } else if (pType.includes('research')) {
+                cat = 'research___innovation';
+            } else if (pType.includes('legal') || pType.includes('policy')) {
+                cat = 'legal___policy_framework';
+            } else if (pType.includes('audit')) {
+                cat = 'digital_corporate_service_and_audit';
+            } else if (pType.includes('hr__procure')) {
+                cat = 'hr__procurement___general_service';
+            } else if (pType.includes('hr')) {
+                cat = 'hr';
+            } else if (pType.includes('project')) {
+                cat = 'project';
+            } else if (pType.includes('purchase')) {
+                cat = 'purchase';
+            } else if (pType) {
+                cat = pType;
+            }
+
+            if (cat && !byPlanTypeMap[cat]) {
+                const meta = getPlanTypeMeta(cat, row.action_plan_name);
+                byPlanTypeMap[cat] = {
+                    key: cat,
+                    label: formatPlanTypeLabel(cat),
+                    label_am: '',
+                    target: 0,
+                    achieved: 0,
+                    plans: 0,
+                    totalExecPct: 0,
+                    unit: meta.unit,
+                    icon: meta.icon,
+                    color: meta.color,
+                    is_default: false
+                };
+            }
 
             if (cat && byPlanTypeMap[cat]) {
                 byPlanTypeMap[cat].target += numTarget;
                 byPlanTypeMap[cat].achieved += numAchieved;
                 byPlanTypeMap[cat].plans += 1;
+                byPlanTypeMap[cat].totalExecPct += apExecPct;
+                byPlanTypeMap[cat].planned_weight = (byPlanTypeMap[cat].planned_weight || 0) + apWeight;
+                byPlanTypeMap[cat].achieved_weight = (byPlanTypeMap[cat].achieved_weight || 0) + apWeightAchieved;
+                if (pType.includes('cost') || costType) {
+                    byPlanTypeMap[cat].cost_amount = (byPlanTypeMap[cat].cost_amount || 0) + numTarget;
+                }
+                if (apExecPct >= 99.9 || (row.status || '').toLowerCase() === 'completed') {
+                    byPlanTypeMap[cat].completed_plans = (byPlanTypeMap[cat].completed_plans || 0) + 1;
+                }
             }
 
             if (pType.includes('income') || incType) {
@@ -446,7 +739,19 @@ router.get('/', verifyToken, (req, res) => {
 
         const byPlanTypesList = Object.values(byPlanTypeMap).map(item => ({
             ...item,
-            pct: item.target > 0 ? Math.round((item.achieved / item.target) * 100 * 100) / 100 : 0
+            total_plans: item.plans,
+            completed_plans: item.completed_plans || 0,
+            planned_weight: Math.round((item.planned_weight || 0) * 100) / 100,
+            achieved_weight: Math.round((item.achieved_weight || 0) * 1000) / 1000,
+            target_numeric: item.target,
+            achieved_numeric: item.achieved,
+            cost_amount: item.cost_amount || 0,
+            execution_pct: item.target > 0
+                ? Math.round((item.achieved / item.target) * 100 * 100) / 100
+                : (item.plans > 0 ? Math.round((item.totalExecPct / item.plans) * 100) / 100 : 0),
+            pct: item.target > 0
+                ? Math.round((item.achieved / item.target) * 100 * 100) / 100
+                : (item.plans > 0 ? Math.round((item.totalExecPct / item.plans) * 100) / 100 : 0)
         }));
 
         const overallPct = totalPlannedWeight > 0
@@ -459,6 +764,10 @@ router.get('/', verifyToken, (req, res) => {
 
         let tbWhereClauses = [];
         let tbParams = [];
+        if (effectiveBranch) {
+            tbWhereClauses.push('(COALESCE(sod.branch_id, u.branch_id, e.branch_id, 1) = ?)');
+            tbParams.push(effectiveBranch);
+        }
         if (year && year !== 'all') {
             tbWhereClauses.push('YEAR(mt.created_at) = ?');
             tbParams.push(year);
@@ -557,7 +866,7 @@ router.get('/', verifyToken, (req, res) => {
             LEFT JOIN employee_positions ep ON e.employee_id = ep.employee_id AND ep.is_primary = 1
             LEFT JOIN positions pos ON ep.position_id = pos.position_id
             LEFT JOIN organization_structure os ON COALESCE(ep.org_node_id, e.department_id) = os.id
-            WHERE LOWER(sod.status) = 'confirmed'
+            WHERE LOWER(sod.status) = 'confirmed' ${tbWhere}
             GROUP BY u.user_id, full_name, username, org_node_id, department, position
         `;
 
@@ -565,7 +874,7 @@ router.get('/', verifyToken, (req, res) => {
         const orgTreeSql = `SELECT id, name, name_amharic, type, parent_id, level FROM organization_structure WHERE status = 'active' ORDER BY level ASC`;
         Promise.all([
             new Promise((resolve) => con.query(monthlyRankSql, tbParams, (err, rows) => resolve(err ? [] : rows))),
-            new Promise((resolve) => con.query(weeklyRankSql, [], (err, rows) => resolve(err ? [] : rows))),
+            new Promise((resolve) => con.query(weeklyRankSql, tbParams, (err, rows) => resolve(err ? [] : rows))),
             new Promise((resolve) => con.query(orgTreeSql, [], (err, rows) => resolve(err ? [] : rows)))
         ]).then(([monthlyRows, weeklyRows, orgNodes]) => {
             // ── 1. Individual Employee Rankings ──
@@ -761,81 +1070,308 @@ router.get('/', verifyToken, (req, res) => {
                 cost: { target: totalCostTarget, achieved: totalCostAchieved, pct: totalCostTarget > 0 ? Math.round(totalCostAchieved / totalCostTarget * 100 * 100) / 100 : 0 },
                 jobs: { target: totalJobsTarget, achieved: totalJobsAchieved, pct: totalJobsTarget > 0 ? Math.round(totalJobsAchieved / totalJobsTarget * 100 * 100) / 100 : 0 },
                 byPlanTypes: byPlanTypesList,
+                visible_plan_types: visiblePlanTypes,
                 employeeRankings,
                 departmentRankings,
                 aiForecast
             };
 
-            res.json({ success: true, hierarchy, summary, flat: uniqueRows });
+            res.json({
+                success: true,
+                hierarchy,
+                summary,
+                flat: uniqueRows,
+                meta: {
+                    can_view_all_branches: canSeeAllBranches,
+                    is_super_admin: isSuperAdmin,
+                    is_top_position: isCentralTop2Positions,
+                    user_branch_id: userBranchId,
+                    user_branch_name: userBranchName,
+                    effective_branch: effectiveBranch
+                }
+            });
         }).catch(err => {
+            console.error('Error calculating rankings/rollup:', err);
+            res.status(500).json({ success: false, message: 'Error calculating rankings', error: err.message });
         }); // end Promise.all rankings
+        }).catch(planTypeErr => {
+            console.error('Error fetching plan types / app settings:', planTypeErr);
+            res.status(500).json({ success: false, message: 'Error initializing plan types', error: planTypeErr.message });
+        }); // end Promise.all planTypes
     }); // end main SQL query
     }); // end user role query
 }); // end router.get('/')
 
+/**
+ * GET /api/executive-report/visible-plan-types
+ * Returns the configured list of visible plan type card keys
+ */
+router.get('/visible-plan-types', verifyToken, (req, res) => {
+    con.query(
+        "SELECT setting_value FROM app_settings WHERE setting_key = 'executive_report_visible_plan_types' LIMIT 1",
+        (err, rows) => {
+            if (err) return res.status(500).json({ success: false, message: 'Database error', error: err.message });
+            let visiblePlanTypes = null;
+            if (rows && rows.length > 0 && rows[0].setting_value) {
+                try {
+                    visiblePlanTypes = JSON.parse(rows[0].setting_value);
+                } catch (e) {
+                    visiblePlanTypes = null;
+                }
+            }
+            res.json({ success: true, visiblePlanTypes });
+        }
+    );
+});
 
 /**
- * GET /api/executive-report/filters  - returns distinct filter options
+ * POST /api/executive-report/visible-plan-types
+ * Allows admin / top management to specify which plan types are visible in executive report cards
+ */
+router.post('/visible-plan-types', verifyToken, (req, res) => {
+    const currentUserId = req.user_id || req.user?.user_id || req.user?.id;
+    const { visiblePlanTypes } = req.body;
+
+    if (!Array.isArray(visiblePlanTypes)) {
+        return res.status(400).json({ success: false, message: 'visiblePlanTypes must be an array of plan type keys' });
+    }
+
+    // Verify admin / executive privileges
+    con.query(
+        `SELECT u.role_id, LOWER(COALESCE(r.role_name, '')) AS role_name, ep.org_node_id, os.level AS org_level
+         FROM users u
+         LEFT JOIN roles r ON u.role_id = r.role_id
+         LEFT JOIN employees e ON u.employee_id = e.employee_id
+         LEFT JOIN employee_positions ep ON e.employee_id = ep.employee_id AND ep.is_primary = 1
+         LEFT JOIN organization_structure os ON ep.org_node_id = os.id
+         WHERE u.user_id = ?`,
+        [currentUserId],
+        (userErr, userRows) => {
+            const uRow = userRows && userRows.length > 0 ? userRows[0] : {};
+            const roleId = Number(uRow.role_id || req.role_id || req.user?.role_id || 0);
+            const roleName = String(uRow.role_name || req.role_name || '').toLowerCase();
+            const orgLevel = Number(uRow.org_level || 0);
+
+            const isAuthorized = Boolean(req.is_super_admin) ||
+                roleId === 34 ||
+                roleId === 1 ||
+                roleId === 2 ||
+                roleId === 29 ||
+                roleName.includes('super admin') ||
+                roleName === 'admin' ||
+                roleName === 'system admin' ||
+                roleName.includes('ceo') ||
+                roleName.includes('deputy') ||
+                (orgLevel > 0 && orgLevel <= 2);
+
+            if (!isAuthorized) {
+                return res.status(403).json({
+                    success: false,
+                    message: 'Permission denied: Only administrators and top management can configure visible plan type cards.'
+                });
+            }
+
+            const valStr = JSON.stringify(visiblePlanTypes);
+            const sql = `
+                INSERT INTO app_settings (setting_key, setting_value, updated_by)
+                VALUES ('executive_report_visible_plan_types', ?, ?)
+                ON DUPLICATE KEY UPDATE setting_value = VALUES(setting_value), updated_by = VALUES(updated_by)
+            `;
+
+            con.query(sql, [valStr, currentUserId], (saveErr) => {
+                if (saveErr) {
+                    return res.status(500).json({ success: false, message: 'Error saving settings', error: saveErr.message });
+                }
+                res.json({
+                    success: true,
+                    message: 'Visible plan types configuration saved successfully',
+                    visiblePlanTypes
+                });
+            });
+        }
+    );
+});
+
+
+/**
+ * GET /api/executive-report/filters  - returns distinct filter options and available branches
  */
 router.get('/filters', verifyToken, (req, res) => {
+    const currentUserId = req.user_id || req.user?.user_id || req.user?.id;
 
+    con.query(
+        `SELECT u.role_id, LOWER(COALESCE(r.role_name, '')) AS role_name, u.employee_id,
+                COALESCE(u.branch_id, e.branch_id, 1) AS branch_id,
+                ep.org_node_id, os.level AS org_level, os.branch_id AS org_branch,
+                COALESCE(b.name, 'Federal Head Office') AS branch_name
+         FROM users u 
+         LEFT JOIN roles r ON u.role_id = r.role_id 
+         LEFT JOIN employees e ON u.employee_id = e.employee_id
+         LEFT JOIN employee_positions ep ON e.employee_id = ep.employee_id AND ep.is_primary = 1
+         LEFT JOIN organization_structure os ON ep.org_node_id = os.id
+         LEFT JOIN branches b ON COALESCE(u.branch_id, e.branch_id, 1) = b.branch_id
+         WHERE u.user_id = ?`,
+        [currentUserId],
+        (userErr, userRows) => {
+            const uRow = userRows && userRows.length > 0 ? userRows[0] : {};
+            const roleId = Number(uRow.role_id || req.role_id || req.user?.role_id || 0);
+            const roleName = String(uRow.role_name || req.role_name || '').toLowerCase();
+            const userBranchId = Number(uRow.branch_id || req.branch_id || 1);
+            const userBranchName = uRow.branch_name || 'Federal Head Office';
+            const orgLevel = Number(uRow.org_level || 0);
+            const orgBranch = Number(uRow.org_branch || userBranchId);
 
-    const filterClauses = ["LOWER(sod.status) = 'confirmed'"];
-    if (!isPrivileged && currentUserId) {
-        filterClauses.push(`(sod.user_id = ${con.escape(currentUserId)} OR sod.created_by = ${con.escape(currentUserId)})`);
-    }
-    const userFilter = `WHERE ${filterClauses.join(' AND ')}`;
+            const isSuperAdmin = Boolean(req.is_super_admin) ||
+                roleId === 34 ||
+                roleId === 1 ||
+                roleName.includes('super admin') ||
+                roleName === 'admin' ||
+                roleName === 'system admin';
 
-    const sql = `
-        SELECT DISTINCT
-            g.goal_id, COALESCE(g.name, 'Goal') AS goal_name, g.year AS goal_year, g.quarter AS goal_quarter,
-            o.objective_id, COALESCE(o.name, 'Objective') AS objective_name,
-            so.specific_objective_id AS kpi_id, COALESCE(so.specific_objective_name, so.name, 'KPI') AS kpi_name,
-            sod.plan_type,
-            COALESCE(os.name_amharic, os.name) AS department_name, os.id AS org_node_id,
-            CONCAT(COALESCE(e.fname, ''), ' ', COALESCE(e.lname, '')) AS owner_name,
-            u.user_id AS owner_user_id
-        FROM specific_objective_details sod
-        LEFT JOIN specific_objectives so ON sod.specific_objective_id = so.specific_objective_id
-        LEFT JOIN objectives o ON so.objective_id = o.objective_id
-        LEFT JOIN goals g ON g.goal_id = COALESCE(sod.goal_id, o.goal_id)
-        LEFT JOIN users u ON sod.user_id = u.user_id
-        LEFT JOIN employees e ON u.employee_id = e.employee_id
-        LEFT JOIN employee_positions ep ON e.employee_id = ep.employee_id AND ep.is_primary = 1
-        LEFT JOIN organization_structure os ON COALESCE(ep.org_node_id, e.department_id) = os.id
-        ${userFilter}
-        ORDER BY g.year DESC, g.goal_id
-    `;
+            const isCentralTop2Positions = (
+                [29, 2].includes(roleId) ||
+                roleName === 'ceo' ||
+                roleName === 'deputy ceo' ||
+                roleName.includes('ceo') ||
+                roleName.includes('deputy') ||
+                [9, 10].includes(Number(uRow.org_node_id)) ||
+                (orgBranch === 1 && orgLevel > 0 && orgLevel <= 2)
+            );
 
-    con.query(sql, [], (err, rows) => {
-        if (err) return res.status(500).json({ success: false, error: err.message });
+            const canSeeAllBranches = isSuperAdmin ||
+                isCentralTop2Positions ||
+                Boolean(req.can_see_all_branches) ||
+                Boolean(req.user?.can_view_all_branches);
 
-        const years = [...new Set(rows.map(r => r.goal_year).filter(Boolean))].sort((a, b) => b - a);
-        const quarters = [...new Set(rows.map(r => r.goal_quarter).filter(Boolean))];
-        const goals = rows.reduce((acc, r) => {
-            if (r.goal_id && !acc.find(g => g.id === r.goal_id)) acc.push({ id: r.goal_id, name: r.goal_name });
-            return acc;
-        }, []);
-        const objectives = rows.reduce((acc, r) => {
-            if (r.objective_id && !acc.find(o => o.id === r.objective_id)) acc.push({ id: r.objective_id, name: r.objective_name });
-            return acc;
-        }, []);
-        const kpis = rows.reduce((acc, r) => {
-            if (r.kpi_id && !acc.find(k => k.id === r.kpi_id)) acc.push({ id: r.kpi_id, name: r.kpi_name });
-            return acc;
-        }, []);
-        const planTypes = [...new Set(rows.map(r => r.plan_type).filter(Boolean))];
-        const departments = rows.reduce((acc, r) => {
-            if (r.org_node_id && !acc.find(d => d.id === r.org_node_id)) acc.push({ id: r.org_node_id, name: r.department_name });
-            return acc;
-        }, []);
-        const owners = rows.reduce((acc, r) => {
-            if (r.owner_user_id && !acc.find(o => o.id === r.owner_user_id)) acc.push({ id: r.owner_user_id, name: r.owner_name });
-            return acc;
-        }, []);
+            const isPrivileged = canSeeAllBranches ||
+                [3, 4, 5, 6, 7, 8, 9, 35].includes(roleId) ||
+                roleName.includes('executive') ||
+                roleName.includes('director') ||
+                roleName.includes('manager') ||
+                roleName.includes('branch admin') ||
+                roleName.includes('plan');
 
-        res.json({ success: true, filters: { years, quarters, goals, objectives, kpis, planTypes, departments, owners } });
-    });
+            let effectiveBranch = null;
+            if (!canSeeAllBranches) {
+                effectiveBranch = userBranchId;
+            } else if (req.query.branch_id && req.query.branch_id !== 'all') {
+                effectiveBranch = Number(req.query.branch_id);
+            }
+
+            const filterClauses = ["LOWER(sod.status) = 'confirmed'"];
+            const filterParams = [];
+
+            if (effectiveBranch) {
+                filterClauses.push('(COALESCE(sod.branch_id, so.branch_id, g.branch_id, u.branch_id, e.branch_id, 1) = ?)');
+                filterParams.push(effectiveBranch);
+            }
+
+            if (!isPrivileged && currentUserId) {
+                filterClauses.push('(sod.user_id = ? OR sod.created_by = ?)');
+                filterParams.push(currentUserId, currentUserId);
+            }
+
+            const userFilter = `WHERE ${filterClauses.join(' AND ')}`;
+
+            const branchSql = `SELECT branch_id, name, name_amharic, code, tier_level, is_head_office FROM branches WHERE status = 'active' ORDER BY is_head_office DESC, branch_id ASC`;
+            const planTypesSql = `SELECT * FROM plan_types ORDER BY is_default DESC, sort_order ASC, id ASC`;
+            const optionsSql = `
+                SELECT DISTINCT
+                    g.goal_id, COALESCE(g.name, 'Goal') AS goal_name, g.year AS goal_year, g.quarter AS goal_quarter,
+                    o.objective_id, COALESCE(o.name, 'Objective') AS objective_name,
+                    so.specific_objective_id AS kpi_id, COALESCE(so.specific_objective_name, so.name, 'KPI') AS kpi_name,
+                    sod.plan_type,
+                    COALESCE(os.name_amharic, os.name) AS department_name, os.id AS org_node_id,
+                    CONCAT(COALESCE(e.fname, ''), ' ', COALESCE(e.lname, '')) AS owner_name,
+                    u.user_id AS owner_user_id
+                FROM specific_objective_details sod
+                LEFT JOIN specific_objectives so ON sod.specific_objective_id = so.specific_objective_id
+                LEFT JOIN objectives o ON so.objective_id = o.objective_id
+                LEFT JOIN goals g ON g.goal_id = COALESCE(sod.goal_id, o.goal_id)
+                LEFT JOIN users u ON sod.user_id = u.user_id
+                LEFT JOIN employees e ON u.employee_id = e.employee_id
+                LEFT JOIN employee_positions ep ON e.employee_id = ep.employee_id AND ep.is_primary = 1
+                LEFT JOIN organization_structure os ON COALESCE(ep.org_node_id, e.department_id) = os.id
+                ${userFilter}
+                ORDER BY g.year DESC, g.goal_id
+            `;
+
+            Promise.all([
+                new Promise((resolve) => con.query(branchSql, [], (err, rows) => resolve(err ? [] : rows))),
+                new Promise((resolve) => con.query(optionsSql, filterParams, (err, rows) => resolve(err ? [] : rows))),
+                new Promise((resolve) => con.query(planTypesSql, [], (err, rows) => resolve(err ? [] : rows)))
+            ]).then(([allBranches, rows, dbPlanTypes]) => {
+                const years = [...new Set(rows.map(r => r.goal_year).filter(Boolean))].sort((a, b) => b - a);
+                const quarters = [...new Set(rows.map(r => r.goal_quarter).filter(Boolean))];
+                const goals = rows.reduce((acc, r) => {
+                    if (r.goal_id && !acc.find(g => g.id === r.goal_id)) acc.push({ id: r.goal_id, name: r.goal_name });
+                    return acc;
+                }, []);
+                const objectives = rows.reduce((acc, r) => {
+                    if (r.objective_id && !acc.find(o => o.id === r.objective_id)) acc.push({ id: r.objective_id, name: r.objective_name });
+                    return acc;
+                }, []);
+                const kpis = rows.reduce((acc, r) => {
+                    if (r.kpi_id && !acc.find(k => k.id === r.kpi_id)) acc.push({ id: r.kpi_id, name: r.kpi_name });
+                    return acc;
+                }, []);
+                const planTypes = [...new Set(rows.map(r => r.plan_type).filter(Boolean))];
+                const departments = rows.reduce((acc, r) => {
+                    if (r.org_node_id && !acc.find(d => d.id === r.org_node_id)) acc.push({ id: r.org_node_id, name: r.department_name });
+                    return acc;
+                }, []);
+                const owners = rows.reduce((acc, r) => {
+                    if (r.owner_user_id && !acc.find(o => o.id === r.owner_user_id)) acc.push({ id: r.owner_user_id, name: r.owner_name });
+                    return acc;
+                }, []);
+
+                const allPlanTypes = (dbPlanTypes || []).map(pt => {
+                    const hasLatin = (s) => /[a-zA-Z]/.test(String(s || ''));
+                    const hasEthiopic = (s) => /[\u1200-\u137F]/.test(String(s || ''));
+                    let enLabel = '';
+                    let amLabel = '';
+                    if (hasLatin(pt.label_en)) enLabel = String(pt.label_en).trim();
+                    else if (hasLatin(pt.label)) enLabel = String(pt.label).trim();
+
+                    if (hasEthiopic(pt.label)) amLabel = String(pt.label).trim();
+                    else if (hasEthiopic(pt.label_en)) amLabel = String(pt.label_en).trim();
+
+                    if (!enLabel) {
+                        enLabel = String(pt.value || '').replace(/^[_\s]+|[_\s]+$/g, '').replace(/[_-]+/g, ' ').replace(/\b\w/g, l => l.toUpperCase()).trim();
+                    }
+                    const meta = getPlanTypeMeta(pt.value, enLabel, amLabel);
+                    return {
+                        value: pt.value,
+                        label: enLabel,
+                        label_am: amLabel,
+                        icon: meta.icon,
+                        color: meta.color,
+                        unit: meta.unit
+                    };
+                });
+
+                // Branch users only see their branch in the list
+                const allowedBranches = canSeeAllBranches
+                    ? (allBranches || [])
+                    : (allBranches || []).filter(b => Number(b.branch_id) === Number(userBranchId));
+
+                res.json({
+                    success: true,
+                    can_view_all_branches: canSeeAllBranches,
+                    is_super_admin: isSuperAdmin,
+                    is_top_position: isCentralTop2Positions,
+                    user_branch_id: userBranchId,
+                    user_branch_name: userBranchName,
+                    effective_branch_id: effectiveBranch,
+                    branches: allowedBranches,
+                    filters: { years, quarters, goals, objectives, kpis, planTypes, allPlanTypes, departments, owners }
+                });
+            }).catch(err => {
+                console.error('Error fetching executive report filters:', err);
+                res.status(500).json({ success: false, error: err.message });
+            });
+        }
+    );
 });
 
 /**

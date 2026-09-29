@@ -82,8 +82,11 @@ const queryAsync = (sql, params = []) => {
 // 1. Get all Goal Configurations (with quarter activations & past baseline weights)
 exports.getGoalConfigurations = async (req, res) => {
   try {
-    // A. Fetch Goals with Pillar info
-    const goalsSql = `
+    const userBranchId = Number(req.branch_id) || 1;
+    const isSuper = Boolean(req.is_super_admin);
+    const allowedBranches = req.allowed_branches && Array.isArray(req.allowed_branches) ? req.allowed_branches : [userBranchId];
+
+    let goalsSql = `
       SELECT 
         g.goal_id,
         g.name AS goal_name,
@@ -95,13 +98,19 @@ exports.getGoalConfigurations = async (req, res) => {
         g.is_active,
         COALESCE(g.weight, 0) AS weight,
         g.pillar_id,
+        g.branch_id,
         p.name AS pillar_name,
         p.code AS pillar_code
       FROM goals g
       LEFT JOIN plan_pillars p ON p.id = g.pillar_id
-      ORDER BY g.goal_id DESC
     `;
-    const goals = await queryAsync(goalsSql);
+    const params = [];
+    if (!isSuper) {
+      goalsSql += ` WHERE g.branch_id IN (?)`;
+      params.push(allowedBranches);
+    }
+    goalsSql += ` ORDER BY g.goal_id DESC`;
+    const goals = await queryAsync(goalsSql, params);
 
     // B. Fetch all Quarter Activations
     const activationsSql = `SELECT goal_id, year, quarter, is_active FROM goal_quarter_activations`;

@@ -166,16 +166,35 @@ const getdepartment = async (req, res) => {
 
 const getUserRoles = async (req, res) => {
   try {
-    // Assuming that the current user's ID is available in req.user_id from verifyToken middleware
     const user_id = req.user_id;
     if (!user_id) {
       return res.status(400).json({ error: "User ID not provided" });
     }
     const sql = `
-      SELECT r.role_name
-      FROM roles r
-      INNER JOIN users u ON u.role_id = r.role_id
+      SELECT 
+        u.user_id,
+        u.user_name,
+        e.fname,
+        e.lname,
+        TRIM(CONCAT(COALESCE(e.fname, ''), ' ', COALESCE(e.lname, ''))) AS name,
+        r.role_id,
+        r.role_name,
+        COALESCE(u.branch_id, e.branch_id, 1) AS branch_id,
+        b.name AS branch_name,
+        b.code AS branch_code,
+        ep.org_node_id,
+        os.level AS org_level,
+        os.name AS org_node_name,
+        os.type AS org_node_type,
+        os.branch_id AS org_branch_id
+      FROM users u
+      LEFT JOIN employees e ON u.employee_id = e.employee_id
+      LEFT JOIN roles r ON u.role_id = r.role_id
+      LEFT JOIN branches b ON COALESCE(u.branch_id, e.branch_id, 1) = b.branch_id
+      LEFT JOIN employee_positions ep ON e.employee_id = ep.employee_id AND ep.is_primary = 1
+      LEFT JOIN organization_structure os ON ep.org_node_id = os.id
       WHERE u.user_id = ?
+      LIMIT 1
     `;
     con.query(sql, [user_id], (err, results) => {
       if (err) {
@@ -185,7 +204,47 @@ const getUserRoles = async (req, res) => {
       if (results.length === 0) {
         return res.status(404).json({ error: "User role not found" });
       }
-      res.json(results[0]);
+      const row = results[0];
+      const roleId = Number(row.role_id) || 0;
+      const roleName = String(row.role_name || '').toLowerCase();
+      const branchId = Number(row.branch_id) || 1;
+      const orgLevel = Number(row.org_level || 0);
+      const orgBranchId = Number(row.org_branch_id || branchId);
+
+      // Super Admin check
+      const isSuperAdmin = (
+        roleId === 34 || 
+        roleId === 1 || 
+        roleName.includes('super admin') || 
+        roleName === 'admin' || 
+        roleName === 'system admin'
+      );
+
+      // 1st two positions on the org structure on the central headquarter (branch_id = 1)
+      const isCentralTop2 = (
+        [29, 2].includes(roleId) ||
+        roleName.includes('ceo') ||
+        roleName.includes('deputy ceo') ||
+        [9, 10].includes(Number(row.org_node_id)) ||
+        (orgBranchId === 1 && orgLevel > 0 && orgLevel <= 2)
+      );
+
+      const canSeeAllBranches = isSuperAdmin || isCentralTop2;
+
+      res.json({
+        ...row,
+        fname: row.fname || '',
+        lname: row.lname || '',
+        name: row.name || row.fname || '',
+        role_id: roleId,
+        role_name: row.role_name || (isSuperAdmin ? 'Super Admin' : ''),
+        branch_id: branchId,
+        branch_name: row.branch_name || (branchId === 1 ? 'Federal Head Office' : 'Branch Office'),
+        is_super_admin: isSuperAdmin,
+        is_central_top2: isCentralTop2,
+        can_see_all_branches: canSeeAllBranches,
+        can_view_all_branches: canSeeAllBranches
+      });
     });
   } catch (error) {
     console.error("Error in getUserRole:", error.message);

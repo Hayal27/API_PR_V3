@@ -1,3 +1,14 @@
+const isPastDeadline = (deadlineStr) => {
+    if (!deadlineStr) return false;
+    const d = new Date(deadlineStr);
+    if (isNaN(d.getTime())) return false;
+    const str = String(deadlineStr).trim();
+    if (/^\d{4}-\d{2}-\d{2}$/.test(str)) {
+        d.setHours(23, 59, 59, 999);
+    }
+    return d.getTime() < Date.now();
+};
+
 const db = require("../models/db");
 const NotificationService = require("../services/notificationService");
 
@@ -89,9 +100,10 @@ exports.assignTask = (req, res) => {
           finalDescription = `${finalDescription}\n\n*Specific Instructions:* ${memberInstructions}`;
         }
 
+        const branchIdToSave = req.body.branch_id || req.branch_id || 1;
         const insertQuery = `
-          INSERT INTO task_assignments (title, description, assigned_by, assigned_to, priority, due_date, category, attachment, status)
-          VALUES (?, ?, ?, ?, ?, ?, ?, ?, 'pending')
+          INSERT INTO task_assignments (title, description, assigned_by, assigned_to, priority, due_date, category, attachment, branch_id, status)
+          VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, 'pending')
         `;
 
         db.query(insertQuery, [
@@ -102,7 +114,8 @@ exports.assignTask = (req, res) => {
           priority || 'medium',
           due_date || null,
           category || 'general',
-          attachment
+          attachment,
+          branchIdToSave
         ], (insertErr, result) => {
           if (!insertErr && result) {
             insertedCount++;
@@ -227,13 +240,46 @@ exports.getAssignedToMe = (req, res) => {
         u_by.user_name as assigned_by_username,
         CONCAT(COALESCE(e_by.fname, u_by.user_name), ' ', COALESCE(e_by.lname, '')) as assigned_by_name,
         COALESCE(os_by.name, 'Staff') as assigned_by_position,
-        COALESCE(d_by.name, os_by.name, 'General Directorate') as assigned_by_department
+        COALESCE(d_by.name, os_by.name, 'General Directorate') as assigned_by_department,
+        -- Strategic Hierarchy details for delegated or linked tasks
+        COALESCE(g.name, 'Corporate Operational Task') AS Goal,
+        g.goal_id,
+        g.name AS goal_name,
+        g.year AS goal_year,
+        g.quarter AS goal_quarter,
+        g.weight AS goal_weight,
+        g.description AS goal_description,
+        COALESCE(o.name, 'Strategic Alignment') AS Objective,
+        o.objective_id,
+        o.name AS objective_name,
+        o.weight AS objective_weight,
+        COALESCE(so.specific_objective_name, so.name, 'Direct Task') AS SpecificObjective,
+        so.specific_objective_id,
+        COALESCE(so.specific_objective_name, so.name) AS kpi_name,
+        so.weight AS kpi_weight,
+        so.measurement AS kpi_measurement,
+        COALESCE(sod.specific_objective_detailname, sod.name, sod.details, ta.title) AS action_plan_name,
+        sod.details AS action_plan_details,
+        sod.plan_type,
+        sod.cost_type,
+        sod.income_plan_type,
+        sod.income_exchange,
+        sod.CIplan,
+        sod.CIbaseline,
+        sod.plan,
+        sod.baseline,
+        sod.weight AS action_plan_weight,
+        sod.measurement AS plan_measurement
       FROM task_assignments ta
       LEFT JOIN users u_by ON ta.assigned_by = u_by.user_id
       LEFT JOIN employees e_by ON u_by.employee_id = e_by.employee_id
       LEFT JOIN departments d_by ON e_by.department_id = d_by.department_id
       LEFT JOIN employee_positions ep_by ON e_by.employee_id = ep_by.employee_id AND ep_by.is_primary = 1
       LEFT JOIN organization_structure os_by ON ep_by.org_node_id = os_by.id
+      LEFT JOIN specific_objective_details sod ON (ta.category LIKE 'action_plan_breakdown:%' AND sod.specific_objective_detail_id = CAST(SUBSTRING_INDEX(ta.category, ':', -1) AS UNSIGNED))
+      LEFT JOIN specific_objectives so ON sod.specific_objective_id = so.specific_objective_id
+      LEFT JOIN objectives o ON so.objective_id = o.objective_id
+      LEFT JOIN goals g ON (sod.goal_id = g.goal_id OR o.goal_id = g.goal_id)
       WHERE ta.assigned_to = ?
       GROUP BY ta.assignment_id
     `;
@@ -306,11 +352,48 @@ exports.getSupervisedUsers = (req, res) => {
       return res.status(401).json({ success: false, message: "Unauthorized" });
     }
 
+    const { branch_id } = req.query;
+    const roleId = Number(req.role_id || (req.user && req.user.role_id) || 0);
+    const roleName = String(req.role_name || (req.user && req.user.role_name) || '').toLowerCase();
+    const isSuperAdmin = Boolean(req.is_super_admin) || 
+                         [1, 34].includes(roleId) || 
+                         roleName.includes('super admin') || 
+                         roleName === 'admin' || 
+                         roleName === 'system admin';
+
+    const isCentralTop2Positions = (
+      [29, 2].includes(roleId) ||
+      roleName === 'ceo' ||
+      roleName === 'deputy ceo' ||
+      roleName.includes('ceo') ||
+      roleName.includes('deputy')
+    );
+
+    const canSeeAllBranches = isSuperAdmin || 
+                              isCentralTop2Positions || 
+                              Boolean(req.can_see_all_branches) || 
+                              Boolean(req.user?.can_view_all_branches) ||
+                              (Array.isArray(req.allowed_branches) && req.allowed_branches.length > 1);
+
+    const branchToFilter = canSeeAllBranches 
+      ? (branch_id && branch_id !== 'all' ? branch_id : null) 
+      : (req.branch_id || 1);
+
+    let branchWhere = '';
+    const queryParams = [];
+    if (branchToFilter) {
+      branchWhere = ' AND (COALESCE(e.branch_id, u.branch_id, 1) = ?)';
+      queryParams.push(branchToFilter);
+    }
+
     const allUsersQuery = `
       SELECT 
         u.user_id,
         u.user_name,
         e.employee_id,
+        COALESCE(e.branch_id, u.branch_id, 1) as branch_id,
+        COALESCE(b.name, 'Federal Head Office') as branch_name,
+        COALESCE(b.code, 'HQ-FED-001') as branch_code,
         CONCAT(COALESCE(e.fname, u.user_name), ' ', COALESCE(e.lname, '')) as name,
         COALESCE(os_main.name, pos.title, pos.name, r.role_name, 'Staff') as position,
         e.email as email,
@@ -319,7 +402,7 @@ exports.getSupervisedUsers = (req, res) => {
         e.supervisor_id,
         (SELECT CONCAT(e2.fname, ' ', e2.lname) FROM employees e2 WHERE e2.employee_id = e.supervisor_id) as supervisor_name,
         (SELECT COUNT(*) FROM task_assignments WHERE assigned_to = u.user_id AND status = 'pending') as pending_tasks,
-        (SELECT COUNT(*) FROM task_assignments WHERE assigned_to = u.user_id AND status = 'completed') as completed_tasks,
+        (SELECT COUNT(*) FROM task_assignments WHERE assigned_to = u.user_id AND status IN ('completed', 'confirmed')) as completed_tasks,
         (SELECT COUNT(*) FROM daily_tasks dt WHERE dt.user_id = u.user_id) as daily_total,
         (SELECT COUNT(*) FROM daily_tasks dt WHERE dt.user_id = u.user_id AND dt.status IN ('done', 'completed')) as daily_completed,
         (SELECT COUNT(*) FROM task_assignments ta_cr WHERE ta_cr.assigned_by = u.user_id) as delegated_total,
@@ -333,11 +416,13 @@ exports.getSupervisedUsers = (req, res) => {
       LEFT JOIN employee_positions ep_main ON e.employee_id = ep_main.employee_id AND ep_main.is_primary = 1
       LEFT JOIN organization_structure os_main ON ep_main.org_node_id = os_main.id
       LEFT JOIN positions pos ON ep_main.position_id = pos.position_id
+      LEFT JOIN branches b ON COALESCE(e.branch_id, u.branch_id, 1) = b.branch_id
       WHERE u.status = '1'
+      ${branchWhere}
       ORDER BY e.fname ASC, u.user_name ASC
     `;
 
-    db.query(allUsersQuery, [], (err, results) => {
+    db.query(allUsersQuery, queryParams, (err, results) => {
       if (err) {
         console.error("Error in getSupervisedUsers query:", err);
         return res.status(500).json({ success: false, message: "Database error", error: err.message });
@@ -451,37 +536,110 @@ exports.getSupervisedUsers = (req, res) => {
         }
 
         const breakdownQuery = `
+          -- 1. Monthly tasks explicitly assigned
           SELECT 
             mta.user_id, 
             mt.monthly_task_id AS task_id, 
-            mt.name, 
+            COALESCE(mt.name, 'Monthly Task') AS name, 
             COALESCE(mt.progress, 0) AS progress, 
             mt.weight, 
-            mt.created_at AS start_date,
-            sod.deadline AS deadline,
+            COALESCE(mt.plan_amount, 0) AS target_amount,
+            COALESCE(mt.actual_amount, 0) AS actual_amount,
+            COALESCE(sod.measurement, '') AS unit,
+            COALESCE(mt.status, 'pending') AS status,
+            COALESCE(mt.description, '') AS notes,
+            COALESCE(mt.start_date, mt.created_at) AS start_date,
+            COALESCE(mt.deadline, sod.deadline) AS deadline,
+            COALESCE(sod.specific_objective_detailname, sod.name, 'Action Plan') AS action_plan_name,
+            NULL AS parent_task_name,
             'monthly' AS type
           FROM monthly_task_assignees mta
           JOIN monthly_tasks mt ON mta.monthly_task_id = mt.monthly_task_id
           LEFT JOIN specific_objective_details sod ON mt.specific_objective_detail_id = sod.specific_objective_detail_id
           WHERE mta.user_id IN (?)
+          
           UNION ALL
+          
+          -- 2. Weekly tasks explicitly assigned
           SELECT 
             wta.user_id, 
             wt.weekly_task_id AS task_id, 
-            wt.name, 
+            COALESCE(wt.name, 'Weekly Task') AS name, 
             COALESCE(wt.progress, 0) AS progress, 
             wt.weight, 
-            wt.created_at AS start_date,
-            sod.deadline AS deadline,
+            COALESCE(wt.plan_amount, 0) AS target_amount,
+            COALESCE(wt.actual_amount, 0) AS actual_amount,
+            COALESCE(sod.measurement, '') AS unit,
+            COALESCE(wt.status, 'pending') AS status,
+            COALESCE(wt.description, '') AS notes,
+            COALESCE(wt.start_date, wt.created_at) AS start_date,
+            COALESCE(wt.deadline, mt.deadline, sod.deadline) AS deadline,
+            COALESCE(sod.specific_objective_detailname, sod.name, 'Action Plan') AS action_plan_name,
+            mt.name AS parent_task_name,
             'weekly' AS type
           FROM weekly_task_assignees wta
           JOIN weekly_tasks wt ON wta.weekly_task_id = wt.weekly_task_id
           LEFT JOIN monthly_tasks mt ON wt.monthly_task_id = mt.monthly_task_id
           LEFT JOIN specific_objective_details sod ON mt.specific_objective_detail_id = sod.specific_objective_detail_id
           WHERE wta.user_id IN (?)
+          
+          UNION ALL
+          
+          -- 3. Monthly tasks on action plans owned by user (where no separate assignees exist)
+          SELECT 
+            sod.user_id, 
+            mt.monthly_task_id AS task_id, 
+            COALESCE(mt.name, 'Monthly Task') AS name, 
+            COALESCE(mt.progress, 0) AS progress, 
+            mt.weight, 
+            COALESCE(mt.plan_amount, 0) AS target_amount,
+            COALESCE(mt.actual_amount, 0) AS actual_amount,
+            COALESCE(sod.measurement, '') AS unit,
+            COALESCE(mt.status, 'pending') AS status,
+            COALESCE(mt.description, '') AS notes,
+            COALESCE(mt.start_date, mt.created_at) AS start_date,
+            COALESCE(mt.deadline, sod.deadline) AS deadline,
+            COALESCE(sod.specific_objective_detailname, sod.name, 'Action Plan') AS action_plan_name,
+            NULL AS parent_task_name,
+            'monthly' AS type
+          FROM monthly_tasks mt
+          JOIN specific_objective_details sod ON mt.specific_objective_detail_id = sod.specific_objective_detail_id
+          LEFT JOIN monthly_task_assignees mta ON mt.monthly_task_id = mta.monthly_task_id
+          WHERE mta.id IS NULL AND sod.user_id IN (?)
+
+          UNION ALL
+
+          -- 4. Action plan breakdowns delegated via task_assignments
+          SELECT 
+            ta.assigned_to AS user_id, 
+            ta.assignment_id AS task_id, 
+            ta.title AS name, 
+            CASE 
+              WHEN ta.status IN ('completed', 'confirmed') THEN 100 
+              WHEN ta.status = 'in_progress' THEN 50 
+              ELSE 0 
+            END AS progress, 
+            0 AS weight, 
+            0 AS target_amount, 
+            0 AS actual_amount, 
+            COALESCE(sod.measurement, '') AS unit, 
+            ta.status AS status, 
+            COALESCE(ta.description, '') AS notes, 
+            ta.created_at AS start_date, 
+            COALESCE(ta.due_date, sod.deadline) AS deadline, 
+            COALESCE(sod.specific_objective_detailname, sod.name, 'Delegated Action Plan') AS action_plan_name, 
+            NULL AS parent_task_name, 
+            'delegated_breakdown' AS type
+          FROM task_assignments ta
+          LEFT JOIN specific_objective_details sod 
+            ON SUBSTRING_INDEX(ta.category, ':', -1) = sod.specific_objective_detail_id
+          WHERE ta.category LIKE 'action_plan_breakdown:%' AND ta.assigned_to IN (?)
         `;
 
-        db.query(breakdownQuery, [userIds, userIds], (errB, bTasks) => {
+        db.query(breakdownQuery, [userIds, userIds, userIds, userIds], (errB, bTasks) => {
+          if (errB) {
+            console.error("Error in getSupervisedUsers breakdown query:", errB);
+          }
           const userTasksMap = {};
           if (!errB && bTasks) {
             bTasks.forEach(bt => {
@@ -493,6 +651,10 @@ exports.getSupervisedUsers = (req, res) => {
           filteredList.forEach(u => {
             const tasks = userTasksMap[u.user_id] || [];
             const totalBTasks = tasks.length;
+            const recTotal = Number(u.received_total) || 0;
+            const recComp = Number(u.completed_tasks) || 0;
+            const totalAllTasks = totalBTasks + recTotal;
+
             let totalProg = 0;
             let overdueCount = 0;
             let earliestStart = null;
@@ -501,7 +663,8 @@ exports.getSupervisedUsers = (req, res) => {
             tasks.forEach(t => {
               const prog = parseFloat(t.progress) || 0;
               totalProg += prog;
-              if (prog === 0) overdueCount++;
+              const isOverdue = t.deadline && new Date(t.deadline) < new Date() && prog < 100;
+              if (isOverdue) overdueCount++;
 
               if (t.start_date) {
                 if (!earliestStart || new Date(t.start_date) < new Date(earliestStart)) {
@@ -515,15 +678,34 @@ exports.getSupervisedUsers = (req, res) => {
               }
             });
 
-            const avgProg = totalBTasks > 0 ? Math.round(totalProg / totalBTasks) : 0;
-            let health = 'on_track';
-            if (totalBTasks > 0) {
-              if (avgProg < 40 || overdueCount > 0) health = 'overdue';
-              else if (avgProg < 75) health = 'behind';
+            // Also check operational tasks overdue
+            const recOverdue = Number(u.received_overdue) || 0;
+            overdueCount += recOverdue;
+
+            // Calculate progress
+            const bAvgProg = totalBTasks > 0 ? Math.round(totalProg / totalBTasks) : 0;
+            const recRate = recTotal > 0 ? Math.round((recComp / recTotal) * 100) : 0;
+            
+            let effectiveAvgProg = 0;
+            if (totalBTasks > 0 && recTotal > 0) {
+              effectiveAvgProg = Math.round((bAvgProg + recRate) / 2);
+            } else if (totalBTasks > 0) {
+              effectiveAvgProg = bAvgProg;
+            } else if (recTotal > 0) {
+              effectiveAvgProg = recRate;
+            }
+
+            let health = 'no_tasks';
+            if (totalAllTasks > 0) {
+              if (overdueCount > 0 || effectiveAvgProg < 40) health = 'overdue';
+              else if (effectiveAvgProg < 75) health = 'behind';
+              else health = 'on_track';
             }
 
             u.breakdown_tasks_count = totalBTasks;
-            u.breakdown_avg_progress = avgProg;
+            u.operational_tasks_count = recTotal;
+            u.total_tasks_count = totalAllTasks;
+            u.breakdown_avg_progress = effectiveAvgProg;
             u.breakdown_overdue_count = overdueCount;
             u.health_status = health;
             u.start_date = earliestStart;
@@ -539,18 +721,13 @@ exports.getSupervisedUsers = (req, res) => {
             const delComp = Number(u.delegated_completed) || 0;
             const delRate = delTotal > 0 ? Math.round((delComp / delTotal) * 100) : 0;
 
-            const recTotal = Number(u.received_total) || 0;
-            const recOverdue = Number(u.received_overdue) || 0;
-            const recComp = Number(u.completed_tasks) || 0;
-            const recRate = recTotal > 0 ? Math.round((recComp / recTotal) * 100) : 0;
-
             let sumW = 0, sumScores = 0;
             if (dTotal > 0) { sumScores += dRate * 0.35; sumW += 0.35; }
             if (recTotal > 0) { sumScores += recRate * 0.35; sumW += 0.35; }
             if (delTotal > 0) { sumScores += delRate * 0.15; sumW += 0.15; }
-            if (totalBTasks > 0) { sumScores += avgProg * 0.15; sumW += 0.15; }
+            if (totalBTasks > 0) { sumScores += bAvgProg * 0.15; sumW += 0.15; }
 
-            const perfScore = sumW > 0 ? Math.round(sumScores / sumW) : 100;
+            const perfScore = sumW > 0 ? Math.round(sumScores / sumW) : null;
             u.performance_score = perfScore;
             u.daily_rate = dRate;
             u.delegated_rate = delRate;
@@ -699,34 +876,102 @@ exports.getSubordinateDetails = async (req, res) => {
       LIMIT 100
     `;
 
-    // 5. Query Work Breakdowns (Monthly and Weekly Tasks)
+    // 5. Query Work Breakdowns (Monthly, Weekly, Plan Owner, and Delegated Breakdown Tasks)
     const breakdownQuery = `
+      -- 1. Monthly tasks explicitly assigned
       SELECT 
         mt.monthly_task_id AS task_id, 
-        mt.name, 
+        COALESCE(mt.name, 'Monthly Task') AS name, 
         COALESCE(mt.progress, 0) AS progress, 
         mt.weight, 
-        mt.created_at AS start_date,
-        sod.deadline AS deadline,
+        COALESCE(mt.plan_amount, 0) AS target_amount,
+        COALESCE(mt.actual_amount, 0) AS actual_amount,
+        COALESCE(sod.measurement, '') AS unit,
+        COALESCE(mt.status, 'pending') AS status,
+        COALESCE(mt.description, '') AS notes,
+        COALESCE(mt.start_date, mt.created_at) AS start_date,
+        COALESCE(mt.deadline, sod.deadline) AS deadline,
+        COALESCE(sod.specific_objective_detailname, sod.name, 'Action Plan') AS action_plan_name,
+        NULL AS parent_task_name,
         'monthly' AS type
       FROM monthly_task_assignees mta
       JOIN monthly_tasks mt ON mta.monthly_task_id = mt.monthly_task_id
       LEFT JOIN specific_objective_details sod ON mt.specific_objective_detail_id = sod.specific_objective_detail_id
       WHERE mta.user_id = ?
+      
       UNION ALL
+      
+      -- 2. Weekly tasks explicitly assigned
       SELECT 
         wt.weekly_task_id AS task_id, 
-        wt.name, 
+        COALESCE(wt.name, 'Weekly Task') AS name, 
         COALESCE(wt.progress, 0) AS progress, 
         wt.weight, 
-        wt.created_at AS start_date,
-        sod.deadline AS deadline,
+        COALESCE(wt.plan_amount, 0) AS target_amount,
+        COALESCE(wt.actual_amount, 0) AS actual_amount,
+        COALESCE(sod.measurement, '') AS unit,
+        COALESCE(wt.status, 'pending') AS status,
+        COALESCE(wt.description, '') AS notes,
+        COALESCE(wt.start_date, wt.created_at) AS start_date,
+        COALESCE(wt.deadline, mt.deadline, sod.deadline) AS deadline,
+        COALESCE(sod.specific_objective_detailname, sod.name, 'Action Plan') AS action_plan_name,
+        mt.name AS parent_task_name,
         'weekly' AS type
       FROM weekly_task_assignees wta
       JOIN weekly_tasks wt ON wta.weekly_task_id = wt.weekly_task_id
       LEFT JOIN monthly_tasks mt ON wt.monthly_task_id = mt.monthly_task_id
       LEFT JOIN specific_objective_details sod ON mt.specific_objective_detail_id = sod.specific_objective_detail_id
       WHERE wta.user_id = ?
+
+      UNION ALL
+
+      -- 3. Monthly tasks on action plans owned by user (where no separate assignees exist)
+      SELECT 
+        mt.monthly_task_id AS task_id, 
+        COALESCE(mt.name, 'Monthly Task') AS name, 
+        COALESCE(mt.progress, 0) AS progress, 
+        mt.weight, 
+        COALESCE(mt.plan_amount, 0) AS target_amount,
+        COALESCE(mt.actual_amount, 0) AS actual_amount,
+        COALESCE(sod.measurement, '') AS unit,
+        COALESCE(mt.status, 'pending') AS status,
+        COALESCE(mt.description, '') AS notes,
+        COALESCE(mt.start_date, mt.created_at) AS start_date,
+        COALESCE(mt.deadline, sod.deadline) AS deadline,
+        COALESCE(sod.specific_objective_detailname, sod.name, 'Action Plan') AS action_plan_name,
+        NULL AS parent_task_name,
+        'monthly' AS type
+      FROM monthly_tasks mt
+      JOIN specific_objective_details sod ON mt.specific_objective_detail_id = sod.specific_objective_detail_id
+      LEFT JOIN monthly_task_assignees mta ON mt.monthly_task_id = mta.monthly_task_id
+      WHERE mta.id IS NULL AND sod.user_id = ?
+
+      UNION ALL
+
+      -- 4. Action plan breakdowns delegated via task_assignments
+      SELECT 
+        ta.assignment_id AS task_id, 
+        ta.title AS name, 
+        CASE 
+          WHEN ta.status IN ('completed', 'confirmed') THEN 100 
+          WHEN ta.status = 'in_progress' THEN 50 
+          ELSE 0 
+        END AS progress, 
+        0 AS weight, 
+        0 AS target_amount, 
+        0 AS actual_amount, 
+        COALESCE(sod.measurement, '') AS unit, 
+        ta.status AS status, 
+        COALESCE(ta.description, '') AS notes, 
+        ta.created_at AS start_date, 
+        COALESCE(ta.due_date, sod.deadline) AS deadline, 
+        COALESCE(sod.specific_objective_detailname, sod.name, 'Delegated Action Plan') AS action_plan_name, 
+        NULL AS parent_task_name, 
+        'delegated_breakdown' AS type
+      FROM task_assignments ta
+      LEFT JOIN specific_objective_details sod 
+        ON SUBSTRING_INDEX(ta.category, ':', -1) = sod.specific_objective_detail_id
+      WHERE ta.category LIKE 'action_plan_breakdown:%' AND ta.assigned_to = ?
     `;
 
     const [userRows, dailyTasks, delegatedTasks, receivedTasks, breakdownTasks] = await Promise.all([
@@ -734,7 +979,7 @@ exports.getSubordinateDetails = async (req, res) => {
       new Promise((resolve, reject) => db.query(dailyTasksQuery, [subordinateUserId], (err, res) => err ? reject(err) : resolve(res || []))),
       new Promise((resolve, reject) => db.query(delegatedTasksQuery, [subordinateUserId], (err, res) => err ? reject(err) : resolve(res || []))),
       new Promise((resolve, reject) => db.query(receivedTasksQuery, [subordinateUserId], (err, res) => err ? reject(err) : resolve(res || []))),
-      new Promise((resolve, reject) => db.query(breakdownQuery, [subordinateUserId, subordinateUserId], (err, res) => err ? reject(err) : resolve(res || [])))
+      new Promise((resolve, reject) => db.query(breakdownQuery, [subordinateUserId, subordinateUserId, subordinateUserId, subordinateUserId], (err, res) => err ? reject(err) : resolve(res || [])))
     ]);
 
     if (!userRows || userRows.length === 0) {
@@ -843,7 +1088,23 @@ exports.updateAssignmentStatus = (req, res) => {
       return res.status(400).json({ success: false, message: "Status is required" });
     }
 
-    let query = `UPDATE task_assignments SET status = ?, updated_at = NOW()`;
+    // Check if task deadline has passed
+    db.query('SELECT due_date, status FROM task_assignments WHERE assignment_id = ? AND assigned_to = ?', [id, userId], (checkErr, checkRows) => {
+      if (checkErr) {
+        return res.status(500).json({ success: false, message: "Database error", error: checkErr.message });
+      }
+      if (!checkRows || checkRows.length === 0) {
+        return res.status(404).json({ success: false, message: "Assignment not found" });
+      }
+      const taskItem = checkRows[0];
+      if (taskItem.due_date && isPastDeadline(taskItem.due_date)) {
+        return res.status(400).json({
+          success: false,
+          message: "Cannot submit report: The deadline for this task has passed."
+        });
+      }
+
+      let query = `UPDATE task_assignments SET status = ?, updated_at = NOW()`;
     const params = [status];
 
     if (completion_note) {
@@ -916,6 +1177,7 @@ exports.updateAssignmentStatus = (req, res) => {
       });
 
       res.json({ success: true, message: "Status updated successfully" });
+    });
     });
   } catch (error) {
     console.error("Error:", error);
@@ -1161,12 +1423,39 @@ exports.getAssignmentStats = (req, res) => {
 exports.getAvailableUsers = (req, res) => {
   try {
     const currentUserId = req.user_id || null;
+    const { branch_id } = req.query;
+    const roleId = Number(req.role_id || (req.user && req.user.role_id));
+    const roleName = String(req.role_name || (req.user && req.user.role_name) || '').toLowerCase();
+    const isSuperAdmin = Boolean(req.is_super_admin) || roleId === 34 || roleName === 'super admin';
+    const isTopManagement = isSuperAdmin ||
+      [1, 2, 29, 31, 32, 33, 34].includes(roleId) ||
+      roleName === 'admin' ||
+      roleName === 'system admin' ||
+      roleName.includes('ceo') ||
+      roleName.includes('deputy') ||
+      roleName.includes('central') ||
+      roleName.includes('corporation directorate') ||
+      roleName.includes('strategic advisor') ||
+      Boolean(req.user?.can_view_all_branches) ||
+      (Array.isArray(req.allowed_branches) && req.allowed_branches.length > 1);
+
+    const branchToFilter = isTopManagement 
+      ? (branch_id && branch_id !== 'all' ? branch_id : null) 
+      : (req.branch_id || 1);
+
+    let branchWhere = '';
+    const queryParams = [];
+    if (branchToFilter) {
+      branchWhere = ' AND (COALESCE(e.branch_id, u.branch_id, 1) = ?)';
+      queryParams.push(branchToFilter);
+    }
 
     const query = `
       SELECT 
         u.user_id,
         u.user_name,
         e.employee_id,
+        COALESCE(e.branch_id, u.branch_id, 1) as branch_id,
         MAX(CONCAT(COALESCE(e.fname, u.user_name), ' ', COALESCE(e.lname, ''))) as name,
         MAX(COALESCE(os_main.name, pos.title, pos.name, r.role_name, 'Staff')) as position,
         MAX(e.email) as email,
@@ -1183,10 +1472,11 @@ exports.getAvailableUsers = (req, res) => {
       LEFT JOIN organization_structure os_main ON ep_main.org_node_id = os_main.id
       LEFT JOIN positions pos ON ep_main.position_id = pos.position_id
       WHERE COALESCE(u.status, '1') IN ('1', 1, 'active')
+      ${branchWhere}
       GROUP BY u.user_id
       ORDER BY name ASC, u.user_name ASC
     `;
-    db.query(query, [], (err, results) => {
+    db.query(query, queryParams, (err, results) => {
       if (err) {
         console.error("Error in getAvailableUsers query:", err);
         return res.status(500).json({ success: false, message: "Database error", error: err.message });

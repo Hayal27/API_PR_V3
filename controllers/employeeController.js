@@ -9,7 +9,7 @@ const util = require("util");
 
 const addEmployee = async (req, res) => {
     const {
-        name, role_id, department_id, supervisor_id, fname, lname, email, phone, sex, telegram_username
+        name, role_id, department_id, branch_id, supervisor_id, fname, lname, email, phone, sex, telegram_username
     } = req.body;
 
     try {
@@ -33,10 +33,18 @@ const addEmployee = async (req, res) => {
             }
         }
 
+        const parsedRoleId = parseInt(role_id, 10);
+        const adminRoleIds = [1, 33, 34, 35];
+        if (!req.is_super_admin && adminRoleIds.includes(parsedRoleId)) {
+            return res.status(403).json({ message: "Forbidden: Only Super Admin can assign Admin or Super Admin roles." });
+        }
+
+        const branchToUse = (req.is_super_admin && branch_id) ? branch_id : (req.branch_id || 1);
+
         // Insert the new employee into the Employees table
         const employeeResult = await query(
-            'INSERT INTO employees (name, role_id, department_id, supervisor_id, fname, lname, email, phone, sex, telegram_username) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
-            [name, role_id, department_id || null, supervisor_id || null, fname, lname, email, phone, sex, telegram_username || null]
+            'INSERT INTO employees (name, role_id, department_id, branch_id, supervisor_id, fname, lname, email, phone, sex, telegram_username) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
+            [name, parsedRoleId, department_id || null, branchToUse, supervisor_id || null, fname, lname, email, phone, sex, telegram_username || null]
         );
 
         // Check if the employee insertion was successful
@@ -53,10 +61,10 @@ const addEmployee = async (req, res) => {
         const defaultPassword = 'itp@123'; // Default password
         const hashedPassword = await bcrypt.hash(defaultPassword, 10); // Hash the password for security
 
-        // Insert the user data into the Users table with role_id included
+        // Insert the user data into the Users table with role_id and branch_id included
         const userResult = await query(
-            'INSERT INTO users (employee_id, user_name, password, role_id) VALUES (?, ?, ?, ?)',
-            [employee_id, defaultUsername, hashedPassword, role_id]
+            'INSERT INTO users (employee_id, user_name, password, role_id, branch_id) VALUES (?, ?, ?, ?, ?)',
+            [employee_id, defaultUsername, hashedPassword, role_id, branchToUse]
         );
 
         // Check if the user insertion was successful
@@ -87,7 +95,11 @@ const getAllDepartments = (req, res) => {
 
 // Function to fetch all roles
 const getAllRoles = (req, res) => {
-    con.query('SELECT * FROM roles', (err, results) => {
+    let queryStr = 'SELECT * FROM roles WHERE status = 1';
+    if (!req.is_super_admin) {
+        queryStr += ' AND role_id NOT IN (1, 33, 34, 35) AND LOWER(role_name) NOT LIKE "%admin%"';
+    }
+    con.query(queryStr, (err, results) => {
         if (err) {
             console.error('Error fetching roles:', err);
             return res.status(500).json({ message: 'Error fetching roles' });
@@ -98,7 +110,13 @@ const getAllRoles = (req, res) => {
 
 // Function to fetch all supervisors
 const getAllSupervisors = (req, res) => {
-    con.query('SELECT * FROM employees', (err, results) => {
+    let whereClause = '';
+    let params = [];
+    if (!req.is_super_admin) {
+        whereClause = 'WHERE branch_id = ?';
+        params = [req.branch_id || 1];
+    }
+    con.query(`SELECT * FROM employees ${whereClause}`, params, (err, results) => {
         if (err) {
             console.error('Error fetching supervisors:', err);
             return res.status(500).json({ message: 'Error fetching supervisors' });
@@ -145,11 +163,45 @@ const getSupervisorsForReferral = (req, res) => {
 
 // Function to fetch all employees with detailed information
 const getAllEmployees = (req, res) => {
+    let { branch_id } = req.query;
+
+    const roleId = Number(req.role_id || (req.user && req.user.role_id));
+    const roleName = String(req.role_name || (req.user && req.user.role_name) || '').toLowerCase();
+    const isSuperAdmin = Boolean(req.is_super_admin) || roleId === 34 || roleName === 'super admin';
+    const isPermittedAll = isSuperAdmin || 
+        [1, 29, 32, 33, 34].includes(roleId) || 
+        roleName === 'admin' || 
+        roleName === 'system admin' || 
+        roleName === 'ceo' ||
+        Boolean(req.user && req.user.can_view_all_branches) ||
+        (Array.isArray(req.allowed_branches) && req.allowed_branches.length > 1);
+
+    let whereClause = '';
+    let params = [];
+
+    if (!isPermittedAll) {
+        if (Array.isArray(req.allowed_branches) && req.allowed_branches.length > 0) {
+            const placeholders = req.allowed_branches.map(() => '?').join(',');
+            whereClause = `WHERE e.branch_id IN (${placeholders})`;
+            params.push(...req.allowed_branches);
+        } else {
+            whereClause = 'WHERE e.branch_id = ?';
+            params.push(req.branch_id || 1);
+        }
+    } else if (branch_id && branch_id !== 'all') {
+        whereClause = 'WHERE e.branch_id = ?';
+        params.push(branch_id);
+    }
+
     const query = `
         SELECT
             e.*,
             r.role_name,
             d.name as department_name,
+            b.name as branch_name,
+            b.name_amharic as branch_name_amharic,
+            b.code as branch_code,
+            b.tier_level as branch_tier,
             supervisor.fname as supervisor_fname,
             supervisor.lname as supervisor_lname,
             u.status as user_status,
@@ -157,12 +209,14 @@ const getAllEmployees = (req, res) => {
         FROM employees e
         LEFT JOIN roles r ON e.role_id = r.role_id
         LEFT JOIN departments d ON e.department_id = d.department_id
+        LEFT JOIN branches b ON e.branch_id = b.branch_id
         LEFT JOIN employees supervisor ON e.supervisor_id = supervisor.employee_id
         LEFT JOIN users u ON e.employee_id = u.employee_id
+        ${whereClause}
         ORDER BY e.employee_id DESC
     `;
 
-    con.query(query, (err, results) => {
+    con.query(query, params, (err, results) => {
         if (err) {
             console.error('Error fetching employees:', err);
             return res.status(500).json({ message: 'Error fetching employees' });
@@ -379,14 +433,31 @@ const getRecentActivities = async (req, res) => {
 // Function to update employee information
 const updateEmployee = async (req, res) => {
     const { employee_id } = req.params;
-    const { name, role_id, department_id, supervisor_id, fname, lname, email, phone, sex, telegram_username } = req.body;
+    const { name, role_id, department_id, branch_id, supervisor_id, fname, lname, email, phone, sex, telegram_username } = req.body;
 
     try {
         const query = util.promisify(con.query).bind(con);
 
+        const adminRoleIds = [1, 33, 34, 35];
+        if (role_id && !req.is_super_admin && adminRoleIds.includes(parseInt(role_id, 10))) {
+            return res.status(403).json({ message: "Forbidden: Only Super Admin can assign Admin or Super Admin roles." });
+        }
+
+        if (!req.is_super_admin) {
+            const empCheck = await query('SELECT branch_id, role_id FROM employees WHERE employee_id = ?', [employee_id]);
+            if (empCheck.length > 0) {
+                if (empCheck[0].branch_id && Number(empCheck[0].branch_id) !== Number(req.branch_id || 1)) {
+                    return res.status(403).json({ message: "Forbidden: You cannot modify employees from other branches." });
+                }
+                if (adminRoleIds.includes(Number(empCheck[0].role_id))) {
+                    return res.status(403).json({ message: "Forbidden: Only Super Admin can modify Administrator accounts." });
+                }
+            }
+        }
+
         const updateResult = await query(
-            'UPDATE employees SET name = ?, role_id = ?, department_id = ?, supervisor_id = ?, fname = ?, lname = ?, email = ?, phone = ?, sex = ?, telegram_username = ? WHERE employee_id = ?',
-            [name, role_id, department_id || null, supervisor_id || null, fname, lname, email, phone, sex, telegram_username || null, employee_id]
+            'UPDATE employees SET name = ?, role_id = ?, department_id = ?, branch_id = COALESCE(?, branch_id), supervisor_id = ?, fname = ?, lname = ?, email = ?, phone = ?, sex = ?, telegram_username = ? WHERE employee_id = ?',
+            [name, role_id, department_id || null, branch_id || null, supervisor_id || null, fname, lname, email, phone, sex, telegram_username || null, employee_id]
         );
 
         if (updateResult.affectedRows === 0) {
@@ -427,6 +498,81 @@ const deleteEmployee = async (req, res) => {
 };
 
 // --- Position Management ---
+
+// Get all employee position assignments (optionally filtered by branch_id)
+const getAllEmployeePositions = async (req, res) => {
+    try {
+        const query = util.promisify(con.query).bind(con);
+        let { branch_id } = req.query;
+
+        const roleId = Number(req.role_id || (req.user && req.user.role_id));
+        const roleName = String(req.role_name || (req.user && req.user.role_name) || '').toLowerCase();
+        const isSuperAdmin = Boolean(req.is_super_admin) || roleId === 34 || roleName === 'super admin';
+        const isPermittedAll = isSuperAdmin || 
+            [1, 29, 32, 33, 34].includes(roleId) || 
+            roleName === 'admin' || 
+            roleName === 'system admin' || 
+            roleName === 'ceo' ||
+            Boolean(req.user && req.user.can_view_all_branches) ||
+            (Array.isArray(req.allowed_branches) && req.allowed_branches.length > 1);
+
+        let whereClause = '';
+        let params = [];
+
+        if (!isPermittedAll) {
+            if (Array.isArray(req.allowed_branches) && req.allowed_branches.length > 0) {
+                const placeholders = req.allowed_branches.map(() => '?').join(',');
+                whereClause = `WHERE (e.branch_id IN (${placeholders}) OR os.branch_id IN (${placeholders}))`;
+                params.push(...req.allowed_branches, ...req.allowed_branches);
+            } else {
+                const userBranch = req.branch_id || 1;
+                whereClause = 'WHERE (e.branch_id = ? OR os.branch_id = ?)';
+                params.push(userBranch, userBranch);
+            }
+        } else if (branch_id && branch_id !== 'all') {
+            whereClause = 'WHERE (e.branch_id = ? OR os.branch_id = ?)';
+            params.push(branch_id, branch_id);
+        }
+
+        const sql = `
+            SELECT 
+                ep.id,
+                ep.employee_id,
+                ep.org_node_id,
+                ep.is_primary,
+                ep.is_delegation,
+                ep.created_at,
+                e.fname,
+                e.lname,
+                CONCAT(COALESCE(e.fname,''), ' ', COALESCE(e.lname,'')) AS full_name,
+                e.email,
+                e.branch_id,
+                COALESCE(b.name, 'Federal Head Office') AS branch_name,
+                COALESCE(b.name_amharic, 'ማዕከላዊ ዋና መስሪያ ቤት') AS branch_name_amharic,
+                b.code AS branch_code,
+                r.role_name,
+                os.name AS org_node_name,
+                os.name_amharic AS org_node_name_amharic,
+                os.type AS org_node_type,
+                os.level AS org_node_level,
+                os.parent_id AS org_node_parent_id,
+                os.branch_id AS org_node_branch_id
+            FROM employee_positions ep
+            JOIN employees e ON ep.employee_id = e.employee_id
+            LEFT JOIN roles r ON e.role_id = r.role_id
+            LEFT JOIN branches b ON e.branch_id = b.branch_id
+            JOIN organization_structure os ON ep.org_node_id = os.id
+            ${whereClause}
+            ORDER BY ep.is_primary DESC, e.fname ASC, e.lname ASC
+        `;
+
+        const results = await query(sql, params);
+        res.json({ success: true, count: results.length, data: results });
+    } catch (error) {
+        console.error("Error fetching all employee positions:", error);
+        res.status(500).json({ success: false, message: "Error fetching employee positions", error: error.message });
+    }
+};
 
 // Get positions for an employee
 const getEmployeePositions = async (req, res) => {
@@ -524,6 +670,7 @@ module.exports = {
     updateEmployee,
     deleteEmployee,
     getEmployeePositions,
+    getAllEmployeePositions,
     addEmployeePosition,
     updateEmployeePosition,
     removeEmployeePosition

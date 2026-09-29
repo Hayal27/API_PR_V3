@@ -1,0 +1,19 @@
+{
+  "enabled": true,
+  "frequency": "daily",
+  "time": "02:00",
+  "day_of_week": 0,
+  "day_of_month": 1,
+  "format": "sql",
+  "type": "full",
+  "custom_tables": [],
+  "include_ddl": true,
+  "include_drop": true,
+  "retention_count": 15,
+  "notify_admin": true,
+  "last_run": "2026-09-25T23:00:00.615Z",
+  "last_status": "success",
+  "last_message": "Auto-backup completed (1 files, 63 tables, 3506 records)",
+  "last_filename": "ITPR_AutoBackup_full_2026-09-25T23-00-00.sql",
+  "last_size_kb": "1218.06"
+}

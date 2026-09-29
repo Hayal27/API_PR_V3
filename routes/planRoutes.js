@@ -595,24 +595,67 @@ router.delete('/plan-types/:value', verifyToken, (req, res) => {
 // GET /api/action-plans/all  – fetch action plans with their full hierarchy
 router.get('/action-plans/all', verifyToken, (req, res) => {
   const userId = req.user_id;
+  const { branch_id } = req.query;
 
-  // First check user role_id and role_name to see if privileged (CEO, Deputy CEO, Admin, Executive)
+  // First check user role_id, role_name, and branch_id to see if top management (CEO, Central Office, Admin) or branch-restricted
+  // Check user role, employee, and central headquarter org structure (CEO level 1, Deputy CEO level 2)
   con.query(
-    `SELECT u.role_id, LOWER(COALESCE(r.role_name, '')) AS role_name, u.employee_id 
+    `SELECT u.role_id, LOWER(COALESCE(r.role_name, '')) AS role_name, u.employee_id, COALESCE(u.branch_id, e.branch_id, 1) as branch_id,
+            ep.org_node_id, os.level as org_level, os.branch_id as org_branch, LOWER(COALESCE(os.type, '')) as org_type, LOWER(COALESCE(os.name, '')) as org_name
      FROM users u 
      LEFT JOIN roles r ON u.role_id = r.role_id 
+     LEFT JOIN employees e ON u.employee_id = e.employee_id
+     LEFT JOIN employee_positions ep ON e.employee_id = ep.employee_id AND ep.is_primary = 1
+     LEFT JOIN organization_structure os ON ep.org_node_id = os.id
      WHERE u.user_id = ?`,
     [userId],
     (userErr, userRows) => {
-      const roleId = userRows && userRows.length > 0 ? Number(userRows[0].role_id) : 0;
-      const roleName = userRows && userRows.length > 0 ? userRows[0].role_name : '';
-      
-      const isPrivileged = [1, 2, 3, 29].includes(roleId) ||
+      const uRow = userRows && userRows.length > 0 ? userRows[0] : {};
+      const roleId = Number(uRow.role_id || req.role_id || 0);
+      const roleName = String(uRow.role_name || req.role_name || '').toLowerCase();
+      const userBranchId = Number(uRow.branch_id || req.branch_id || 1);
+      const orgLevel = Number(uRow.org_level || 0);
+      const orgBranch = Number(uRow.org_branch || userBranchId);
+
+      // 1. Super Admin check
+      const isSuperAdmin = Boolean(req.is_super_admin) || 
+                           roleId === 34 || 
+                           roleId === 1 || 
+                           roleName.includes('super admin') || 
+                           roleName === 'admin' || 
+                           roleName === 'system admin';
+
+      // 2. 1st two positions on the org structure on the central headquarter (branch_id = 1):
+      // Level 1: CEO (org_node_id = 9, role_id = 29)
+      // Level 2: Deputy CEO (org_node_id = 10, role_id = 2)
+      const isCentralTop2Positions = (
+        [29, 2].includes(roleId) ||
+        roleName === 'ceo' ||
+        roleName === 'deputy ceo' ||
         roleName.includes('ceo') ||
         roleName.includes('deputy') ||
-        roleName.includes('admin') ||
-        roleName.includes('executive') ||
-        roleName.includes('director');
+        [9, 10].includes(Number(uRow.org_node_id)) ||
+        (orgBranch === 1 && orgLevel > 0 && orgLevel <= 2)
+      );
+
+      const canSeeAllBranches = isSuperAdmin || 
+                                isCentralTop2Positions || 
+                                Boolean(req.can_see_all_branches) ||
+                                Boolean(req.user?.can_view_all_branches) ||
+                                (Array.isArray(req.allowed_branches) && req.allowed_branches.length > 1);
+
+      const isBranchAdmin = roleId === 35 || roleName === 'branch admin' || Boolean(req.is_branch_admin);
+      const isTopManagement = canSeeAllBranches;
+
+      // Determine branch filter:
+      // If NOT Super Admin and NOT Central Top 2 Positions: strictly restricted to user's own branch
+      // If Super Admin / Central Top 2 Positions: can see all branches consolidated or filter by specific branch
+      let effectiveBranch = null;
+      if (!canSeeAllBranches) {
+        effectiveBranch = userBranchId;
+      } else if (branch_id && branch_id !== 'all') {
+        effectiveBranch = branch_id;
+      }
 
     let sql = `
       SELECT
@@ -628,7 +671,16 @@ router.get('/action-plans/all', verifyToken, (req, res) => {
         sod.priority,
         sod.status,
         sod.measurement,
-        COALESCE(sod.plan, sod.weight, 0) AS weight,
+        sod.plan_type,
+        sod.income_exchange,
+        sod.cost_type,
+        sod.employment_type,
+        sod.project_type,
+        sod.income_plan_type,
+        sod.incomeName,
+        sod.costName,
+        sod.employee_of,
+        COALESCE(sod.weight, sod.plan, 0) AS weight,
         COALESCE(sod.execution_percentage, sod.CIexecution_percentage, sod.progress, 0) AS progress,
         COALESCE(sod.starting_date, sod.created_at) AS starting_date,
         sod.deadline,
@@ -647,6 +699,14 @@ router.get('/action-plans/all', verifyToken, (req, res) => {
         u.user_id AS owner_user_id,
         COALESCE(pos.title, pos.name, 'Staff') AS owner_position,
         COALESCE(os.name_amharic, os.name, 'General Directorate') AS department_name,
+        os.id AS org_node_id,
+        os.parent_id AS org_parent_id,
+        os.level AS org_level,
+        os.type AS org_type,
+        COALESCE(b.name, 'Federal Head Office') AS branch_name,
+        COALESCE(b.name_amharic, 'ማዕከላዊ ዋና መስሪያ ቤት') AS branch_name_amharic,
+        b.code AS branch_code,
+        COALESCE(sod.branch_id, so.branch_id, g.branch_id, u.branch_id, e.branch_id, 1) AS branch_id,
         (SELECT COUNT(*) FROM monthly_tasks mt WHERE mt.specific_objective_detail_id = sod.specific_objective_detail_id) AS breakdown_tasks_count,
         (SELECT CONCAT(COALESCE(e2.fname, u2.user_name), ' ', COALESCE(e2.lname, '')) FROM task_assignments ta JOIN users u2 ON ta.assigned_to = u2.user_id LEFT JOIN employees e2 ON u2.employee_id = e2.employee_id WHERE ta.category = CONCAT('action_plan_breakdown:', sod.specific_objective_detail_id) ORDER BY ta.created_at DESC LIMIT 1) AS delegated_to_name,
         (SELECT ta.created_at FROM task_assignments ta WHERE ta.category = CONCAT('action_plan_breakdown:', sod.specific_objective_detail_id) ORDER BY ta.created_at DESC LIMIT 1) AS delegated_at,
@@ -660,13 +720,25 @@ router.get('/action-plans/all', verifyToken, (req, res) => {
       LEFT JOIN employee_positions ep ON e.employee_id = ep.employee_id AND ep.is_primary = 1
       LEFT JOIN positions pos ON ep.position_id = pos.position_id
       LEFT JOIN organization_structure os ON COALESCE(ep.org_node_id, e.department_id) = os.id
+      LEFT JOIN branches b ON COALESCE(sod.branch_id, so.branch_id, g.branch_id, u.branch_id, e.branch_id, 1) = b.branch_id
       LEFT JOIN action_plan_quarter_activations apqa 
         ON apqa.specific_objective_detail_id = sod.specific_objective_detail_id
     `;
 
+    const conditions = [];
     const params = [];
-    if (!isPrivileged) {
-      sql += ` WHERE (
+
+    // Branch filter condition
+    if (effectiveBranch) {
+      conditions.push(`(COALESCE(sod.branch_id, so.branch_id, g.branch_id, u.branch_id, e.branch_id, 1) = ?)`);
+      params.push(effectiveBranch);
+    }
+
+    // Role-based visibility condition:
+    // Top management and Branch Admins can see all action plans in their branch scope
+    // Regular branch staff only see their owned/created/assigned/supervised action plans
+    if (!isTopManagement && !isBranchAdmin) {
+      conditions.push(`(
         sod.user_id = ? 
         OR sod.created_by = ? 
         OR sod.specific_objective_detail_id IN (
@@ -690,8 +762,12 @@ router.get('/action-plans/all', verifyToken, (req, res) => {
           FROM task_assignments ta
           WHERE ta.assigned_to = ? AND ta.category LIKE 'action_plan_breakdown:%'
         )
-      ) `;
+      )`);
       params.push(userId, userId, userId, userId, userId, userId);
+    }
+
+    if (conditions.length > 0) {
+      sql += ` WHERE ` + conditions.join(' AND ');
     }
 
     sql += ` GROUP BY sod.specific_objective_detail_id ORDER BY sod.created_at DESC `;
@@ -800,7 +876,15 @@ router.get('/action-plans/all', verifyToken, (req, res) => {
 // GET /api/action-plans/delegated-to-me  – fetch action plans delegated to current user for breakdown
 router.get('/action-plans/delegated-to-me', verifyToken, (req, res) => {
   const userId = req.user_id;
+  const { branch_id } = req.query;
   if (!userId) return res.status(401).json({ success: false, message: 'Unauthorized' });
+
+  let branchClause = '';
+  const params = [userId];
+  if (branch_id && branch_id !== 'all') {
+    branchClause = ' AND (COALESCE(sod.branch_id, so.branch_id, g.branch_id, u.branch_id, e.branch_id, 1) = ?)';
+    params.push(branch_id);
+  }
 
   const sql = `
     SELECT
@@ -816,7 +900,16 @@ router.get('/action-plans/delegated-to-me', verifyToken, (req, res) => {
       sod.priority,
       sod.status,
       sod.measurement,
-      COALESCE(sod.plan, sod.weight, 0) AS weight,
+      sod.plan_type,
+      sod.income_exchange,
+      sod.cost_type,
+      sod.employment_type,
+      sod.project_type,
+      sod.income_plan_type,
+      sod.incomeName,
+      sod.costName,
+      sod.employee_of,
+      COALESCE(sod.weight, sod.plan, 0) AS weight,
       COALESCE(sod.execution_percentage, sod.CIexecution_percentage, sod.progress, 0) AS progress,
       COALESCE(sod.starting_date, sod.created_at) AS starting_date,
       sod.deadline,
@@ -832,6 +925,9 @@ router.get('/action-plans/delegated-to-me', verifyToken, (req, res) => {
       CONCAT(COALESCE(e.fname, ''), ' ', COALESCE(e.lname, '')) AS owner_name,
       u.user_id AS owner_user_id,
       COALESCE(os.name_amharic, os.name, 'General Directorate') AS department_name,
+      COALESCE(b.name, 'Federal Head Office') AS branch_name,
+      COALESCE(b.name_amharic, 'ማዕከላዊ ዋና መስሪያ ቤት') AS branch_name_amharic,
+      COALESCE(sod.branch_id, so.branch_id, g.branch_id, u.branch_id, e.branch_id, 1) AS branch_id,
       (SELECT COUNT(*) FROM monthly_tasks mt WHERE mt.specific_objective_detail_id = sod.specific_objective_detail_id) AS breakdown_tasks_count,
       ta.assignment_id AS delegation_id,
       ta.title AS delegation_title,
@@ -851,13 +947,14 @@ router.get('/action-plans/delegated-to-me', verifyToken, (req, res) => {
     LEFT JOIN employees e ON u.employee_id = e.employee_id
     LEFT JOIN employee_positions ep ON e.employee_id = ep.employee_id AND ep.is_primary = 1
     LEFT JOIN organization_structure os ON COALESCE(ep.org_node_id, e.department_id) = os.id
+    LEFT JOIN branches b ON COALESCE(sod.branch_id, so.branch_id, g.branch_id, u.branch_id, e.branch_id, 1) = b.branch_id
     LEFT JOIN users u_by ON ta.assigned_by = u_by.user_id
     LEFT JOIN employees e_by ON u_by.employee_id = e_by.employee_id
-    WHERE ta.assigned_to = ? AND ta.category LIKE 'action_plan_breakdown:%'
+    WHERE ta.assigned_to = ? AND ta.category LIKE 'action_plan_breakdown:%' ${branchClause}
     ORDER BY ta.created_at DESC
   `;
 
-  con.query(sql, [userId], (err, rows) => {
+  con.query(sql, params, (err, rows) => {
     if (err) {
       console.error('Error fetching delegated plans:', err);
       return res.status(500).json({ success: false, message: 'Error fetching delegated plans', error: err.message });
@@ -1025,9 +1122,9 @@ router.put('/action-plans/:id', verifyToken, (req, res) => {
     measurement,
     starting_date,
     deadline,
+    income_exchange,
+    plan_type,
   } = req.body;
-
-  const plannedWeight = weight !== undefined ? weight : plan;
 
   const sql = `
     UPDATE specific_objective_details SET
@@ -1045,6 +1142,8 @@ router.put('/action-plans/:id', verifyToken, (req, res) => {
       measurement = COALESCE(?, measurement),
       starting_date = COALESCE(?, starting_date),
       deadline = COALESCE(?, deadline),
+      income_exchange = COALESCE(?, income_exchange),
+      plan_type = COALESCE(?, plan_type),
       updated_at = NOW()
     WHERE specific_objective_detail_id = ?
   `;
@@ -1055,8 +1154,8 @@ router.put('/action-plans/:id', verifyToken, (req, res) => {
     details || null,
     priority || null,
     status || null,
-    plannedWeight !== undefined && plannedWeight !== '' ? plannedWeight : null,
-    plannedWeight !== undefined && plannedWeight !== '' ? plannedWeight : null,
+    weight !== undefined && weight !== '' ? weight : null,
+    plan !== undefined && plan !== '' ? plan : null,
     baseline !== undefined && baseline !== '' ? baseline : null,
     CIplan !== undefined && CIplan !== '' ? CIplan : null,
     CIbaseline !== undefined && CIbaseline !== '' ? CIbaseline : null,
@@ -1064,6 +1163,8 @@ router.put('/action-plans/:id', verifyToken, (req, res) => {
     measurement || null,
     starting_date || null,
     deadline || null,
+    income_exchange || null,
+    plan_type || null,
     id
   ];
 

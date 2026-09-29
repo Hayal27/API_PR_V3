@@ -4,22 +4,38 @@ const con = require("../models/db");
 // Fetch all goals (optionally filtered by year / quarter).
 // Note: verifyToken middleware already authenticated the request and set req.user_id.
 const getGoals = (req, res) => {
-  const { year, quarter } = req.query;
+  const { year, quarter, branch_id } = req.query;
 
   let query = `
       SELECT goal_id, name, description, year, quarter, weight, created_at, updated_at,
-             start_year, end_year, COALESCE(is_active, 1) AS is_active, pillar_id
+             start_year, end_year, COALESCE(is_active, 1) AS is_active, pillar_id, branch_id
       FROM goals
+      WHERE 1=1
   `;
   const queryParams = [];
 
+  // Strict Branch Isolation: Users only see goals for their assigned branch(es) unless Super Admin
+  const userBranchId = Number(req.branch_id) || 1;
+  const isSuper = Boolean(req.is_super_admin);
+  const allowedBranches = req.allowed_branches && Array.isArray(req.allowed_branches) ? req.allowed_branches : [userBranchId];
+
+  if (isSuper) {
+    if (branch_id && branch_id !== 'all') {
+      query += " AND branch_id = ?";
+      queryParams.push(branch_id);
+    }
+  } else {
+    query += " AND branch_id IN (?)";
+    queryParams.push(allowedBranches);
+  }
+
   if (year) {
-    query += " WHERE year = ?";
+    query += " AND year = ?";
     queryParams.push(year);
   }
 
   if (quarter) {
-    query += queryParams.length === 0 ? " WHERE quarter = ?" : " AND quarter = ?";
+    query += " AND quarter = ?";
     queryParams.push(quarter);
   }
 
@@ -63,7 +79,7 @@ const getGoals = (req, res) => {
 
 // ─── getObjectivesByGoals ─────────────────────────────────────────────────────
 const getObjectivesByGoals = (req, res) => {
-  const { goal_id, year, quarter } = req.query;
+  const { goal_id, year, quarter, branch_id } = req.query;
 
   let query = `
     SELECT
@@ -71,13 +87,30 @@ const getObjectivesByGoals = (req, res) => {
       goal_id,
       name,
       description,
-      weight
+      weight,
+      branch_id
     FROM objectives
+    WHERE 1=1
   `;
   const queryParams = [];
 
+  // Strict Branch Isolation: Users only see objectives for their assigned branch(es) unless Super Admin
+  const userBranchId = Number(req.branch_id) || 1;
+  const isSuper = Boolean(req.is_super_admin);
+  const allowedBranches = req.allowed_branches && Array.isArray(req.allowed_branches) ? req.allowed_branches : [userBranchId];
+
+  if (isSuper) {
+    if (branch_id && branch_id !== 'all') {
+      query += " AND branch_id = ?";
+      queryParams.push(branch_id);
+    }
+  } else {
+    query += " AND branch_id IN (?)";
+    queryParams.push(allowedBranches);
+  }
+
   if (goal_id) {
-    query += " WHERE goal_id = ?";
+    query += " AND goal_id = ?";
     queryParams.push(goal_id);
   }
 
@@ -183,7 +216,7 @@ const getspesificObjectivesByGoals = (req, res) => {
 
     const fetchPositionsAndObjectives = () => {
       // 3. Fetch specific objectives (filtered by objective_id if provided, else all)
-      const { year, quarter } = req.query;
+      const { year, quarter, branch_id } = req.query;
       let sql = `
         SELECT
           so.specific_objective_id,
@@ -192,6 +225,7 @@ const getspesificObjectivesByGoals = (req, res) => {
           so.view,
           so.weight,
           so.plan_type,
+          so.branch_id,
           so.department_id                        AS org_node_id,
           so.org_node_ids,
           so.supportive_org_node_ids,
@@ -201,11 +235,27 @@ const getspesificObjectivesByGoals = (req, res) => {
           so.updated_at
         FROM specific_objectives so
         LEFT JOIN organization_structure os ON so.department_id = os.id
+        WHERE 1=1
       `;
       const queryParams = [];
 
+      // Strict Branch Isolation: Users only see specific objectives for their assigned branch(es) unless Super Admin
+      const userBranchId = Number(req.branch_id) || 1;
+      const isSuper = Boolean(req.is_super_admin);
+      const allowedBranches = req.allowed_branches && Array.isArray(req.allowed_branches) ? req.allowed_branches : [userBranchId];
+
+      if (isSuper) {
+        if (branch_id && branch_id !== 'all') {
+          sql += " AND so.branch_id = ?";
+          queryParams.push(branch_id);
+        }
+      } else {
+        sql += " AND so.branch_id IN (?)";
+        queryParams.push(allowedBranches);
+      }
+
       if (objective_id) {
-        sql += " WHERE so.objective_id = ?";
+        sql += " AND so.objective_id = ?";
         queryParams.push(objective_id);
       }
 
@@ -380,7 +430,11 @@ const getGoalById = (req, res) => {
 
 // ─── getAllObjectives ─────────────────────────────────────────────────────────
 const getAllObjectives = (req, res) => {
-  const query = `
+  const userBranchId = Number(req.branch_id) || 1;
+  const isSuper = Boolean(req.is_super_admin);
+  const allowedBranches = req.allowed_branches && Array.isArray(req.allowed_branches) ? req.allowed_branches : [userBranchId];
+
+  let query = `
     SELECT
       objective_id,
       goal_id,
@@ -388,13 +442,19 @@ const getAllObjectives = (req, res) => {
       description,
       year,
       quarter,
+      branch_id,
       created_at,
       updated_at
     FROM objectives
-    ORDER BY updated_at DESC, created_at DESC
   `;
+  const params = [];
+  if (!isSuper) {
+    query += " WHERE branch_id IN (?)";
+    params.push(allowedBranches);
+  }
+  query += " ORDER BY updated_at DESC, created_at DESC";
 
-  con.query(query, (err, results) => {
+  con.query(query, params, (err, results) => {
     if (err) {
       console.error("Database Error (getAllObjectives):", err.message);
       return res.status(500).json({ message: "Error fetching objectives from the database" });
@@ -407,19 +467,29 @@ const getAllObjectives = (req, res) => {
 
 // ─── getAllSpecificObjectives ──────────────────────────────────────────────────
 const getAllSpecificObjectives = (req, res) => {
-  const query = `
+  const userBranchId = Number(req.branch_id) || 1;
+  const isSuper = Boolean(req.is_super_admin);
+  const allowedBranches = req.allowed_branches && Array.isArray(req.allowed_branches) ? req.allowed_branches : [userBranchId];
+
+  let query = `
     SELECT
       specific_objective_id,
       objective_id,
       specific_objective_name,
       view,
+      branch_id,
       created_at,
       updated_at
     FROM specific_objectives
-    ORDER BY updated_at DESC, created_at DESC
   `;
+  const params = [];
+  if (!isSuper) {
+    query += " WHERE branch_id IN (?)";
+    params.push(allowedBranches);
+  }
+  query += " ORDER BY updated_at DESC, created_at DESC";
 
-  con.query(query, (err, results) => {
+  con.query(query, params, (err, results) => {
     if (err) {
       console.error("Database Error (getAllSpecificObjectives):", err.message);
       return res.status(500).json({ message: "Error fetching specific objectives from the database" });

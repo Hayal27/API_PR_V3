@@ -32,6 +32,7 @@ const evaluationRoutes = require("./routes/evaluationRoutes.js");
 const executiveReportRoutes = require("./routes/executiveReportRoutes.js");
 const reportModuleRoutes = require("./routes/reportModuleRoutes.js");
 const kpiAssignmentRoutes = require("./routes/kpiAssignmentRoutes.js");
+const branchRoutes = require("./routes/branchRoutes.js");
 const DeadlineScheduler = require("./services/deadlineScheduler.js");
 const telegramBot = require("./services/telegramBot.js");
 const ReminderScheduler = require("./services/reminderScheduler.js");
@@ -92,6 +93,7 @@ app.use("/api", dataQualityRoutes);
 app.use("/api", evaluationRoutes);
 app.use("/api/executive-report", executiveReportRoutes);
 app.use("/api/report-module", reportModuleRoutes);
+app.use("/api/branches", branchRoutes);
 
 app.post("/login", authMiddleware.login);
 app.post("/api/login", authMiddleware.login);
@@ -182,158 +184,13 @@ app.listen(PORT, "0.0.0.0", () => {
   BackupScheduler.init();
   console.log('Deadline, Reminder, and Automated Backup schedulers initialized');
 
-  // ── Auto-register menu items that may not yet exist ──────────────────────
-  setTimeout(() => autoRegisterMenuItems(), 2000); // wait 2 s for DB to settle
+  // ── Auto-Migrate & Auto-Heal Database Schema (Safe, Idempotent, Non-destructive) ──
+  const autoSchemaMigrator = require('./migrations/autoSchemaMigrator');
+  setTimeout(() => {
+    autoSchemaMigrator.runAutoMigration().catch(err => {
+      console.error('Error during auto-migration:', err);
+    });
+  }, 1000);
 });
 
-/**
- * Idempotently ensures required menu items exist in menu_items + role_permissions.
- * Safe to run on every startup — uses INSERT IGNORE / existence checks.
- */
-function autoRegisterMenuItems() {
-  const db = con;
-
-  const menus = [
-    {
-      name: 'Action Plan Breakdown',
-      path: '/plan/action-plan-breakdown',
-      icon: 'bi bi-diagram-3',
-      fileName: 'ActionPlanBreakdownPage.jsx',
-      sortOrder: 55,
-      parentPath: '/plan/View_myplan',
-      roles: [1, 2, 3, 4, 29],
-    },
-    {
-      name: 'M&E Compliance',
-      path: '/me/compliance',
-      icon: 'bi bi-shield-check',
-      fileName: 'MECompliancePage.jsx',
-      sortOrder: 60,
-      parentPath: null,
-      roles: [1, 2, 3, 4, 29],
-    },
-    {
-      name: 'Executive Report',
-      path: '/reports/executive',
-      icon: 'bi bi-bar-chart-steps',
-      fileName: 'ExecutiveReportPage.jsx',
-      sortOrder: 65,
-      parentPath: null,
-      roles: [1, 2, 3, 4, 5, 29],
-    },
-    {
-      name: 'KPI Position Assignment',
-      path: '/kpi/my-assigned',
-      icon: 'bi bi-award-fill',
-      fileName: 'KPIAssignmentPage.jsx',
-      sortOrder: 4,
-      parentPath: '#',
-      roles: [1, 2, 3, 4, 5, 29],
-    },
-    {
-      name: 'Assign New Task',
-      path: '/tasks/assignment/assign',
-      icon: 'bi bi-plus-circle',
-      fileName: 'TaskAssignment.jsx',
-      sortOrder: 1,
-      parentPath: '#',
-      roles: [1, 2, 3, 4, 5, 29],
-    },
-    {
-      name: 'Sent Tasks',
-      path: '/tasks/assignment/sent',
-      icon: 'bi bi-send',
-      fileName: 'TaskAssignment.jsx',
-      sortOrder: 2,
-      parentPath: '#',
-      roles: [1, 2, 3, 4, 5, 29],
-    },
-    {
-      name: 'Received Tasks',
-      path: '/tasks/assignment/received',
-      icon: 'bi bi-inbox',
-      fileName: 'TaskAssignment.jsx',
-      sortOrder: 3,
-      parentPath: '#',
-      roles: [1, 2, 3, 4, 5, 29],
-    },
-    {
-      name: 'Subordinates',
-      path: '/tasks/assignment/subordinates',
-      icon: 'bi bi-people',
-      fileName: 'TaskAssignment.jsx',
-      sortOrder: 4,
-      parentPath: '#',
-      roles: [1, 2, 3, 4, 5, 29],
-    },
-  ];
-
-  menus.forEach(menu => {
-    // 1. Resolve parent_id (optional)
-    const resolveParent = menu.parentPath
-      ? new Promise(resolve =>
-          db.query('SELECT id FROM menu_items WHERE path = ? LIMIT 1', [menu.parentPath], (err, rows) =>
-            resolve((!err && rows && rows.length > 0) ? rows[0].id : null)
-          )
-        )
-      : Promise.resolve(null);
-
-    resolveParent.then(parentId => {
-      // 2. Check if menu already exists
-      db.query('SELECT id FROM menu_items WHERE path = ? LIMIT 1', [menu.path], (err, existing) => {
-        if (err) { console.error('autoRegisterMenuItems: check error', err.message); return; }
-
-        const proceed = (menuItemId) => {
-          // 3. Ensure permissions for each role
-          menu.roles.forEach(roleId => {
-            db.query(
-              'SELECT id FROM role_permissions WHERE role_id = ? AND menu_item_id = ? LIMIT 1',
-              [roleId, menuItemId],
-              (pErr, pRows) => {
-                if (pErr || (pRows && pRows.length > 0)) return;
-                db.query(
-                  'INSERT INTO role_permissions (role_id, menu_item_id, can_view, can_create, can_edit, can_delete) VALUES (?, ?, 1, 1, 1, 1)',
-                  [roleId, menuItemId],
-                  (iErr) => {
-                    if (!iErr) console.log(`✔ Menu permission granted: "${menu.name}" → role_id=${roleId}`);
-                  }
-                );
-              }
-            );
-          });
-        };
-
-        if (existing && existing.length > 0) {
-          proceed(existing[0].id);
-        } else {
-          db.query(
-            'INSERT INTO menu_items (name, path, icon, parent_id, sort_order, file_name, is_active) VALUES (?, ?, ?, ?, ?, ?, 1)',
-            [menu.name, menu.path, menu.icon, parentId, menu.sortOrder, menu.fileName],
-            (iErr, result) => {
-              if (iErr) { console.error(`autoRegisterMenuItems: insert error for "${menu.name}":`, iErr.message); return; }
-              console.log(`✔ Menu item registered: "${menu.name}" (id=${result.insertId})`);
-              proceed(result.insertId);
-            }
-          );
-        }
-      });
-    });
-  });
-
-  // Run Task Assignment child menus migration
-  try {
-    const autoMigrateTaskAssignmentMenus = require('./migrations/autoMigrateTaskAssignmentMenus');
-    autoMigrateTaskAssignmentMenus();
-  } catch (err) {
-    console.error('Failed to run Task Assignment auto-migration:', err);
-  }
-
-  // Run KPI Position Assignment migration
-  try {
-    const addKpiPositionAssignmentMenu = require('./migrations/add_kpi_position_assignment_menu');
-    addKpiPositionAssignmentMenu();
-  } catch (err) {
-    console.error('Failed to run KPI Position Assignment migration:', err);
-  }
-}
 

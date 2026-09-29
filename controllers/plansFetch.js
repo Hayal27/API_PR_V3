@@ -404,6 +404,14 @@ const getAllOrgP_lans = async (req, res) => {
       filterValues.push(user_id);
     }
 
+    // Branch scoping: Branch Admins and branch staff only see their branch plans; Super Admin can view all or filter
+    const isSuper = Boolean(req.is_super_admin);
+    const branchToFilter = isSuper ? (req.query.branch_id && req.query.branch_id !== 'all' ? req.query.branch_id : null) : (req.branch_id || 1);
+    if (branchToFilter) {
+      filterConditions.push("p.branch_id = ?");
+      filterValues.push(branchToFilter);
+    }
+
     // Dynamically add filters based on query parameters
     if (year) {
       filterConditions.push("g.year = ?");
@@ -696,6 +704,14 @@ const getAllOrgPlans = async (req, res) => {
     // Array to store dynamic filter conditions and values
     let filterConditions = ["p.status = 'approved'"]; // Ensures only approved plans are fetched
     let filterValues = [];
+
+    // Branch scoping
+    const isSuper = Boolean(req.is_super_admin);
+    const branchToFilter = isSuper ? (req.query.branch_id && req.query.branch_id !== 'all' ? req.query.branch_id : null) : (req.branch_id || 1);
+    if (branchToFilter) {
+      filterConditions.push("p.branch_id = ?");
+      filterValues.push(branchToFilter);
+    }
 
     // Dynamically add filters based on query parameters
     if (year) {

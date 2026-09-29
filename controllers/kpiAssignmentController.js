@@ -97,11 +97,17 @@ const getMyAssignedKPIs = async (req, res) => {
                         so.supportive_org_node_ids,
                         so.created_at,
                         os.name as department_name,
-                        o.name as objective_name,
-                        g.name as goal_name,
-                        g.goal_id,
-                        g.start_year as goal_start_year,
-                        g.end_year as goal_end_year,
+                        COALESCE(so.objective_id, o.objective_id) as objective_id,
+                        COALESCE(o.name, (SELECT name FROM objectives WHERE objective_id = so.objective_id)) as objective_name,
+                        COALESCE(o.description, (SELECT description FROM objectives WHERE objective_id = so.objective_id)) as objective_description,
+                        COALESCE(g.goal_id, sod.goal_id, o.goal_id) as goal_id,
+                        COALESCE(g.name, (SELECT name FROM goals WHERE goal_id = COALESCE(sod.goal_id, o.goal_id))) as goal_name,
+                        COALESCE(g.description, (SELECT description FROM goals WHERE goal_id = COALESCE(sod.goal_id, o.goal_id))) as goal_description,
+                        COALESCE(g.year, (SELECT year FROM goals WHERE goal_id = COALESCE(sod.goal_id, o.goal_id))) as goal_year,
+                        COALESCE(g.quarter, (SELECT quarter FROM goals WHERE goal_id = COALESCE(sod.goal_id, o.goal_id))) as goal_quarter,
+                        COALESCE(g.weight, (SELECT weight FROM goals WHERE goal_id = COALESCE(sod.goal_id, o.goal_id))) as goal_weight,
+                        COALESCE(g.start_year, (SELECT start_year FROM goals WHERE goal_id = COALESCE(sod.goal_id, o.goal_id))) as goal_start_year,
+                        COALESCE(g.end_year, (SELECT end_year FROM goals WHERE goal_id = COALESCE(sod.goal_id, o.goal_id))) as goal_end_year,
                         pp.name as pillar_name,
                         COALESCE(AVG(sod.execution_percentage), 0) as execution_percentage,
                         MAX(sod.baseline) as baseline,
@@ -116,23 +122,36 @@ const getMyAssignedKPIs = async (req, res) => {
                     FROM specific_objectives so
                     LEFT JOIN specific_objective_details sod ON sod.specific_objective_id = so.specific_objective_id
                     LEFT JOIN objectives o ON so.objective_id = o.objective_id
-                    LEFT JOIN goals g ON o.goal_id = g.goal_id
+                    LEFT JOIN goals g ON (g.goal_id = o.goal_id OR g.goal_id = sod.goal_id)
                     LEFT JOIN plan_pillars pp ON g.pillar_id = pp.id
                     LEFT JOIN organization_structure os ON so.department_id = os.id
                     LEFT JOIN users u ON sod.user_id = u.user_id
                     LEFT JOIN employees e ON u.employee_id = e.employee_id
                     LEFT JOIN (
                         SELECT 
-                            pbs.specific_objective_detail_id,
+                            COALESCE(sod_sub.specific_objective_id, pbs.specific_objective_detail_id) as specific_objective_id,
                             pbs.supervisor_user_id as delegated_to_user_id,
                             CONCAT(COALESCE(e2.fname, u2.user_name, ''), ' ', COALESCE(e2.lname, '')) as delegated_to_name
                         FROM plan_breakdown_supervisors pbs
                         JOIN users u2 ON pbs.supervisor_user_id = u2.user_id
                         LEFT JOIN employees e2 ON u2.employee_id = e2.employee_id
-                    ) pbs_name ON pbs_name.specific_objective_detail_id = so.specific_objective_id
+                        LEFT JOIN specific_objective_details sod_sub ON sod_sub.specific_objective_detail_id = pbs.specific_objective_detail_id
+                        UNION
+                        SELECT 
+                            COALESCE(sod_sub2.specific_objective_id, CAST(SUBSTRING_INDEX(ta.category, ':', -1) AS UNSIGNED)) as specific_objective_id,
+                            ta.assigned_to as delegated_to_user_id,
+                            CONCAT(COALESCE(e3.fname, u3.user_name, ''), ' ', COALESCE(e3.lname, '')) as delegated_to_name
+                        FROM task_assignments ta
+                        JOIN users u3 ON ta.assigned_to = u3.user_id
+                        LEFT JOIN employees e3 ON u3.employee_id = e3.employee_id
+                        LEFT JOIN specific_objective_details sod_sub2 ON sod_sub2.specific_objective_detail_id = CAST(SUBSTRING_INDEX(ta.category, ':', -1) AS UNSIGNED)
+                        WHERE ta.category LIKE 'action_plan_breakdown:%'
+                    ) pbs_name ON pbs_name.specific_objective_id = so.specific_objective_id
                     GROUP BY so.specific_objective_id, so.specific_objective_name, so.view, so.weight,
                              so.plan_type, so.department_id, so.org_node_ids, so.supportive_org_node_ids,
-                             so.created_at, os.name, o.name, g.name, g.goal_id, g.start_year, g.end_year, pp.name, e.fname, e.lname,
+                             so.created_at, os.name, so.objective_id, o.objective_id, o.name, o.description,
+                             g.goal_id, sod.goal_id, o.goal_id, g.name, g.description, g.year, g.quarter,
+                             g.weight, g.start_year, g.end_year, pp.name, e.fname, e.lname,
                              pbs_name.delegated_to_name, pbs_name.delegated_to_user_id
                     ORDER BY so.specific_objective_id DESC
                 `;
@@ -186,6 +205,7 @@ const getMyAssignedKPIs = async (req, res) => {
                     res.status(200).json({
                         success: true,
                         kpis: matchedKpis,
+                        data: matchedKpis,
                         isGlobal
                     });
                 });
@@ -223,53 +243,71 @@ const getSubordinatesForKPI = async (req, res) => {
     }
 };
 
-// POST /api/kpis/delegate - Delegate a KPI to a subordinate
+// POST /api/kpis/delegate - Delegate one or multiple KPIs to a subordinate
 const delegateKPI = async (req, res) => {
     try {
         const user_id = req.user_id;
-        const { specific_objective_detail_id, delegate_to_user_id, note, due_date, priority } = req.body;
+        let { specific_objective_detail_id, specific_objective_detail_ids, delegate_to_user_id, note, due_date, priority } = req.body;
 
-        if (!specific_objective_detail_id || !delegate_to_user_id) {
-            return res.status(400).json({ success: false, message: 'KPI ID and Subordinate selection are required' });
+        const ids = specific_objective_detail_ids && Array.isArray(specific_objective_detail_ids) && specific_objective_detail_ids.length > 0
+            ? specific_objective_detail_ids.map(Number).filter(id => !isNaN(id) && id > 0)
+            : (specific_objective_detail_id ? [Number(specific_objective_detail_id)].filter(id => !isNaN(id) && id > 0) : []);
+
+        if (ids.length === 0 || !delegate_to_user_id) {
+            return res.status(400).json({ success: false, message: 'At least one KPI ID and Subordinate selection are required' });
         }
 
-        // 1. Insert/update plan_breakdown_supervisors
+        // 1. Insert/update plan_breakdown_supervisors in bulk
+        const pbsValues = ids.map(id => [id, delegate_to_user_id]);
         const pbsSql = `
             INSERT INTO plan_breakdown_supervisors (specific_objective_detail_id, supervisor_user_id)
-            VALUES (?, ?)
+            VALUES ?
             ON DUPLICATE KEY UPDATE supervisor_user_id = VALUES(supervisor_user_id)
         `;
 
-        con.query(pbsSql, [specific_objective_detail_id, delegate_to_user_id], (err, result) => {
+        con.query(pbsSql, [pbsValues], (err) => {
             if (err) {
                 console.error('Error inserting plan_breakdown_supervisors:', err);
                 return res.status(500).json({ success: false, message: err.message });
             }
 
-            // 2. Fetch KPI detail name for notification
-            con.query('SELECT specific_objective_name, name FROM specific_objectives WHERE specific_objective_id = ?', [specific_objective_detail_id], (kErr, kRows) => {
-                const kpiName = (kRows && kRows.length > 0) ? (kRows[0].specific_objective_name || kRows[0].name) : 'KPI Objective';
+            // 2. Fetch KPI names
+            con.query('SELECT specific_objective_id, specific_objective_name, name FROM specific_objectives WHERE specific_objective_id IN (?)', [ids], (kErr, kRows) => {
+                const kpiMap = new Map();
+                (kRows || []).forEach(r => kpiMap.set(Number(r.specific_objective_id), r.specific_objective_name || r.name || `KPI #${r.specific_objective_id}`));
 
-                // 3. Create a task assignment delegation record
+                const taskValues = [];
+                const notifValues = [];
+
+                ids.forEach(id => {
+                    const kpiName = kpiMap.get(id) || `KPI #${id}`;
+                    const title = `⚡ Delegated KPI: ${kpiName}`;
+                    const desc = note || `You have been delegated responsibility for KPI "${kpiName}". Please create or update its action plan breakdown.`;
+                    const cat = `action_plan_breakdown:${id}`;
+
+                    taskValues.push([title, desc, user_id, delegate_to_user_id, priority || 'high', 'pending', due_date || null, cat]);
+                    notifValues.push([delegate_to_user_id, '⚡ KPI Delegated to You', desc, 'kpi_delegation', 0]);
+                });
+
                 const taskSql = `
                     INSERT INTO task_assignments (title, description, assigned_by, assigned_to, priority, status, due_date, category)
-                    VALUES (?, ?, ?, ?, ?, 'pending', ?, ?)
+                    VALUES ?
                 `;
-                const title = `⚡ Delegated KPI: ${kpiName}`;
-                const desc = note || `You have been delegated responsibility for KPI "${kpiName}". Please create or update its action plan breakdown.`;
-                const cat = `action_plan_breakdown:${specific_objective_detail_id}`;
 
-                con.query(taskSql, [title, desc, user_id, delegate_to_user_id, priority || 'high', due_date || null, cat], (tErr) => {
+                con.query(taskSql, [taskValues], (tErr) => {
+                    if (tErr) console.error('Error inserting task assignments:', tErr);
 
-                    // 4. Create notification
                     const notifSql = `
                         INSERT INTO notifications (user_id, title, message, type, is_read)
-                        VALUES (?, ?, ?, 'kpi_delegation', 0)
+                        VALUES ?
                     `;
-                    con.query(notifSql, [delegate_to_user_id, '⚡ KPI Delegated to You', desc], () => {
+
+                    con.query(notifSql, [notifValues], () => {
                         res.status(200).json({
                             success: true,
-                            message: `KPI "${kpiName}" delegated successfully!`
+                            message: ids.length === 1
+                                ? `KPI delegated successfully!`
+                                : `${ids.length} KPIs delegated successfully to the selected subordinate!`
                         });
                     });
                 });

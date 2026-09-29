@@ -3,15 +3,285 @@ const axios = require('axios');
 const { promisify } = require('util');
 const dbQuery = promisify(db.query).bind(db);
 
-// Supported active Groq models in prioritized fallback order
+// Supported active Groq models in prioritized fallback order (verified working models)
 const CANDIDATE_MODELS = [
-    'groq/compound',
-    'groq/compound-mini',
-    'qwen/qwen3.8-27b',
     'openai/gpt-oss-120b',
     'openai/gpt-oss-20b',
-    'qwen/qwen3.6-27b'
+    'qwen/qwen3.8-27b'
 ];
+
+// Contextual intelligent fallback generator when external LLM is temporarily unreachable
+function generateIntelligentFallbackReply(userQuestion, userProfile, data, allowedMenus = []) {
+    const q = (userQuestion || '').toLowerCase();
+    const isAmharic = /[\u1200-\u137F]/.test(userQuestion || '');
+    const isBilingual = /both|ሁለቱም|በሁለቱም|amharic and english|english and amharic/i.test(userQuestion || '');
+    const name = userProfile ? (userProfile.fname || userProfile.user_name || 'Team Member') : 'Team Member';
+    const roleName = userProfile?.role_name || 'Staff Member';
+    const roleTier = data.roleTier || (userProfile?.role_name?.toLowerCase().includes('admin') ? 'global' : 'staff');
+    const { myReceivedTasks = [], myDailyTasks = [], mySentTasks = [], myPlans = [], subordinatesList = [] } = data;
+
+    // ── ROLE & PERMISSION GUARD (STRICT ROLE RESTRICTION) ─────────────────────
+    const isAskingAdmin = q.includes('admin') || q.includes('user management') || q.includes('delete user') || 
+                         q.includes('org structure') || q.includes('settings') || q.includes('logs') || 
+                         q.includes('audit') || q.includes('permission') || q.includes('አስተዳዳሪ') || 
+                         q.includes('ተጠቃሚ') || q.includes('መዋቅር') || q.includes('ሴቲንግ');
+
+    if (isAskingAdmin && roleTier !== 'global') {
+        const amharicAdmin = `⚠️ **የፈቃድ ገደብ ማሳሰቢያ (Permission Notice)**
+
+ይቅርታ **${name}**፣ የተጠቃሚዎች አስተዳደር፣ ሲስተም ሴቲንግ፣ የክትትል ሎግ እና የተቋም መዋቅር ለስርዓት አስተዳዳሪዎች (**Administrators**) ብቻ የተፈቀዱ ናቸው። የእርስዎ የስራ ድርሻ ይህንን መረጃ የማግኘት ፈቃድ የለውም።
+
+የእርስዎ የአሁን ሚና **${roleName}** ሲሆን፣ የሚከተሉትን የተፈቀዱ ተግባራት ማከናወን ይችላሉ፡
+- 📋 ስትራቴጂክ ዕቅዶችን ማዘጋጀትና ማቅረብ፡ **[አዲስ ዕቅድ ማዘጋጃ / Add Strategic Plan](/plan/PlanSteps/Add)**
+- 📑 ያቀረቧቸውን ዕቅዶች መከታተል፡ **[ያቀረብኳቸው ዕቅዶች / My Submitted Plans](/plan/View_myplan)**
+- 📥 የተሰጡዎትን ተግባራት መከታተል፡ **[የተሰጡኝ ተግባራት / Received Tasks](/tasks/assignment/received)**
+- 📅 የዕለት ተዕለት ተግባራትን መመዝገብ፡ **[የዕለት ተግባራት / Daily Planner](/tasks/daily)**
+- 📊 የስራ አፈጻጸም ሪፖርት ማቅረብ፡ **[ሪፖርት ማቅረቢያ / Submit Report](/report/Add)**`;
+
+        const englishAdmin = `⚠️ **Access Control Notice**
+
+Hello **${name}**, system administration, user account management, audit logs, and organizational structure settings are restricted to **System Administrators**. Your current role does not have permission to view or manage this administrative data.
+
+As a **${roleName}**, you are authorized to access:
+- 📋 Formulate & Submit Plans: **[Add Strategic Plan](/plan/PlanSteps/Add)**
+- 📑 Track Submission Status: **[My Submitted Plans](/plan/View_myplan)**
+- 📥 Execute Assigned Tasks: **[Received Tasks](/tasks/assignment/received)**
+- 📅 Log Daily Agenda: **[Daily Planner](/tasks/daily)**
+- 📊 Submit Progress Reports: **[Submit Report](/report/Add)**`;
+
+        if (isBilingual) return `${amharicAdmin}\n\n---\n\n${englishAdmin}`;
+        if (isAmharic) return amharicAdmin;
+        return englishAdmin;
+    }
+
+    const isAskingApproval = q.includes('approve') || q.includes('hierarchy approval') || q.includes('subordinate') || q.includes('ማጽደቅ') || q.includes('የበታች');
+    if (isAskingApproval && roleTier === 'staff') {
+        const amharicApproval = `⚠️ **የፈቃድ ገደብ ማሳሰቢያ (Permission Notice)**
+
+ይቅርታ **${name}**፣ የዕቅድ እና የስራ አፈጻጸም ማጽደቅ እንዲሁም የበታች ሰራተኞች ክትትል ተግባራት ለኃላፊዎች (**Supervisors & Directors**) ብቻ የተፈቀዱ ናቸው።
+
+የእርስዎ ሚና **${roleName}** በመሆኑ የራስዎን ዕቅድ ማዘጋጀትና ለኃላፊዎ ማቅረብ ይችላሉ፡
+- 🚀 አዲስ ዕቅድ ለማቅረብ፡ **[አዲስ ዕቅድ ማዘጋጃ / Add Strategic Plan](/plan/PlanSteps/Add)**
+- 📑 ያቀረቡትን ዕቅድ ሁኔታ ለመከታተል፡ **[ያቀረብኳቸው ዕቅዶች / My Submitted Plans](/plan/View_myplan)**
+- 📥 የተሰጡዎትን ተግባራት ለማከናወን፡ **[የተሰጡኝ ተግባራት / Received Tasks](/tasks/assignment/received)**`;
+
+        const englishApproval = `⚠️ **Access Control Notice**
+
+Hello **${name}**, plan approval workflows and subordinate tracking are restricted to designated **Supervisors and Directors**.
+
+As a **${roleName}**, you can formulate your plans and submit them for review:
+- 🚀 Formulate a New Plan: **[Add Strategic Plan](/plan/PlanSteps/Add)**
+- 📑 Track Submission Status: **[My Submitted Plans](/plan/View_myplan)**
+- 📥 Execute Assigned Tasks: **[Received Tasks](/tasks/assignment/received)**`;
+
+        if (isBilingual) return `${amharicApproval}\n\n---\n\n${englishApproval}`;
+        if (isAmharic) return amharicApproval;
+        return englishApproval;
+    }
+
+    // ── 1. STRATEGIC PLANNING ────────────────────────────────────────────────
+    if (q.includes('plan') || q.includes('create') || q.includes('objective') || q.includes('kpi') || q.includes('goal') || q.includes('step') || q.includes('ዕቅድ') || q.includes('ግቦች') || q.includes('ማዘጋጀት')) {
+        const amharicContent = `### 📋 በስርዓቱ ውስጥ አዲስ ስትራቴጂክ ዕቅድ እንዴት ማዘጋጀት እንደሚቻል (Step-by-Step Guide)
+
+በኢትዮጵያ አይቲ ፓርክ የዕቅድ እና ሪፖርት ማኔጅመንት ስርዓት ውስጥ ስትራቴጂክ ዕቅድ ለማዘጋጀት የሚከተሉትን 5 ደረጃዎች በቅደም ተከተል ይከተሉ፡
+
+---
+
+#### 1️⃣ **ደረጃ 1፡ የዕቅድ ማዘጋጃውን ይክፈቱ (Open Planning Wizard)**
+- በቀጥታ ወደ ዕቅድ ማዘጋጃ ቅጽ ይሂዱ፡ **[አዲስ ዕቅድ ማዘጋጃ / Add Strategic Plan](/plan/PlanSteps/Add)**
+
+#### 2️⃣ **ደረጃ 2፡ የስትራቴጂክ ዓላማን ይምረጡ (Select Strategic Goal)**
+- ከተቆልቋዩ ዝርዝር ውስጥ የተቋሙን 5 ዓመት ምሰሶ (Pillar) እና ዓመታዊ ግብ (Goal) ይምረጡ።
+
+#### 3️⃣ **ደረጃ 3፡ ዋና ዋና ግቦችን ይግለጹ (Define Objectives & Specific Objectives)**
+- የክፍልዎን ወይም የዳይሬክቶሬትዎን ዋና ዓላማዎች እና ዝርዝር ንዑስ ግቦች ያስገቡ።
+
+#### 4️⃣ **ደረጃ 4፡ ቁልፍ የአፈጻጸም አመልካቾችን (KPIs) ይሙሉ**
+- መነሻ እሴት (Baseline) እና የዒላማ እሴት (Target Value) ያስገቡ።
+- የክብደት ድርሻ (Weight) ድምር 100% መሆኑን ያረጋግጡ።
+- የሩብ ዓመት (Q1, Q2, Q3, Q4) ክፍፍሎችን ይምረጡ።
+
+#### 5️⃣ **ደረጃ 5፡ ያረጋግጡ እና ያቅርቡ (Submit for Approval)**
+- መረጃውን ከመረመሩ በኋላ **Submit** የሚለውን ይጫኑ። ዕቅዱ ወደ ኃላፊዎ እንዲፀድቅ ይላካል።
+- ሁኔታውን በማንኛውም ጊዜ እዚህ መከታተል ይችላሉ፡ **[ያቀረብኳቸው ዕቅዶች / My Submitted Plans](/plan/View_myplan)**
+
+> 💡 **ምክር / Pro Tip:** ዕቅዱን ከማቅረብዎ በፊት የተቋሙን ስትራቴጂክ ዕቅዶች በ**[የተቋሙ ስትራቴጂክ ዕቅዶች / Organization Plans](/plan/ViewOrgPlan)** ላይ በመመልከት ከድርጅቱ ግቦች ጋር መጣጣሙን ያረጋግጡ።
+
+---
+
+### 🔗 ቀጥታ ማስፈንጠሪያዎች (Quick Navigation Links):
+- 🚀 **[አዲስ ዕቅድ ማዘጋጃ / Add Strategic Plan](/plan/PlanSteps/Add)**
+- 📑 **[ያቀረብኳቸው ዕቅዶች / My Submitted Plans](/plan/View_myplan)**
+- 🏢 **[የተቋሙ ስትራቴጂክ ዕቅዶች / Organization Plans](/plan/ViewOrgPlan)**
+${roleTier !== 'staff' ? '- ⚖️ **[የግቦችና የሩብ ዓመታት ቅንብር / Goal Config](/goal-config)**\n- 🧩 **[የተግባራት ክፍፍል / Action Plan Breakdown](/plan/action-plan-breakdown)**' : ''}`;
+
+        const englishContent = `### 📋 Step-by-Step Guide: How to Create a Plan in This System
+
+To create and submit an institutional plan in the Ethiopian IT Park Management System, follow these 5 core steps in the user interface:
+
+---
+
+#### 1️⃣ **Step 1: Launch the Planning Wizard**
+- Open the plan formulation wizard directly: **[Add Strategic Plan](/plan/PlanSteps/Add)**
+
+#### 2️⃣ **Step 2: Select Corporate Pillar & Goal**
+- Select the 5-year corporate pillar and target annual corporate goal from the dropdown menu.
+
+#### 3️⃣ **Step 3: Formulate Objectives & Specific Objectives**
+- Define your department's core Objective, then break it down into Specific Objectives.
+
+#### 4️⃣ **Step 4: Define Measurable KPIs & Quantitative Targets**
+- Enter baseline value (starting point) and target outcome.
+- Ensure total KPI weights balance to **100%**.
+- Select the active quarters (Q1, Q2, Q3, Q4).
+
+#### 5️⃣ **Step 5: Review & Submit for Approval**
+- Verify all entries and click **Submit**. Your plan will route for supervisory review.
+- Monitor review status anytime in **[My Submitted Plans](/plan/View_myplan)**.
+
+> 💡 **Pro Tip:** Before submitting, inspect overarching institutional targets in **[Organization Strategic Plans](/plan/ViewOrgPlan)** to ensure strategic alignment.
+
+---
+
+### 🔗 Quick Navigation Links:
+- 🚀 **[Add Strategic Plan Wizard](/plan/PlanSteps/Add)**
+- 📑 **[My Submitted Plans](/plan/View_myplan)**
+- 🏢 **[Organization Strategic Plans](/plan/ViewOrgPlan)**
+${roleTier !== 'staff' ? '- 🧩 **[Action Plan Breakdown](/plan/action-plan-breakdown)**\n- ⚖️ **[Goal & KPI Config](/goal-config)**' : ''}`;
+
+        if (isBilingual) return `${amharicContent}\n\n---\n\n${englishContent}`;
+        if (isAmharic) return amharicContent;
+        return englishContent;
+    }
+
+    // ── 2. TASKS & DAILY AGENDA ──────────────────────────────────────────────
+    if (q.includes('task') || q.includes('assign') || q.includes('delegate') || q.includes('received') || q.includes('daily') || q.includes('ተግባር') || q.includes('ስራ') || q.includes('ዕለታዊ')) {
+        const amharicTasks = `### ⚡ የተግባራት እና የዕለት ስራዎች ማኔጅመንት (Task Operations)
+
+በስርዓቱ ውስጥ ተግባራትን ለመከታተል፣ ለመፈፀም እና ለማስተዳደር የሚከተሉትን ደረጃዎች ይጠቀሙ፡
+
+1. **የተሰጡዎትን ተግባራት መፈፀም (Execute Received Tasks):**
+   - ወደ **[የተሰጡኝ ተግባራት / Received Tasks](/tasks/assignment/received)** በመሄድ የተሰጡዎትን ስራዎች ይመልከቱ።
+   - የስራውን ሁኔታ (\`በሂደት ላይ / in_progress\`፣ \`ተጠናቋል / completed\`) ያዘምኑ እና ማስረጃዎችን ያያይዙ።
+2. **የዕለት ተዕለት ተግባራትን ማቀድ (Daily Planner):**
+   - በ**[የዕለት ተግባራት / Daily Planner](/tasks/daily)** የዛሬውን የስራ ሰዓት እና ዝርዝር ተግባራት ይመዝግቡ።
+${roleTier !== 'staff' ? `3. **ለቡድን አባላት ስራ ማስተላለፍ (Delegate Tasks):**\n   - በ**[አዲስ ተግባር ማስተላለፊያ / Assign New Task](/tasks/assignment/assign)** ለሰራተኞች ስራዎችን ከማጠናቀቂያ ቀን ጋር ይመድቡ።\n   - የተላለፉ ተግባራትን በ**[የተላለፉ ተግባራት / Sent Tasks Tracking](/tasks/assignment/sent)** ይከታተሉ።` : ''}
+
+---
+
+### 🔗 ቀጥታ ማስፈንጠሪያዎች (Quick Links):
+- 📥 **[የተሰጡኝ ተግባራት / Received Tasks](/tasks/assignment/received)**
+- 📅 **[የዕለት ተግባራት / Daily Planner](/tasks/daily)**
+${roleTier !== 'staff' ? '- 📤 **[አዲስ ተግባር ማስተላለፊያ / Assign New Task](/tasks/assignment/assign)**\n- 📊 **[የተላለፉ ተግባራት ክትትል / Sent Tasks](/tasks/assignment/sent)**' : ''}`;
+
+        const englishTasks = `### ⚡ Task Operations & Workload Workflow
+
+Here is how to manage, execute, and track operational tasks across the system:
+
+1. **Executing Tasks Assigned to You:**
+   - Open **[Received Tasks](/tasks/assignment/received)** to inspect assignments delegated to you.
+   - Update your progress status (\`in_progress\`, \`completed\`) and attach verification evidence.
+2. **Managing Your Daily Schedule:**
+   - Open **[Daily Planner](/tasks/daily)** to schedule your day with time blocks, priorities, and hourly routines.
+${roleTier !== 'staff' ? `3. **Delegating Tasks to Team Members:**\n   - Open **[Assign New Task](/tasks/assignment/assign)** to delegate deliverables with due dates.\n   - Review submissions and verify completions in **[Sent Tasks Tracking](/tasks/assignment/sent)**.` : ''}
+
+---
+
+### 🔗 Quick Links:
+- 📥 **[Received Tasks](/tasks/assignment/received)**
+- 📅 **[Daily Planner](/tasks/daily)**
+${roleTier !== 'staff' ? '- 📤 **[Assign New Task](/tasks/assignment/assign)**\n- 📊 **[Sent Tasks Tracking](/tasks/assignment/sent)**' : ''}`;
+
+        if (isBilingual) return `${amharicTasks}\n\n---\n\n${englishTasks}`;
+        if (isAmharic) return amharicTasks;
+        return englishTasks;
+    }
+
+    // ── 3. REPORTS ───────────────────────────────────────────────────────────
+    if (q.includes('report') || q.includes('analytic') || q.includes('performance') || q.includes('ሪፖርት') || q.includes('አፈጻጸም')) {
+        const amharicReports = `### 📊 የስራ አፈጻጸም ሪፖርት ማቅረቢያ መመሪያ (Reporting Guide)
+
+1. **ወቅታዊ የስራ አፈጻጸም ሪፖርት ማቅረብ:**
+   - ወደ **[ሪፖርት ማቅረቢያ / Submit Report](/report/Add)** ይሂዱ።
+   - የጸደቀውን ቁልፍ የአፈጻጸም አመልካች (KPI) ይምረጡ።
+   - በእቅዱ መሰረት የተከናወነውን ትክክለኛ ውጤት እና የማረጋገጫ ሰነዶችን አያይዘው ያቅርቡ።
+2. **ያቀረቧቸውን ሪፖርቶች መከታተል:**
+   - ያለፉ ሪፖርቶችን ሁኔታ በ**[ያቀረብኳቸው ሪፖርቶች / My Reports](/report/View_myreport)** ይከታተሉ።
+
+---
+
+### 🔗 ቀጥታ ማስፈንጠሪያዎች (Quick Links):
+- 📝 **[ሪፖርት ማቅረቢያ / Submit Report](/report/Add)**
+- 📂 **[ያቀረብኳቸው ሪፖርቶች / My Reports](/report/View_myreport)**
+${roleTier === 'global' ? '- 💼 **[የአመራር ሪፖርቶች / Executive Reports](/reports/executive)**\n- 💾 **[ዳታ ኤክስፖርት / Export Data](/reports/export)**' : ''}`;
+
+        const englishReports = `### 📊 Performance Reporting Guide
+
+1. **Submitting Progress Reports:**
+   - Navigate to: **[Submit Report](/report/Add)**
+   - Select your approved Specific Objective Detail (KPI).
+   - Enter actual achieved progress against planned targets and attach supporting verification files.
+2. **Tracking Submitted Reports:**
+   - View past submissions and approval states in: **[My Reports](/report/View_myreport)**
+
+---
+
+### 🔗 Quick Links:
+- 📝 **[Submit Report](/report/Add)**
+- 📂 **[My Reports](/report/View_myreport)**
+${roleTier === 'global' ? '- 💼 **[Executive Reports](/reports/executive)**\n- 💾 **[Export Data](/reports/export)**' : ''}`;
+
+        if (isBilingual) return `${amharicReports}\n\n---\n\n${englishReports}`;
+        if (isAmharic) return amharicReports;
+        return englishReports;
+    }
+
+    // ── 4. GENERAL WELCOME ───────────────────────────────────────────────────
+    if (isAmharic) {
+        return `ሰላም **${name}**! እኔ Master Mind የኢትዮጵያ አይቲ ፓርክ አስተዋይ የ AI ኦፕሬቲንግ ረዳት ነኝ።
+
+የእርስዎ ሚና **${roleName}** ሲሆን፣ በስርዓቱ ውስጥ የተፈቀዱትን የሚከተሉትን ዋና ዋና ተግባራት ማከናወን ይችላሉ፡
+- 📋 **ስትራቴጂክ ዕቅድ ለማዘጋጀት**፡ **[አዲስ ዕቅድ ማዘጋጃ / Add Strategic Plan](/plan/PlanSteps/Add)**
+- 📥 **የተሰጡዎትን ተግባራት ለመመልከት**፡ **[የተሰጡኝ ተግባራት / Received Tasks](/tasks/assignment/received)**
+- 📅 **የዕለት ስራዎችን ለመመዝገብ**፡ **[የዕለት ተግባራት / Daily Planner](/tasks/daily)**
+- 📊 **አፈጻጸም ሪፖርት ለማቅረብ**፡ **[ሪፖርት ማቅረቢያ / Submit Report](/report/Add)**
+
+እባክዎ ስለ ዕቅድ፣ ተግባራት፣ ወይም አጠቃላይ የስርዓቱ አጠቃቀም ማንኛውንም ጥያቄ ይጠይቁኝ!`;
+    }
+    return `Hello **${name}**! I am Master Mind, your Ethiopian IT Park AI Operating Assistant.
+
+Your authenticated role is **${roleName}**. Here are the primary workflows available to you:
+- 📋 **Formulate Strategic Plans**: **[Add Strategic Plan](/plan/PlanSteps/Add)**
+- 📥 **Manage Received Tasks**: **[Received Tasks](/tasks/assignment/received)**
+- 📅 **Log Daily Agenda**: **[Daily Planner](/tasks/daily)**
+- 📊 **Submit Progress Reports**: **[Submit Report](/report/Add)**
+
+Feel free to ask me for step-by-step guidance on how to navigate the portal, manage your tasks, or submit updates!`;
+}
+
+// Strict Zero Backend Exposure Detector
+function isLeakingBackendInfo(text) {
+    if (!text || typeof text !== 'string') return false;
+    const lower = text.toLowerCase();
+
+    // 1. Controller and backend JS filenames
+    if (/(\b\w+controller(\.js)?|\bcontroller\s*:\s*\w+|\b[\w-]+\.js\b)/i.test(text)) return true;
+
+    // 2. REST API endpoints, HTTP verbs & routes
+    if (/(\/api\/|api\s*endpoint|backend\s*api|curl\s+|http\s*(get|post|put|delete))/i.test(text)) return true;
+    if (/\b(post|get|put|delete|patch)\s+\/[a-z0-9_-]+/i.test(text)) return true;
+
+    // 3. Technical payloads, database tables, schema, cURL, or error codes
+    if (lower.includes('approvalworkflow') || lower.includes('specific_objective_details') || lower.includes('database table') || lower.includes('db schema') || lower.includes('db table') || lower.includes('database schema')) return true;
+    if (lower.includes('curl command') || lower.includes('key payload') || lower.includes('typical payload') || lower.includes('request payload')) return true;
+    if (lower.includes('backend apis') || lower.includes('backend controller') || lower.includes('cheat‑sheet (endpoints)') || lower.includes('cheat-sheet (endpoints)')) return true;
+    if (lower.includes('400 bad request') || lower.includes('422 unprocessable') || lower.includes('500 internal')) return true;
+
+    // 4. Code / JSON structures representing APIs
+    if (/\{\s*"(name|title|goal_id|pillar_id|objective_id)"\s*:/i.test(text)) return true;
+
+    return false;
+}
 
 // Helper to call Groq with automatic model fallback
 async function callGroqWithFallback(payload, apiKey) {
@@ -22,8 +292,8 @@ async function callGroqWithFallback(payload, apiKey) {
                 ...payload,
                 model
             }, {
-                headers: { 'Authorization': `Bearer ${apiKey}`, 'Content-Type': 'application/json' },
-                timeout: 35000
+                headers: { 'Authorization': 'Bearer ' + apiKey, 'Content-Type': 'application/json' },
+                timeout: 25000
             });
             if (res.data?.choices?.[0]?.message?.content) {
                 return res.data;
@@ -156,6 +426,8 @@ exports.chatWithAI = async (req, res) => {
         // 1. Fetch authenticated user profile & organizational placement
         let userProfile = null;
         let roleTier = 'staff'; // 'global', 'supervisor', 'staff'
+        let isGlobal = false;
+        let isSupervisor = false;
         let subordinateEmpIds = new Set();
         let subordinatesList = [];
         let subordinateTasks = [];
@@ -199,7 +471,7 @@ exports.chatWithAI = async (req, res) => {
 
                     // Determine Tier:
                     // Global (Admin / CEO / Executive)
-                    const isGlobal = [1, 2, 3, 9, 29, 33].includes(roleId) ||
+                    isGlobal = [1, 2, 3, 9, 29, 33].includes(roleId) ||
                         hLevel <= 3 ||
                         rName.includes('ceo') ||
                         rName.includes('admin') ||
@@ -208,7 +480,7 @@ exports.chatWithAI = async (req, res) => {
                         rName.includes('director general');
 
                     // Check if Supervisor (Head / Director / Manager / Lead / has direct reports)
-                    let isSupervisor = isGlobal ||
+                    isSupervisor = isGlobal ||
                         rName.includes('head') ||
                         rName.includes('director') ||
                         rName.includes('manager') ||
@@ -432,258 +704,202 @@ exports.chatWithAI = async (req, res) => {
             }
         }
 
-        // 5. Global organizational stats & System Controller Metadata
-        let systemMeta = {};
+        // 5. Query allowed menu items for this user's specific role for access control
+        let allowedMenuItems = [];
         try {
-            const [depRows, roleRows, pillarRows, goalRows, orgNodes, appCount] = await Promise.all([
-                dbQuery('SELECT department_id, name FROM departments LIMIT 30').catch(() => []),
-                dbQuery('SELECT role_id, role_name, hierarchy_level FROM roles ORDER BY hierarchy_level ASC LIMIT 25').catch(() => []),
-                dbQuery('SELECT id, name FROM pillars LIMIT 10').catch(() => []),
-                dbQuery('SELECT goal_id, title, start_year, end_year, weight, is_active FROM goals LIMIT 15').catch(() => []),
-                dbQuery('SELECT COUNT(*) as total_units FROM organization_structure').catch(() => [{ total_units: 0 }]),
-                dbQuery('SELECT COUNT(*) as total_applicants FROM applicants').catch(() => [{ total_applicants: 0 }])
-            ]);
-            systemMeta = {
-                departments: depRows,
-                roles: roleRows,
-                pillars: pillarRows,
-                goals: goalRows,
-                totalOrgUnits: orgNodes[0]?.total_units || 0,
-                totalApplicants: appCount[0]?.total_applicants || 0
-            };
-
-            [orgTaskStats, globalSummary] = await Promise.all([
-                dbQuery(`SELECT status, COUNT(*) as count FROM task_assignments GROUP BY status`).catch(() => []),
-                dbQuery(`
-                    SELECT g.year, COUNT(sod.specific_objective_detail_id) as objective_count,
-                    ROUND(AVG(COALESCE(sod.CIexecution_percentage, sod.execution_percentage, 0)), 2) as avg_execution_perc,
-                    SUM(COALESCE(sod.CIplan, 0)) as total_planned_value, SUM(COALESCE(sod.CIoutcome, 0)) as total_actual_value
-                    FROM specific_objective_details sod JOIN plans p ON sod.specific_objective_detail_id = p.specific_objective_detail_id
-                    JOIN goals g ON p.goal_id = g.goal_id JOIN approvalworkflow aw ON p.plan_id = aw.plan_id
-                    WHERE aw.status = 'completed' GROUP BY g.year ORDER BY g.year ASC
-                `).catch(() => [])
-            ]);
-        } catch (globalErr) {
-            console.warn("Notice fetching global summary & system meta:", globalErr.message);
+            const roleId = Number(userProfile?.role_id) || 0;
+            if (isGlobal || roleId === 1 || roleId === 33) {
+                allowedMenuItems = await dbQuery(`
+                    SELECT DISTINCT mi.name, mi.path, mi.icon
+                    FROM menu_items mi
+                    WHERE mi.is_active = 1 AND mi.path IS NOT NULL AND mi.path != '' AND mi.path != '#'
+                    ORDER BY mi.sort_order ASC, mi.id ASC
+                `);
+            } else {
+                allowedMenuItems = await dbQuery(`
+                    SELECT DISTINCT mi.name, mi.path, mi.icon
+                    FROM menu_items mi
+                    JOIN role_permissions rp ON mi.id = rp.menu_item_id
+                    WHERE rp.role_id = ? AND rp.can_view = 1 AND mi.is_active = 1
+                      AND mi.path IS NOT NULL AND mi.path != '' AND mi.path != '#'
+                    ORDER BY mi.sort_order ASC, mi.id ASC
+                `, [roleId]);
+            }
+        } catch (menuErr) {
+            console.warn("Notice fetching user allowed menus:", menuErr.message);
         }
+
+        // Standard bilingual mapping for application routes
+        const MENU_BILINGUAL_MAP = {
+            '/': 'ዳሽቦርድ / Dashboard',
+            '/plan/PlanSteps/Add': 'አዲስ ዕቅድ ማዘጋጃ / Add Strategic Plan',
+            '/plan/View_myplan': 'ያቀረብኳቸው ዕቅዶች / My Submitted Plans',
+            '/Stategy-plan/View': 'የስትራቴጂክ ዕቅዶች ዳሽቦርድ / Strategy Plans Overview',
+            '/plan/ViewOrgPlan': 'የተቋሙ ስትራቴጂክ ዕቅዶች / Organization Plans',
+            '/plan/hierarchy-approvals': 'የዕቅድ ማጽደቂያ / Hierarchy Plan Approvals',
+            '/plan/action-plan-breakdown': 'የተግባራት ክፍፍል / Action Plan Breakdown',
+            '/plan-pillars': 'የስትራቴጂክ ምሰሶዎች / Plan Pillars',
+            '/goal-config': 'የግቦችና ሩብ ዓመታት ቅንብር / Goal Configuration',
+            '/tasks/daily': 'የዕለት ተግባራት / Daily Planner',
+            '/tasks/assignment/received': 'የተሰጡኝ ተግባራት / Received Tasks',
+            '/tasks/management': 'የስራ ተግባራቴ / My Tasks',
+            '/staff/tasks': 'የስራ ተግባራቴ / My Tasks',
+            '/tasks/assignment/assign': 'አዲስ ተግባር ማስተላለፊያ / Assign New Task',
+            '/tasks/assignment/sent': 'የተላለፉ ተግባራት ክትትል / Sent Tasks Tracking',
+            '/tasks/assignment/subordinates': 'የቡድን አባላት ስራዎች / Team Subordinates',
+            '/kpi/my-assigned': 'የተመደቡ ኬፒአይዎች / KPI Position Assignment',
+            '/report/Add': 'ሪፖርት ማቅረቢያ / Submit Report',
+            '/report/View_myreport': 'ያቀረብኳቸው ሪፖርቶች / My Reports',
+            '/report/overall': 'አጠቃላይ ሪፖርትና AI ትንበያ / Overall Reporting & AI',
+            '/reports/executive': 'የአመራር ሪፖርት / Executive Report',
+            '/reports/export': 'ዳታ ኤክስፖርት / Export Data',
+            '/ProfilePictureUpload': 'የግል መረጃ / Profile',
+            '/UserTable': 'የተጠቃሚዎች ዝርዝር / User Management',
+            '/EmployeeForm': 'አዲስ ሰራተኛ መመዝገቢያ / Add Employee',
+            '/admin/org-structure': 'የተቋም መዋቅር / Organization Structure',
+            '/admin/employee-positions': 'የሰራተኞች የስራ መደብ / Employee Positions',
+            '/settings': 'ሲስተም ሴቲንግ / Settings',
+            '/menu-permissions': 'የፈቃድ አስተዳደር / Menu Permissions',
+            '/admin/logs': 'የስርዓቱ ክትትል ሎግ / Audit Trail & Logs'
+        };
+
+        const allowedLinksFormatted = (allowedMenuItems.length > 0 ? allowedMenuItems : [
+            { name: 'Add Strategic Plan', path: '/plan/PlanSteps/Add' },
+            { name: 'My Submitted Plans', path: '/plan/View_myplan' },
+            { name: 'Received Tasks', path: '/tasks/assignment/received' },
+            { name: 'Daily Planner', path: '/tasks/daily' },
+            { name: 'Submit Report', path: '/report/Add' },
+            { name: 'My Reports', path: '/report/View_myreport' },
+            { name: 'Profile', path: '/ProfilePictureUpload' }
+        ]).map(m => {
+            const label = MENU_BILINGUAL_MAP[m.path] || m.name;
+            return `- [${label}](${m.path})`;
+        }).join('\n');
 
         try {
             // Build the comprehensive knowledge system prompt
             const systemPrompt = {
                 role: 'system',
-                content: `You are "Master Mind", the authoritative, real-time AI Operating Intelligence for the Ethiopian IT Park Corporation (EITPC).
-                
+                content: `You are "Master Mind", the executive, user-friendly, and highly intelligent AI Operating Assistant for the Ethiopian IT Park Management System.
+
+====================================================================
 AUTHENTICATED USER CONTEXT & ACCESS TIER:
+====================================================================
 - Full Name: ${userProfile ? `${userProfile.fname || ''} ${userProfile.lname || ''}`.trim() : 'Guest User'}
 - Role & Title: ${userProfile?.role_name || 'Team Member'} (${userProfile?.position || 'Staff'})
 - Department: ${userProfile?.department_name || 'General Directorate'}
 - Supervisor: ${userProfile?.supervisor_name || 'Leadership'}
-- Access Tier: ${roleTier.toUpperCase()} ${roleTier === 'global' ? '(Full Corporate Visibility)' : roleTier === 'supervisor' ? '(Self + Subordinate Team Visibility)' : '(Self-Service)'}
-
-ACCESS CONTROL & PRIVACY RULES:
-1. STAFF SELF-SERVICE: Staff members have full real-time access to their OWN daily tasks, assigned tasks, delegated tasks, meetings, plans, and reports. Do not expose other employees' private tasks unless they are assigned together.
-2. SUPERVISOR VISIBILITY: Supervisors (Section Heads, Department Heads, Directors, Managers) have FULL access to their own data PLUS all subordinate employees reporting to them based on organizational structure. You MUST expose subordinates' tasks, workloads, pending items, and progress to help the supervisor lead effectively.
-3. ADMIN & CEO: Complete global visibility across all organizational units, departments, tasks, and system performance.
-4. HUMAN-CENTRIC & REAL-TIME: NEVER say "I do not have access to your personal task list". You have direct live database access to their tasks right now.
+- Access Tier: ${roleTier.toUpperCase()} (${roleTier === 'global' ? 'Full Corporate & Administrative Visibility' : roleTier === 'supervisor' ? 'Team Leadership & Subordinate Oversight' : 'Self-Service & Individual Workflows'})
 
 ====================================================================
-LIVE DATABASE DATA INJECTED IN REAL-TIME FOR THIS USER:
+STRICT ROLE-BASED ACCESS CONTROL & CONFIDENTIALITY:
 ====================================================================
+The user's permitted UI pages are strictly limited to the following:
+${allowedLinksFormatted}
 
-1. PERSONAL RECEIVED TASKS (Assigned to this user to work on):
-${JSON.stringify(myReceivedTasks, null, 2)}
-
-2. PERSONAL DAILY PLANNER TASKS (Today / Recent from Daily Checklist):
-${JSON.stringify(myDailyTasks, null, 2)}
-
-3. PERSONAL DELEGATED / SENT TASKS (Tasks this user assigned to others):
-${JSON.stringify(mySentTasks, null, 2)}
-
-4. PERSONAL MEETINGS & CALENDAR:
-${JSON.stringify(myMeetings, null, 2)}
-
-5. SUBORDINATE TEAM DIRECTORY (For Supervisors/Directors):
-${JSON.stringify(subordinatesList, null, 2)}
-
-6. SUBORDINATE ACTIVE TASKS (Assigned to team members under supervision):
-${JSON.stringify(subordinateTasks, null, 2)}
-
-7. SUBORDINATE RECENT DAILY TASKS:
-${JSON.stringify(subordinateDailyTasks, null, 2)}
-
-8. GLOBAL ORGANIZATION TASK STATS:
-${JSON.stringify(orgTaskStats, null, 2)}
-
-9. STRATEGIC ANNUAL PERFORMANCE:
-${JSON.stringify(globalSummary, null, 2)}
-
-10. SYSTEM METADATA OVERVIEW:
-${JSON.stringify(systemMeta, null, 2)}
+CRITICAL PERMISSION ENFORCEMENT RULES:
+1. ONLY reference and provide navigation links to pages that are explicitly in the permitted list above or appropriate for the user's Access Tier (${roleTier}).
+2. IF THE USER ASKS ABOUT A PAGE, FEATURE, OR FUNCTION THAT IS RESTRICTED OR NOT PERMITTED FOR THEIR ROLE (such as standard staff asking how to configure organization structure, manage users, modify system settings, access audit logs, or perform supervisor hierarchy approvals):
+   - YOU MUST NOT explain the internal steps, features, or details of that restricted page.
+   - YOU MUST NOT allow the user to know confidential operational details of restricted administrative or leadership functions.
+   - Politely inform the user that their current role (${userProfile?.role_name || 'Staff'}) does not have permission to access that feature, and that it is restricted to System Administrators or Department Supervisors.
+   - Immediately redirect and guide the user to their authorized workflows (such as [አዲስ ዕቅድ ማዘጋጃ / Add Strategic Plan](/plan/PlanSteps/Add), [ያቀረብኳቸው ዕቅዶች / My Submitted Plans](/plan/View_myplan), [የተሰጡኝ ተግባራት / Received Tasks](/tasks/assignment/received), [የዕለት ተግባራት / Daily Planner](/tasks/daily), or [ሪፖርት ማቅረቢያ / Submit Report](/report/Add)).
 
 ====================================================================
-COMPLETE BACKEND APIS, CONTROLLERS & ARCHITECTURE REGISTRY:
+ZERO BACKEND & API EXPOSURE (FRONTEND UI ONLY):
 ====================================================================
-You possess exhaustive, master-level knowledge of all 22 backend controllers, their endpoints, database tables, workflows, and business logic:
-
-1. goalConfigController.js (Strategic Goal & KPI Quarterly Configuration Engine):
-   - Endpoints: GET /api/plan/goal-configs, PUT /api/plan/goal-configs/:id, POST /api/plan/goal-configs/toggle-quarter, POST /api/plan/goal-configs/toggle-objective-quarter, POST /api/plan/goal-configs/toggle-kpi-quarter, POST /api/plan/goal-configs/toggle-action-plan-quarter
-   - Tables: goals, goal_quarter_activations, objective_quarter_activations, kpi_quarter_activations, action_plan_quarter_activations
-   - Capabilities: Configures goal start_year, end_year, weight (0.00-100.00), pillar_id, and is_active. Manages the quarter activation matrix (Q1, Q2, Q3, Q4) for goals, objectives, and KPIs to control whether reporting and planning are active in the current fiscal period.
-
-2. fileController.js (Secure Asset Serving):
-   - Endpoints: GET /api/files/:filename, GET /api/files/info/:filename
-   - Storage: uploads/ directory
-   - Capabilities: Path-sanitized, secure file serving for task attachments, avatars, plan evidence files, and report proofs. Validates MIME types and file existence.
-
-3. employeeController.js (Employee Directory & Position Mapping):
-   - Endpoints: GET /api/getAllEmployees, POST /api/addEmployee, PUT /api/updateEmployee/:id, DELETE /api/deleteEmployee/:id, GET /api/employee-positions/:employee_id, POST /api/employee-positions, GET /api/getAllSupervisors, GET /api/getEmployeeStatistics
-   - Tables: employees, departments, roles, employee_positions, positions, organization_structure
-   - Capabilities: Employee CRUD, reporting supervisor linkage (supervisor_id), department assignment, and primary (is_primary = 1) / secondary mapping to organizational units.
-
-4. dailyTaskController.js (Personal Day Planner & Task Reminders):
-   - Endpoints: GET /api/daily-tasks, POST /api/daily-tasks, PUT /api/daily-tasks/:id, DELETE /api/daily-tasks/:id, GET /api/daily-tasks/stats, POST /api/daily-tasks/send-reminder
-   - Tables: daily_tasks
-   - Capabilities: Personal daily checklist with time-blocks (start_time, end_time), priority (low, medium, high), status (todo, in_progress, done), categories, notes; automated email & Telegram alerts.
-
-5. configMulter.js (Uploads Middleware):
-   - Capabilities: Configures disk storage, generates timestamped unique filenames, enforces 10MB-50MB limits, restricts MIME types to PDF, DOCX, XLSX, PNG, JPG, ZIP across task, plan, and report uploads.
-
-6. chatController.js (Real-time Internal Chat & Group Collaboration):
-   - Endpoints: GET /api/chat/conversations, POST /api/chat/conversations, GET /api/chat/conversations/:id/messages, POST /api/chat/conversations/:id/messages, PUT /api/chat/messages/:id, DELETE /api/chat/messages/:id, POST /api/chat/messages/:id/reactions, GET /api/chat/users/presence, POST /api/chat/groups
-   - Tables: chat_conversations, chat_messages, chat_participants, chat_attachments, chat_reactions, user_presence
-   - Capabilities: Direct 1-on-1 messaging, organization groups, message reactions, attachments, file sharing, user online presence tracking, group administration.
-
-7. analytics.js (Longitudinal & Financial Corporate Analytics):
-   - Endpoints: /api/cost-reporting, /api/income-reporting, /api/cost-vs-income-reporting, /api/hr-reporting, /api/user-performance-ranking, /api/unit-performance-ranking
-   - Tables: plans, specific_objective_details, approvalworkflow, goals, departments, employees
-   - Capabilities: Evaluates corporate cost vs income in both ETB (Ethiopian Birr) and USD ($), regular vs capital budget variances, HR staffing differences, and calculates institutional performance rankings strictly filtering for completed approved plans (approvalworkflow.status = 'completed').
-
-8. dashboardSelfService.js (Personal Self-Service Analytics Hub):
-   - Endpoints: GET /api/dashboard/self-service/stats, GET /api/dashboard/self-service/activity-chart, GET /api/dashboard/self-service/pillars, GET /api/dashboard/self-service/today-overview
-   - Capabilities: User personal metrics, pending vs completed tasks, today's schedule agenda, activity trends, and strategic pillars progress.
-
-9. meetingController.js (Meeting Scheduling & Video Conference Management):
-   - Endpoints: GET /api/meetings, POST /api/meetings, PUT /api/meetings/:id, POST /api/meetings/:id/respond, POST /api/meetings/:id/postpone, POST /api/meetings/:id/end, POST /api/meetings/:id/reminders
-   - Tables: meetings, meeting_participants, meeting_attachments, meeting_minutes, meeting_reminders
-   - Capabilities: Schedules one-on-one, team, department, or company-wide meetings with Zoom ID/passcode, meeting links, recurrence rules, RSVP tracking (accepted, declined, tentative), and logs minutes of meetings.
-
-10. kpiAssignmentController.js (KPI Cascading & Position Delegation):
-    - Endpoints: GET /api/kpis/my-assigned, GET /api/kpis/subordinates, POST /api/kpis/delegate
-    - Tables: kpi_positions, employee_positions, specific_objective_details, employees
-    - Capabilities: Cascades high-level strategic KPIs down the hierarchy from directors to department heads, section heads, and staff positions.
-
-11. notificationController.js (In-App Alerts & Push Notifications):
-    - Endpoints: GET /api/notifications, GET /api/notifications/unread-count, PUT /api/notifications/:id/read, PUT /api/notifications/mark-all-read, DELETE /api/notifications/:id, POST /api/notifications/alert
-    - Tables: notifications
-    - Capabilities: Real-time user alerts for task assignments, plan approvals, rejections, meeting invites, and priority system announcements.
-
-12. organizationStructureController.js (Interactive Hierarchy Tree):
-    - Endpoints: GET /api/admin/org-structure/tree, POST /api/admin/org-structure/unit, PUT /api/admin/org-structure/unit/:id, DELETE /api/admin/org-structure/unit/:id, GET /api/admin/org-structure/types
-    - Tables: organization_structure, organization_types, employee_positions
-    - Capabilities: Multi-level organizational hierarchy tree (Board -> CEO -> Deputy CEO -> Directorates -> Departments -> Sections -> Units) with parent-child integrity validation.
-
-13. passwordController.js (Security, Password Reset & OTP Engine):
-    - Endpoints: POST /api/password/change, POST /api/password/request-reset, POST /api/password/verify-otp, POST /api/password/reset
-    - Tables: users, password_resets, otp_logs
-    - Capabilities: Password complexity validation, bcrypt hashing, 6-digit numeric OTP delivery via SMTP email, 15-minute expiration window, maximum 5 attempt rate limiting.
-
-14. pillarController.js (5-Year Strategic Corporate Pillars):
-    - Endpoints: GET /api/plan/pillars, POST /api/plan/pillars, PUT /api/plan/pillars/:id, DELETE /api/plan/pillars/:id, POST /api/plan/pillars/assign-goals
-    - Tables: pillars, goals
-    - Capabilities: Corporate 5-year pillars (Infrastructure, Digitalization, Investment, etc.) and goal alignment (goals.pillar_id).
-
-15. planDtailedController.js (Strategic Plan Formulation & Weight Balancing):
-    - Endpoints: /api/plan/add-goals, /api/plan/add-objectives, /api/plan/add-specific-objectives, /api/plan/add-details, /api/plan/distribute-weights
-    - Tables: goals, objectives, specific_objectives, specific_objective_details
-    - Capabilities: 4-tier planning architecture (Goal -> Objective -> Specific Objective -> Specific Objective Details/KPIs). Balances weights so that sum(goal weights) = 100%, sum(objective weights) = 100%, and sum(KPI weights) = 100%.
-
-16. profileUploadController.js (Avatar Management):
-    - Endpoints: POST /api/profile/upload-picture, GET /api/profile/picture/:userId
-    - Tables: users, employees
-    - Capabilities: Avatar uploads, image optimization, file persistence, updating users.avatar_url.
-
-17. roleController.js (Role-Based Access Control & Hierarchical Authority):
-    - Endpoints: GET /api/roles, GET /api/roles/hierarchy, POST /api/roles, PUT /api/roles/:id, DELETE /api/roles/:id
-    - Tables: roles, role_permissions, users
-    - Capabilities: Hierarchy scale from Level 1 (CEO / Admin) to Level 14 (Staff), defining approval rights and data visibility.
-
-18. taskAssignmentController.js (Task Delegation, Execution & Confirmation Engine):
-    - Endpoints: POST /api/task-assignments/assign, GET /api/task-assignments/assigned-to-me, GET /api/task-assignments/assigned-by-me, GET /api/task-assignments/supervised-users, PUT /api/task-assignments/:id/status, PUT /api/task-assignments/:id/confirm, PUT /api/task-assignments/:id/reject, GET /api/task-assignments/hub-alerts, GET /api/task-assignments/performance-ranking
-    - Tables: task_assignments, users, employees, departments, organization_structure
-    - Capabilities: Assign tasks with roles (Executor, Reviewer), urgency (urgent, high, medium, low), due dates, attachments. Full lifecycle tracking (pending -> in_progress -> completed -> confirmed / rejected). Deep recursive hierarchy discovery for supervisors.
-
-19. userController.js (User Administration & Account Lifecycle):
-    - Endpoints: GET /api/getAllUsers, PUT /api/changeUserStatus, PUT /api/updateUser/:id, DELETE /api/deleteUser/:id
-    - Tables: users, employees, roles, departments
-    - Capabilities: User account lifecycle, credentials, linking users to employees, activating/deactivating accounts (status = '1' vs '0').
-
-20. taskBreakdownController.js (Action Plan Monthly & Weekly Decomposition):
-    - Endpoints: GET /api/tasks/breakdown/:detailId, POST /api/tasks/breakdown/monthly, POST /api/tasks/breakdown/weekly, PUT /api/tasks/breakdown/progress, POST /api/tasks/breakdown/assignees, GET /api/tasks/breakdown/my-received
-    - Tables: monthly_tasks, weekly_tasks, monthly_task_assignees, weekly_task_assignees, specific_objective_details
-    - Capabilities: Breaks down approved annual KPIs into 12 monthly tasks and 4 weekly tasks per month, distributing weights and tracking micro-execution progress.
-
-21. taskController.js (General Task Operations & Reminders):
-    - Endpoints: GET /api/tasks, POST /api/tasks, PUT /api/tasks/:id, DELETE /api/tasks/:id, POST /api/tasks/:id/reminders, POST /api/tasks/:id/supervisors
-    - Tables: tasks, task_reminders, task_notifications, task_supervisors
-    - Capabilities: Operations tracking, task reminders, assigning supervisor oversight to team activities.
-
-22. applicantController.js (Recruitment & Job Application Intake):
-    - Endpoints: GET /api/applicants
-    - Tables: applicants
-    - Capabilities: Ingests and reviews recruitment candidates, CVs, contact details, and application states.
+- ABSOLUTELY NEVER mention backend files, JavaScript controllers (e.g. *.js, aiController.js, pillarController.js, etc.).
+- ABSOLUTELY NEVER mention raw REST API endpoints (e.g. "POST /api/...", "GET /api/..."), HTTP methods, query params, or status codes.
+- ABSOLUTELY NEVER mention database tables (e.g. specific_objective_details, approvalworkflow, users, etc.) or SQL statements.
+- ABSOLUTELY NEVER output JSON payloads, request bodies, or cURL commands.
+- ALL instructions must strictly describe the user-facing web interface:
+  * Name of the sidebar menu or header item to click.
+  * Which buttons to click (e.g. "Add Strategic Plan", "Submit", "Filter", "Save").
+  * Which dropdowns, form inputs, or modal windows to interact with.
+  * Real business logic explained in simple, human terms (e.g. "Make sure your KPI baseline is entered and target weights add up to 100%").
 
 ====================================================================
-COMPREHENSIVE SYSTEM CONTROLS & PAGES NAVIGATION GUIDE:
+BILINGUAL LANGUAGE RULES (AMHARIC & ENGLISH):
 ====================================================================
-When guiding the user, provide direct markdown links (e.g. [Page Name](/route)):
-- [Daily Planner](/tasks/daily): Daily checklist with priorities, time slots, completion toggles.
-- [Assign New Task](/tasks/assignment/assign): Assign tasks with roles, due dates, urgency, files.
-- [Received Tasks](/tasks/assignment/received): Tasks assigned to the user to execute and submit.
-- [Sent Tasks Tracking](/tasks/assignment/sent): Track delegated tasks, confirm or reject completions.
-- [Team Subordinates](/tasks/assignment/subordinates): Supervisor view of team members' active workloads.
-- [Task Analytics & Breakdown](/tasks/breakdown): Analytics and action plan decompositions.
-- [KPI Position Assignment](/kpi/my-assigned): View assigned KPIs and cascade to subordinates.
-- Top Header Meeting Icon: Advanced Meeting Scheduler modal for 1-on-1s, teams, Zoom links.
-- [Add Strategic Plan](/plan/PlanSteps/Add): Strategic planning wizard (Goals, Objectives, KPIs).
-- [My Submitted Plans](/plan/View_myplan): View and manage user's submitted plans.
-- [Hierarchy Plan Approvals](/plan/hierarchy-approvals): Supervisor plan approval workflow.
-- [Organization Plans](/plan/ViewOrgPlan): Corporation-wide strategic plans view.
-- [Strategic Plan Overview](/Stategy-plan/View), [Plan Pillars](/plan-pillars), [Goal Config](/goal-config).
-- [Submit Report](/report/Add), [My Reports](/report/View_myreport), [Overall Reporting & AI](/report/overall), [Executive Reports](/reports/executive), [Export Data](/reports/export).
-- [Organization Structure](/admin/org-structure), [Employee Positions](/admin/employee-positions), [User Directory](/UserTable), [Audit Trail & Logs](/admin/logs), [System Settings](/settings).
+- Understand the user's prompt language and intent:
+  1. If the user asks in Amharic (ይህም የአማርኛ ፊደላት ሲኖሩበት):
+     * Respond primarily and fluently in Amharic (በአማርኛ).
+     * Provide clear, step-by-step guidance using natural Ethiopian professional terminology (e.g. ስትራቴጂክ ዕቅድ፣ ቁልፍ የአፈጻጸም አመልካች / KPI፣ የተሰጡ ተግባራት፣ የዕለት ስራዎች፣ ሪፖርት).
+     * Use bilingual button links: [የአማርኛ ስም / English Name](/path) so the user can easily find the button on their screen.
+  2. If the user asks in English:
+     * Respond in English with clear, structured steps and navigation links [Page Name](/path).
+  3. If the user asks for both languages (e.g. "in both amharic and english", "በሁለቱም ቋንቋ", "bilingual"), or when providing comprehensive system procedural guides:
+     * Structure the response into two elegant, clearly separated sections:
+       ### 🇪🇹 በአማርኛ (Amharic Guide)
+       [Complete, step-by-step Amharic walkthrough]
+       ### 🇬🇧 In English (English Guide)
+       [Complete, step-by-step English walkthrough]
 
 ====================================================================
-RESPONSE INSTRUCTIONS & FORMATTING:
+AMAZING, STYLED PRESENTATION & VISUAL EXCELLENCE:
 ====================================================================
-1. DEEP SYSTEM & ARCHITECTURAL EXPERTISE:
-   - You know the codebase, all 22 controllers, their exact API paths, parameters, schemas, and workflows.
-   - When asked about how any feature, controller, or API works, explain the exact workflow, database behavior, and navigation path clearly.
-2. DIRECT, STRUCTURED, AND ACTIONABLE:
-   - When asked "what tasks do I have for today" or similar:
-     * Break down with clear Markdown headings (### 🎯 Priority Tasks Assigned to You, ### 📋 Today's Daily Planner, ### 👥 Subordinate Team Overview, ### 📤 Tasks You Delegated).
-     * Use visual badges: 🔴 Urgent, 🟠 High, 🟡 Medium, 🟢 Low.
-     * Include Status: ⏳ Pending, 🔄 In Progress, ✅ Completed.
-     * For each task, show: Title, Priority, Due Date, and who assigned it.
-     * If the user is a supervisor (like a Section Head), ALWAYS provide their subordinates' task status so they know what their team is working on.
-     * Provide direct navigation links (e.g. [Open Received Tasks](/tasks/assignment/received), [Manage Daily Tasks](/tasks/daily)).
-3. TONE:
-   - Executive, articulate, empowering, and exceptionally knowledgeable.
-   - Address the user respectfully by their name or title if known.`
+- Format every response with clean, high-impact Markdown:
+  * Numbered visual step badges: 1️⃣, 2️⃣, 3️⃣, 4️⃣, 5️⃣.
+  * Expressive icons: 🎯 (Strategic Goals), 📋 (Planning & KPIs), ⚡ (Tasks), 📊 (Reports & Analytics), 💡 (Tips & Best Practices), ⚠️ (Permissions & Notices), ✅ (Submission & Confirmation).
+  * Use blockquotes for helpful tips: \`> 💡 **ምክር / Pro Tip:** ...\`
+  * Always provide clickable markdown navigation links formatted as [Title](/path). In the application UI, these links render as interactive glowing navigation buttons that users can click to jump directly to the page!
+  * Ensure answers are deep, thorough, and highly context-aware—referencing the user's actual tasks, plans, and team context when helpful.
+
+====================================================================
+LIVE USER WORKLOAD CONTEXT (FROM DATABASE):
+====================================================================
+- Active Received Tasks: ${myReceivedTasks.length} pending/in progress (${myReceivedTasks.map(t => `"${t.title}" (Due: ${t.due_date || 'N/A'}, Priority: ${t.priority})`).slice(0, 5).join(', ') || 'No pending tasks'})
+- Today's Daily Agenda: ${myDailyTasks.length} items logged
+- Delegated Sent Tasks: ${mySentTasks.length} items
+- Submitted Plans: ${myPlans.length} records (${myPlans.map(p => `"${p.specific_objective_name}" - Status: ${p.plan_status}`).slice(0, 3).join(', ') || 'No active plans'})
+${roleTier !== 'staff' ? `- Subordinate Team Members: ${subordinatesList.length} members (${subordinatesList.map(s => s.name).slice(0, 5).join(', ')})` : ''}
+`
             };
 
             const groqRes = await callGroqWithFallback({
                 messages: [systemPrompt, ...messages],
-                temperature: 0.4
+                temperature: 0.5,
+                max_tokens: 1800
             }, apiKey);
 
-            const aiResponse = groqRes.choices[0].message.content;
-            return res.status(200).json({ success: true, reply: aiResponse });
+            let aiResponse = groqRes.choices[0].message.content || '';
+            // Sanitize repetitive loops if model produces repeating patterns
+            aiResponse = aiResponse.replace(/(.{3,50}?)\1{4,}/gs, '$1');
+
+            // Strictly verify that the AI model did not output any forbidden backend, API, or database details
+            if (isLeakingBackendInfo(aiResponse)) {
+                console.warn("⚠️ Groq model output contained forbidden backend/API details. Enforcing clean UI-only fallback reply.");
+                const lastUserMsg = Array.isArray(messages) && messages.length > 0
+                    ? (messages.filter(m => m.role === 'user').pop()?.content || '')
+                    : '';
+                aiResponse = generateIntelligentFallbackReply(lastUserMsg, userProfile, {
+                    myReceivedTasks,
+                    myDailyTasks,
+                    mySentTasks,
+                    myPlans,
+                    subordinatesList,
+                    roleTier
+                }, allowedMenuItems);
+            }
+
+            return res.status(200).json({ success: true, reply: aiResponse.trim() });
 
         } catch (apiError) {
             console.error("Groq Chat Error:", apiError.message);
+            const lastUserMsg = Array.isArray(messages) && messages.length > 0
+                ? (messages.filter(m => m.role === 'user').pop()?.content || '')
+                : '';
+            const fallbackReply = generateIntelligentFallbackReply(lastUserMsg, userProfile, {
+                myReceivedTasks,
+                myDailyTasks,
+                mySentTasks,
+                myPlans,
+                subordinatesList,
+                roleTier
+            }, allowedMenuItems);
             return res.status(200).json({ 
                 success: true, 
-                reply: `Hello ${userProfile ? userProfile.fname : ''}! I am Master Mind, your Ethiopian IT Park AI assistant. I have direct access to your real-time tasks and complete system controls. You currently have ${myReceivedTasks.length} received task(s) and ${myDailyTasks.length} daily task(s) on file. Please open [Received Tasks](/tasks/assignment/received) or [Daily Planner](/tasks/daily) to inspect them in detail.`
+                reply: fallbackReply
             });
         }
     } catch (error) {

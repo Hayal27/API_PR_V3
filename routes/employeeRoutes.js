@@ -1,8 +1,7 @@
 // employeeRoutes.js
 const express = require('express');
 const router = express.Router();
-// const verifyToken = require ('../middleware/verifyToken')
-// const { checkSessionExpiration } = require('../middleware/sessionMiddleware');
+const verifyToken = require('../middleware/verifyToken');
 const {
     addEmployee,
     getAllDepartments,
@@ -15,6 +14,7 @@ const {
     updateEmployee,
     deleteEmployee,
     getEmployeePositions,
+    getAllEmployeePositions,
     addEmployeePosition,
     updateEmployeePosition,
     removeEmployeePosition
@@ -23,12 +23,13 @@ const {
 // Define routes
 
 // Employee CRUD operations
-router.post('/addEmployee', addEmployee);
-router.get('/employees', getAllEmployees); // Route to fetch all employees with details
-router.put('/employees/:employee_id', updateEmployee); // Route to update employee
-router.delete('/employees/:employee_id', deleteEmployee); // Route to delete employee
+router.post('/addEmployee', verifyToken.optionalVerifyToken, addEmployee);
+router.get('/employees', verifyToken.optionalVerifyToken, getAllEmployees); // Route to fetch all employees with details
+router.put('/employees/:employee_id', verifyToken.optionalVerifyToken, updateEmployee); // Route to update employee
+router.delete('/employees/:employee_id', verifyToken.optionalVerifyToken, deleteEmployee); // Route to delete employee
 
 // Employee Positions operations
+router.get('/employee-positions', verifyToken.optionalVerifyToken, getAllEmployeePositions);
 router.get('/employees/:employee_id/positions', getEmployeePositions);
 router.post('/employees/:employee_id/positions', addEmployeePosition);
 router.put('/employees/:employee_id/positions/:position_id', updateEmployeePosition);
@@ -36,8 +37,8 @@ router.delete('/employees/:employee_id/positions/:position_id', removeEmployeePo
 
 // Reference data routes
 router.get('/departments',  getAllDepartments); // Route to fetch all departments
-router.get('/roles',  getAllRoles); // Route to fetch all roles
-router.get('/supervisors',  getAllSupervisors); // Route to fetch all supervisors
+router.get('/roles', verifyToken.optionalVerifyToken, getAllRoles); // Route to fetch all roles
+router.get('/supervisors', verifyToken.optionalVerifyToken, getAllSupervisors); // Route to fetch all supervisors
 router.get('/supervisor/supervisors', getSupervisorsForReferral); // Route to fetch supervisors for referral
 
 // Dashboard and analytics routes

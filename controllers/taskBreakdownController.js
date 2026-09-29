@@ -452,6 +452,17 @@ const addWeeklyTasks = (req, res) => {
         });
 };
 
+const isPastDeadline = (deadlineStr) => {
+    if (!deadlineStr) return false;
+    const d = new Date(deadlineStr);
+    if (isNaN(d.getTime())) return false;
+    const str = String(deadlineStr).trim();
+    if (/^\d{4}-\d{2}-\d{2}$/.test(str)) {
+        d.setHours(23, 59, 59, 999);
+    }
+    return d.getTime() < Date.now();
+};
+
 // Update task progress, description, and attachment
 // Helper to synchronize parent plan progress
 // Helper to synchronize parent plan progress
@@ -719,6 +730,7 @@ const updateTaskProgress = (req, res) => {
     // 1. First, find which specific_objective_detail_id this task belongs to (+ parent plan metrics)
     const getDetailIdQuery = type === 'monthly'
         ? `SELECT mt.specific_objective_detail_id, mt.weight AS task_weight, mt.plan_amount AS task_plan_amount,
+                  mt.deadline AS task_deadline, sod.deadline AS plan_deadline,
                   COALESCE(sod.specific_objective_detailname, sod.name, 'Action Plan') AS plan_name,
                   COALESCE(sod.weight, 0) AS plan_weight,
                   COALESCE(sod.baseline, sod.CIbaseline, 0) AS plan_baseline,
@@ -730,6 +742,7 @@ const updateTaskProgress = (req, res) => {
            LEFT JOIN specific_objective_details sod ON mt.specific_objective_detail_id = sod.specific_objective_detail_id
            WHERE mt.monthly_task_id = ?`
         : `SELECT mt.specific_objective_detail_id, wt.weight AS task_weight, wt.plan_amount AS task_plan_amount,
+                  wt.deadline AS task_deadline, mt.deadline AS monthly_deadline, sod.deadline AS plan_deadline,
                   COALESCE(sod.specific_objective_detailname, sod.name, 'Action Plan') AS plan_name,
                   COALESCE(sod.weight, 0) AS plan_weight,
                   COALESCE(sod.baseline, sod.CIbaseline, 0) AS plan_baseline,
@@ -749,6 +762,14 @@ const updateTaskProgress = (req, res) => {
         }
 
         const parentInfo = results[0];
+        const effectiveDeadline = parentInfo.task_deadline || parentInfo.monthly_deadline || parentInfo.plan_deadline;
+        if (effectiveDeadline && isPastDeadline(effectiveDeadline)) {
+            return res.status(400).json({
+                success: false,
+                message: 'Cannot submit report: The deadline for this task has passed.'
+            });
+        }
+
         const detailId = parentInfo.specific_objective_detail_id;
         const taskWeight = Number(parentInfo.task_weight) || 0;
         const taskPlanAmount = Number(parentInfo.task_plan_amount) || 0;
@@ -1087,11 +1108,16 @@ const getMyReceivedBreakdownTasks = (req, res) => {
             mt.attachment,
             mt.actual_amount,
             mt.created_at,
+            mt.start_date AS task_start_date,
+            mt.deadline AS task_deadline,
             'monthly' AS type,
             COALESCE(so.specific_objective_name, so.name, sod.name, sod.specific_objective_detailname) AS SpecificObjective,
             COALESCE(g.name, 'Goal') AS Goal,
             COALESCE(o.name, 'Objective') AS Objective,
             CASE WHEN mta.assigned_by = mta.user_id OR mta.user_id IS NULL THEN 'Self-Assigned (Me)' ELSE CONCAT(e.fname, ' ', e.lname) END AS assigned_by_name,
+            -- Action plan details
+            COALESCE(sod.specific_objective_detailname, sod.name, sod.details, 'Action Plan') AS action_plan_name,
+            sod.details AS action_plan_details,
             sod.plan_type,
             sod.cost_type,
             sod.costName,
@@ -1106,8 +1132,15 @@ const getMyReceivedBreakdownTasks = (req, res) => {
             sod.CIplan AS ci_plan,
             sod.CIbaseline AS CI_Baseline,
             sod.CIplan AS CI_Plan,
+            sod.CIplan AS action_plan_ciplan,
+            sod.CIbaseline AS action_plan_cibaseline,
             sod.baseline,
             sod.plan,
+            sod.plan AS action_plan_plan,
+            sod.baseline AS action_plan_baseline,
+            sod.weight AS action_plan_weight,
+            sod.priority AS action_plan_priority,
+            sod.status AS action_plan_status,
             COALESCE(sod.CIbaseline, sod.baseline, 0) AS plan_baseline,
             COALESCE(
                 NULLIF(mt.plan_amount, 0),
@@ -1122,10 +1155,23 @@ const getMyReceivedBreakdownTasks = (req, res) => {
             COALESCE(g.is_active, 1) AS goal_is_active,
             apqa.is_active AS ap_quarter_active,
             so.specific_objective_id,
+            COALESCE(so.specific_objective_name, so.name, 'KPI') AS kpi_name,
+            so.weight AS kpi_weight,
+            so.measurement AS kpi_measurement,
+            so.baseline AS kpi_baseline,
+            so.plan AS kpi_target,
             o.objective_id,
+            COALESCE(o.name, 'Objective') AS objective_name,
+            o.description AS objective_description,
+            o.weight AS objective_weight,
             g.goal_id,
-            sod.deadline AS plan_deadline,
-            sod.created_at AS plan_start_date
+            COALESCE(g.name, 'Goal') AS goal_name,
+            g.description AS goal_description,
+            g.year AS goal_year,
+            g.quarter AS goal_quarter,
+            g.weight AS goal_weight,
+            COALESCE(mt.deadline, sod.deadline) AS plan_deadline,
+            COALESCE(mt.start_date, sod.created_at) AS plan_start_date
         FROM monthly_tasks mt
         LEFT JOIN monthly_task_assignees mta ON mt.monthly_task_id = mta.monthly_task_id
         LEFT JOIN specific_objective_details sod ON mt.specific_objective_detail_id = sod.specific_objective_detail_id
@@ -1152,12 +1198,19 @@ const getMyReceivedBreakdownTasks = (req, res) => {
             wt.attachment,
             wt.actual_amount,
             wt.created_at,
+            wt.start_date AS task_start_date,
+            wt.deadline AS task_deadline,
             'weekly' AS type,
             mt.name AS parent_monthly_name,
+            mt.weight AS parent_monthly_weight,
+            mt.plan_amount AS parent_monthly_plan_amount,
             COALESCE(so.specific_objective_name, so.name, sod.name, sod.specific_objective_detailname) AS SpecificObjective,
             COALESCE(g.name, 'Goal') AS Goal,
             COALESCE(o.name, 'Objective') AS Objective,
             CASE WHEN wta.assigned_by = wta.user_id OR wta.user_id IS NULL THEN 'Self-Assigned (Me)' ELSE CONCAT(e.fname, ' ', e.lname) END AS assigned_by_name,
+            -- Action plan details
+            COALESCE(sod.specific_objective_detailname, sod.name, sod.details, 'Action Plan') AS action_plan_name,
+            sod.details AS action_plan_details,
             sod.plan_type,
             sod.cost_type,
             sod.costName,
@@ -1172,8 +1225,15 @@ const getMyReceivedBreakdownTasks = (req, res) => {
             sod.CIplan AS ci_plan,
             sod.CIbaseline AS CI_Baseline,
             sod.CIplan AS CI_Plan,
+            sod.CIplan AS action_plan_ciplan,
+            sod.CIbaseline AS action_plan_cibaseline,
             sod.baseline,
             sod.plan,
+            sod.plan AS action_plan_plan,
+            sod.baseline AS action_plan_baseline,
+            sod.weight AS action_plan_weight,
+            sod.priority AS action_plan_priority,
+            sod.status AS action_plan_status,
             COALESCE(sod.CIbaseline, sod.baseline, 0) AS plan_baseline,
             COALESCE(
                 NULLIF(wt.plan_amount, 0),
@@ -1189,10 +1249,23 @@ const getMyReceivedBreakdownTasks = (req, res) => {
             COALESCE(g.is_active, 1) AS goal_is_active,
             apqa.is_active AS ap_quarter_active,
             so.specific_objective_id,
+            COALESCE(so.specific_objective_name, so.name, 'KPI') AS kpi_name,
+            so.weight AS kpi_weight,
+            so.measurement AS kpi_measurement,
+            so.baseline AS kpi_baseline,
+            so.plan AS kpi_target,
             o.objective_id,
+            COALESCE(o.name, 'Objective') AS objective_name,
+            o.description AS objective_description,
+            o.weight AS objective_weight,
             g.goal_id,
-            sod.deadline AS plan_deadline,
-            sod.created_at AS plan_start_date
+            COALESCE(g.name, 'Goal') AS goal_name,
+            g.description AS goal_description,
+            g.year AS goal_year,
+            g.quarter AS goal_quarter,
+            g.weight AS goal_weight,
+            COALESCE(wt.deadline, mt.deadline, sod.deadline) AS plan_deadline,
+            COALESCE(wt.start_date, mt.start_date, sod.created_at) AS plan_start_date
         FROM weekly_tasks wt
         JOIN monthly_tasks mt ON wt.monthly_task_id = mt.monthly_task_id
         LEFT JOIN weekly_task_assignees wta ON wt.weekly_task_id = wta.weekly_task_id

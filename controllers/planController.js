@@ -103,7 +103,7 @@ const addPlan = (req, res) => {
           // Retrieve supervisor_id and department_id
           // Retrieve supervisor_id, department_id, and role_name
           con.query(
-            `SELECT e.supervisor_id, e.department_id, r.role_name 
+            `SELECT e.supervisor_id, e.department_id, e.branch_id, r.role_name 
                  FROM employees e 
                  LEFT JOIN roles r ON e.role_id = r.role_id 
                  WHERE e.employee_id = ?`,
@@ -117,7 +117,8 @@ const addPlan = (req, res) => {
                 return res.status(404).json({ message: "Employee details not found" });
               }
 
-              const { supervisor_id: defaultSupervisorEmployeeId, department_id, role_name } = employeeResult[0];
+              const { supervisor_id: defaultSupervisorEmployeeId, department_id, branch_id: empBranchId, role_name } = employeeResult[0];
+              const branch_id = Number(req.body.branch_id) || Number(req.branch_id) || Number(empBranchId) || 1;
               // Use selected supervisor's employee_id if provided, otherwise use default supervisor's employee_id
               const supervisor_id = selectedSupervisorEmployeeId || defaultSupervisorEmployeeId;
 
@@ -126,6 +127,7 @@ const addPlan = (req, res) => {
                 defaultSupervisorEmployeeId,
                 finalSupervisorId: supervisor_id,
                 planCreatorEmployeeId: employee_id,
+                branch_id,
                 role_name
               });
 
@@ -136,9 +138,9 @@ const addPlan = (req, res) => {
                 const insertPlanQuery = `
                       INSERT INTO plans (
                         user_id, department_id, supervisor_id, employee_id, goal_id, objective_id, specific_objective_id, specific_objective_detail_id,
-                        status, reporting, year, department_name, created_at, updated_at
+                        status, reporting, year, department_name, branch_id, created_at, updated_at
                       )
-                      VALUES (?, ?, ?, ?, ?, ?, ?, ?, 'Pending', 'deactivate', ?, ?, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+                      VALUES (?, ?, ?, ?, ?, ?, ?, ?, 'Pending', 'deactivate', ?, ?, ?, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
                     `;
                 const values = [
                   user_id,
@@ -151,6 +153,7 @@ const addPlan = (req, res) => {
                   specificObjectiveDetailsId,
                   new Date().getFullYear(), // Add current year
                   deptName, // Add department name (or Position)
+                  branch_id,
                 ];
 
                 con.query(insertPlanQuery, values, (err, result) => {

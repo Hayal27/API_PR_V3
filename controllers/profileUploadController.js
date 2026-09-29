@@ -67,12 +67,18 @@ const getProfilePicture = (req, res) => {
       u.user_name,
       u.avatar_url,
       u.role_id,
+      r.role_name AS role,
       e.fname,
       e.lname,
+      TRIM(CONCAT(COALESCE(e.fname, ''), ' ', COALESCE(e.lname, ''))) AS name,
+      COALESCE(u.branch_id, e.branch_id, 1) AS branch_id,
+      b.name AS branch_name,
       e.email,
       COALESCE(d.name, 'General Directorate') as department_name
     FROM users u
     LEFT JOIN employees e ON u.employee_id = e.employee_id
+    LEFT JOIN roles r ON u.role_id = r.role_id
+    LEFT JOIN branches b ON COALESCE(u.branch_id, e.branch_id, 1) = b.branch_id
     LEFT JOIN departments d ON e.department_id = d.department_id
     WHERE u.user_id = ?
   `;
@@ -107,6 +113,11 @@ const getProfilePicture = (req, res) => {
       avatarUrl: fullAvatarUrl,
       user: {
         ...userData,
+        fname: userData.fname || '',
+        lname: userData.lname || '',
+        name: userData.name || userData.fname || '',
+        branch_name: userData.branch_name || 'Federal Head Office',
+        role: userData.role || (Number(userData.role_id) === 34 ? 'Super Admin' : 'Admin'),
         avatar_url: fullAvatarUrl
       }
     });

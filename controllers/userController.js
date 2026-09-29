@@ -1,19 +1,25 @@
 // controllers/userController.js
 
 const { Users, Employees, Departments, OrganizationStructure, Roles, sequelize } = require('../models/index');
-const { QueryTypes } = require('sequelize');
+const { QueryTypes, Op } = require('sequelize');
 const bcrypt = require('bcryptjs');
 const { logAudit, AUDIT_ACTIONS } = require('../middleware/auditLogger');
 
 const updateUser = async (req, res) => {
   const { user_id } = req.params;
-  const { fname, lname, user_name, phone, department_id, role_id, supervisor_id, telegram_username } = req.body;
+  const { fname, lname, user_name, phone, department_id, branch_id, role_id, supervisor_id, telegram_username } = req.body;
 
   // Convert role_id to an integer and check validity
   const parsedRoleID = parseInt(role_id, 10);
   if (isNaN(parsedRoleID)) {
     console.error("Invalid role_id provided:", role_id);
     return res.status(400).json({ message: "Invalid role_id provided" });
+  }
+
+  // Non-super-admins CANNOT assign Admin or Super Admin roles
+  const adminRoleIds = [1, 33, 34, 35];
+  if (!req.is_super_admin && adminRoleIds.includes(parsedRoleID)) {
+    return res.status(403).json({ message: "Forbidden: Only Super Admin can assign Admin or Super Admin roles." });
   }
 
   try {
@@ -33,14 +39,24 @@ const updateUser = async (req, res) => {
       }
     }
 
-    // Retrieve employee_id from the users table
+    // Retrieve user and check permissions
     const user = await Users.findByPk(user_id, { raw: true });
     if (!user) {
       console.error("User not found for update, user_id:", user_id);
       return res.status(404).json({ message: "User not found" });
     }
-    const employee_id = user.employee_id;
 
+    // Non-super-admins cannot edit an existing Admin or Super Admin account
+    if (!req.is_super_admin && adminRoleIds.includes(Number(user.role_id))) {
+      return res.status(403).json({ message: "Forbidden: Only Super Admin can modify Administrator accounts." });
+    }
+
+    // Non-super-admins cannot edit a user outside their branch
+    if (!req.is_super_admin && user.branch_id && Number(user.branch_id) !== Number(req.branch_id || 1)) {
+      return res.status(403).json({ message: "Forbidden: You cannot modify users outside your branch." });
+    }
+
+    const employee_id = user.employee_id;
     console.log(`Updating user_id ${user_id} with role_id ${parsedRoleID}`);
 
     // Update the employees table for personal details
@@ -50,6 +66,7 @@ const updateUser = async (req, res) => {
       if (lname !== undefined) empUpdateData.lname = lname;
       if (phone !== undefined) empUpdateData.phone = phone;
       if (department_id !== undefined) empUpdateData.department_id = department_id;
+      if (branch_id !== undefined) empUpdateData.branch_id = branch_id;
       if (supervisor_id !== undefined) empUpdateData.supervisor_id = supervisor_id || null;
       if (telegram_username !== undefined) empUpdateData.telegram_username = telegram_username || null;
 
@@ -92,7 +109,14 @@ const updateUser = async (req, res) => {
 const getAllRoles = async (req, res) => {
   try {
     const results = await Roles.findAll({ raw: true });
-    return res.json(results);
+    // Non-super-admins cannot see Admin or Super Admin roles
+    const filtered = !req.is_super_admin
+      ? results.filter(r => 
+          !([1, 33, 34, 35].includes(Number(r.role_id))) &&
+          !String(r.role_name || '').toLowerCase().includes('admin')
+        )
+      : results;
+    return res.json(filtered);
   } catch (err) {
     console.error("Error retrieving roles:", err);
     return res.status(500).json({ message: "Error retrieving roles", error: err.message });
@@ -110,19 +134,43 @@ const getDepartment = async (req, res) => {
   }
 };
 
-// Get all users (including employee details if available)
+// Get all users (including employee details and branch if available)
 const getAllUsers = async (req, res) => {
   try {
+    let { branch_id } = req.query;
+
+    let whereClause = '';
+    const replacements = [];
+
+    // Strict branch isolation: non-super-admins can ONLY see users from their own branch
+    if (!req.is_super_admin) {
+      const branchToFilter = req.branch_id || 1;
+      whereClause = 'WHERE (COALESCE(e.branch_id, u.branch_id, 1) = ?)';
+      replacements.push(branchToFilter);
+    } else if (branch_id && branch_id !== 'all') {
+      whereClause = 'WHERE (COALESCE(e.branch_id, u.branch_id, 1) = ?)';
+      replacements.push(branch_id);
+    }
+
     const query = `
       SELECT
         u.*,
         e.*,
+        b.name AS branch_name,
+        b.name_amharic AS branch_name_amharic,
+        b.code AS branch_code,
+        b.tier_level AS branch_tier,
         u.status AS status
       FROM users u
       LEFT JOIN employees e ON u.employee_id = e.employee_id
+      LEFT JOIN branches b ON COALESCE(e.branch_id, u.branch_id, 1) = b.branch_id
+      ${whereClause}
     `;
 
-    const results = await sequelize.query(query, { type: QueryTypes.SELECT });
+    const results = await sequelize.query(query, {
+      replacements,
+      type: QueryTypes.SELECT
+    });
 
     // Ensure status is always a proper integer (0 or 1) from users table
     const normalized = results.map(r => ({
@@ -229,6 +277,48 @@ const getUserRoles = async (req, res) => {
   }
 };
 
+// Add new user + employee
+const addUser = async (req, res) => {
+  const { user_name, fname, lname, phone, email, department_id, branch_id, role_id, password } = req.body;
+  try {
+    const parsedRoleId = parseInt(role_id, 10);
+    const adminRoleIds = [1, 33, 34, 35];
+    if (!req.is_super_admin && adminRoleIds.includes(parsedRoleId)) {
+      return res.status(403).json({ message: "Forbidden: Only Super Admin can assign Admin or Super Admin roles." });
+    }
+    const branchToUse = (req.is_super_admin && branch_id) ? branch_id : (req.branch_id || 1);
+    const defaultPassword = password || 'itp@123';
+    const hashedPassword = await bcrypt.hash(defaultPassword, 10);
+    const fullName = `${fname || ''} ${lname || ''}`.trim() || user_name;
+
+    // Check if username already exists
+    const existing = await sequelize.query(
+      'SELECT user_id FROM users WHERE user_name = :user_name LIMIT 1',
+      { replacements: { user_name }, type: QueryTypes.SELECT }
+    );
+    if (existing && existing.length > 0) {
+      return res.status(400).json({ message: 'Username already exists' });
+    }
+
+    // Insert employee
+    const [empInsertId] = await sequelize.query(
+      'INSERT INTO employees (name, fname, lname, email, phone, department_id, branch_id, role_id, sex) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)',
+      { replacements: [fullName, fname || '', lname || '', email || '', phone || '', department_id || null, branchToUse, parsedRoleId, 'M'] }
+    );
+
+    // Insert user
+    const [userInsertId] = await sequelize.query(
+      'INSERT INTO users (employee_id, user_name, password, role_id, branch_id, status) VALUES (?, ?, ?, ?, ?, 1)',
+      { replacements: [empInsertId, user_name, hashedPassword, parsedRoleId, branchToUse] }
+    );
+
+    return res.status(201).json({ success: true, message: 'User successfully registered', user_id: userInsertId });
+  } catch (err) {
+    console.error('Error adding user:', err);
+    return res.status(500).json({ message: 'Error registering user: ' + err.message });
+  }
+};
+
 module.exports = {
   getUserRoles,
   getAllRoles,
@@ -236,5 +326,6 @@ module.exports = {
   getAllUsers,
   changeUserStatus,
   updateUser,
-  deleteUser
+  deleteUser,
+  addUser
 };

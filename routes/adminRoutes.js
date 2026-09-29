@@ -7,11 +7,15 @@ const {
     createOrgUnit,
     updateOrgUnit,
     deleteOrgUnit,
+    mapOrgUnitParent,
+    batchMapOrgUnits,
     getOrgHierarchy,
     getOrgTypes,
     createOrgType,
     updateOrgType,
-    deleteOrgType
+    deleteOrgType,
+    bulkImportOrgUnits,
+    bulkImportOrgTypes
 } = require('../controllers/organizationStructureController');
 
 const {
@@ -27,9 +31,13 @@ const {
 router.get('/org-structure', verifyToken, getOrgStructure);
 router.get('/org-structure/hierarchy', verifyToken, getOrgHierarchy);
 router.get('/org-structure/types', verifyToken, getOrgTypes);
+router.post('/org-structure/bulk-import', verifyToken, bulkImportOrgUnits);
+router.post('/org-structure/types/bulk-import', verifyToken, bulkImportOrgTypes);
 router.get('/org-structure/:id', verifyToken, getOrgUnitById);
 router.post('/org-structure', verifyToken, createOrgUnit);
 router.put('/org-structure/:id', verifyToken, updateOrgUnit);
+router.put('/org-structure/:id/map-parent', verifyToken, mapOrgUnitParent);
+router.post('/org-structure/batch-map', verifyToken, batchMapOrgUnits);
 router.delete('/org-structure/:id', verifyToken, deleteOrgUnit);
 
 // Organization Types Routes

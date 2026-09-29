@@ -46,14 +46,15 @@ const addGoals = (req, res) => {
       const employee_id = result[0].employee_id;
       console.log("Employee ID:", employee_id);
 
+      const branchIdToSave = req.body.branch_id || req.branch_id || 1;
       const query = `
         INSERT INTO goals (
-          user_id, name, description, year, quarter, weight, created_at, updated_at, employee_id, start_year, end_year, is_active
+          user_id, name, description, year, quarter, weight, created_at, updated_at, employee_id, start_year, end_year, is_active, branch_id
         ) 
-        VALUES (?, ?, ?, ?, ?, ?, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, ?, ?, ?, 1)
+        VALUES (?, ?, ?, ?, ?, ?, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, ?, ?, ?, 1, ?)
       `;
 
-      const values = [user_id, name, description, goalYear, quarter, goalWeight, employee_id, goalStartYear, goalEndYear];
+      const values = [user_id, name, description, goalYear, quarter, goalWeight, employee_id, goalStartYear, goalEndYear, branchIdToSave];
 
       con.query(query, values, (err, result) => {
         if (err) {
@@ -127,12 +128,13 @@ const addObjectives = (req, res) => {
 
       const employee_id = userResult[0].employee_id;
 
+      const branchIdToSave = req.body.branch_id || req.branch_id || 1;
       const query = `
-        INSERT INTO objectives (user_id, goal_id, name, description, weight, employee_id, created_at, updated_at)
-        VALUES (?, ?, ?, ?, ?, ?, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+        INSERT INTO objectives (user_id, goal_id, name, description, weight, employee_id, branch_id, created_at, updated_at)
+        VALUES (?, ?, ?, ?, ?, ?, ?, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
       `;
 
-      con.query(query, [user_id, goal, name, description, objWeight, employee_id], (err, result) => {
+      con.query(query, [user_id, goal, name, description, objWeight, employee_id, branchIdToSave], (err, result) => {
         if (err) {
           console.error("Database Error adding objective:", err.message, err.code);
           if (err.code === 'ER_NO_REFERENCED_ROW' || err.code === 'ER_NO_REFERENCED_ROW_2') {
@@ -198,21 +200,23 @@ const addSpecificObjectives = (req, res) => {
       } catch {}
     }
 
+    const branchIdToSave = req.body.branch_id || req.branch_id || 1;
+
     // ── If an explicit org position or list was chosen, skip auto-detection ──
     if (primarySingleId || primaryJson || supportiveJson) {
       const insertQuery = `
         INSERT INTO specific_objectives (
           user_id, objective_id, specific_objective_name, view,
           deadline_quarter, priority, department_id, name, count,
-          org_node_ids, supportive_org_node_ids, weight, plan_type,
+          org_node_ids, supportive_org_node_ids, weight, plan_type, branch_id,
           created_at, updated_at
         )
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
       `;
       const vals = [
         user_id, objective_id, specific_objective_name, view,
         'Q1', 'አስፈላጊ', primarySingleId || null, specific_objective_name, 1,
-        primaryJson, supportiveJson, kpiWeight, resolvedPlanType
+        primaryJson, supportiveJson, kpiWeight, resolvedPlanType, branchIdToSave
       ];
       con.query(insertQuery, vals, (err, result) => {
         if (err) {
@@ -323,10 +327,10 @@ const addSpecificObjectives = (req, res) => {
       const query = `
         INSERT INTO specific_objectives (
           user_id, objective_id, specific_objective_name, view, 
-          deadline_quarter, priority, department_id, name, count, plan_type, weight,
+          deadline_quarter, priority, department_id, name, count, plan_type, weight, branch_id,
           created_at, updated_at
         )
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
       `;
 
       // Provide default values for required fields
@@ -341,7 +345,8 @@ const addSpecificObjectives = (req, res) => {
         specific_objective_name,  // Use specific_objective_name as name
         1,  // Default count
         resolvedPlanType,
-        kpiWeight
+        kpiWeight,
+        branchIdToSave
       ];
 
       con.query(query, values, (err, result) => {
@@ -410,7 +415,7 @@ const addspecificObjectiveDetails = async (req, res) => {
 
     // Get employee details (using org_node_id as the primary position identifier)
     const getEmployeeDetailsQuery = `
-          SELECT e.fname, IFNULL(ep.org_node_id, e.department_id) as department_id 
+          SELECT e.fname, IFNULL(ep.org_node_id, e.department_id) as department_id, COALESCE(u.branch_id, e.branch_id, 1) as branch_id 
           FROM employees e 
           JOIN users u ON e.employee_id = u.employee_id 
           LEFT JOIN employee_positions ep ON e.employee_id = ep.employee_id AND ep.is_primary = 1
@@ -422,7 +427,7 @@ const addspecificObjectiveDetails = async (req, res) => {
       return res.status(404).json({ message: "Employee not found for the given user." });
     }
 
-    const { fname: employeeName, department_id } = employeeResults[0];
+    const { fname: employeeName, department_id, branch_id: userBranchId } = employeeResults[0];
 
     // Validate required fields
     const validationErrors = specific_objective.map((item) => {
@@ -479,15 +484,25 @@ const addspecificObjectiveDetails = async (req, res) => {
         }
       }
 
+      // Also look up branch_id from goal or specific_objective if not explicitly provided
+      let inferredBranchId = null;
+      if (goal_id) {
+        const [gRow] = await query(`SELECT branch_id FROM goals WHERE goal_id = ?`, [goal_id]);
+        if (gRow && gRow.branch_id) inferredBranchId = gRow.branch_id;
+      }
+      const branchIdToSave = item.branch_id || req.body.branch_id || req.branch_id || inferredBranchId || userBranchId || 1;
+      const finalDepartmentId = item.department_id || department_id || null;
+      const startingDateToSave = item.starting_date || null;
+
       // Insert specific objective details
       const insertQuery = `
                           INSERT INTO specific_objective_details (
                               user_id, goal_id, specific_objective_id, specific_objective_detailname, details,
-                              baseline, plan, measurement, created_by, year, month, day, deadline, status, priority,
+                              baseline, plan, measurement, created_by, year, month, day, starting_date, deadline, status, priority,
                               plan_type, cost_type, income_exchange, employment_type, incomeName, costName,
                               CIbaseline, CIplan, department_id, name, description, count,
-                              project_type, income_plan_type, employee_of, weight
-                          ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?,  ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`;
+                              project_type, income_plan_type, employee_of, weight, branch_id
+                          ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`;
 
       // Convert CIbaseline and CIplan to numbers
       let ciBaseline = null;
@@ -506,17 +521,18 @@ const addspecificObjectiveDetails = async (req, res) => {
       const sqlParameters = [
         user_id, goal_id, item.specific_objective_id, item.specific_objective_detailname, item.details,
         item.baseline, item.plan, item.measurement, employeeName, item.year, item.month, item.day,
-        item.deadline || null, item.status || "Pending", item.priority || "አስፈላጊ",
+        startingDateToSave, item.deadline || null, item.status || "Pending", item.priority || "አስፈላጊ",
         item.plan_type || null, item.cost_type || null, item.income_exchange || null,
         item.employment_type || null, item.incomeName || null, item.costName || null,
-        ciBaseline, ciPlan, department_id,
+        ciBaseline, ciPlan, finalDepartmentId,
         item.name || item.specific_objective_detailname || "Default Name",
         item.description || item.details || "Default Description",
         item.count || 1,
         item.project_type || null,
         item.income_plan_type || null,
         item.employee_of || null,
-        actionPlanWeight || 0
+        actionPlanWeight || 0,
+        branchIdToSave
       ];
 
       const result = await query(insertQuery, sqlParameters);
